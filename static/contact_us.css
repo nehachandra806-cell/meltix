@@ -1,0 +1,186 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { 
+    font-family: 'Lato', sans-serif; height: 100vh; width: 100vw; overflow: hidden; 
+    background-color: #030201; 
+}
+
+/* =========================================
+   🌟 AMBIENT BACKGROUND & DUST PARTICLES 🌟
+   ========================================= */
+.ambient-background { 
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+    z-index: -1; pointer-events: none; overflow: hidden;
+    background-color: #030201;
+}
+
+/* Soft Glowing Orbs */
+.glow-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: floatOrb 12s infinite alternate ease-in-out; }
+.top-right { width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(212, 163, 115, 0.15), transparent); top: -10vw; right: -10vw; }
+.bottom-left { width: 55vw; height: 55vw; background: radial-gradient(circle, rgba(212, 163, 115, 0.1), transparent); bottom: -15vw; left: -15vw; animation-delay: -4s; }
+@keyframes floatOrb { 0% { transform: translate(0, 0); } 100% { transform: translate(-40px, 40px); } }
+
+/* 🌟 DUST PARTICLE CSS 🌟 */
+.particle-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.dust {
+    position: absolute;
+    bottom: -20px; /* SCREEN KE NEECHE SE START HOGA */
+    background: #f2c98a;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #f2c98a, 0 0 10px #d4a373;
+    opacity: 0;
+    animation: floatUpDust linear infinite forwards;
+}
+
+/* Halka fade in aur upar udna */
+@keyframes floatUpDust {
+    0% { transform: translateY(0); opacity: 0; }
+    15% { opacity: 0.8; } /* Dheere se fade in */
+    50% { transform: translateY(-50vh) translateX(15px); opacity: 1; }
+    85% { opacity: 0.8; }
+    100% { transform: translateY(-120vh) translateX(-15px); opacity: 0; } /* Fade out hote hue upar gayab */
+}
+
+/* =========================================
+   Return Button
+   ========================================= */
+.back-btn { 
+    position: absolute; top: 30px; left: 40px; font-family: 'Playfair Display', serif; color: #d4a373; text-decoration: none; font-size: 1.2rem; transition: 0.5s; display: flex; align-items: center; gap: 8px; z-index: 1000; 
+    opacity: 0; pointer-events: none;
+}
+.back-btn.visible { opacity: 1; pointer-events: auto; }
+.back-btn:hover { color: #fff; transform: translateX(-5px); }
+
+/* Intro Screen */
+.intro-screen {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    background-color: #030201; z-index: 500;
+    transition: opacity 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.intro-text { font-family: 'Playfair Display', serif; color: #f2c98a; font-size: 4rem; text-align: center; line-height: 1.4; font-weight: 600; }
+.intro-text span {
+    display: inline-block; opacity: 0; transform: translateY(15px); filter: blur(8px);
+    animation: wordReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: var(--delay); margin-right: 0.25em;
+}
+.intro-text span:last-child { margin-right: 0; }
+@keyframes wordReveal { to { opacity: 1; transform: translateY(0); filter: blur(0); text-shadow: 0 0 20px rgba(242, 201, 138, 0.6); } }
+
+/* =========================================
+   FLIP CARDS CONTAINER
+   ========================================= */
+.cards-container {
+    width: 100vw; height: 100vh;
+    display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;
+    opacity: 0; transform: scale(1.05); transition: opacity 0.8s ease, transform 0.8s ease; pointer-events: none;
+    padding: 20px;
+}
+.cards-container.visible { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+/* 3D Flip Card */
+.flip-card {
+    background-color: transparent;
+    width: 220px; height: 300px;
+    perspective: 1000px; cursor: pointer;
+    transition: transform 0.4s ease;
+}
+
+.flip-card:hover {
+    transform: translateY(-15px);
+}
+
+.flip-card-inner {
+    position: relative; width: 100%; height: 100%;
+    text-align: center; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+    position: absolute; width: 100%; height: 100%;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+    border-radius: 20px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+.flip-card-front {
+    background: linear-gradient(145deg, #0f0c0a, #050403);
+    border: 1px solid rgba(212, 163, 115, 0.3);
+    transition: all 0.5s ease;
+}
+
+.icon-wrapper {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(212, 163, 115, 0.1);
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: 25px; transition: all 0.5s ease;
+    border: 1px solid rgba(212, 163, 115, 0.3);
+}
+
+.icon-wrapper svg { width: 40px; height: 40px; fill: #d4a373; transition: all 0.5s ease; }
+
+.tap-hint {
+    font-family: 'Lato', sans-serif; color: rgba(242, 201, 138, 0.7);
+    font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase;
+    transition: all 0.5s ease;
+}
+
+.flip-card:hover .flip-card-front {
+    border-color: var(--brand);
+    box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+}
+.flip-card:hover .icon-wrapper {
+    background: var(--brand); border-color: var(--brand); box-shadow: 0 0 30px var(--brand);
+}
+.flip-card:hover .icon-wrapper svg { fill: #fff; }
+.flip-card:hover .tap-hint { color: #fff; text-shadow: 0 0 10px var(--brand); }
+.flip-card[style*="#ffffff"]:hover .icon-wrapper svg { fill: #000; }
+
+.flip-card-back {
+    background-size: cover; background-position: center;
+    transform: rotateY(180deg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.back-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    backdrop-filter: blur(2px);
+    padding: 20px;
+}
+
+.flip-card-back h2 {
+    font-family: 'Playfair Display', serif; font-size: 2rem; color: #fff;
+    margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+
+.tagline {
+    font-family: 'Lato', sans-serif; font-size: 0.9rem; color: #eaddcf; letter-spacing: 1px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8); text-align: center;
+    margin-bottom: 20px; line-height: 1.4;
+}
+
+.card-btn {
+    text-decoration: none; font-family: 'Lato', sans-serif; font-weight: 700; color: #fff;
+    border: 1px solid #fff; padding: 8px 20px; border-radius: 25px; font-size: 0.85rem;
+    letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; position: relative; z-index: 10; 
+}
+.card-btn:hover { background-color: #fff; color: #000 !important; box-shadow: 0 0 15px rgba(255,255,255,0.6); }
+
+@media (max-width: 850px) {
+    .intro-text { font-size: 2.5rem; }
+    .cards-container { flex-direction: row; gap: 20px; }
+    .flip-card { width: 160px; height: 220px; }
+    .icon-wrapper { width: 60px; height: 60px; }
+    .icon-wrapper svg { width: 30px; height: 30px; }
+    .tap-hint { font-size: 0.7rem; }
+    .flip-card-back h2 { font-size: 1.5rem; }
+    .tagline { font-size: 0.75rem; margin-bottom: 15px; }
+    .card-btn { padding: 6px 15px; font-size: 0.7rem; }
+}

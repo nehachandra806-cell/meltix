@@ -1,0 +1,1091 @@
+/* =========================================
+   1. GLOBAL STYLES
+   ========================================= */
+* { box-sizing: border-box; }
+
+body {
+    margin: 0; 
+    padding: 0; 
+    background-color: #030201; 
+    color: #d4a373; 
+    font-family: 'Lato', sans-serif;
+    height: 100vh; 
+    overflow: hidden; 
+}
+
+/* =========================================
+   ✨ ROYAL TAP OVERLAY ✨
+   ========================================= */
+#start-overlay { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    background: #030201; 
+    z-index: 100000; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    cursor: pointer; 
+    transition: opacity 1s ease, visibility 1s; 
+}
+
+#start-overlay.hidden { 
+    opacity: 0; 
+    visibility: hidden; 
+}
+
+#start-overlay h2 { 
+    color: #d4a373; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 2.2rem; 
+    letter-spacing: 8px; 
+    text-transform: uppercase; 
+    font-weight: 400; 
+    margin: 0; 
+}
+
+.pulse-text { 
+    animation: luxuryGlow 2.5s ease-in-out infinite alternate; 
+}
+
+@keyframes luxuryGlow { 
+    0% { 
+        opacity: 0.4; 
+        text-shadow: 0 0 10px rgba(212, 163, 115, 0.2); 
+        transform: scale(0.98); 
+    } 
+    100% { 
+        opacity: 1; 
+        text-shadow: 0 0 20px rgba(212, 163, 115, 0.8), 0 0 40px rgba(212, 163, 115, 0.5), 0 0 60px rgba(166, 124, 82, 0.4); 
+        transform: scale(1.02); 
+    } 
+}
+
+/* =========================================
+   🎬 2. CINEMATIC VIDEO INTRO
+   ========================================= */
+#cinematic-intro { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    z-index: 9999; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-end; 
+    padding-bottom: 12vh; 
+    background: #000; 
+    overflow: hidden; 
+    transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
+}
+
+#bg-video { 
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    object-fit: cover; 
+    z-index: -2; 
+    opacity: 0; 
+    animation: videoFadeIn 3s ease-in-out forwards; 
+}
+
+@keyframes videoFadeIn { 
+    to { opacity: 1; } 
+}
+
+.alive-video { 
+    opacity: 1 !important; 
+    animation: breatheEffect 8s ease-in-out infinite !important; 
+}
+
+@keyframes breatheEffect { 
+    0% { transform: scale(1); filter: brightness(1); } 
+    50% { transform: scale(1.03); filter: brightness(1.15); } 
+    100% { transform: scale(1); filter: brightness(1); } 
+}
+
+.video-vignette { 
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%); 
+    z-index: -1; 
+    pointer-events: none; 
+}
+
+#btn-container { 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 2s ease-in-out; 
+    z-index: 10; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+}
+
+/* ✨ ROYAL ENTER BUTTON ✨ */
+.enter-vault-btn { 
+    background: rgba(10, 8, 5, 0.5); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); 
+    border: 1px solid rgba(212, 163, 115, 0.4); 
+    color: #eaddcf; 
+    padding: 16px 40px; 
+    border-radius: 40px; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.3rem; 
+    letter-spacing: 2px; 
+    cursor: pointer; 
+    transition: all 0.5s ease; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(212, 163, 115, 0.1); 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    animation: floatingBtn 3s ease-in-out infinite; 
+}
+
+.enter-vault-btn span { 
+    color: #d4a373; 
+    transition: transform 0.4s ease; 
+    font-size: 1.5rem; 
+}
+
+.enter-vault-btn:hover { 
+    background: rgba(212, 163, 115, 0.15); 
+    border-color: #d4a373; 
+    color: #fff; 
+    transform: scale(1.05); 
+    box-shadow: 0 15px 40px rgba(212, 163, 115, 0.3); 
+}
+
+.enter-vault-btn:hover span { 
+    transform: rotate(90deg); 
+}
+
+@keyframes floatingBtn { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-10px); } 
+}
+
+/* =========================================
+   ✨ DUST PARTICLES ✨
+   ========================================= */
+#dust-particles { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    pointer-events: none; 
+    z-index: 10000; 
+    opacity: 0; 
+    transition: opacity 4s ease-in-out; 
+}
+
+.dust { 
+    position: absolute; 
+    bottom: -10px; 
+    background-color: rgba(212, 163, 115, 0.6); 
+    border-radius: 50%; 
+    box-shadow: 0 0 8px rgba(212, 163, 115, 0.8); 
+    opacity: 0; 
+    animation: floatUp linear infinite; 
+}
+
+@keyframes floatUp { 
+    0% { transform: translateY(0) translateX(0); opacity: 0; } 
+    10%, 90% { opacity: 1; } 
+    100% { transform: translateY(-110vh) translateX(30px); opacity: 0; } 
+}
+
+/* =========================================
+   🛍️ 3. THE VAULT MAIN CONTENT
+   ========================================= */
+#main-content { 
+    position: relative; 
+    z-index: 10005; 
+}
+
+.hidden-main { 
+    opacity: 0; 
+    pointer-events: none; 
+    transform: scale(1.05); 
+    transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1); 
+    height: 100vh; 
+    width: 100%; 
+}
+
+.show-main { 
+    opacity: 1; 
+    pointer-events: auto; 
+    transform: scale(1); 
+    overflow: hidden; /* 🔴 Yahan se scroll hata diya */
+    height: 100vh; 
+}
+
+.top-nav { 
+    padding: 30px 50px; 
+    position: absolute; 
+    top: 0; left: 0; 
+    z-index: 100; 
+}
+
+.back-btn { 
+    font-family: 'Playfair Display', serif; 
+    color: #d4a373; 
+    text-decoration: none; 
+    font-size: 1.2rem; 
+    transition: all 0.3s ease; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+.back-btn span { 
+    color: #d4a373; 
+    font-size: 1.2rem; 
+    transition: color 0.3s; 
+}
+
+.back-btn:hover { 
+    color: #fff; 
+    text-shadow: 0 0 10px rgba(212, 163, 115, 0.8); 
+}
+
+.back-btn:hover span { 
+    color: #fff; 
+}
+
+.vault-wrapper { 
+    height: 100vh; /* 🔴 Fixed height wapas laa di */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    position: relative; 
+    /* Padding bottom hata di */
+}
+
+.bg-watermark { 
+    position: absolute; 
+    top: 50%; left: 50%; 
+    transform: translate(-50%, -50%); 
+    font-family: 'Playfair Display', serif; 
+    font-size: 14vw; 
+    color: rgba(212, 163, 115, 0.03); 
+    white-space: nowrap; 
+    z-index: 1; 
+    pointer-events: none; 
+    user-select: none; 
+    letter-spacing: 10px; 
+}
+
+/* =========================================
+   🔥 4. 3D VAULT GRID DESIGN 🔥
+   ========================================= */
+.vault-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 30px; 
+    width: 100%; 
+}
+
+.vault-3d-parent { 
+    background: transparent; 
+    border: none; 
+    padding: 0; 
+    cursor: pointer; 
+    outline: none; 
+    perspective: 1000px; 
+    width: 100%; 
+}
+
+.vault-category-btn {
+    position: relative; 
+    height: 150px; 
+    background: linear-gradient(145deg, rgba(20, 15, 10, 0.8), rgba(10, 8, 5, 0.9));
+    border: 1px solid rgba(212, 163, 115, 0.15); 
+    border-radius: 12px; 
+    transition: all 0.5s ease-in-out; 
+    transform-style: preserve-3d; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.vault-category-btn::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    background: radial-gradient(circle, rgba(212, 163, 115, 0.1) 0%, transparent 70%); 
+    opacity: 0; 
+    transition: opacity 0.4s ease; 
+    pointer-events: none; 
+}
+
+.glass-layer { 
+    transform-style: preserve-3d; 
+    position: absolute; 
+    inset: 8px; 
+    border-radius: 8px; 
+    background: linear-gradient(0deg, rgba(212, 163, 115, 0.02) 0%, rgba(212, 163, 115, 0.08) 100%); 
+    transform: translate3d(0px, 0px, 25px); 
+    border-left: 1px solid rgba(212, 163, 115, 0.2); 
+    border-bottom: 1px solid rgba(212, 163, 115, 0.2); 
+    transition: all 0.5s ease-in-out; 
+    pointer-events: none; 
+}
+
+.btn-content { 
+    transform-style: preserve-3d; 
+    transform: translate3d(0, 0, 26px); 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    pointer-events: none; 
+}
+
+.cat-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.8rem; 
+    color: #eaddcf; 
+    margin-bottom: 8px; 
+    transition: all 0.5s ease-in-out; 
+    font-weight: 600; 
+    letter-spacing: 1px; 
+}
+
+.cat-sub { 
+    font-family: 'Lato', sans-serif; 
+    font-size: 0.85rem; 
+    color: rgba(255, 255, 255, 0.4); 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    transition: all 0.5s ease-in-out; 
+}
+
+.vault-3d-parent:hover .vault-category-btn { 
+    transform: rotate3d(1, -1, 0, 15deg); 
+    box-shadow: rgba(212, 163, 115, 0.2) 20px 30px 25px -20px, rgba(0, 0, 0, 0.8) 0px 25px 30px 0px; 
+    border-color: #d4a373; 
+}
+
+.vault-3d-parent:hover .vault-category-btn::before { 
+    opacity: 1; 
+}
+
+.vault-3d-parent:hover .cat-title { 
+    transform: translate3d(0, 0, 50px); 
+    color: #d4a373; 
+    text-shadow: 0 0 15px rgba(212, 163, 115, 0.5); 
+}
+
+.vault-3d-parent:hover .cat-sub { 
+    transform: translate3d(0, 0, 30px); 
+    color: rgba(212, 163, 115, 0.8); 
+}
+
+.future-text { 
+    margin-top: 20px; /* 🔴 Margin thodi kam kar di taaki screen me fit aa jaye */
+    font-family: 'Lato', sans-serif; 
+    font-size: 0.95rem; 
+    color: rgba(212, 163, 115, 0.6); 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    animation: pulseText 3s infinite; 
+}
+
+@keyframes pulseText { 
+    0%, 100% { opacity: 0.4; } 
+    50% { opacity: 1; text-shadow: 0 0 10px rgba(212, 163, 115, 0.5); } 
+}
+
+/* =========================================
+   🔥 5. CATEGORY MODAL (SPLIT: WHITE & DARK) 🔥
+   ========================================= */
+.category-modal { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 200000; 
+    background: rgba(3, 2, 1, 0.75); 
+    backdrop-filter: blur(12px); 
+    -webkit-backdrop-filter: blur(12px); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.5s ease; 
+}
+
+.category-modal.show-modal { 
+    opacity: 1; 
+    pointer-events: auto; 
+}
+
+.category-modal-content { 
+    width: 85vw; 
+    height: 85vh; 
+    background: transparent; 
+    border: 1px solid rgba(212, 163, 115, 0.5); 
+    border-radius: 20px; 
+    display: flex; 
+    overflow: hidden; 
+    position: relative; 
+    transform: scale(0.95) translateY(20px); 
+    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(212, 163, 115, 0.2); 
+}
+
+.category-modal.show-modal .category-modal-content { 
+    transform: scale(1) translateY(0); 
+}
+
+.close-modal-cat { 
+    position: absolute; 
+    top: 15px; right: 15px; 
+    z-index: 100; 
+    background: rgba(255, 255, 255, 0.95); 
+    border: 1px solid #d4a373; 
+    color: #8b5e34; 
+    font-size: 26px; 
+    border-radius: 50%; 
+    width: 40px; height: 40px; 
+    cursor: pointer; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+}
+
+.close-modal-cat:hover { 
+    background: #d4a373; 
+    color: #fff; 
+    transform: rotate(90deg); 
+    box-shadow: 0 0 15px rgba(212, 163, 115, 0.5); 
+}
+
+/* 🔴 Clean Left Side (Video) - WAPAS FULL SIZE (EDGE-TO-EDGE) 🔴 */
+.modal-left-cat { 
+    flex: 1; 
+    position: relative; 
+    border-right: 1px solid rgba(212,163,115,0.3); 
+    background: #ffffff; 
+    padding: 0; 
+    overflow: hidden; 
+}
+.modal-left-cat .video-container { 
+    width: 100%; 
+    height: 100%; 
+    cursor: pointer; 
+    position: relative;
+}
+.modal-left-cat video { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; /* 🔴 Wapas cover kar diya taaki white gap na aaye */
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    pointer-events: none; /* 🔴 BROWSER KO VIDEO PAUSE KARNE SE ROKNE KE LIYE */
+}
+
+/* 🔴 Right Side (Meltix Dark Theme) */
+.modal-right-cat { 
+    flex: 1.2; 
+    padding: 50px; 
+    overflow-y: auto; 
+    background: linear-gradient(145deg, #1a1410, #0a0805); 
+}
+
+.modal-right-cat::-webkit-scrollbar { width: 6px; }
+.modal-right-cat::-webkit-scrollbar-track { background: transparent; }
+.modal-right-cat::-webkit-scrollbar-thumb { background: rgba(212,163,115,0.4); border-radius: 10px; }
+
+/* Header text changes for dark theme */
+.modal-header h2 { 
+    color: #d4a373; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 2.8rem; 
+    margin: 0 0 10px 0; 
+}
+
+.modal-header p { 
+    color: rgba(255,255,255,0.6); 
+    letter-spacing: 3px; 
+    font-size: 0.9rem; 
+    text-transform: uppercase; 
+    margin-bottom: 40px; 
+    border-bottom: 1px solid rgba(212,163,115,0.3); 
+    padding-bottom: 20px; 
+}
+
+.product-grid { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 25px; 
+    padding-bottom: 20px;
+}
+
+/* 🔴 Product Card Dark Theme */
+.product-card { 
+    background: rgba(20, 15, 10, 0.8); 
+    border: 1px solid rgba(212,163,115,0.2); 
+    border-radius: 12px; 
+    padding: 20px; 
+    text-align: center; 
+    transition: all 0.4s ease; 
+    cursor: pointer; 
+    position: relative; 
+    overflow: hidden; 
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5); 
+}
+
+.product-card:hover { 
+    border-color: #d4a373; 
+    transform: translateY(-5px); 
+    box-shadow: 0 15px 30px rgba(212, 163, 115, 0.15); 
+}
+
+.product-card img { 
+    width: 100%; 
+    height: 180px; 
+    object-fit: cover; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+}
+
+.product-card h4 { 
+    color: #eaddcf; 
+    margin: 0 0 8px; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.3rem; 
+}
+
+.product-card .price { 
+    color: #d4a373; 
+    font-family: 'Lato', sans-serif; 
+    font-weight: bold; 
+    letter-spacing: 1px; 
+}
+
+/* =========================================
+   🔥 6. ULTIMATE LUXURY PRODUCT MODAL (DARK THEME) 🔥
+   ========================================= */
+.modal-overlay { 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    background: rgba(10, 8, 5, 0.85); 
+    backdrop-filter: blur(20px) saturate(120%); 
+    z-index: 200005; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.5s ease; 
+}
+
+.modal-overlay.show-modal { 
+    opacity: 1; 
+    pointer-events: auto; 
+}
+
+.modal-container { 
+    background: linear-gradient(145deg, #1a1410, #0a0805); 
+    width: 85vw; height: 85vh; 
+    border-radius: 20px; 
+    border: 1px solid rgba(212, 163, 115, 0.3); 
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(212, 163, 115, 0.05); 
+    position: relative; 
+    padding: 35px; 
+    display: flex; 
+    flex-direction: column; 
+    transform: scale(0.95) translateY(20px); 
+    transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1); 
+}
+
+.modal-overlay.show-modal .modal-container { 
+    transform: scale(1) translateY(0); 
+}
+
+/* SKETCH WALA CROSS BUTTON */
+.close-modal { 
+    position: absolute; 
+    top: -18px; right: -18px; 
+    background: linear-gradient(145deg, #d4a373, #c28c55); 
+    border: 3px solid #15100c; 
+    border-radius: 50%; 
+    width: 45px; height: 45px; 
+    color: #000; 
+    font-size: 1.8rem; 
+    font-weight: 300; 
+    line-height: 1; 
+    cursor: pointer; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.9); 
+    z-index: 10; 
+    transition: transform 0.4s ease, filter 0.3s ease; 
+}
+
+.close-modal:hover { 
+    filter: brightness(1.2); 
+    transform: rotate(90deg) scale(1.1); 
+}
+
+/* Back to Category Button */
+.back-to-cat-btn { 
+    position: absolute; 
+    top: 10px; left: 20px; 
+    z-index: 100; 
+    background: transparent; 
+    border: none; 
+    color: #d4a373; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.2rem; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+    padding: 10px; 
+}
+
+.back-to-cat-btn:hover { 
+    color: #fff; 
+    transform: translateX(-5px); 
+    text-shadow: 0 0 10px rgba(212,163,115,0.4); 
+}
+
+.modal-content { 
+    display: flex; 
+    gap: 40px; 
+    height: 100%; 
+    padding-top: 20px; 
+}
+
+/* --- Left Side --- */
+.modal-left { 
+    flex: 1.1; 
+    display: flex; 
+    flex-direction: column; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    padding-right: 15px; 
+}
+
+.modal-left::-webkit-scrollbar { width: 4px; }
+.modal-left::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
+
+.main-image-container { 
+    width: 100%; 
+    min-height: 350px; 
+    aspect-ratio: 1/1; 
+    border-radius: 16px; 
+    border: 1px solid rgba(212, 163, 115, 0.25); 
+    margin-bottom: 20px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+    overflow: hidden; 
+    display: block !important; 
+    background: #0a0805; 
+    cursor: zoom-in; 
+    position: relative; 
+}
+
+.main-image-container img { 
+    width: 100%; height: 100%; 
+    object-fit: cover; 
+    transition: transform 0.3s ease; 
+}
+
+.main-image-container:hover img { 
+    transform: scale(1.02); 
+}
+
+.thumbnail-gallery { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 30px; 
+    width: 100%; 
+}
+
+.thumbnail-gallery img { 
+    width: 22%; 
+    aspect-ratio: 1/1; 
+    border-radius: 10px; 
+    object-fit: cover; 
+    cursor: pointer; 
+    border: 2px solid transparent; 
+    opacity: 0.5; 
+    transition: all 0.3s ease; 
+}
+
+.thumbnail-gallery img:hover, .thumbnail-gallery img.active-thumb { 
+    opacity: 1; 
+    border-color: #d4a373; 
+    transform: translateY(-3px); 
+    box-shadow: 0 5px 15px rgba(212, 163, 115, 0.2); 
+}
+
+/* Rating & Reviews Section */
+.section-title-premium { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 1.3rem; 
+    color: #eaddcf; 
+    margin-bottom: 15px; 
+    border-bottom: 1px solid rgba(212, 163, 115, 0.15); 
+    padding-bottom: 8px; 
+    letter-spacing: 1px; 
+}
+
+.star-rating-static { 
+    margin-bottom: 25px; 
+    font-size: 1.3rem; 
+    display: flex; 
+    align-items: center; 
+    gap: 4px; 
+}
+
+.star.gold { color: #d4a373; text-shadow: 0 0 8px rgba(212,163,115,0.6); }
+.star.grey { color: rgba(255, 255, 255, 0.15); }
+.star.half-gold { 
+    background: linear-gradient(90deg, #d4a373 50%, rgba(255, 255, 255, 0.15) 50%); 
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    text-shadow: none; 
+}
+
+.rating-text { 
+    font-family: 'Lato', sans-serif; 
+    font-size: 0.95rem; 
+    color: #a89f91; 
+    margin-left: 12px; 
+}
+
+.reviews-container { margin-bottom: 25px; }
+
+.review-item { 
+    background: rgba(20, 15, 10, 0.6); 
+    padding: 18px; 
+    border-radius: 10px; 
+    margin-bottom: 15px; 
+    border: 1px solid rgba(212, 163, 115, 0.08); 
+    transition: transform 0.3s ease, border-color 0.3s ease; 
+}
+
+.review-item:hover { 
+    transform: translateX(5px); 
+    border-color: rgba(212, 163, 115, 0.3); 
+}
+
+.review-user { 
+    font-family: 'Playfair Display', serif; 
+    color: #d4a373; 
+    margin: 0 0 6px 0; 
+    font-weight: bold; 
+    font-size: 1.05rem; 
+}
+
+.review-text { 
+    font-family: 'Lato', sans-serif; 
+    color: rgba(255,255,255,0.7); 
+    font-size: 0.95rem; 
+    font-style: italic; 
+    margin: 0; 
+    line-height: 1.5;
+}
+
+.form-stars-container { 
+    display: flex; 
+    gap: 5px; 
+    font-size: 1.5rem; 
+    margin-bottom: 5px; 
+    cursor: pointer; 
+}
+
+.form-star { color: rgba(255, 255, 255, 0.2); transition: color 0.2s; }
+.form-star.active { color: #d4a373; text-shadow: 0 0 8px rgba(212,163,115,0.6); }
+
+.write-review-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    width: 100%; 
+    background: rgba(0,0,0,0.3); 
+    padding: 20px; 
+    border-radius: 12px; 
+    border: 1px dashed rgba(212, 163, 115, 0.2); 
+}
+
+.write-review-form.locked { opacity: 0.5; pointer-events: none; }
+
+.premium-input { 
+    background: rgba(10, 8, 5, 0.8); 
+    border: 1px solid rgba(212, 163, 115, 0.2); 
+    color: #fff; 
+    padding: 12px 15px; 
+    border-radius: 8px; 
+    font-family: 'Lato', sans-serif; 
+    width: 100%; 
+    font-size: 0.95rem; 
+    transition: all 0.3s ease; 
+}
+
+.premium-input:focus { 
+    outline: none; 
+    border-color: #d4a373; 
+    box-shadow: 0 0 10px rgba(212,163,115,0.1); 
+}
+
+textarea.premium-input, #reviewText { 
+    resize: none !important; 
+    height: 100px !important; 
+    min-height: 100px !important; 
+    max-height: 100px !important; 
+    overflow-y: auto; 
+    font-family: 'Lato', sans-serif; 
+}
+
+.meltix-btn-form { 
+    background: transparent; 
+    color: #d4a373; 
+    border: 1px solid #d4a373; 
+    padding: 12px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    font-size: 0.85rem; 
+    font-weight: bold; 
+    letter-spacing: 1px; 
+    transition: all 0.3s ease; 
+    width: 100%; 
+}
+
+.meltix-btn-form:hover { 
+    background: #d4a373; 
+    color: #000; 
+    box-shadow: 0 5px 15px rgba(212,163,115,0.3); 
+}
+
+/* --- Right Side --- */
+.modal-right { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    padding-left: 10px; 
+    padding-right: 10px; 
+}
+
+.modal-right::-webkit-scrollbar { width: 4px; }
+.modal-right::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
+
+.modal-header-info { margin-bottom: 30px; }
+
+.product-category-title-premium { 
+    font-family: 'Playfair Display', serif; 
+    color: #d4a373; 
+    letter-spacing: 2px; 
+    font-size: 1.1rem; 
+    font-style: italic; 
+    margin: 0 0 8px 0; 
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5); 
+}
+
+.shining-text { 
+    background: linear-gradient(to right, #ffffff 20%, #d4a373 40%, #d4a373 60%, #ffffff 80%); 
+    background-size: 200% auto; 
+    color: #000; 
+    -webkit-background-clip: text; 
+    background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    animation: shineEffect 4s linear infinite; 
+}
+
+@keyframes shineEffect { to { background-position: 200% center; } }
+
+.product-title-premium { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 3rem; 
+    color: transparent; 
+    margin: 0; 
+    line-height: 1.1; 
+    font-weight: 600; 
+}
+
+.details-accordion { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 25px; 
+    margin-bottom: 30px;
+}
+
+.detail-item h4 { 
+    font-family: 'Playfair Display', serif; 
+    color: #eaddcf; 
+    font-size: 1.3rem; 
+    margin: 0 0 8px 0; 
+    font-weight: 400;
+}
+
+.detail-item p { 
+    font-family: 'Lato', sans-serif; 
+    color: rgba(255,255,255,0.6); 
+    font-size: 1.05rem; 
+    margin: 0; 
+    line-height: 1.6; 
+    font-weight: 300;
+}
+
+/* Add to Cart Section Fixed at Bottom */
+.purchase-section { 
+    margin-top: auto; 
+    margin-bottom: 20px; 
+    background: rgba(20, 15, 10, 0.8); 
+    padding: 25px; 
+    border-radius: 16px; 
+    border: 1px solid rgba(212, 163, 115, 0.2); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
+}
+
+.price-block { display: flex; flex-direction: column; }
+
+.price-label { 
+    margin: 0 0 2px 0; 
+    color: rgba(212,163,115,0.6); 
+    font-family: 'Lato', sans-serif; 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+}
+
+.product-price-premium { 
+    font-family: 'Lato', sans-serif; 
+    font-size: 2.2rem; 
+    color: #fff; 
+    margin: 0; 
+    font-weight: 700; 
+}
+
+/* ==========================================
+   🔴 MAGICAL UIVERSE ADD TO CART BUTTON 🔴
+   ========================================== */
+.magic-cart-btn { 
+    position: relative; 
+    padding: 14px 35px; 
+    background: #d4a373; 
+    font-family: 'Lato', sans-serif; 
+    font-size: 1rem; 
+    font-weight: 700; 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    color: #030201; 
+    border: 2px solid #d4a373; 
+    border-radius: 30px; 
+    box-shadow: 0 0 0 rgba(212, 163, 115, 0.5); 
+    transition: all 0.3s ease-in-out; 
+    cursor: pointer; 
+    overflow: visible; 
+}
+
+.magic-cart-btn .star-1 { position: absolute; top: 20%; left: 20%; width: 25px; height: auto; filter: drop-shadow(0 0 0 #d4a373); z-index: -5; transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96); }
+.magic-cart-btn .star-2 { position: absolute; top: 45%; left: 45%; width: 15px; height: auto; filter: drop-shadow(0 0 0 #d4a373); z-index: -5; transition: all 1s cubic-bezier(0, 0.4, 0, 1.01); }
+.magic-cart-btn .star-3 { position: absolute; top: 40%; left: 40%; width: 5px; height: auto; filter: drop-shadow(0 0 0 #d4a373); z-index: -5; transition: all 1s cubic-bezier(0, 0.4, 0, 1.01); }
+.magic-cart-btn .star-4 { position: absolute; top: 20%; left: 40%; width: 8px; height: auto; filter: drop-shadow(0 0 0 #d4a373); z-index: -5; transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01); }
+.magic-cart-btn .star-5 { position: absolute; top: 25%; left: 45%; width: 15px; height: auto; filter: drop-shadow(0 0 0 #d4a373); z-index: -5; transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01); }
+.magic-cart-btn .star-6 { position: absolute; top: 5%; left: 50%; width: 5px; height: auto; filter: drop-shadow(0 0 0 #d4a373); z-index: -5; transition: all 0.8s ease; }
+
+.magic-cart-btn:hover { 
+    background: rgba(10, 8, 5, 0.8); 
+    color: #d4a373; 
+    box-shadow: 0 0 25px rgba(212, 163, 115, 0.5); 
+}
+
+.magic-cart-btn:hover .star-1 { top: -80%; left: -30%; filter: drop-shadow(0 0 10px #d4a373); z-index: 2; }
+.magic-cart-btn:hover .star-2 { top: -25%; left: 10%; filter: drop-shadow(0 0 10px #d4a373); z-index: 2; }
+.magic-cart-btn:hover .star-3 { top: 55%; left: 25%; filter: drop-shadow(0 0 10px #d4a373); z-index: 2; }
+.magic-cart-btn:hover .star-4 { top: 30%; left: 80%; filter: drop-shadow(0 0 10px #d4a373); z-index: 2; }
+.magic-cart-btn:hover .star-5 { top: 25%; left: 115%; filter: drop-shadow(0 0 10px #d4a373); z-index: 2; }
+.magic-cart-btn:hover .star-6 { top: 5%; left: 60%; filter: drop-shadow(0 0 10px #d4a373); z-index: 2; }
+.magic-cart-btn .fil0 { fill: #d4a373; }
+
+.auth-prompt-container { text-align: center; background: rgba(10, 8, 5, 0.6); padding: 30px; border-radius: 12px; border: 1px dashed rgba(212, 163, 115, 0.2); }
+.auth-prompt-containerReviewed { text-align: center; background: rgba(20, 15, 10, 0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(212, 163, 115, 0.1); }
+
+/* 🔴 REVIEW LIKE/DISLIKE & DELETE BUTTONS */
+.review-actions-bar { display: flex; gap: 15px; margin-top: 10px; border-top: 1px dashed rgba(212, 163, 115, 0.1); padding-top: 8px; }
+.rev-act-btn { background: transparent; border: none; color: rgba(255,255,255,0.4); font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.3s ease; font-family: 'Lato', sans-serif; padding: 0; }
+.rev-act-btn:hover { color: #d4a373; }
+
+@keyframes popIcon { 
+    0% { transform: scale(1); } 
+    50% { transform: scale(1.4) rotate(-10deg); } 
+    100% { transform: scale(1) rotate(0deg); } 
+}
+
+.act-icon { display: inline-block; transition: transform 0.2s; }
+.rev-act-btn.active-like { color: #4ade80; } 
+.rev-act-btn.active-like .act-icon { animation: popIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; filter: drop-shadow(0 0 5px rgba(74, 222, 128, 0.6)); }
+.rev-act-btn.active-dislike { color: #f87171; } 
+.rev-act-btn.active-dislike .act-icon { animation: popIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.6)); }
+
+.delete-review-btn { background: transparent; border: none; color: rgba(255,255,255,0.15); cursor: pointer; font-size: 1.1rem; transition: all 0.3s ease; padding: 0; }
+.delete-review-btn:hover { color: #f87171; transform: scale(1.2); filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.5)); }
+.review-header-flex { display: flex; justify-content: space-between; align-items: flex-start; }
+
+/* 🔴 PREMIUM WISHLIST BUTTON */
+.absolute-wishlist { 
+    position: absolute; top: 15px; left: 15px; 
+    z-index: 10; 
+    background: rgba(10, 8, 5, 0.3); 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px); 
+    border: 1px solid rgba(212, 163, 115, 0.3); 
+    width: 42px; height: 42px; border-radius: 50%; 
+    display: flex; justify-content: center; align-items: center; 
+    cursor: pointer; color: #d4a373; transition: all 0.3s ease; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+}
+
+.absolute-wishlist svg { width: 18px; height: 18px; transition: all 0.3s ease; }
+.absolute-wishlist:hover { background: rgba(212, 163, 115, 0.2); border-color: rgba(212, 163, 115, 0.8); transform: scale(1.08); box-shadow: 0 6px 20px rgba(212, 163, 115, 0.2); }
+.absolute-wishlist.saved { background: #d4a373; border-color: #d4a373; }
+.absolute-wishlist.saved svg { stroke: #030201; fill: #030201; }
+
+/* Lightbox Styling */
+#meltix-lightbox { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px); }
+#meltix-lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 12px; box-shadow: 0 0 40px rgba(212,163,115,0.6); transform: scale(0.8); transition: transform 0.3s ease; }
+
+/* =========================================
+   🔴 VIDEO LOADER & FADE EFFECT 🔴
+   ========================================= */
+.cat-vid-loader {
+    position: absolute; 
+    top: 50%; left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 45px; height: 45px; 
+    border: 3px solid rgba(212, 163, 115, 0.2);
+    border-top-color: #d4a373; 
+    border-radius: 50%;
+    animation: spinLoader 0.8s linear infinite; 
+    z-index: 5;
+}
+@keyframes spinLoader { 
+    to { transform: translate(-50%, -50%) rotate(360deg); } 
+}
+
+/* Video ko shuru mein transparent rakho, phir smooth transition do */
+.fade-vid { 
+    opacity: 0; 
+    transition: opacity 0.5s ease-in-out; 
+}
+/* Ye class JS lagayega jab video load ho jayegi */
+.fade-vid.vid-ready { 
+    opacity: 1; 
+}

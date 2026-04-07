@@ -1,0 +1,401 @@
+/* =========================================
+   GLOBAL LUXURY STYLES & PURE FADE IN
+   ========================================= */
+* { box-sizing: border-box; }
+
+body {
+    margin: 0; 
+    padding: 0; 
+    color: #d4a373; 
+    font-family: 'Lato', sans-serif; 
+    height: 100vh; 
+    overflow: hidden;
+    background-color: #030201; 
+    background-image: radial-gradient(circle at center, #15100c 0%, #030201 100%);
+    animation: pureFadeIn 1.5s ease-in-out forwards;
+}
+
+@keyframes pureFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.back-btn {
+    position: absolute; 
+    top: 40px; 
+    left: 50px;
+    font-family: 'Playfair Display', serif; 
+    color: #d4a373; 
+    text-decoration: none; 
+    font-size: 1.2rem; 
+    transition: all 0.3s ease; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+    z-index: 100;
+}
+.back-btn:hover { 
+    color: #fff; 
+    text-shadow: 0 0 10px rgba(212, 163, 115, 0.8); 
+    transform: translateX(-5px); 
+}
+
+/* =========================================
+   🎬 FULL SCREEN VIDEO BACKGROUND
+   ========================================= */
+.video-background {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -1; 
+}
+
+.video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(10, 8, 5, 0.4) 0%, rgba(3, 2, 1, 0.85) 100%);
+    pointer-events: none;
+}
+
+/* =========================================
+   ✨ FADE IN & LAYOUT
+   ========================================= */
+.page-fade-in {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* =========================================
+   🔮 HORIZONTAL GLASSMORPHISM FORM
+   ========================================= */
+.support-container-glass {
+    width: 85vw; 
+    max-width: 1000px; 
+    background: rgba(10, 8, 5, 0.3); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 163, 115, 0.25);
+    border-radius: 20px; 
+    padding: 50px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(212, 163, 115, 0.05);
+    position: relative;
+    overflow: hidden;
+    animation: floatFloat 6s ease-in-out infinite;
+}
+
+@keyframes floatFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.glow-line {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, transparent, #d4a373, transparent);
+    opacity: 0.6;
+}
+
+.glass-inner-split {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+/* =========================================
+   🔴 LEFT PANEL: Cinematic HUD Interface
+   ========================================= */
+.glass-left.meltix-HUD-interface {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    position: relative;
+    /* 🔴 overflow: visible FORCED here taaki cut na ho */
+    overflow: visible; 
+    padding: 0 40px 0 20px; 
+    z-index: 1;
+}
+
+.glass-left.meltix-HUD-interface::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(212, 163, 115, 0.5), transparent);
+}
+
+.glass-left.meltix-HUD-interface .hud-pattern-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: radial-gradient(rgba(212, 163, 115, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* =========================================
+   🔮 HORIZONTAL GLASSMORPHISM FORM 
+   ========================================= */
+.support-container-glass {
+    width: 85vw; 
+    max-width: 1050px; 
+    /* 🔴 FIX 1: Opacity aur Blur kam kiya taaki peeche ki video mast dikhe */
+    background: rgba(10, 8, 5, 0.3); 
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    border: 1px solid rgba(212, 163, 115, 0.25);
+    border-radius: 20px; 
+    padding: 50px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(212, 163, 115, 0.05);
+    position: relative;
+    overflow: hidden;
+    /* 🔴 FIX 2: Tera favorite floating effect wapas aa gaya! */
+    animation: floatFloat 6s ease-in-out infinite; 
+}
+
+/* Floating Animation */
+@keyframes floatFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+.glass-left.meltix-HUD-interface .dynamic-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 3.5rem; 
+    font-weight: 600;
+    background: linear-gradient(135deg, #ffffff 20%, #d4a373 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 10px 0; 
+    line-height: 1.2; 
+    filter: drop-shadow(0px 5px 10px rgba(0,0,0,0.6)); 
+}
+
+.glass-left.meltix-HUD-interface .dynamic-subtitle { 
+    color: rgba(212, 163, 115, 0.85); 
+    letter-spacing: 2.5px; 
+    font-size: 1rem; 
+    text-transform: uppercase; 
+    margin: 0; 
+    line-height: 1.5; 
+}
+
+/* =========================================
+   Luxury Circular Icon Structure 💎
+   ========================================= */
+.meltix-icon-circle-container {
+    position: relative;
+    width: 125px; 
+    height: 125px;
+    margin-bottom: 25px; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    z-index: 2;
+    /* 🔴 Make sure container itself doesn't hide glow */
+    overflow: visible; 
+}
+
+.meltix-icon-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(212, 163, 115, 0.8);
+    background: radial-gradient(circle, rgba(10, 8, 5, 0.7) 0%, rgba(3, 2, 1, 0.3) 100%);
+    overflow: hidden; 
+    position: relative;
+    box-shadow: 0 0 35px rgba(212, 163, 115, 0.45), inset 0 0 20px rgba(212, 163, 115, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 2;
+}
+
+.meltix-icon-circle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 45px rgba(212, 163, 115, 0.6), inset 0 0 25px rgba(212, 163, 115, 0.2);
+}
+
+#meltix-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+.icon-inner-glow {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 150, 255, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+/* 🔴 FINAL FIX: Glow ka size badhaya aur pure gradient pe shift kiya taaki kate na 🔴 */
+.icon-halo-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 250px; /* Dabbe ko bahut bada kar diya */
+    height: 250px;
+    margin-top: -125px; margin-left: -125px;
+    border-radius: 50%;
+    /* Gradient ko andar hi fade kar diya bina blur filter use kiye */
+    background: radial-gradient(circle, rgba(212, 163, 115, 0.5) 0%, rgba(0, 150, 255, 0.3) 25%, transparent 60%);
+    opacity: 0.9;
+    pointer-events: none;
+    z-index: 0; /* Icon ke theek peeche */
+}
+
+.decorative-lines-container {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.hud-line-pattern {
+    position: absolute;
+    bottom: 25px; left: 40px;
+    height: 1px; width: 60px;
+    background: rgba(212, 163, 115, 0.3);
+}
+
+.hud-line-pattern::after {
+    content: '';
+    position: absolute;
+    top: -3px; right: -3px;
+    width: 7px; height: 7px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff, 0 0 20px #d4a373;
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+/* =========================================
+   GLASS RIGHT PANEL (FORM INPUTS)
+   ========================================= */
+.glass-right {
+    flex: 1.2;
+}
+
+.form-group { margin-bottom: 20px; }
+
+.form-label { 
+    display: block; 
+    font-family: 'Playfair Display', serif; 
+    color: #eaddcf; 
+    font-size: 1.1rem; 
+    margin-bottom: 8px; 
+    letter-spacing: 1px; 
+}
+
+.premium-input {
+    width: 100%; 
+    background: rgba(0, 0, 0, 0.4); 
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    color: #fff; 
+    padding: 15px 20px; 
+    border-radius: 12px; 
+    font-family: 'Lato', sans-serif; 
+    font-size: 1rem; 
+    transition: all 0.3s ease; 
+    outline: none;
+}
+
+.premium-input:focus { 
+    border-color: #d4a373; 
+    box-shadow: 0 0 15px rgba(212, 163, 115, 0.15); 
+    background: rgba(10, 8, 5, 0.7); 
+}
+
+.premium-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+textarea.premium-input { resize: none; height: 110px; }
+
+/* =========================================
+   DYNAMIC SUBMIT BUTTON
+   ========================================= */
+.submit-btn {
+    width: 100%; 
+    padding: 15px; 
+    background: rgba(212, 163, 115, 0.1); 
+    border: 1px solid #d4a373;
+    color: #d4a373; 
+    font-family: 'Lato', sans-serif; 
+    font-size: 1rem; 
+    font-weight: 700;
+    letter-spacing: 3px; 
+    text-transform: uppercase; 
+    border-radius: 12px; 
+    cursor: pointer;
+    transition: all 0.4s ease; 
+    position: relative; 
+    overflow: hidden;
+    margin-top: 10px;
+    backdrop-filter: blur(5px);
+}
+
+.submit-btn:hover { 
+    background: #d4a373; 
+    color: #030201; 
+    box-shadow: 0 0 25px rgba(212, 163, 115, 0.5); 
+}
+
+.submit-btn.loading { 
+    pointer-events: none; 
+    color: transparent; 
+    border-color: rgba(212, 163, 115, 0.5); 
+    background: transparent;
+}
+
+.submit-btn.loading::after {
+    content: ''; 
+    position: absolute; top: 50%; left: 50%; 
+    width: 22px; height: 22px;
+    margin-top: -11px; margin-left: -11px; 
+    border: 2px solid transparent; 
+    border-top-color: #d4a373;
+    border-radius: 50%; 
+    animation: spin 0.8s linear infinite;
+}
+
+.submit-btn.success { 
+    background: #4ade80; 
+    border-color: #4ade80; 
+    color: #000; 
+    pointer-events: none; 
+    box-shadow: 0 0 30px rgba(74, 222, 128, 0.5); 
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Mobile Responsiveness */
+@media (max-width: 850px) {
+    .glass-inner-split { flex-direction: column; gap: 30px; }
+    .glass-left.meltix-HUD-interface { padding-right: 0; padding-bottom: 30px; text-align: center; width: 100%; }
+    .glass-left.meltix-HUD-interface::after { display: none; } 
+    .header-section { text-align: center; }
+    .decorative-lines-container { display: none; }
+}

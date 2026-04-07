@@ -1,0 +1,800 @@
+/* =========================================
+   1. GLOBAL STYLES
+   ========================================= */
+body {
+    margin: 0;
+    overflow-x: hidden; 
+    background-color: #000; 
+    font-family: 'Playfair Display', serif;
+}
+
+/* =========================================
+   🌟 ORIGINAL STYLING + SOFT HALO + EMBER EFFECT
+   ========================================= */
+
+.top-nav-icons {
+    position: fixed;
+    top: 30px;
+    left: 40px;
+    z-index: 10000;
+    display: flex;
+    gap: 20px;
+    overflow: visible;
+}
+
+.shop-nav-btn {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: profileBounce 13s infinite;
+}
+
+.nav-icon-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px; 
+    height: 45px;
+    background: rgba(15, 10, 7, 0.85); 
+    border-radius: 50%; 
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 10px rgba(212, 163, 115, 0.2); 
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden; 
+}
+
+.nav-icon-circle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 163, 115, 0.4); 
+    pointer-events: none;
+}
+
+.nav-icon-circle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        to right, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(242, 201, 138, 0.4) 50%, 
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: slowerShine 5s infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.shop-nav-btn svg {
+    color: #d4a373; 
+    width: 22px;
+    height: 22px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2; 
+}
+
+/* Soft Golden Halo Effect */
+.shop-nav-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 68px;
+    height: 68px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid rgba(242, 201, 138, 0.5);
+    opacity: 0;
+    box-shadow: 0 0 25px rgba(242, 201, 138, 0.6);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: -1;
+}
+
+.shop-nav-btn:hover::after {
+    width: 82px;
+    height: 82px;
+    opacity: 1;
+    border-color: rgba(242, 201, 138, 0.85);
+}
+
+/* Warm Ember Glow (Candle feel) */
+.shop-nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: #f2c98a;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 12px #f2c98a, 0 0 22px #d4a373;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+    animation: emberFloat 4s ease-in-out infinite;
+}
+
+.shop-nav-btn:hover::before {
+    opacity: 1;
+}
+
+@keyframes slowerShine {
+    0%, 15% { left: -150%; }
+    70%, 100% { left: 250%; }
+}
+
+@keyframes profileBounce {
+    0%, 94% { transform: translateY(0); }
+    96% { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes emberFloat {
+    0%   { transform: translate(-50%, -50%) scale(0.6); }
+    50%  { transform: translate(-50%, -95%) scale(1.15); }
+    100% { transform: translate(-50%, -130%) scale(0.4); }
+}
+
+/* =========================================
+   Hover & Active States
+   ========================================= */
+
+/* Button and Circle Hover Interaction */
+.shop-nav-btn:hover .nav-icon-circle {
+    background: rgba(212, 163, 115, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.9), 0 0 15px rgba(242, 201, 138, 0.4);
+}
+
+.shop-nav-btn:hover svg {
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+/* Stop bounce on hover */
+.shop-nav-btn:hover {
+    animation: none; 
+}
+
+/* Trigger Stars Burst on Hover */
+.shop-nav-btn:hover::after {
+    opacity: 1;
+    /* Sparkle burst animation */
+    animation: sparkleBurst 1s ease-out infinite;
+}
+
+/* =========================================
+   Keyframes (Animations)
+   ========================================= */
+
+/* Slower Shine Animation (Traverses in ~3 seconds) */
+@keyframes slowerShine {
+    0%, 10% { left: -150%; } /* Initial pause (0.5s pause if cycle 5s) */
+    70%, 100% { left: 250%; } /* Traversing is done between 10% and 70% (60% of 5s = 3s). Perfect! */
+}
+
+/* Slower Idle Bounce (Every 13s) */
+@keyframes profileBounce {
+    0%, 94% { transform: translateY(0); } /* ~12 sec तक शांत */
+    96% { transform: translateY(-8px); }  /* उछलेगा! */
+    98% { transform: translateY(0); }
+    99% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+/* Hover Star Burst Animation */
+@keyframes sparkleBurst {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.6); 
+        opacity: 0; 
+    }
+    20% { 
+        opacity: 0.7; /* Fast fade-in */
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1.1) translate(0, -5px); 
+        opacity: 0; /* Burst out and fade out */
+    }
+}
+
+/* =========================================
+   2. SHOP PAGE & VIDEOS (MOTION BLUR RUSH EFFECT)
+   ========================================= */
+#shop-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh; 
+    overflow: hidden;
+}
+
+#shop-video-container {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%; 
+    z-index: 1;
+    pointer-events: none !important; 
+    
+    transform: scale(1.2); 
+    filter: blur(10px);
+    transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1), filter 1.2s ease-out;
+}
+
+body.entered #shop-video-container {
+    transform: scale(1);
+    filter: blur(0px);
+}
+
+#vid-shop-loop {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 1 !important; 
+    z-index: 1; 
+    pointer-events: none !important;
+}
+
+.hover-video {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    z-index: 2; 
+    transition: opacity 0.1s ease-in-out;
+    pointer-events: none !important;
+}
+.hover-video.active {
+    opacity: 1;
+    z-index: 3; 
+}
+
+/* ==========================================
+   3. TRIGGER COORDINATES (The Magic Boxes)
+   ========================================== */
+.trigger-box {
+    position: absolute;
+    z-index: 9999; 
+    cursor: pointer;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.01); 
+}
+#trigger-hidden-msg { top: 22%; left: 2%; width: 28%; height: 32%; }
+#trigger-storage { top: 57%; left: 2%; width: 28%; height: 32%; }
+#trigger-zodiac { top: 29%; left: 33.5%; width: 33%; height: 26%; }
+#trigger-break { top: 57%; left: 33.5%; width: 33%; height: 26%; }
+#trigger-date-kit { top: 22%; right: 2%; width: 28%; height: 32%; }
+#trigger-soon { top: 57%; right: 2%; width: 28%; height: 32%; }
+
+/* =========================================
+   4. POPUP OVERLAY (Surprises Soon Card)
+   ========================================= */
+#soon-popup-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); 
+    z-index: 999999; display: flex; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;
+}
+#soon-popup-overlay.show { opacity: 1; pointer-events: auto; }
+#soon-popup-overlay img {
+    max-width: 80%; max-height: 80%; transform: scale(0.8);
+    transition: transform 0.3s ease-out; border-radius: 15px; 
+}
+#soon-popup-overlay.show img { transform: scale(1); }
+
+/* ==========================================
+   5. GRAND ENTRY ANIMATION (PHYSICAL 3D DOORS)
+   ========================================== */
+#shop-entry-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    z-index: 9999999; display: flex; pointer-events: none; 
+    perspective: 1500px; 
+}
+
+.glass-door {
+    width: 50%; height: 100%; position: relative;
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    box-shadow: inset 0 0 30px rgba(212, 163, 115, 0.2);
+    transform-style: preserve-3d;
+    transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1); 
+    pointer-events: auto; overflow: hidden; 
+}
+
+.glass-door::before {
+    content: ''; position: absolute; top: -150%; left: -150%; width: 300%; height: 300%;
+    background: linear-gradient(135deg, transparent 45%, rgba(255, 255, 255, 0.2) 50%, transparent 55%);
+    animation: glassShimmer 6s infinite linear; pointer-events: none;
+}
+@keyframes glassShimmer {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(100%, 100%) rotate(10deg); }
+}
+
+.door-left { transform-origin: left center; border-right: 2px solid rgba(212, 163, 115, 0.5); }
+.door-right { transform-origin: right center; border-left: 2px solid rgba(212, 163, 115, 0.5); }
+
+.door-handle {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 10px; height: 140px; border-radius: 5px;
+    background: linear-gradient(to bottom, #d4a373, #a67c52);
+    box-shadow: 0 5px 15px rgba(212, 163, 115, 0.3);
+}
+.door-left .door-handle { right: 25px; }
+.door-right .door-handle { left: 25px; }
+
+.board-assembly {
+    position: absolute; top: 15%; right: 40px; width: 160px; height: 120px; 
+    transform-origin: top center; animation: swingPhysicalBoard 3.5s ease-in-out infinite alternate; z-index: 10;
+}
+
+.nail {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%;
+    background: radial-gradient(circle, #ffe0b2, #a67c52); box-shadow: 0 3px 5px rgba(0,0,0,0.6); z-index: 3;
+}
+
+.welcome-board {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: rgba(20, 15, 10, 0.9); border: 2px solid #d4a373; color: #d4a373;
+    padding: 12px 0; text-align: center; font-size: 1.6rem; font-family: 'Playfair Display', serif;
+    border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.6), 0 0 15px rgba(212, 163, 115, 0.2);
+}
+
+.welcome-board::before {
+    content: ''; position: absolute; bottom: 100%; left: 15px; width: 2px; height: 78px; background: #d4a373;
+    transform-origin: bottom center; transform: rotate(50deg);
+}
+.welcome-board::after {
+    content: ''; position: absolute; bottom: 100%; right: 15px; width: 2px; height: 78px; background: #d4a373;
+    transform-origin: bottom center; transform: rotate(-50deg);
+}
+
+@keyframes swingPhysicalBoard {
+    0% { transform: rotateZ(-4deg); }
+    100% { transform: rotateZ(4deg); }
+}
+
+/* ==========================================
+   6. CAMERA ENTRY EFFECT LOGIC
+   ========================================== */
+#shop-entry-overlay.open .door-left { transform: rotateY(-115deg) translateZ(100px); }
+#shop-entry-overlay.open .door-right { transform: rotateY(115deg) translateZ(100px); }
+#shop-entry-overlay.open { visibility: hidden; transition: visibility 0s 1.5s; }
+
+/* =========================================
+   7. PREMIUM FOOTER 
+   ========================================= */
+#shop-footer {
+    width: 100%;
+    background-color: #050403; 
+    border-top: 1px solid rgba(212, 163, 115, 0.3); 
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    z-index: 10;
+    position: relative;
+}
+
+.footer-link {
+    color: #d4a373;
+    text-decoration: none;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #fff;
+    text-shadow: 0 0 15px rgba(212, 163, 115, 0.8); 
+}
+
+.footer-divider {
+    color: rgba(212, 163, 115, 0.5);
+    font-size: 1.5rem;
+}
+
+/* =========================================
+   8. 🤖 FLOATING BOT WIDGET STYLES
+   ========================================= */
+
+/* TOAST NOTIFICATION */
+#bot-toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(15, 12, 10, 0.85);
+    border: 1px solid rgba(212, 163, 115, 0.4);
+    color: #eaddcf;
+    font-family: 'Lato', sans-serif;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(212, 163, 115, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+#bot-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+#bot-toast b {
+    color: #d4a373;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+}
+
+/* FLY-IN LOGIC Container */
+.meltix-bot-container {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    z-index: 9999; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none; 
+    transform: translate3d(-500px, -500px, 0); 
+}
+
+.floating-bot {
+    width: 170px; 
+    cursor: pointer;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    animation: floatBot 3.5s ease-in-out infinite;
+}
+
+.floating-bot:hover {
+    transform: scale(1.1) translateY(-5px);
+}
+
+.meltix-bot-container.dragging .floating-bot {
+    animation: none;
+    transform: scale(1.1);
+    cursor: grabbing;
+}
+.meltix-bot-container.dragging .bot-shadow {
+    display: none;
+}
+
+.bot-shadow {
+    width: 90px; 
+    height: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    margin-top: 15px;
+    filter: blur(4px);
+    animation: shadowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes floatBot {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-18px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes shadowPulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(0.7); opacity: 0.2; }
+    100% { transform: scale(1); opacity: 0.5; }
+}
+
+/* =========================================
+   9. 💭 BOT IDLE CHAT BUBBLE
+   ========================================= */
+.bot-chat-bubble {
+    position: absolute;
+    bottom: 180px; 
+    left: 50%; 
+    background: rgba(212, 163, 115, 0.95); 
+    color: #1a1410;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    pointer-events: none; 
+    opacity: 0;
+    transform: translateX(-50%) translateY(15px) scale(0.8);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 10;
+    white-space: nowrap; 
+}
+
+.bot-chat-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: rgba(212, 163, 115, 0.95) transparent transparent transparent;
+}
+
+.bot-chat-bubble.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* =========================================
+   10. 🎛️ ULTRA-PREMIUM MELTIX SIDE PANEL
+   ========================================= */
+#panel-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#panel-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.side-panel {
+    position: fixed;
+    top: 0; right: -420px; 
+    width: 400px; 
+    height: 100vh;
+    background: rgba(12, 9, 7, 0.85); 
+    backdrop-filter: blur(25px); 
+    border-left: 1px solid rgba(212, 163, 115, 0.2);
+    box-shadow: -15px 0 50px rgba(0,0,0,0.9);
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.6s cubic-bezier(0.25, 1, 0.2, 1);
+}
+
+.side-panel.active {
+    right: 0; 
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 35px;
+    border-bottom: 1px solid rgba(212, 163, 115, 0.15);
+    background: linear-gradient(to bottom, rgba(212, 163, 115, 0.05), transparent);
+}
+
+.panel-header h2 {
+    margin: 0;
+    color: #eaddcf;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    font-family: 'Playfair Display', serif;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: rgba(212, 163, 115, 0.6);
+    font-size: 2.2rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    transform: rotate(90deg) scale(1.1);
+    color: #d4a373;
+}
+
+.panel-content {
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.standard-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.panel-btn {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
+    border: 1px solid rgba(212, 163, 115, 0.15);
+    color: #c4b5a3;
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.panel-btn::after {
+    content: '›';
+    font-size: 1.5rem;
+    color: rgba(212, 163, 115, 0.3);
+    transition: all 0.4s ease;
+    margin-top: -2px;
+}
+
+.panel-btn:hover {
+    background: linear-gradient(135deg, rgba(212, 163, 115, 0.1), transparent);
+    border-color: rgba(212, 163, 115, 0.6);
+    transform: translateX(8px);
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 15px rgba(212, 163, 115, 0.05);
+}
+
+.panel-btn:hover::after {
+    color: #d4a373;
+    transform: translateX(4px);
+}
+
+/* =========================================
+   11. BRUTALIST 3D LUXURY BUTTON
+   ========================================= */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: auto; 
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+.brutalist-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 120px;
+    background-color: #0a0806; 
+    border: 2px solid #d4a373; 
+    border-radius: 12px;
+    color: #eaddcf;
+    font-weight: bold;
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 4px 4px 1px #1a1410; 
+}
+
+.brutalist-button:hover {
+    background-color: #1f1814;
+    border-color: #d4a373;
+    transform: translate(-6px, -6px) rotate(1deg);
+    box-shadow: 10px 10px 0 #000, 15px 15px 25px rgba(212, 163, 115, 0.2);
+}
+
+.brutalist-button::before,
+.brutalist-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(212, 163, 115, 0.15),
+        transparent
+    );
+    transition: 0.6s;
+}
+
+.brutalist-button::before { left: -100%; }
+.brutalist-button::after { left: 100%; }
+
+.brutalist-button:hover::before { animation: swipeRight 1.5s infinite; }
+.brutalist-button:hover::after { animation: swipeLeft 1.5s infinite; }
+
+@keyframes swipeRight {
+    100% { transform: translateX(200%) skew(-45deg); }
+}
+
+@keyframes swipeLeft {
+    100% { transform: translateX(-200%) skew(-45deg); }
+}
+
+.craft-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 3;
+}
+
+.craft-icon {
+    width: 35px; 
+    height: 35px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.button-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.2;
+    text-align: center;
+    margin-top: 8px; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 3;
+    font-family: 'Playfair Display', serif;
+}
+
+.button-text span:first-child {
+    font-size: 0.8rem;
+    color: #a89f91;
+    font-family: 'Lato', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.button-text span:last-child {
+    font-size: 1.3rem;
+    color: #d4a373;
+    letter-spacing: 1px;
+}
+
+.brutalist-button:hover .craft-logo {
+    transform: translateY(-4px);
+}
+
+.brutalist-button:hover .craft-icon {
+    animation: spin-and-zoom 4s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+}
+
+.brutalist-button:hover .button-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    transform: translateY(-2px);
+}
+
+.brutalist-button:active {
+    transform: translate(0, 0) rotate(0deg);
+    box-shadow: 2px 2px 0 #000;
+}
+
+.brutalist-button:active .craft-icon,
+.brutalist-button:active .button-text {
+    transform: scale(0.95);
+}
+
+@keyframes spin-and-zoom {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+}

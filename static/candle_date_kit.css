@@ -1,0 +1,1095 @@
+/* =========================================
+   1. GLOBAL STYLES (Pitch Black Base)
+   ========================================= */
+* {
+    box-sizing: border-box; 
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #030201; 
+    color: #d4a373;
+    font-family: 'Lato', sans-serif;
+    height: 100vh;
+    overflow: hidden; 
+}
+
+.top-nav {
+    padding: 30px 50px;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 100;
+}
+
+.back-btn {
+    font-family: 'Playfair Display', serif;
+    color: #d4a373;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-btn span { color: #d4a373; font-size: 1.2rem; }
+
+.back-btn:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(212, 163, 115, 0.8);
+}
+.back-btn:hover span { color: #fff; }
+
+/* =========================================
+   2. MAGICAL DUST PARTICLES ✦
+   ========================================= */
+#dust-particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; 
+    z-index: 1;
+}
+
+.dust {
+    position: absolute;
+    bottom: -10px; 
+    background-color: rgba(212, 163, 115, 0.6); 
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(212, 163, 115, 0.8); 
+    opacity: 0;
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-110vh) translateX(30px); opacity: 0; }
+}
+
+/* =========================================
+   3. MELTIX ACCORDION MENU 🔴 (3 ITEMS FIX)
+   ========================================= */
+.accordion-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 10; 
+    transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.accordion-container.fade-out-active {
+    opacity: 0;
+    transform: scale(0.85); 
+    pointer-events: none;
+}
+
+.meltix-accordion {
+    width: 80%;
+    max-width: 850px; 
+    height: 380px;    
+    border-radius: 12px;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(20, 15, 10, 0.4); 
+    border: 1px solid rgba(212, 163, 115, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.meltix-accordion p {
+    height: 100%;
+    flex: 1; /* 🔴 SET BACK TO FLEX 1 FOR 3 ITEMS 🔴 */
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    background: linear-gradient(145deg, #15100c, #0a0806);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.meltix-accordion p:hover {
+    flex: 4; /* 🔴 EXPAND ON HOVER 🔴 */
+    background: linear-gradient(145deg, #241c16, #0a0806);
+    border: 1px solid #d4a373;
+    box-shadow: 0 0 30px rgba(212, 163, 115, 0.15);
+}
+
+.meltix-accordion p span {
+    min-width: 300px; 
+    text-align: center;
+    transform: rotate(-90deg);
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meltix-accordion p:hover span {
+    transform: rotate(0); 
+}
+
+.title-main {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: rgba(212, 163, 115, 0.7);
+    font-weight: 600;
+    letter-spacing: 2px;
+    transition: color 0.6s ease;
+}
+
+.title-sub {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    transition: color 0.6s ease;
+}
+
+.meltix-accordion p:hover .title-main {
+    color: #d4a373;
+    text-shadow: 0 0 15px rgba(212, 163, 115, 0.4);
+}
+
+.meltix-accordion p:hover .title-sub {
+    color: #b0a59a;
+}
+
+/* =========================================
+   4. BOTTOM-LEFT AESTHETIC MENU (FAB)
+   ========================================= */
+.fab-menu-container {
+    position: fixed;
+    bottom: 40px;
+    left: 50px;
+    z-index: 999;
+    opacity: 0; 
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+}
+
+.fab-menu-container.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.fab-main-btn {
+    background: rgba(20, 15, 10, 0.4);
+    border: 1px solid rgba(212, 163, 115, 0.3);
+    color: #d4a373;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+    cursor: pointer;
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fab-main-btn span { color: #d4a373; }
+
+.fab-main-btn:hover {
+    background: #d4a373;
+    color: #000;
+}
+.fab-main-btn:hover span { color: #000; }
+
+.fab-options {
+    position: absolute;
+    bottom: 70px;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.fab-options.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.fab-options button {
+    background: rgba(10, 8, 5, 0.6);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    color: #eaddcf;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+    backdrop-filter: blur(15px);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.fab-options button:hover {
+    border-color: #d4a373;
+    background: rgba(212, 163, 115, 0.15);
+    transform: translateX(5px); 
+}
+
+/* =========================================
+   5. FULL-SCREEN 3D SHOWCASE
+   ========================================= */
+.hidden-showcase {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.hidden-showcase.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.glow-orb {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(212,163,115,0.12) 0%, rgba(0,0,0,0) 70%);
+    z-index: -2;
+}
+
+.bg-watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 15vw; 
+    color: rgba(212, 163, 115, 0.02); 
+    white-space: nowrap;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: 10px;
+}
+
+.carousel-viewport {
+    width: 100vw;
+    height: 60vh; 
+    overflow-x: hidden; 
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.carousel-viewport:active {
+    cursor: grabbing;
+}
+
+.carousel-track {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 0 50vw; 
+    width: max-content;
+}
+
+.img-container {
+    position: relative;
+    width: 250px; 
+    height: 250px;
+    cursor: pointer;
+}
+
+.carousel-img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 1px solid rgba(212, 163, 115, 0.1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    pointer-events: none; 
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.img-container.center-glow .carousel-img {
+    box-shadow: 0 30px 50px rgba(0,0,0,0.9), 0 0 25px rgba(212,163,115,0.4);
+    border: 1px solid rgba(212, 163, 115, 0.5);
+}
+
+/* =========================================
+   6. SCRUBBER BAR STYLE
+   ========================================= */
+.scrubber-wrapper {
+    position: absolute;
+    bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    z-index: 60;
+}
+
+#custom-scrubber {
+    width: 350px;
+    appearance: none;
+    background: rgba(212, 163, 115, 0.2);
+    height: 3px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+#custom-scrubber::-webkit-slider-thumb {
+    appearance: none;
+    width: 25px; 
+    height: 8px;
+    background: #d4a373;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(212, 163, 115, 0.9);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+#custom-scrubber::-webkit-slider-thumb:hover { 
+    transform: scale(1.3); 
+    background: #fff;
+}
+
+.drag-hint {
+    margin-top: 15px;
+    font-size: 0.8rem;
+    color: rgba(212, 163, 115, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    pointer-events: none;
+    user-select: none;
+    animation: pulseHint 2s infinite;
+}
+
+@keyframes pulseHint {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+}
+
+/* =========================================
+   7. HEART BUTTON STYLES ❤️‍🔥
+   ========================================= */
+.like-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(10, 8, 5, 0.6); 
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 163, 115, 0.4);
+    border-radius: 50%;
+    width: 40px; 
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+}
+
+.heart-icon {
+    width: 22px;
+    height: 22px;
+    fill: transparent; 
+    stroke: #d4a373;   
+    stroke-width: 2px;
+    transition: all 0.3s ease; 
+}
+
+.like-btn:hover {
+    transform: scale(1.15);
+    background: rgba(212, 163, 115, 0.15); 
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(212, 163, 115, 0.5); 
+}
+
+.like-btn.liked {
+    border-color: #ff4b4b;
+    background: rgba(255, 75, 75, 0.1); 
+    box-shadow: 0 0 25px rgba(255, 75, 75, 0.6); 
+}
+
+.like-btn.liked .heart-icon {
+    fill: #ff4b4b; 
+    stroke: #ff4b4b;
+    animation: heartPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    filter: drop-shadow(0 0 8px rgba(255, 75, 75, 0.9)); 
+}
+
+@keyframes heartPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.6); } 
+    100% { transform: scale(1.2); } 
+}
+
+/* =========================================
+   8. CAROUSEL CONTROLS
+   ========================================= */
+.carousel-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: -30px; 
+    margin-bottom: 30px;
+    z-index: 100;
+    position: relative;
+}
+
+.meltix-btn-secondary {
+    background: rgba(15, 12, 10, 0.7);
+    border: 1px solid rgba(212, 163, 115, 0.3);
+    border-radius: 30px;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+    background: linear-gradient(to right, #d4a373 20%, #ffffff 50%, #d4a373 80%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shineText 4s linear infinite;
+}
+
+@keyframes shineText { to { background-position: 200% center; } }
+
+.meltix-btn-secondary:hover {
+    border-color: #d4a373;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(212, 163, 115, 0.2);
+}
+
+.meltix-btn-secondary:active {
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   🔴 9. ULTIMATE LUXURY MODAL (POP-UP) 🔴
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(10, 8, 5, 0.85);
+    backdrop-filter: blur(20px) saturate(120%);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* LUXURY COMPACT BOX */
+.modal-container {
+    background: linear-gradient(145deg, #1a1410, #0a0805); 
+    width: 90%;
+    max-width: 950px; 
+    height: 85vh;    
+    border-radius: 20px;
+    border: 1px solid rgba(212, 163, 115, 0.3);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), inset 0 0 50px rgba(212, 163, 115, 0.05);
+    position: relative;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.modal-overlay.show .modal-container {
+    transform: scale(1) translateY(0);
+}
+
+/* SKETCH WALA CROSS BUTTON */
+.close-modal {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    background: linear-gradient(145deg, #d4a373, #c28c55);
+    border: 3px solid #15100c;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    color: #000;
+    font-size: 1.8rem;
+    font-weight: 300;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+    z-index: 10;
+    transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.close-modal:hover {
+    filter: brightness(1.2);
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* Layout */
+.modal-content {
+    display: flex;
+    gap: 40px;
+    height: 100%;
+}
+
+/* --- Left Side --- */
+.modal-left {
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    padding-right: 15px;
+}
+
+.modal-left::-webkit-scrollbar { width: 4px; }
+.modal-left::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
+
+/* 🔴 NAYA MAIN IMAGE CONTAINER (FALLBACK KE SAATH) 🔴 */
+.main-image-container { 
+    width: 100%; 
+    min-height: 350px; 
+    aspect-ratio: 1/1; 
+    border-radius: 16px; 
+    border: 1px solid rgba(212, 163, 115, 0.25); 
+    margin-bottom: 20px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+    overflow: hidden; 
+    display: block !important; 
+    background: #0a0805; 
+    cursor: zoom-in;
+}
+
+.main-image-container img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transition: transform 0.3s ease;
+}
+
+.main-image-container:hover img {
+    transform: scale(1.02);
+}
+
+/* 4 THUMBNAILS EXACTLY BELOW MAIN IMAGE */
+.thumbnail-gallery {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.thumbnail-gallery img {
+    width: 22%;
+    aspect-ratio: 1/1;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.thumbnail-gallery img:hover, .thumbnail-gallery img.active-thumb {
+    opacity: 1;
+    border-color: #d4a373;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(212, 163, 115, 0.2);
+}
+
+/* Rating & Reviews Section */
+.section-title-premium {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: #eaddcf;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(212, 163, 115, 0.15);
+    padding-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.star-rating-static { margin-bottom: 25px; font-size: 1.3rem; display: flex; align-items: center; gap: 4px; }
+.star.gold { color: #d4a373; text-shadow: 0 0 8px rgba(212,163,115,0.6); }
+.star.grey { color: rgba(255, 255, 255, 0.15); }
+.rating-text { font-family: 'Lato', sans-serif; font-size: 0.95rem; color: #a89f91; margin-left: 12px; }
+
+.star.half-gold {
+    background: linear-gradient(90deg, #d4a373 50%, rgba(255, 255, 255, 0.15) 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+}
+
+.reviews-container {
+    margin-bottom: 25px;
+}
+.review-item {
+    background: rgba(20, 15, 10, 0.6);
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(212, 163, 115, 0.08);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.review-item:hover {
+    transform: translateX(5px);
+    border-color: rgba(212, 163, 115, 0.3);
+}
+
+.review-user { font-family: 'Playfair Display', serif; color: #d4a373; margin: 0 0 6px 0; font-weight: bold; font-size: 1.05rem; }
+.review-text { font-family: 'Lato', sans-serif; color: rgba(255,255,255,0.7); font-size: 0.95rem; font-style: italic; margin: 0; line-height: 1.5;}
+
+/* Review Stars Interaction Styling */
+.form-stars-container {
+    display: flex; gap: 5px; font-size: 1.5rem; margin-bottom: 5px; cursor: pointer;
+}
+.form-star { color: rgba(255, 255, 255, 0.2); transition: color 0.2s; }
+.form-star.active { color: #d4a373; text-shadow: 0 0 8px rgba(212,163,115,0.6); }
+
+.write-review-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    width: 100%; 
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px dashed rgba(212, 163, 115, 0.2);
+}
+
+/* Simulation locking experience style */
+.write-review-form.locked {
+    opacity: 0.5; pointer-events: none;
+}
+
+.premium-input {
+    background: rgba(10, 8, 5, 0.8); border: 1px solid rgba(212, 163, 115, 0.2);
+    color: #fff; padding: 12px 15px; border-radius: 8px; font-family: 'Lato', sans-serif;
+    width: 100%; font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+.premium-input:focus { outline: none; border-color: #d4a373; box-shadow: 0 0 10px rgba(212,163,115,0.1); }
+
+.meltix-btn-form {
+    background: transparent;
+    color: #d4a373;
+    border: 1px solid #d4a373;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+.meltix-btn-form:hover {
+    background: #d4a373;
+    color: #000;
+    box-shadow: 0 5px 15px rgba(212,163,115,0.3);
+}
+
+/* --- Right Side --- */
+.modal-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.modal-right::-webkit-scrollbar { width: 4px; }
+.modal-right::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
+
+.modal-header-info {
+    margin-bottom: 30px;
+}
+
+.product-category-title-premium {
+    font-family: 'Playfair Display', serif;
+    color: #d4a373;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+    font-style: italic;
+    margin: 0 0 8px 0;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.shining-text {
+    background: linear-gradient(to right, #ffffff 20%, #d4a373 40%, #d4a373 60%, #ffffff 80%);
+    background-size: 200% auto;
+    color: #000;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shineEffect 4s linear infinite;
+}
+
+@keyframes shineEffect {
+    to { background-position: 200% center; }
+}
+
+.product-title-premium {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: transparent; 
+    margin: 0;
+    line-height: 1.1;
+    font-weight: 600;
+}
+
+.details-accordion { flex: 1; display: flex; flex-direction: column; gap: 25px; }
+.detail-item h4 { font-family: 'Playfair Display', serif; color: #eaddcf; font-size: 1.3rem; margin: 0 0 8px 0; font-weight: 400;}
+.detail-item p { font-family: 'Lato', sans-serif; color: rgba(255,255,255,0.6); font-size: 1.05rem; margin: 0; line-height: 1.6; font-weight: 300;}
+
+/* Add to Cart Section Fixed at Bottom */
+.purchase-section {
+    margin-top: 30px;
+    background: rgba(20, 15, 10, 0.8);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+.price-block { display: flex; flex-direction: column; }
+.price-label { margin: 0 0 2px 0; color: rgba(212,163,115,0.6); font-family: 'Lato', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;}
+.product-price-premium { font-family: 'Lato', sans-serif; font-size: 2.2rem; color: #fff; margin: 0; font-weight: 700; }
+
+/* ==========================================
+   10. MAGICAL UIVERSE ADD TO CART BUTTON 🔴
+   ========================================== */
+.magic-cart-btn {
+    position: relative;
+    padding: 14px 35px;
+    background: #d4a373; /* Meltix Gold */
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #030201; /* Dark Text */
+    border: 2px solid #d4a373;
+    border-radius: 30px; /* Pill shape to match design */
+    box-shadow: 0 0 0 rgba(212, 163, 115, 0.5);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    overflow: visible;
+}
+
+.magic-cart-btn .star-1 {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 25px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #d4a373);
+    z-index: -5;
+    transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+}
+
+.magic-cart-btn .star-2 {
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #d4a373);
+    z-index: -5;
+    transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.magic-cart-btn .star-3 {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #d4a373);
+    z-index: -5;
+    transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.magic-cart-btn .star-4 {
+    position: absolute;
+    top: 20%;
+    left: 40%;
+    width: 8px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #d4a373);
+    z-index: -5;
+    transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.magic-cart-btn .star-5 {
+    position: absolute;
+    top: 25%;
+    left: 45%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #d4a373);
+    z-index: -5;
+    transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01);
+}
+
+.magic-cart-btn .star-6 {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 0 #d4a373);
+    z-index: -5;
+    transition: all 0.8s ease;
+}
+
+/* 🔴 Hover State (Jadoo Yahan Hai) 🔴 */
+.magic-cart-btn:hover {
+    background: rgba(10, 8, 5, 0.8); /* Transparent blackish */
+    color: #d4a373; /* Text Gold ho jayega */
+    box-shadow: 0 0 25px rgba(212, 163, 115, 0.5);
+}
+
+.magic-cart-btn:hover .star-1 {
+    position: absolute;
+    top: -80%;
+    left: -30%;
+    width: 25px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #d4a373);
+    z-index: 2;
+}
+
+.magic-cart-btn:hover .star-2 {
+    position: absolute;
+    top: -25%;
+    left: 10%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #d4a373);
+    z-index: 2;
+}
+
+.magic-cart-btn:hover .star-3 {
+    position: absolute;
+    top: 55%;
+    left: 25%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #d4a373);
+    z-index: 2;
+}
+
+.magic-cart-btn:hover .star-4 {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    width: 8px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #d4a373);
+    z-index: 2;
+}
+
+.magic-cart-btn:hover .star-5 {
+    position: absolute;
+    top: 25%;
+    left: 115%;
+    width: 15px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #d4a373);
+    z-index: 2;
+}
+
+.magic-cart-btn:hover .star-6 {
+    position: absolute;
+    top: 5%;
+    left: 60%;
+    width: 5px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #d4a373);
+    z-index: 2;
+}
+
+/* SVG Fill Color */
+.magic-cart-btn .fil0 {
+    fill: #d4a373; /* Gold colored stars */
+}
+
+.auth-prompt-container {
+    text-align: center;
+    background: rgba(10, 8, 5, 0.6);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px dashed rgba(212, 163, 115, 0.2);
+}
+
+.auth-prompt-containerReviewed {
+    text-align: center;
+    background: rgba(20, 15, 10, 0.3);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 163, 115, 0.1);
+}
+
+/* 🔴 NAYA: AESTHETIC REVIEW LIKE/DISLIKE & DELETE BUTTONS 🔴 */
+.review-actions-bar {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    border-top: 1px dashed rgba(212, 163, 115, 0.1);
+    padding-top: 8px;
+}
+
+.rev-act-btn {
+    background: transparent; border: none; color: rgba(255,255,255,0.4);
+    font-size: 0.95rem; cursor: pointer; display: flex; align-items: center;
+    gap: 6px; transition: color 0.3s ease; font-family: 'Lato', sans-serif; padding: 0;
+}
+.rev-act-btn:hover { color: #d4a373; }
+
+/* Pop Animation Keyframes */
+@keyframes popIcon {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4) rotate(-10deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.act-icon { display: inline-block; transition: transform 0.2s; }
+
+/* Active States with Glow and Pop */
+.rev-act-btn.active-like { color: #4ade80; } 
+.rev-act-btn.active-like .act-icon { 
+    animation: popIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    filter: drop-shadow(0 0 5px rgba(74, 222, 128, 0.6));
+}
+
+.rev-act-btn.active-dislike { color: #f87171; } 
+.rev-act-btn.active-dislike .act-icon { 
+    animation: popIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.6));
+}
+
+/* Delete Button Styling */
+.delete-review-btn {
+    background: transparent; border: none; color: rgba(255,255,255,0.15);
+    cursor: pointer; font-size: 1.1rem; transition: all 0.3s ease; padding: 0;
+}
+.delete-review-btn:hover {
+    color: #f87171; transform: scale(1.2); filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.5));
+}
+.review-header-flex {
+    display: flex; justify-content: space-between; align-items: flex-start;
+}
+/* 🔴 NAYA: REVIEW TEXT BOX SIZE FIX 🔴 */
+textarea.premium-input, #reviewText {
+    resize: none !important; /* Khench ke bada karne wala option lock kar dega */
+    height: 100px !important; /* Dabbe ki fixed height */
+    min-height: 100px !important;
+    max-height: 100px !important;
+    overflow-y: auto; /* Agar lamba review hoga toh andar hi scroll aayega */
+    font-family: 'Lato', sans-serif;
+}
+/* ==========================================
+   🔴 PREMIUM WISHLIST BUTTON (CORNER) 🔴
+   ========================================== */
+.absolute-wishlist {
+    position: absolute;
+    top: 15px;
+    left: 15px; 
+    z-index: 10;
+    
+    /* Premium Glass Effect */
+    background: rgba(10, 8, 5, 0.3); 
+    backdrop-filter: blur(8px); 
+    -webkit-backdrop-filter: blur(8px);
+    
+    /* Perfect Gol (Circle) aur Patla Border */
+    border: 1px solid rgba(212, 163, 115, 0.3); 
+    width: 42px;
+    height: 42px;
+    border-radius: 50%; /* Isse box ekdum gol ho jayega */
+    
+    /* Center aligning icon */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #d4a373;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Halka sa shadow */
+}
+
+.absolute-wishlist svg {
+    width: 18px;
+    height: 18px;
+    transition: all 0.3s ease;
+}
+
+.absolute-wishlist:hover {
+    background: rgba(212, 163, 115, 0.2);
+    border-color: rgba(212, 163, 115, 0.8);
+    transform: scale(1.08); /* Hover karne pe button thoda bada hoga (pop effect) */
+    box-shadow: 0 6px 20px rgba(212, 163, 115, 0.2);
+}
+
+/* Jab save ho jaye toh solid Gold */
+.absolute-wishlist.saved {
+    background: #d4a373;
+    border-color: #d4a373;
+}
+
+.absolute-wishlist.saved svg {
+    stroke: #030201; /* Icon outline black */
+    fill: #030201;   /* Icon andar se black */
+}

@@ -1,0 +1,240 @@
+/* Premium Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@400;600;700&display=swap');
+
+:root {
+    --bg-main: #050403;
+    --text-muted: #a89f91;
+    --pure-shining-gold: #FFD700; 
+    --palette-white-cloud: #ffffff; 
+    --palette-icy-blue: #cbe3f5;   
+    --palette-light-gold-muted: #E8E3C3; 
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-main);
+    font-family: 'Lato', sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: clip; 
+}
+
+/* 1. INTRO SCREEN */
+#intro-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: var(--bg-main);
+    z-index: 100;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: opacity 0.8s ease;
+}
+
+.scroll-prompt {
+    font-family: 'Lato', sans-serif;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+}
+
+.scroll-arrow {
+    width: 20px; height: 20px;
+    border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted);
+    transform: rotate(45deg); animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+    40% { transform: translateY(-15px) rotate(45deg); }
+    60% { transform: translateY(-7px) rotate(45deg); }
+}
+
+/* 2. OFFICIAL BACK BUTTON */
+.back-btn {
+    position: fixed; top: 40px; left: 40px;
+    color: var(--text-muted); text-decoration: none;
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 6px; z-index: 200; transition: color 0.3s ease;
+}
+.pointer-star {
+    color: #C9A050; font-size: 1.3rem; display: inline-block; transition: color 0.3s ease;
+}
+.back-btn:hover, .back-btn:hover .pointer-star { 
+    color: #ffffff !important; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); 
+}
+
+/* 3. MAIN SCROLL CONTAINER */
+#scroll-container {
+    position: relative; height: 500vh; background: var(--bg-main);
+}
+
+.sticky-wrapper {
+    position: sticky; top: 0; height: 100vh; width: 100vw; overflow: hidden; background: var(--bg-main);
+}
+
+#video-canvas {
+    width: 100%; height: 100%; object-fit: cover; transform: scale(1.05); 
+}
+
+/* 🔥 BACKGROUND GLOW & FLICKER 🔥 */
+.bg-glow-wrapper {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 4; pointer-events: none; opacity: 0; /* Controlled by JS */
+}
+.flicker-glow {
+    width: 100%; height: 100%;
+    /* Ek magical blue cloud glow */
+    background: radial-gradient(circle at center, rgba(135, 206, 235, 0.25) 0%, transparent 65%);
+    animation: flickerAnim 3s infinite alternate ease-in-out;
+}
+@keyframes flickerAnim {
+    0% { transform: scale(0.95); opacity: 0.6; filter: brightness(0.8); }
+    50% { transform: scale(1.05); opacity: 1; filter: brightness(1.3); }
+    100% { transform: scale(1); opacity: 0.8; filter: brightness(1); }
+}
+
+.vignette {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 20%, rgba(5, 4, 3, 0.85) 100%);
+    z-index: 5; pointer-events: none;
+}
+
+/* 4. CINEMATIC TEXT OVERLAY */
+#text-overlay {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 90%; max-width: 1000px; text-align: center; z-index: 10;
+    display: flex; flex-direction: column; align-items: center;
+}
+
+#top-group {
+    display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 25px;
+}
+
+/* Line 1: CONSTANT SHINING GOLD EFFECT */
+.overline {
+    font-family: 'Lato', sans-serif; text-transform: uppercase; letter-spacing: 6px; font-size: 1rem; font-weight: 700;
+    background: linear-gradient(to right, var(--pure-shining-gold) 20%, #ffffff 50%, var(--pure-shining-gold) 80%);
+    background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+    animation: shineText 3s linear infinite, dropGlow 2s alternate infinite ease-in-out;
+}
+@keyframes shineText { to { background-position: 200% center; } }
+@keyframes dropGlow {
+    0% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+    100% { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.9)); }
+}
+
+/* The Gold Underline */
+.text-divider {
+    height: 2px; width: 0px; /* JS expands this */
+    background-color: var(--pure-shining-gold); box-shadow: 0 0 15px rgba(255, 215, 0, 0.9);
+}
+
+/* Line 2: MAIN TITLE */
+.main-title {
+    font-family: 'Cinzel', serif; color: var(--palette-white-cloud); font-size: 5.5rem; line-height: 1.2; margin: 0;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.9), 0 0 15px var(--palette-icy-blue);
+}
+
+.word-wrapper { display: inline-block; white-space: nowrap; }
+.reveal-char { opacity: 0; display: inline-block; transition: opacity 0.3s ease; }
+
+/* Line 3: SUBTITLE */
+.subtitle {
+    font-family: 'Playfair Display', serif; font-style: italic; color: var(--palette-light-gold-muted); 
+    font-size: 1.8rem; margin-top: 15px; text-shadow: 0 5px 20px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,1);
+}
+.reveal-word { opacity: 0; display: inline-block; transition: opacity 0.5s ease; margin-right: 8px; }
+
+/* 5. NEXT SECTION */
+.next-section {
+    min-height: 100vh; background-color: var(--bg-main); display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 50px; border-top: 1px solid rgba(212, 163, 115, 0.2);
+    position: relative; z-index: 50;
+}
+.next-section h2 { font-family: 'Cinzel', serif; color: #C9A050; font-size: 2.5rem; margin-bottom: 20px; }
+.next-section p { color: var(--text-muted); font-size: 1.2rem; text-align: center; }
+/* =========================================
+   6. DYNAMIC PRODUCT GRID (THE COLLECTION)
+   ========================================= */
+.suggestion-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 40px;
+}
+
+.suggest-card {
+    background: rgba(20, 15, 10, 0.6);
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    border-radius: 15px;
+    width: 250px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.suggest-card:hover {
+    transform: translateY(-10px);
+    border-color: #d4a373;
+    box-shadow: 0 15px 30px rgba(212, 163, 115, 0.2);
+}
+
+.img-wrapper {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.suggest-card:hover .img-wrapper img {
+    transform: scale(1.1);
+}
+
+.suggest-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.suggest-info h3 {
+    margin: 0 0 10px 0;
+    font-family: 'Playfair Display', serif;
+    color: var(--palette-white-cloud);
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.like-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #ff4b4b;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.mini-heart {
+    width: 16px;
+    height: 16px;
+    fill: #ff4b4b;
+}
+
+.no-likes-msg {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    font-style: italic;
+    letter-spacing: 1px;
+    margin-top: 20px;
+}

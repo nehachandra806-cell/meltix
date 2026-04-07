@@ -1,0 +1,327 @@
+/* =========================================
+   GLOBAL STYLES
+   ========================================= */
+* { box-sizing: border-box; }
+
+body {
+    margin: 0; padding: 0; color: #d4a373; font-family: 'Lato', sans-serif; 
+    height: 100vh; overflow: hidden; background-color: #030201; 
+    animation: pureFadeIn 1.5s ease-in-out forwards;
+}
+
+@keyframes pureFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.back-btn {
+    position: absolute; 
+    top: 25px; 
+    left: 30px; 
+    font-family: 'Playfair Display', serif; 
+    color: #eaddcf; text-decoration: none; font-size: 1.15rem; 
+    transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; z-index: 100;
+}
+.back-btn:hover { color: #fff; transform: translateX(-5px); }
+
+/* =========================================
+   🎬 BACKGROUNDS
+   ========================================= */
+.video-background { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+.fb-video { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease; }
+.fb-video.active-vid { opacity: 1; z-index: 1; }
+.video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); pointer-events: none; transition: background-color 1s ease; z-index: 2; }
+
+/* =========================================
+   🎈 FLOATING ICONS & EXPLOSIVE FLY-OUT
+   ========================================= */
+.floating-icons-container {
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 2; 
+    pointer-events: none;
+}
+
+.msg-bubble {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(212,163,115,0.25), rgba(212,163,115,0.05));
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(242, 201, 138, 0.3);
+    border-radius: 18px; border-bottom-left-radius: 4px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    animation: floatBubble ease-in-out infinite;
+    transition: transform 0.4s ease, opacity 0.4s ease; 
+}
+
+.lines { width: 70%; height: 50%; display: flex; flex-direction: column; justify-content: space-evenly; }
+.line { width: 100%; height: 2px; background: rgba(242, 201, 138, 0.7); border-radius: 2px; }
+.line.short { width: 60%; }
+
+.b1 { top: 20%; left: 15%; width: 70px; height: 50px; animation-duration: 6s; }
+.b2 { top: 35%; right: 20%; width: 55px; height: 40px; animation-duration: 8s; animation-delay: 1s; }
+.b3 { top: 15%; right: 30%; width: 80px; height: 60px; animation-duration: 7s; animation-delay: 2s; }
+.b4 { top: 45%; left: 25%; width: 45px; height: 35px; animation-duration: 5s; animation-delay: 0.5s; }
+.b5 { top: 30%; left: 10%; width: 60px; height: 45px; animation-duration: 6.5s; animation-delay: 3s; }
+.b6 { top: 40%; right: 12%; width: 70px; height: 50px; animation-duration: 7.5s; animation-delay: 1.5s; }
+.b7 { top: 10%; left: 28%; width: 50px; height: 35px; animation-duration: 5.5s; animation-delay: 2.5s; }
+.b8 { top: 25%; right: 15%; width: 40px; height: 30px; animation-duration: 6s; animation-delay: 0.2s; }
+
+@keyframes floatBubble {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+.fly-out-1 { transform: translate(-100vw, -80vh) rotate(-60deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-2 { transform: translate(100vw, -60vh) rotate(60deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-3 { transform: translate(-50vw, -120vh) rotate(-45deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-4 { transform: translate(50vw, -120vh) rotate(45deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-5 { transform: translate(-120vw, 30vh) rotate(-90deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-6 { transform: translate(120vw, 30vh) rotate(90deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-7 { transform: translate(-30vw, 100vh) rotate(-120deg) scale(2.5) !important; opacity: 0 !important; }
+.fly-out-8 { transform: translate(30vw, 100vh) rotate(120deg) scale(2.5) !important; opacity: 0 !important; }
+
+
+/* =========================================
+   🟢 LAYER 3: THE PERFECT UI (Foreground)
+   ========================================= */
+.interactive-ui-layer { width: 100vw; height: 100vh; position: absolute; top:0; left:0; z-index: 5; }
+
+.bottom-dark-fade, .background-content-wrapper, .button-layer {
+    transition: opacity 0.6s ease; 
+}
+
+.bottom-dark-fade {
+    position: absolute; bottom: 0; left: 0; width: 100vw; height: 50vh;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+    z-index: 4; pointer-events: none;
+}
+
+.background-content-wrapper {
+    position: absolute;
+    bottom: 18%; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px;
+    z-index: 5; 
+}
+
+.main-title-text { margin: 0; }
+
+.gradient-phrase {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+    font-weight: 600;
+    background: linear-gradient(to right, #f2c98a 0%, #ffffff 25%, #d4a373 50%, #ffffff 75%, #f2c98a 100%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradientShine 4s linear infinite;
+    filter: drop-shadow(0 0 12px rgba(228, 182, 118, 0.6));
+    white-space: nowrap; 
+}
+
+@keyframes gradientShine { to { background-position: 200% center; } }
+
+.subtitle-text { font-family: 'Lato', sans-serif; font-size: clamp(0.9rem, 1.2vw, 1.1rem); color: #eaddcf; margin: 0; font-weight: 400; white-space: nowrap; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+.button-layer { position: absolute; bottom: 6%; left: 50%; transform: translateX(-50%); z-index: 6; }
+
+.cinematic-gold-btn {
+    padding: 18px 45px; 
+    background: linear-gradient(135deg, #d4a373 0%, #f2c98a 50%, #d4a373 100%);
+    background-size: 200% auto;
+    border: none;
+    color: #030201; 
+    font-family: 'Lato', sans-serif; 
+    font-size: 1.05rem; 
+    font-weight: 800;
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    border-radius: 40px; 
+    cursor: pointer; 
+    transition: all 0.4s ease; 
+    box-shadow: 0 10px 30px rgba(212, 163, 115, 0.4);
+    animation: goldShimmer 4s linear infinite;
+}
+
+@keyframes goldShimmer { to { background-position: 200% center; } }
+
+.cinematic-gold-btn:hover { 
+    box-shadow: 0 0 30px rgba(242, 201, 138, 0.8); 
+    transform: translateY(-3px);
+}
+
+/* =========================================
+   👑 STEP 2: ROYAL LUXURY GLASS PANEL
+   ========================================= */
+.fb-step-container { 
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    text-align: center; transition: opacity 0.5s ease; z-index: 10;
+    
+    /* 🔴 Poori screen par halka dark fade aur blur, taaki panel pop kare */
+    background: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+
+.premium-prompt-panel {
+    /* 🔴 Perfect compact dimensions */
+    max-width: 520px;
+    width: 90%;
+    padding: 45px 50px;
+    
+    /* 🔴 Deep warm glass effect */
+    background: linear-gradient(135deg, rgba(30, 22, 18, 0.65), rgba(10, 8, 5, 0.85));
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    
+    /* 🔴 Realistic glass edges (Top/Left light reflection) */
+    border: 1px solid rgba(242, 201, 138, 0.15); /* Base gold border */
+    border-top: 1px solid rgba(255, 255, 255, 0.12); /* Light hitting from top */
+    border-left: 1px solid rgba(255, 255, 255, 0.08); /* Light hitting from left */
+    border-radius: 24px;
+    
+    /* 🔴 3D Depth */
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(242, 201, 138, 0.05);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 30px; /* Text aur button ke beech perfect space */
+    
+    /* 🔴 Super smooth popup animation */
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+    animation: luxuryPop 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes luxuryPop {
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.rate-prompt-text { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 2rem; /* Clean and elegant size */
+    line-height: 1.3;
+    font-weight: 400; 
+    margin: 0; 
+    color: #fcf9f5; /* Premium soft white */
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8); 
+}
+
+/* =========================================
+   🟢 STEP 3: STARS PERFECTLY ALIGNED & GLOWING
+   ========================================= */
+.phone-stars-container { 
+    position: absolute; 
+    top: 50%; 
+    left: 34%; 
+    transform: translate(-50%, -50%) rotate(8deg); 
+    z-index: 8; 
+}
+
+.star-rating-interactive { 
+    display: flex; 
+    gap: 6px; 
+    font-size: 1.8rem; 
+    color: rgba(0, 0, 0, 0.15); 
+    cursor: pointer; 
+}
+
+/* 🔴 NAYA: Stars shuru mein gayab rahenge aur animation call hoga */
+.fb-star { 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    opacity: 0; 
+    animation: starPopFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 🔴 NAYA: Ek-ek karke aane ka jadoo (Staggered Delay) */
+.fb-star:nth-child(1) { animation-delay: 0.1s; }
+.fb-star:nth-child(2) { animation-delay: 0.2s; }
+.fb-star:nth-child(3) { animation-delay: 0.3s; }
+.fb-star:nth-child(4) { animation-delay: 0.4s; }
+.fb-star:nth-child(5) { animation-delay: 0.5s; }
+
+/* 🔴 NAYA: Bouncy Fade In Animation */
+@keyframes starPopFade {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.fb-star.hovered, .fb-star.active { 
+    color: #f2c98a; 
+    text-shadow: 0 0 15px rgba(242, 201, 138, 0.9), 0 0 30px rgba(212, 163, 115, 0.8); 
+}
+
+.fb-star:hover {
+    transform: scale(1.3); 
+}
+
+/* =========================================
+   🔮 SLIDE-IN FORM 
+   ========================================= */
+.support-container-glass {
+    position: absolute; 
+    right: 5vw; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    width: 90vw; max-width: 450px; 
+    background: rgba(10, 8, 5, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(212, 163, 115, 0.25); border-radius: 20px; padding: 40px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(212, 163, 115, 0.05);
+    opacity: 0; pointer-events: none; z-index: 15;
+    transition: transform 0.6s ease, opacity 0.6s ease;
+}
+.support-container-glass.show-form { animation: slideInRight 0.8s ease forwards; pointer-events: auto; }
+
+@keyframes slideInRight { 
+    from { opacity: 0; transform: translateY(-50%) translateX(50px); } 
+    to { opacity: 1; transform: translateY(-50%) translateX(0); } 
+}
+
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-family: 'Playfair Display', serif; color: #eaddcf; font-size: 1.1rem; margin-bottom: 8px; letter-spacing: 1px; }
+.premium-input { width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 163, 115, 0.2); color: #fff; padding: 15px 20px; border-radius: 12px; font-family: 'Lato', sans-serif; font-size: 1rem; transition: all 0.3s ease; outline: none; }
+.premium-input:focus { border-color: #d4a373; box-shadow: 0 0 15px rgba(212, 163, 115, 0.15); background: rgba(10, 8, 5, 0.7); }
+.premium-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+textarea.premium-input { resize: none; height: 110px; }
+
+
+/* 🔴 FIXED: Spinner ab button ke bahar nahi udega kyuki position relative hai aur border solid hai */
+.submit-btn { 
+    position: relative; 
+    width: 100%; padding: 15px; background: rgba(212, 163, 115, 0.1); 
+    border: 1px solid #d4a373; color: #d4a373; font-family: 'Lato', sans-serif; 
+    font-size: 1rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; 
+    border-radius: 12px; cursor: pointer; transition: all 0.4s ease; margin-top: 10px; 
+}
+.submit-btn:hover { background: #d4a373; color: #030201; box-shadow: 0 0 25px rgba(212, 163, 115, 0.5); }
+
+.submit-btn.loading { pointer-events: none; color: transparent; border-color: rgba(212, 163, 115, 0.5); background: transparent; }
+
+/* 🔴 Spinner Circle Fix: solid lagana zaroori tha taaki goal chakkar bane */
+.submit-btn.loading::after { 
+    content: ''; 
+    position: absolute; 
+    top: 50%; left: 50%; 
+    width: 24px; height: 24px; 
+    margin-top: -12px; margin-left: -12px; 
+    border: 3px solid rgba(212, 163, 115, 0.2); /* ⬅️ YE FIXED HAI */
+    border-top-color: #d4a373; 
+    border-radius: 50%; 
+    animation: spin 0.8s linear infinite; 
+}
+
+.submit-btn.success { background: #4ade80; border-color: #4ade80; color: #000; pointer-events: none; box-shadow: 0 0 30px rgba(74, 222, 128, 0.5); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Mobile Adjustments */
+@media (max-width: 850px) {
+    .subtitle-text { white-space: normal; } 
+    .background-content-wrapper { bottom: 22%; }
+    .button-layer { bottom: 5%; }
+    .msg-bubble { transform: scale(0.7); }
+    .gradient-phrase { white-space: normal; font-size: 2.2rem; }
+    
+    .premium-prompt-panel { padding: 40px; width: 90%; }
+    .rate-prompt-text { font-size: 2rem; }
+}
