@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Crafting in Progress</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #050403;
+            --text-main: #eaddcf;
+            --text-muted: #a89f91;
+            --theme-gold: #d4a373;
+            --box-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(212, 163, 115, 0.2);
+            --glow-color: rgba(212, 163, 115, 0.4);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle Background Glow */
+        .bg-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(212, 163, 115, 0.08) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse-glow 4s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* Glass Container */
+        .construction-container {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            padding: 60px 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 550px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Animated Hourglass Icon */
+        .icon-wrapper {
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .icon-wrapper svg {
+            filter: drop-shadow(0 0 10px var(--glow-color));
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--theme-gold);
+            margin: 0 0 15px 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        /* Premium Button */
+        .back-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a1410, #050403);
+            color: var(--theme-gold);
+            border: 1px solid var(--theme-gold);
+            padding: 15px 40px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(212, 163, 115, 0.15);
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #d4a373, #a67c52);
+            color: #050403;
+            box-shadow: 0 0 25px rgba(212, 163, 115, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* Golden Particles */
+        .particle {
+            position: absolute;
+            background: var(--theme-gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: drift linear infinite;
+        }
+
+        @keyframes drift {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="construction-container">
+        <div class="icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 24 24" fill="none" stroke="#d4a373" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 3h14"/>
+                <path d="M5 21h14"/>
+                <path d="M7 3v4c0 2.76 2.24 5 5 5s5-2.24 5-5V3"/>
+                <path d="M7 21v-4c0-2.76 2.24-5 5-5s5 2.24 5 5v4"/>
+                <circle cx="12" cy="15" r="1.5" fill="#d4a373"/>
+                <path d="M12 9v2"/>
+            </svg>
+        </div>
+        
+        <h1 class="title">Crafting in Progress</h1>
+        <p class="subtitle">This section of the Meltix Atelier is currently being curated with our finest materials. More surprises will be revealed soon.</p>
+        
+        <a href="/shop" class="back-btn">Return to Collection</a>
+    </div>
+
+    <script>
+        function createParticles() {
+            for(let i = 0; i < 30; i++) { 
+                let particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = (Math.random() * 100 + 50) + 'vh';
+                particle.style.animationDuration = (Math.random() * 5 + 5) + 's'; 
+                particle.style.animationDelay = (Math.random() * 5) + 's';
+                let size = Math.random() * 4 + 1; 
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                document.body.appendChild(particle);
+            }
+        }
+        window.addEventListener('load', createParticles);
+    </script>
+</body>
+</html>

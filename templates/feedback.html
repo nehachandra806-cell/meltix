@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Feedback Experience</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='feedback.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <a href="javascript:history.back()" class="back-btn"><span>✦</span> Return</a>
+
+    <div class="video-background">
+        <video muted playsinline id="fb-vid-1" class="fb-video active-vid" preload="auto">
+            <source src="{{ url_for('static', filename='models/feedback_part1.mp4') }}" type="video/mp4">
+        </video>
+        <video muted playsinline id="fb-vid-2" class="fb-video" preload="auto">
+            <source src="{{ url_for('static', filename='models/feedback_part2.mp4') }}" type="video/mp4">
+        </video>
+        <div class="video-overlay" id="fb-dark-overlay"></div>
+    </div>
+
+    <div class="floating-icons-container">
+        <div class="msg-bubble b1"><div class="lines"><div class="line"></div><div class="line short"></div></div></div>
+        <div class="msg-bubble b2"><div class="lines"><div class="line"></div></div></div>
+        <div class="msg-bubble b3"><div class="lines"><div class="line"></div><div class="line"></div><div class="line short"></div></div></div>
+        <div class="msg-bubble b4"><div class="lines"><div class="line short"></div></div></div>
+        <div class="msg-bubble b5"><div class="lines"><div class="line"></div><div class="line short"></div></div></div>
+        <div class="msg-bubble b6"><div class="lines"><div class="line"></div><div class="line"></div></div></div>
+        <div class="msg-bubble b7"><div class="lines"><div class="line"></div></div></div>
+        <div class="msg-bubble b8"><div class="lines"><div class="line short"></div></div></div>
+    </div>
+
+    <div class="interactive-ui-layer" id="fb-step-1">
+        
+        <div class="bottom-dark-fade" id="dark-fade"></div>
+
+        <div class="background-content-wrapper" id="bg-text">
+            <h1 class="main-title-text">
+                <span class="gradient-phrase">Better candles. Better vibes. Tell us how.</span>
+            </h1>
+            <p class="subtitle-text">We’re obsessed with perfecting your atmosphere. Share your experience so we can keep the glow going.</p>
+        </div>
+
+        <div class="button-layer" id="ui-button">
+            <button class="cinematic-gold-btn" onclick="startExperience()">Share Your Experience</button>
+        </div>
+
+    </div>
+
+    <div id="fb-step-2" class="fb-step-container" style="display: none;">
+        <div class="premium-prompt-panel">
+            <h2 class="rate-prompt-text">Please rate us before sharing your experience</h2>
+            <button class="cinematic-gold-btn" onclick="playZoomVideo()">Rate Us</button>
+        </div>
+    </div>
+
+    <div id="fb-step-3" class="phone-stars-container" style="display: none;">
+        <div class="star-rating-interactive" onmouseout="resetStars()">
+            <span class="fb-star" data-val="1" onclick="selectStar(1)" onmouseover="hoverStar(1)">★</span>
+            <span class="fb-star" data-val="2" onclick="selectStar(2)" onmouseover="hoverStar(2)">★</span>
+            <span class="fb-star" data-val="3" onclick="selectStar(3)" onmouseover="hoverStar(3)">★</span>
+            <span class="fb-star" data-val="4" onclick="selectStar(4)" onmouseover="hoverStar(4)">★</span>
+            <span class="fb-star" data-val="5" onclick="selectStar(5)" onmouseover="hoverStar(5)">★</span>
+        </div>
+    </div>
+
+    <div class="support-container-glass" id="feedback-form-box">
+        <div id="form-header" style="margin-bottom: 20px;">
+            <h2 style="font-family: 'Playfair Display'; color: #fff; margin:0 0 5px 0; font-size: 2rem;">Your Experience</h2>
+            <p style="color: #d4a373; margin:0; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Tell us more</p>
+        </div>
+        <form id="reportForm" onsubmit="handleFormSubmit(event)">
+            <input type="hidden" id="feedbackRating" name="feedbackRating" value="0">
+            <div class="form-group">
+                <label class="form-label">Your Email</label>
+                <input type="email" id="userEmail" class="premium-input" placeholder="hello@example.com" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Detailed Feedback</label>
+                <textarea id="userMessage" class="premium-input" placeholder="What did you love?"></textarea>
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
+        </form>
+
+        <div id="thank-you-msg" style="display: none; text-align: center; padding: 20px 10px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.4rem; color: #f2c98a; margin: 0 0 15px 0; font-weight: 500;">Thank You !</h2>
+            <p style="font-family: 'Lato', sans-serif; font-size: 1.1rem; color: #eaddcf; margin: 0 0 35px 0; line-height: 1.6;">Every detail matters to us.<br>We’re constantly evolving, and your feedback is our guide. Thank you for helping us shape a brighter, better Meltix</p>
+            <button onclick="closeForm()" class="cinematic-gold-btn" style="padding: 12px 35px; font-size: 0.85rem;">OK</button>
+        </div>
+
+    </div>
+
+    <script>
+        const vid1 = document.getElementById('fb-vid-1');
+        const vid2 = document.getElementById('fb-vid-2');
+        const overlay = document.getElementById('fb-dark-overlay');
+
+        document.addEventListener("DOMContentLoaded", function() {
+            vid1.pause();
+            vid1.currentTime = 0;
+        });
+
+        function startExperience() {
+            document.getElementById('bg-text').style.opacity = '0';
+            document.getElementById('ui-button').style.opacity = '0';
+            document.getElementById('dark-fade').style.opacity = '0';
+
+            const bubbles = document.querySelectorAll('.msg-bubble');
+            bubbles.forEach((bubble, index) => {
+                bubble.style.animation = 'none'; 
+                void bubble.offsetWidth; 
+                bubble.style.transition = `transform 0.8s cubic-bezier(0.55, 0.05, 0.22, 0.99) ${index * 0.04}s, opacity 0.6s ease ${index * 0.04 + 0.15}s`;
+                bubble.classList.add(`fly-out-${(index % 8) + 1}`);
+            });
+            
+            setTimeout(() => {
+                document.getElementById('fb-step-1').style.display = 'none';
+                document.querySelector('.floating-icons-container').style.display = 'none';
+                vid1.play(); 
+            }, 1000); 
+
+            vid1.onended = () => {
+                document.getElementById('fb-step-2').style.display = 'flex';
+                overlay.style.backgroundColor = "rgba(0,0,0,0.6)"; 
+            };
+        }
+
+        function hoverStar(rating) {
+            const stars = document.querySelectorAll('.fb-star');
+            stars.forEach(s => {
+                if (parseInt(s.getAttribute('data-val')) <= rating) {
+                    s.classList.add('hovered');
+                } else {
+                    s.classList.remove('hovered');
+                }
+            });
+        }
+
+        function resetStars() {
+            const stars = document.querySelectorAll('.fb-star');
+            stars.forEach(s => s.classList.remove('hovered'));
+        }
+
+        function playZoomVideo() {
+            document.getElementById('fb-step-2').style.display = 'none'; 
+            overlay.style.backgroundColor = "rgba(0,0,0,0)"; 
+            vid1.classList.remove('active-vid');
+            vid2.classList.add('active-vid');
+            vid2.play();
+            vid2.onended = () => { document.getElementById('fb-step-3').style.display = 'block'; };
+        }
+
+        function selectStar(rating) {
+            document.getElementById('feedbackRating').value = rating;
+            const stars = document.querySelectorAll('.fb-star');
+            stars.forEach(s => {
+                if (parseInt(s.getAttribute('data-val')) <= rating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+            setTimeout(() => {
+                document.getElementById('fb-step-3').style.opacity = '1'; 
+                overlay.style.backgroundColor = "transparent"; 
+                document.getElementById('feedback-form-box').classList.add('show-form');
+            }, 500);
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            setTimeout(() => {
+                btn.classList.remove('loading');
+                btn.classList.add('success');
+                btn.innerText = "SENT ✓";
+                
+                setTimeout(() => {
+                    document.getElementById('form-header').style.display = 'none';
+                    document.getElementById('reportForm').style.display = 'none';
+                    
+                    const thankYouMsg = document.getElementById('thank-you-msg');
+                    thankYouMsg.style.display = 'block';
+                    thankYouMsg.style.animation = 'pureFadeIn 0.8s ease forwards';
+                }, 800);
+
+            }, 1500); 
+        }
+
+        // 🔴 FIXED: Ye seedha Shop page par redirect karega
+        function closeForm() {
+            window.location.href = '/shop'; 
+        }
+    </script>
+</body>
+</html>

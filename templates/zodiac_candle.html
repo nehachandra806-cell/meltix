@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Zodiac Candle | Meltix</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='zodiac_candle.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="/shop" class="back-btn"><span>✦</span> Back to Collection</a>
+    </nav>
+
+    <div id="dust-particles"></div>
+
+    <div class="fab-menu-container" id="fab-menu">
+        <button class="fab-main-btn" onclick="toggleFabMenu()"><span>✦</span> Options</button>
+        <div class="fab-options" id="fab-options">
+            <button onclick="switchVariant('Classic Sun Sign')">Classic Sun Sign</button>
+            <button onclick="switchVariant('Four Elements')">Four Elements</button>
+            <button onclick="switchVariant('Hidden Crystal')">Hidden Crystal</button>
+        </div>
+    </div>
+
+    <div class="accordion-container" id="accordion-box">
+        <div class="meltix-accordion">
+            <p onclick="handleSelection('Classic Sun Sign')">
+                <span>
+                    <strong class="title-main">Classic Sun Sign</strong>
+                    <small class="title-sub">Zodiac Candle</small>
+                </span>
+            </p>
+            <p onclick="handleSelection('Four Elements')">
+                <span>
+                    <strong class="title-main">Four Elements</strong>
+                    <small class="title-sub">Zodiac Candle</small>
+                </span>
+            </p>
+            <p onclick="handleSelection('Hidden Crystal')">
+                <span>
+                    <strong class="title-main">Hidden Crystal</strong>
+                    <small class="title-sub">Zodiac Candle</small>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div id="product-showcase" class="hidden-showcase">
+        <div class="glow-orb"></div>
+        <h1 id="bg-dynamic-title" class="bg-watermark">ZODIAC</h1>
+        
+        <div class="carousel-viewport" id="drag-area">
+            <div class="carousel-track" id="carousel-track"></div>
+        </div>
+        
+        <div class="scrubber-wrapper">
+            <input type="range" id="custom-scrubber" min="0" max="100" value="0">
+            <p class="drag-hint">← Drag to explore →</p>
+        </div>
+
+        <div class="carousel-controls">
+            <button id="stop-showcase-btn" class="meltix-btn-secondary">Stop Auto Showcasing</button>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="close-modal" onclick="closeModal()">×</button>
+
+            <div class="modal-content">
+                <div class="modal-left"> 
+                    <div class="main-image-container" style="position: relative;"> 
+                        <button class="save-later-btn absolute-wishlist" title="Save for Later" onclick="toggleWishlist(this)">
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" class="bookmark-icon">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </button>
+                        <img id="modalMainImage" src="" alt="Product Main Image" onclick="openLightbox(this.src)"> 
+                    </div> 
+                    
+                    <div class="thumbnail-gallery"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="active-thumb thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                    </div> 
+                    
+                    <div class="modal-interactions"> 
+                        <div class="rating-section"> 
+                            <h4 class="section-title-premium">Rating & Reviews</h4> 
+                            <div class="star-rating-static" id="displayStars"> 
+                                <span class="rating-text">Loading...</span> 
+                            </div> 
+                        </div> 
+                        <div class="reviews-section"> 
+                            <div class="reviews-container" id="reviewsList"></div> 
+                            <div id="reviewFormArea"> 
+                                <form class="write-review-form locked" id="reviewForm" onsubmit="submitReview(event)" style="display:none;"> 
+                                    <div class="form-stars-container"> 
+                                        <span class="form-star" data-val="1">★</span> 
+                                        <span class="form-star" data-val="2">★</span> 
+                                        <span class="form-star" data-val="3">★</span> 
+                                        <span class="form-star" data-val="4">★</span> 
+                                        <span class="form-star" data-val="5">★</span> 
+                                    </div> 
+                                    <input type="hidden" id="reviewRating" value="0"> 
+                                    <input type="text" id="reviewName" placeholder="Your name..." class="premium-input" required> 
+                                    <textarea id="reviewText" placeholder="Write your experience..." class="premium-input" rows="2" required></textarea> 
+                                    <button type="submit" class="meltix-btn-form" id="submitReviewBtn">Post Review</button> 
+                                </form> 
+                                
+                                <div id="loginToReviewPrompt" class="auth-prompt-container"> 
+                                    <p class="review-text">Sign in with Google to share your experience or save items.</p> 
+                                    <div id="g_id_onload" data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+                                    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_black" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+                                </div> 
+                                
+                                <div id="alreadyReviewedMessage" class="auth-prompt-containerReviewed" style="display:none;"> 
+                                    <p class="review-text">You have already submitted a review for this product.</p> 
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div>
+
+                <div class="modal-right">
+                    <div class="modal-header-info">
+                        <p id="modalCategory" class="product-category-title-premium">Meltix Zodiac Collection</p>
+                        <h2 id="modalTitle" class="product-title-premium shining-text">Zodiac Candle</h2>
+                    </div>
+                    
+                    <div class="details-accordion">
+                        <div class="detail-item">
+                            <h4>What's Special About This Candle?</h4>
+                            <p id="modalSpecialty">Product detail magic text.</p>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <h4>Astrological Significance</h4>
+                            <p id="modalSignificance">Significance text goes here.</p>
+                        </div>
+
+                        <div class="detail-item">
+                            <h4>How It's Crafted (Process)</h4>
+                            <p id="modalProcess">Process text.</p>
+                        </div>
+                    </div>
+
+                    <div class="purchase-section">
+                        <div class="price-block">
+                            <p class="price-label">Price</p>
+                            <p class="product-price-premium">₹ 500</p>
+                        </div>
+                        <button class="magic-cart-btn">
+                            ADD TO CART
+                            <div class="star-1"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-2"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-3"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-4"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-5"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-6"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dustContainer = document.getElementById('dust-particles');
+        for (let i = 0; i < 50; i++) {
+            let particle = document.createElement('div');
+            particle.className = 'dust';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            let size = Math.random() * 3 + 1; 
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            dustContainer.appendChild(particle);
+        }
+
+        const productData = {
+            'Classic Sun Sign': [
+                {id: 30, src: "{{ url_for('static', filename='images/classic_zodiac_1.jpg') }}"},
+                {id: 31, src: "{{ url_for('static', filename='images/classic_zodiac_2.jpg') }}"},
+                {id: 32, src: "{{ url_for('static', filename='images/classic_zodiac_3.jpg') }}"},
+                {id: 33, src: "{{ url_for('static', filename='images/classic_zodiac_4.jpg') }}"},
+                {id: 34, src: "{{ url_for('static', filename='images/classic_zodiac_5.jpg') }}"},
+                {id: 35, src: "{{ url_for('static', filename='images/classic_zodiac_6.jpg') }}"},
+                {id: 36, src: "{{ url_for('static', filename='images/classic_zodiac_7.jpg') }}"},
+                {id: 37, src: "{{ url_for('static', filename='images/classic_zodiac_8.jpg') }}"},
+                {id: 38, src: "{{ url_for('static', filename='images/classic_zodiac_9.jpg') }}"},
+                {id: 39, src: "{{ url_for('static', filename='images/classic_zodiac_10.jpg') }}"},
+                {id: 40, src: "{{ url_for('static', filename='images/classic_zodiac_11.jpg') }}"},
+                {id: 41, src: "{{ url_for('static', filename='images/classic_zodiac_12.jpg') }}"}
+            ],
+            'Four Elements': [
+                {id: 42, src: "{{ url_for('static', filename='images/elements_zodiac_1.jpg') }}"},
+                {id: 43, src: "{{ url_for('static', filename='images/elements_zodiac_2.jpg') }}"},
+                {id: 44, src: "{{ url_for('static', filename='images/elements_zodiac_3.jpg') }}"},
+                {id: 45, src: "{{ url_for('static', filename='images/elements_zodiac_4.jpg') }}"}
+            ],
+            'Hidden Crystal': [
+                {id: 46, src: "{{ url_for('static', filename='images/crystal_zodiac_1.jpg') }}"},
+                {id: 47, src: "{{ url_for('static', filename='images/crystal_zodiac_2.jpg') }}"},
+                {id: 48, src: "{{ url_for('static', filename='images/crystal_zodiac_3.jpg') }}"},
+                {id: 49, src: "{{ url_for('static', filename='images/crystal_zodiac_4.jpg') }}"},
+                {id: 50, src: "{{ url_for('static', filename='images/crystal_zodiac_5.jpg') }}"},
+                {id: 51, src: "{{ url_for('static', filename='images/crystal_zodiac_6.jpg') }}"},
+                {id: 52, src: "{{ url_for('static', filename='images/crystal_zodiac_7.jpg') }}"},
+                {id: 53, src: "{{ url_for('static', filename='images/crystal_zodiac_8.jpg') }}"},
+                {id: 54, src: "{{ url_for('static', filename='images/crystal_zodiac_9.jpg') }}"},
+                {id: 55, src: "{{ url_for('static', filename='images/crystal_zodiac_10.jpg') }}"},
+                {id: 56, src: "{{ url_for('static', filename='images/crystal_zodiac_11.jpg') }}"},
+                {id: 57, src: "{{ url_for('static', filename='images/crystal_zodiac_12.jpg') }}"}
+            ]
+        };
+
+        // 🔴 EXACT ZODIAC DATA WITH SEPARATE SIGNIFICANCE 🔴
+        const productDetails = {
+            30: { title: "The Steadfast Taurus", specialty: "This candle captures the grounded and luxurious essence of the Taurus sign. Representing the Earth element, it radiates an energy of deep stability and calm. The custom bull illustration reflects the steadfast and determined nature of a Taurus.", process: "Poured with rich olive-green wax into a sleek frosted glass tumbler. It features an elegant cream label with a detailed Taurus emblem. A slow-burning wax blend and lead-free cotton wick ensure a steady, reliable burn.", significance: "Known as 'The Anchor,' Taurus signifies stability, patience, and physical comfort. This candle is designed for those seeking consistency and a sense of peace in their lives." },
+            31: { title: "The Fiery Aries", specialty: "This candle embodies the bold and energetic spirit of the Aries sign. As a Fire element, it creates a dynamic and powerful aura. The striking deep red color and majestic ram illustration celebrate Aries' fearless leadership and vibrant energy.", process: "Hand-poured into a premium deep red frosted glass vessel. It features a metallic-gold ram emblem on a matching crimson label. The flame is robust and brilliant, mirroring the fiery Aries personality.", significance: "Aries is 'The Pioneer.' It signifies the courage to start new journeys, intense passion, and an unstoppable drive. This candle is perfect for a motivation boost." },
+            32: { title: "The Expressive Gemini", specialty: "Represents the dual, intellectual, and communicative spirit of Gemini. As an Air element, it brings a fresh, breezy, and stimulating energy to any space. The sky-blue tone and twin-face symbol reflect their adaptable and curious nature.", process: "Housed in a soft-touch frosted glass jar with light-blue wax. The design includes a gold metallic twin emblem and a stamped Meltix logo. The burn is consistent, matching Gemini’s ever-moving energy.", significance: "Gemini is 'The Communicator.' It signifies curiosity, versatility, and intellectual growth. This candle is designed to spark creative ideas and lively conversation." },
+            33: { title: "The Radiant Leo", specialty: "Mirrors the charismatic and natural leadership energy of a Leo. Representing the Fire element, it provides a luxurious golden glow. The lion illustration and amber color celebrate Leo’s bold, big-hearted, and dramatic presence.", process: "Poured into an elegant, sun-kissed amber frosted glass vessel. The premium label features a vintage lion illustration with golden sunburst accents. It offers a theatrical yet reliable burn.", significance: "Leo is 'The King/Queen.' It signifies confidence, creativity, and vibrant self-expression. This candle is crafted to enhance positivity and warmth in any room." },
+            34: { title: "The Serene Virgo", specialty: "Reflects the pure, practical, and detail-oriented nature of Virgo. Rooted in the Earth element, it brings grounding and refreshing energy. The sage-green wax and botanical maiden illustration capture Virgo’s connection to nature and their nurturing spirit.", process: "Set in a minimalist frosted glass jar with soft green wax. The crisp white label features elegant line-art of the Virgo maiden. It ensures a flawless, meticulously clean burn—exactly how a Virgo prefers it.", significance: "Virgo is 'The Healer.' It signifies precision, logic, and dedicated service. This candle is the perfect companion for mental clarity and organization." },
+            35: { title: "The Nurturing Cancer", specialty: "Captures the intuitive, emotional, and protective essence of the Cancer sign. Flowing with the Water element, it creates a comforting sanctuary at home. The blue-grey tone and celestial crab illustration reflect Cancer’s deep connection to the moon.", process: "Housed in a soothing frosted glass jar with moody blue-grey wax. It features a stunning metallic-style print of the Cancer emblem. The burn feels like a warm, protective hug.", significance: "Cancer is 'The Guardian.' It signifies emotional security, intuition, and a love for the home. This candle is best used for an emotional recharge." },
+            36: { title: "The Harmonious Libra", specialty: "Captures the balanced, aesthetic, and charming energy of Libra. As an Air element, it brings peace and refined beauty to your space. The blush pink wax and scale illustration reflect Libra’s love for romance, symmetry, and luxury.", process: "Housed in a chic frosted glass jar that casts a soft, romantic glow. The textured label features rose-gold metallic detailing of the scales. The burn is perfectly symmetrical and even.", significance: "Libra is 'The Diplomat.' It signifies balance, justice, and harmony in relationships. This candle is meant to create a serene and beautiful atmosphere." },
+            37: { title: "The Adventurous Sagittarius", specialty: "Captures the bold, optimistic, and philosophical spirit of Sagittarius. Ignited by the Fire element, it brings expansive, wandering energy. The plum color and centaur archer reflect their quest for knowledge and adventure.", process: "Set in a deep purple frosted glass jar with a gold foil label featuring the centaur archer. It produces a robust, unbound flame that fuels big dreams and wanderlust.", significance: "Sagittarius is 'The Seeker.' It signifies adventure, freedom, and truth-seeking. This candle is perfect for fueling inspiration and new ideas." },
+            38: { title: "The Ambitious Capricorn", specialty: "Embodies the disciplined, practical, and highly driven spirit of Capricorn. Grounded in the Earth element, it brings resilient and structured energy. The slate-grey wax and sea-goat illustration reflect their ability to navigate complex challenges.", process: "Housed in a minimalist frosted glass jar with slate-grey wax. The label features a vintage-style line drawing of the sea-goat. It ensures a steady, enduring burn, mirroring Capricorn’s stamina.", significance: "Capricorn is 'The Achiever.' It signifies discipline, resilience, and ambition. This candle is the ultimate tool for focus and goal-setting." },
+            39: { title: "The Mysterious Scorpio", specialty: "Channels the magnetic, intense, and fiercely passionate energy of Scorpio. Plunging into the Water element, it brings mystery and emotional depth. The dark plum wax and detailed scorpion reflect their transformative nature.", process: "Housed in an elegant frosted glass vessel that shrouds the dark wax, creating a moody glow. The metallic bronze label features a detailed scorpion. The burn is captivating and resilient.", significance: "Scorpio is 'The Alchemist.' It signifies transformation, intensity, and passion. This candle is designed for soulful reflection and deep focus." },
+            40: { title: "The Dreamy Pisces", specialty: "Captures the imaginative, empathetic, and intuitive spirit of Pisces. Flowing with the Water element, it brings tranquility and creative energy. The aqua-blue wax and twin-fish illustration reflect their connection to the mystical.", process: "Housed in a serene frosted glass vessel with aqua-blue wax and a gold-foil stamp of the twin fishes. It offers a gentle, ethereal burn that feels spiritually peaceful.", significance: "Pisces is 'The Dreamer.' It signifies empathy, imagination, and spiritual peace. This candle is ideal for meditation and letting your mind wander." },
+            41: { title: "The Visionary Aquarius", specialty: "Celebrates the intellectual, original, and forward-thinking spirit of Aquarius. As an Air element, it brings refreshing and stimulating energy. The deep teal tone and Water Bearer reflect their desire for progress and new ideas.", process: "Poured into a deep teal frosted glass jar that creates a modern glow. The label features rose-gold metallic line art of the Water Bearer. It provides a steady, crisp burn that honors the unique Aquarius spirit.", significance: "Aquarius is 'The Reformer.' It signifies innovation, community, and vision. This candle is perfect for brainstorming and creative work." },
+            42: { title: "The Eternal Flame: Fire Element", specialty: "This candle is the physical manifestation of passion, creativity, and raw energy. Designed for the fire signs—Aries, Leo, and Sagittarius—it radiates a warmth that transforms any space into a powerhouse of motivation. The flickering glow through the contoured amber glass mimics the movement of a real bonfire, igniting your inner drive and fueling your most ambitious dreams.", process: "Housed in a unique, wave-contoured amber glass jar that creates a beautiful play of light. The wax is a rich, fiery crimson blend, topped with a high-performance wick for a steady, intense burn. The label features a stunning copper-bronze finish with intricate flame illustrations and the bold Meltix FIRE branding.", significance: "Fire represents Transformation and Vitality. It is the spark of life and the engine of change. This candle is dedicated to those who lead with their hearts and possess the courage to burn bright, providing the energetic atmosphere needed to turn visions into reality." },
+            43: { title: "The Fluid Spirit: Water Element", specialty: "This candle captures the soothing, intuitive, and deeply emotional nature of the Water signs—Cancer, Scorpio, and Pisces. The unique wave-contoured glass mimics the gentle rippling of a tranquil lake, bringing a sense of flow and healing to your environment. It is designed to cleanse the aura and encourage a state of deep emotional reflection and inner peace.", process: "Poured into a beautiful, seafoam-blue frosted glass vessel with a signature 'ripple' texture that feels organic in the hand. The wax is a serene aqua-blue blend. The label is crafted from high-quality textured paper with rose-gold foil accents, featuring the Water drop icon and elegant wave patterns.", significance: "Water represents Intuition, Healing, and Flow. It is the element of deep feelings and the subconscious. This candle is for those who lead with empathy and wisdom, providing the fluid, calming atmosphere needed to recharge the soul and trust the tide of life." },
+            44: { title: "The Celestial Breeze: Air Element", specialty: "This candle embodies the clarity, intellect, and limitless freedom of the Air signs—Gemini, Libra, and Aquarius. Housed in a sleek, tapered vessel, it represents the invisible yet powerful force of the wind. Lighting this candle clears the mental fog, sparking inspiration and promoting a sense of lightness and objectivity in your thoughts and space.", process: "Features a modern, tapered frosted glass jar with a premium brushed silver metallic lid. The label is finished in a sophisticated silver-on-white aesthetic, showcasing the Air alchemy triangle and flowing wind motifs. The wax is a light, ethereal grey-blue, designed for a crisp and clean burn.", significance: "Air represents Intellect, Communication, and Freedom. It is the element of ideas and the breath of life. This candle is dedicated to the visionaries and thinkers, providing the fresh, clear atmosphere needed for brainstorming, social connection, and mental expansion." },
+            45: { title: "The Rooted Earth: Earth Element", specialty: "This candle is a steadfast anchor, designed for the Earth signs—Taurus, Virgo, and Capricorn. It captures the essence of unshakable stability and practical wisdom. The heavy, wide-based design symbolizes solid foundations and deep roots. Lighting this candle feels like grounding your spirit, providing a sense of deep security and a strong connection to the ancient, enduring strength of the natural world.", process: "Housed in a substantial, tapered frosted glass jar with a mossy, earth-toned finish. The label is made of premium forest-green textured paper featuring genuine rose-gold foil accents. It showcases an intricate illustration of a mountain with deep-reaching roots. Crafted with an ultra-premium, slow-burning wax blend and a perfectly centered cotton wick for a reliable and long-lasting burn.", significance: "Earth represents Grounding, Stability, and Endurance. It is the element of manifestation and tangible results. This candle is dedicated to those who build, nourish, and persevere, providing the steady, foundational atmosphere needed to make dreams real and enduring." },
+            46: { title: "Taurus: The Emerald Revelation", specialty: "This interactive candle offers a physical discovery. As the honey-toned wax melts away, it slowly reveals a raw, genuine Green Crystal (associated with Emerald or Jade) hidden deep within. Once the candle is spent, you are left with a lasting gemstone that has been 'charged' by your intentions, serving as a powerful talisman for your workspace or altar.", process: "Poured into a premium frosted glass jar with a vintage-style Taurus bull illustration and copper-gold foil accents. We use a high-quality, slow-burning wax blend to ensure the crystal is revealed safely and beautifully. The cotton wick provides a steady flame that perfectly illuminates the gemstone as it emerges from the golden pool.", significance: "This candle signifies Prosperity and Emotional Grounding. Ruled by Venus, Taurus seeks beauty and security. The hidden green crystal represents growth and the abundance of the Earth." },
+            47: { title: "Scorpio: The Obsidian Shadow", specialty: "This interactive candle mirrors the mysterious and transformative depths of a Scorpio. As the intense, dark plum wax creates a deep melt pool, a sharp, genuine Black Obsidian crystal slowly emerges from the shadows. Once the burn is complete, you are left with a powerful protection stone that has been infused with the candle's energy, perfect for your personal sanctuary or meditation space.", process: "Housed in an elegant frosted glass vessel with a stunning rose-gold metallic label featuring the Scorpio scorpion and astrological symbol. We use a slow-burning, high-pigment wax blend and a sturdy cotton wick to ensure the flame stays bright as it reveals the dark gemstone hidden within the liquid wax.", significance: "This candle signifies Protection and Inner Strength. Ruled by Pluto, Scorpio represents the power of transformation. The hidden black obsidian acts as a psychic shield, helping the user ground their intense emotions and release negative energy, perfectly complementing Scorpio’s journey through the deep waters of the soul." },
+            48: { title: "Sagittarius: The Amethyst Journey", specialty: "This interactive candle embodies the expansive and spiritual quest of the Sagittarius archer. As the warm, honey-toned wax creates a glowing pool, a genuine Amethyst crystal is slowly revealed. Once the candle has burned through, you are left with a beautiful gemstone that has been 'charged' with the candle's energy, serving as a reminder of your inner truth and higher wisdom.", process: "Hand-poured into a sleek frosted glass vessel, featuring a premium textured label with elegant gold-foil detailing of the Sagittarius centaur. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a consistent, steady flame that perfectly illuminates the purple crystal as it surfaces.", significance: "This candle signifies Spiritual Growth and Expansion. Ruled by Jupiter, Sagittarius is the seeker of knowledge. The hidden amethyst crystal supports this journey by enhancing intuition, providing protection during travels (both physical and spiritual), and connecting the user to their higher purpose." },
+            49: { title: "Libra: The Opalescent Balance", specialty: "This interactive candle reflects the refined beauty and harmonious nature of a Libra. As the pristine white wax slowly transforms into a clear, glowing pool, a genuine, iridescent Opal crystal is revealed. Once the candle has fulfilled its journey, you are left with a shimmering gemstone that has been 'charged' by the flame, serving as a physical anchor for peace and emotional equilibrium in your space.", process: "Housed in an elegant frosted glass tumbler that emits a soft, ethereal glow. The premium cream label features the Libra scales and the Meltix logo in sophisticated rose-gold foil. We use a high-quality, clean-burning wax blend and a lead-free cotton wick to ensure a steady burn that beautifully highlights the opalescent gemstone as it surfaces from the wax.", significance: "This candle signifies Harmony and Emotional Clarity. Ruled by Venus, Libra seeks symmetry and grace in all things. The hidden opal crystal supports this by enhancing creativity, stabilizing emotions, and encouraging the user to find a perfect balance between their heart and mind." },
+            50: { title: "Cancer: The Moonstone Sanctuary", specialty: "This interactive candle captures the nurturing, moon-ruled essence of the Cancer sign. As the creamy white wax melts into a shimmering pool, a genuine Moonstone crystal slowly surfaces. Once the candle has completed its burn, you are left with a beautiful gemstone that has been 'charged' by the flame, serving as a lasting talisman for emotional comfort and inner peace.", process: "Poured into a soft-touch frosted glass vessel that emits a gentle, ethereal glow when lit. The premium white label features an intricate metallic-gold crab illustration and the Cancer symbol. Crafted with a high-quality, slow-burning wax blend and a lead-free cotton wick, it ensures a calm and steady burn that perfectly highlights the iridescent moonstone as it is revealed.", significance: "This candle signifies Intuition and Emotional Healing. Ruled by the Moon, Cancer is the sign of the heart and home. The hidden moonstone crystal supports this by enhancing intuition, stabilizing emotions, and providing a sense of safety and calm, reflecting Cancer's deep connection to their feelings and their sanctuary." },
+            51: { title: "Capricorn: The Smoky Quartz Foundation", specialty: "This interactive candle mirrors the resilient and ambitious nature of Capricorn. As the warm, earth-toned wax melts away, it slowly reveals a genuine Smoky Quartz crystal hidden within. Once the candle's journey is complete, you are left with a grounded gemstone 'charged' by the flame, perfect for keeping at your workspace as a reminder of your long-term goals and persistence.", process: "Hand-poured into a minimalist frosted glass vessel featuring a premium textured label with a vintage-style illustration of the Capricorn sea-goat. The copper-gold foil detailing adds a touch of professional luxury. We use a high-quality, slow-burning wax blend and a sturdy cotton wick to ensure a clean burn that beautifully highlights the crystal as it emerges from the golden melt pool.", significance: "This candle signifies Grounding and Manifestation. Ruled by Saturn, Capricorn is the architect of the zodiac. The hidden smoky quartz crystal supports this by absorbing negative energy, providing mental clarity, and helping the user stay focused on turning their ambitious visions into tangible reality." },
+            52: { title: "Gemini: The Citrine Spark", specialty: "This interactive candle perfectly mirrors the bright, curious, and intellectual energy of Gemini. As the light, cream-colored wax melts away, it reveals a genuine, golden Citrine crystal. Once the flame has done its work, you are left with a vibrant gemstone 'charged' by the candle, perfect for keeping on your desk to spark new ideas and social connections.", process: "Housed in a premium frosted glass jar featuring an elegant, rose-gold metallic illustration of the Gemini twins. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a clean, bright burn that beautifully illuminates the Citrine as it surfaces from the warm wax.", significance: "This candle signifies Creativity and Communication. Ruled by Mercury, Gemini is the messenger of the zodiac. The hidden Citrine crystal supports this by clearing mental fog, enhancing self-expression, and attracting success and abundance to the user’s creative and intellectual pursuits." },
+            53: { title: "Pisces: The Amethyst Dream", specialty: "This interactive candle embodies the mystical and dreamy depths of a Pisces. As the creamy white wax melts into a soft, glowing pool, a genuine Amethyst cluster is slowly revealed. Once the candle is spent, the gemstone remains as a lasting symbol of peace and spiritual connection that has been 'charged' by the flame's energy, perfect for your meditation space.", process: "Poured into a serene frosted glass vessel, featuring a premium label with detailed blue and purple line art of the iconic Pisces twin fish. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a tranquil burn that beautifully showcases the purple crystal as it surfaces.", significance: "This candle signifies Intuition and Inner Peace. Ruled by Neptune, Pisces is the most spiritual sign of the zodiac. The hidden amethyst cluster enhances this connection by calming the mind, protecting the spirit, and encouraging the user to trust their vivid imagination and deep intuition." },
+            54: { title: "Leo: The Radiant Sunstone", specialty: "This interactive candle perfectly mirrors the charismatic and warm-hearted energy of Leo. As the rich, golden wax creates a sun-like glow, a genuine Sunstone crystal slowly reveals itself. Once the candle has burned through, you are left with a vibrant gemstone 'charged' by the flame, serving as a physical reminder of your inner strength and natural brilliance.", process: "Housed in an elegant frosted glass vessel featuring a vintage-inspired parchment label. The design showcases a powerful, hand-drawn lion illustration and the Leo symbol in a sophisticated gold finish. We use a premium, slow-burning wax blend and a lead-free cotton wick to ensure a steady, bright flame that highlights the shimmering sunstone as it emerges.", significance: "This candle signifies Confidence and Vitality. Ruled by the Sun, Leo is the heart of the zodiac. The hidden sunstone crystal supports this by boosting self-worth, instilling a sense of joy, and helping the user shine in their creative and leadership pursuits." },
+            55: { title: "Virgo: The Peridot Harvest", specialty: "This interactive candle beautifully captures the meticulous and nurturing essence of the Virgo sign. As the creamy white wax melts into a warm, golden pool, genuine Peridot crystals are revealed, surfacing like a bountiful harvest. Once the candle is spent, these vibrant green gems remain, serving as a lasting talisman for mental clarity and health, 'charged' by your focused intentions.", process: "Poured into a signature frosted glass jar with a premium textured label. The design features an elegant line-art maiden holding stalks of wheat, finished with a sophisticated metallic-gold touch. Our clean-burning wax blend and lead-free wick ensure a flawless, steady burn that perfectly showcases the crystals as they are unearthed from the wax.", significance: "This candle signifies Growth and Mental Precision. Ruled by Mercury, Virgo is the analyst and healer of the zodiac. The hidden Peridot crystals support this by reducing stress, encouraging emotional balance, and helping the user manifest their goals through practical steps and pure intentions." },
+            56: { title: "Aquarius: The Aquamarine Vision", specialty: "This interactive candle embodies the visionary and humanitarian spirit of Aquarius. As the pristine white wax creates a clear, luminous pool, a genuine Aquamarine crystal is slowly revealed, surfacing like a new idea from the depths of the mind. Once the candle is spent, you are left with a cool, calming gemstone 'charged' by the flame, perfect for your creative space or a spot where you do your best thinking.", process: "Housed in an elegant frosted glass vessel with a beautiful watercolor-inspired label. The design features a flowing water-bearer jug and the Aquarius waves, finished with a sophisticated gold-foil Meltix logo. We use a high-quality, clean-burning wax blend and a lead-free cotton wick to ensure a crisp, steady burn that highlights the blue crystal as it emerges.", significance: "This candle signifies Innovation and Mental Clarity. Ruled by Uranus, Aquarius is the futuristic thinker of the zodiac. The hidden Aquamarine crystal supports this by enhancing clear communication, soothing the mind, and encouraging the user to embrace their unique individuality and visionary goals." },
+            57: { title: "Aries: The Red Jasper Fire", specialty: "This interactive candle perfectly captures the bold and fearless energy of Aries. As the pristine white wax transforms into a warm, glowing pool, a genuine Red Jasper crystal is slowly revealed. Once the candle's journey is complete, you are left with a powerful gemstone 'charged' by the flame, serving as a lasting talisman for courage and physical vitality that you can carry with you or keep on your altar.", process: "Housed in a premium frosted glass jar that creates a soft, ambient glow when lit. The elegant cream label features a stunning metallic-gold ram illustration with intricate filigree details and the Aries symbol. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a robust, steady flame that highlights the red gemstone as it surfaces.", significance: "This candle signifies Courage and Vitality. Ruled by Mars, Aries is the bold leader of the zodiac. The hidden red jasper crystal supports this by providing grounding energy, boosting stamina, and helping the user channel their fiery passion into productive and fearless action." }
+        };
+
+        const dragArea = document.getElementById('drag-area');
+        const track = document.getElementById('carousel-track');
+        const bgTitle = document.getElementById('bg-dynamic-title');
+        let autoScrollSpeed = 1.0; 
+        let isAutoScrollActive = true; 
+        const stopBtn = document.getElementById('stop-showcase-btn');
+        
+        let isLoggedIn = false;
+        let currentUser = JSON.parse(localStorage.getItem('meltix_user')) || null;
+        if(currentUser) isLoggedIn = true;
+
+        function handleSelection(selectedType) {
+            document.getElementById('accordion-box').classList.add('fade-out-active');
+            bgTitle.innerText = selectedType.split(' ')[0].toUpperCase();
+            loadImages(selectedType);
+
+            setTimeout(() => {
+                document.getElementById('product-showcase').classList.add('show');
+                document.getElementById('fab-menu').classList.add('show');
+            }, 800);
+        }
+
+        function toggleFabMenu() {
+            document.getElementById('fab-options').classList.toggle('open');
+        }
+
+        function switchVariant(variantName) {
+            document.getElementById('fab-options').classList.remove('open');
+            const showcase = document.getElementById('product-showcase');
+            showcase.style.opacity = '0'; 
+            
+            setTimeout(() => {
+                bgTitle.innerText = variantName.split(' ')[0].toUpperCase();
+                loadImages(variantName); 
+                const images = document.querySelectorAll('.img-container');
+                images.forEach(img => img.classList.remove('center-glow'));
+                showcase.style.opacity = '1'; 
+                requestAnimationFrame(forceRenderFrame);
+            }, 500);
+        }
+
+         function forceRenderFrame() {
+            if (!dragArea || !track) return;
+            const centerPoint = dragArea.getBoundingClientRect().left + dragArea.clientWidth / 2;
+            const images = document.querySelectorAll('.img-container');
+            images.forEach(img => {
+                const imgCenter = img.getBoundingClientRect().left + img.clientWidth / 2;
+                const dist = Math.abs(centerPoint - imgCenter);
+                const maxDist = dragArea.clientWidth / 1.5; 
+                if (dist < maxDist) {
+                    const ratio = 1 - (dist / maxDist);
+                    const scale = 0.7 + (0.5 * ratio); 
+                    if (scale > 1.05) {
+                        img.classList.add('center-glow');
+                    }
+                }
+            });
+        }
+
+
+        let isDragging = false;
+        let isActuallyDragging = false; 
+        let mouseDownX = 0; 
+        const clickThreshold = 10; 
+        let isScrubbing = false;
+        let startX, startScrollLeft;
+        const scrubber = document.getElementById('custom-scrubber');
+
+        dragArea.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            isActuallyDragging = false; 
+            mouseDownX = e.pageX; 
+            startX = e.pageX;
+            startScrollLeft = dragArea.scrollLeft;
+            dragArea.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragArea.style.cursor = 'grab';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const diff = e.pageX - startX;
+            dragArea.scrollLeft = startScrollLeft - diff;
+
+            if (Math.abs(e.pageX - mouseDownX) > clickThreshold) {
+                isActuallyDragging = true;
+            }
+        });
+
+        scrubber.addEventListener('input', () => {
+            isScrubbing = true; let maxScroll = track.scrollWidth - dragArea.clientWidth; dragArea.scrollLeft = (scrubber.value / 100) * maxScroll;
+        });
+        scrubber.addEventListener('change', () => { isScrubbing = false; });
+        scrubber.addEventListener('mouseup', () => { isScrubbing = false; });
+        scrubber.addEventListener('touchend', () => { isScrubbing = false; });
+
+        function loadImages(category) {
+            track.innerHTML = '';
+            let likedProducts = JSON.parse(localStorage.getItem('meltix_likes')) || [];
+
+            productData[category].forEach(item => {
+                let container = document.createElement('div');
+                container.className = 'img-container';
+                
+                let img = document.createElement('img');
+                img.className = 'carousel-img';
+                img.src = item.src;
+                img.draggable = false;
+                
+                let likeBtn = document.createElement('button');
+                likeBtn.className = 'like-btn';
+                likeBtn.setAttribute('data-product-id', item.id);
+                
+                if (likedProducts.includes(item.id.toString())) {
+                    likeBtn.classList.add('liked');
+                }
+
+                likeBtn.innerHTML = `
+                    <svg class="heart-icon" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                `;
+                
+                likeBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    
+                    let isLiked = this.classList.toggle('liked');
+                    let productId = this.getAttribute('data-product-id');
+
+                    if (isLiked) {
+                        if (!likedProducts.includes(productId)) likedProducts.push(productId);
+                    } else {
+                        likedProducts = likedProducts.filter(id => id !== productId);
+                    }
+                    localStorage.setItem('meltix_likes', JSON.stringify(likedProducts));
+
+                    fetch('/like_product', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            action: isLiked ? 'like' : 'unlike',
+                            name: category + " Zodiac Candle", 
+                            image_file: item.src.split('/').pop() 
+                        })
+                    })
+                    .then(response => response.json())
+                    .catch(error => console.error('Error:', error));
+                });
+
+                container.addEventListener('click', () => {
+                    if (!isActuallyDragging) {
+                        openModal(item.id);
+                    }
+                });
+
+                container.appendChild(img);
+                container.appendChild(likeBtn);
+                track.appendChild(container);
+            });
+            
+            setTimeout(() => {
+                dragArea.scrollLeft = 0;
+                scrubber.value = 0;
+            }, 50);
+        }
+
+         function renderLoop() {
+            if (document.getElementById('product-showcase').classList.contains('show')) {
+                let maxScroll = track.scrollWidth - dragArea.clientWidth;
+
+                if (!isDragging && !isScrubbing && maxScroll > 0 && isAutoScrollActive) {
+                    dragArea.scrollLeft += autoScrollSpeed;
+                    if (dragArea.scrollLeft >= maxScroll - 2) {
+                        dragArea.scrollLeft = 0; 
+                    }
+                }
+
+                if (!isScrubbing && maxScroll > 0) {
+                    scrubber.value = (dragArea.scrollLeft / maxScroll) * 100;
+                }
+
+                const centerPoint = dragArea.getBoundingClientRect().left + dragArea.clientWidth / 2;
+                const images = document.querySelectorAll('.img-container');
+
+                images.forEach(img => {
+                    const imgCenter = img.getBoundingClientRect().left + img.clientWidth / 2;
+                    const dist = Math.abs(centerPoint - imgCenter);
+                    const maxDist = dragArea.clientWidth / 1.5; 
+
+                    let scale = 0.7; 
+                    let opacity = 0.3; 
+                    let zIndex = 1;
+
+                    if (dist < maxDist) {
+                        const ratio = 1 - (dist / maxDist);
+                        scale = 0.7 + (0.5 * ratio); 
+                        opacity = 0.3 + (0.7 * ratio); 
+                        zIndex = Math.round(ratio * 10);
+                    }
+
+                    img.style.transform = `scale(${scale})`;
+                    img.style.opacity = opacity;
+                    img.style.zIndex = zIndex;
+
+                    if (scale > 1.05) {
+                        img.classList.add('center-glow');
+                    } else {
+                        img.classList.remove('center-glow');
+                    }
+                });
+            }
+            requestAnimationFrame(renderLoop);
+        }
+        requestAnimationFrame(renderLoop); 
+
+        if(stopBtn) {
+            stopBtn.addEventListener('click', function() {
+                isAutoScrollActive = !isAutoScrollActive;
+                if (isAutoScrollActive) {
+                    this.innerText = "Stop Auto Showcasing";
+                    this.style.background = "linear-gradient(to right, #d4a373 20%, #ffffff 50%, #d4a373 80%)"; 
+                    this.style.webkitBackgroundClip = "text";
+                    this.style.color = "transparent";
+                } else {
+                    this.innerText = "Start Auto Showcasing";
+                    this.style.background = "none";
+                    this.style.webkitBackgroundClip = "none";
+                    this.style.color = "#a89f91"; 
+                    this.style.backgroundColor = "rgba(10, 8, 5, 0.9)"; 
+                }
+            });
+        }
+
+        // ==========================================
+        // 🔴 MASTER MODAL JAVASCRIPT LOGIC 🔴
+        // ==========================================
+        const modal = document.getElementById('productModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSpecialty = document.getElementById('modalSpecialty');
+        const modalProcess = document.getElementById('modalProcess');
+        const modalSignificance = document.getElementById('modalSignificance'); // 🔴 NEW FIELD 🔴
+        const modalCategory = document.getElementById('modalCategory');
+
+        const reviewForm = document.getElementById('reviewForm');
+        const loginPrompt = document.getElementById('loginToReviewPrompt');
+        const reviewedMessage = document.getElementById('alreadyReviewedMessage');
+
+        function handleCredentialResponse(response) {
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const userData = JSON.parse(jsonPayload);
+            
+            currentUser = {
+                name: userData.name,
+                email: userData.email,
+                picture: userData.picture
+            };
+            
+            isLoggedIn = true;
+            localStorage.setItem('meltix_user', JSON.stringify(currentUser)); 
+            
+            toggleAuthFormState(activeProductId); 
+        }
+
+        function toggleAuthFormState(productId) {
+            let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+            
+            if (!isLoggedIn) {
+                reviewForm.style.display = 'none';
+                loginPrompt.style.display = 'block';
+                reviewedMessage.style.display = 'none';
+            } else if (userReviews.includes(productId.toString())) {
+                reviewForm.style.display = 'none';
+                loginPrompt.style.display = 'none';
+                reviewedMessage.style.display = 'block';
+            } else {
+                reviewForm.style.display = 'flex';
+                reviewForm.classList.remove('locked'); 
+                loginPrompt.style.display = 'none';
+                reviewedMessage.style.display = 'none';
+                
+                if (currentUser && currentUser.name) {
+                    document.getElementById('reviewName').value = currentUser.name;
+                }
+            }
+        }
+
+        const stars = document.querySelectorAll('.form-star');
+        const ratingInput = document.getElementById('reviewRating');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const val = this.getAttribute('data-val');
+                stars.forEach(s => {
+                    s.classList.toggle('active', s.getAttribute('data-val') <= val);
+                });
+            });
+            
+            star.parentElement.addEventListener('mouseleave', function() {
+                const currentVal = ratingInput.value;
+                stars.forEach(s => {
+                    s.classList.toggle('active', s.getAttribute('data-val') <= currentVal);
+                });
+            });
+
+            star.addEventListener('click', function() {
+                ratingInput.value = this.getAttribute('data-val');
+            });
+        });
+        
+        let currentReviews = []; 
+
+        async function fetchAndRenderReviews(productId) {
+            try {
+                const response = await fetch(`/get_reviews/${productId}`);
+                const data = await response.json();
+                
+                currentReviews = data.reviews_data.map((r, index) => ({
+                    ...r,
+                    id: r.id || index, 
+                    likes: r.likes !== undefined ? r.likes : 0, 
+                    userAction: null 
+                }));
+
+                renderReviewsUI(); 
+            } catch(e) {
+                console.error("Error loading reviews", e);
+            }
+        }
+
+        function renderReviewsUI() {
+            const displayStars = document.getElementById('displayStars');
+            const reviewsList = document.getElementById('reviewsList');
+
+            currentReviews.sort((a, b) => b.likes - a.likes);
+
+            let totalRating = 0;
+            currentReviews.forEach(r => totalRating += Number(r.rating));
+            let avgRating = currentReviews.length > 0 ? (totalRating / currentReviews.length) : 0;
+            
+            avgRating = Math.round(avgRating * 2) / 2;
+
+            let starsHtml = '';
+            for(let i=1; i<=5; i++) {
+                if(avgRating >= i) {
+                    starsHtml += `<span class="star gold">★</span>`; 
+                } else if(avgRating >= i - 0.5) {
+                    starsHtml += `<span class="star half-gold">★</span>`; 
+                } else {
+                    starsHtml += `<span class="star grey">★</span>`; 
+                }
+            }
+
+            if(currentReviews.length === 0) {
+                starsHtml += `<span class="rating-text">No reviews yet</span>`;
+                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
+            } else {
+                starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
+                
+                reviewsList.innerHTML = currentReviews.map((r) => {
+                    let likeActive = r.userAction === 'like' ? 'active-like' : '';
+                    let dislikeActive = r.userAction === 'dislike' ? 'active-dislike' : '';
+
+                    return `
+                    <div class="review-item">
+                        <div class="review-header-flex">
+                            <p class="review-user">${r.user_name} <span style="color:#d4a373; font-size:0.8rem; margin-left:10px;">${'★'.repeat(r.rating)}</span></p>
+                            <button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>
+                        </div>
+                        <p class="review-text">"${r.review_text}"</p>
+                        
+                        <div class="review-actions-bar">
+                            <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
+                                <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
+                            </button>
+                            <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
+                                <span class="act-icon">👎</span>
+                            </button>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+            displayStars.innerHTML = starsHtml;
+        }
+
+        function handleReviewAction(reviewId, actionType) {
+            let review = currentReviews.find(r => r.id === reviewId);
+            if(!review) return;
+
+            if (actionType === 'like') {
+                if (review.userAction === 'like') {
+                    review.likes--;
+                    review.userAction = null;
+                } else {
+                    review.likes++;
+                    review.userAction = 'like';
+                }
+            } else {
+                if (review.userAction === 'dislike') {
+                    review.userAction = null;
+                } else {
+                    if (review.userAction === 'like') review.likes--;
+                    review.userAction = 'dislike';
+                }
+            }
+            renderReviewsUI(); 
+        }
+
+        function deleteReview(reviewId) {
+            if(confirm("Are you sure you want to delete this review?")) {
+                currentReviews = currentReviews.filter(r => r.id !== reviewId);
+                
+                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+                userReviews = userReviews.filter(id => id !== activeProductId.toString());
+                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
+                toggleAuthFormState(activeProductId);
+
+                renderReviewsUI();
+
+                fetch(`/delete_review/${reviewId}`, { method: 'DELETE' }).catch(e => console.log('Pinged backend to delete'));
+            }
+        }
+
+        let activeProductId = null;
+
+        function openModal(productId) {
+            activeProductId = productId;
+            let targetProduct = null;
+            let targetCategory = "";
+            
+            for (const category in productData) {
+                targetProduct = productData[category].find(item => item.id == productId);
+                if (targetProduct) {
+                    targetCategory = category;
+                    break;
+                }
+            }
+            if (!targetProduct) return;
+
+            const mainImg = document.getElementById('modalMainImage');
+            mainImg.src = targetProduct.src;
+
+            const thumbs = document.querySelectorAll('.thumb-img');
+            thumbs.forEach((thumb, index) => {
+                thumb.src = targetProduct.src;
+                if(index === 0) thumb.classList.add('active-thumb');
+                else thumb.classList.remove('active-thumb');
+            });
+
+            // 🔴 EXACT ZODIAC DETAILS WITH SIGNIFICANCE BINDED HERE 🔴
+            const details = productDetails[productId];
+            modalCategory.innerText = `${targetCategory} Candle`;
+            if (details) {
+                modalTitle.innerText = details.title;
+                modalSpecialty.innerText = details.specialty;
+                modalProcess.innerText = details.process;
+                
+                // 🔴 Handle Significance Field 🔴
+                if (details.significance) {
+                    modalSignificance.innerText = details.significance;
+                    modalSignificance.parentElement.style.display = "block";
+                } else {
+                    modalSignificance.parentElement.style.display = "none";
+                }
+            }
+
+            toggleAuthFormState(productId);
+            fetchAndRenderReviews(productId);
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; 
+            activeProductId = null;
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value;
+            const text = document.getElementById('reviewText').value;
+            const rating = ratingInput.value;
+
+            if(rating === "0") {
+                alert("Please select a star rating!");
+                return;
+            }
+
+            const btn = document.getElementById('submitReviewBtn');
+            btn.innerText = "Posting...";
+
+            try {
+                await fetch('/submit_review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_id: activeProductId,
+                        user_name: name,
+                        review_text: text,
+                        rating: rating
+                    })
+                });
+
+                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+                userReviews.push(activeProductId.toString());
+                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
+
+                toggleAuthFormState(activeProductId);
+                reviewForm.reset();
+                ratingInput.value = "0";
+                stars.forEach(s => s.classList.remove('active'));
+
+                fetchAndRenderReviews(activeProductId); 
+
+            } catch (err) {
+                console.error(err);
+                btn.innerText = "Error. Try Again.";
+                btn.style.borderColor = "#ff4b4b";
+            }
+        }
+
+        async function toggleWishlist(btnElement) {
+            if (!isLoggedIn || !currentUser) {
+                alert("Bhai, pehle Google se Sign In kar le!");
+                return;
+            }
+
+            try {
+                const response = await fetch('/toggle_wishlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_email: currentUser.email, 
+                        product_id: activeProductId 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === "success") {
+                    if (data.action === "added") {
+                        btnElement.classList.add('saved');
+                    } else {
+                        btnElement.classList.remove('saved');
+                    }
+                }
+            } catch(e) {
+                console.error("Wishlist error:", e);
+            }
+        }
+
+        function changeModalImage(clickedElement, imgSrc) {
+            document.getElementById('modalMainImage').src = imgSrc;
+            const thumbs = document.querySelectorAll('.thumb-img');
+            thumbs.forEach(thumb => thumb.classList.remove('active-thumb'));
+            clickedElement.classList.add('active-thumb');
+        }
+
+        function openLightbox(imageSrc) {
+            if (!imageSrc || imageSrc.includes(window.location.href)) return; 
+            
+            let existing = document.getElementById('meltix-lightbox');
+            if (existing) existing.remove();
+
+            let lightbox = document.createElement('div');
+            lightbox.id = 'meltix-lightbox';
+            lightbox.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px);';
+            
+            let img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.cssText = 'max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 12px; box-shadow: 0 0 40px rgba(212,163,115,0.6); transform: scale(0.8); transition: transform 0.3s ease;';
+            
+            lightbox.appendChild(img);
+            document.body.appendChild(lightbox); 
+            
+            setTimeout(() => {
+                lightbox.style.opacity = '1';
+                img.style.transform = 'scale(1)';
+            }, 10);
+
+            lightbox.onclick = function() {
+                lightbox.style.opacity = '0';
+                img.style.transform = 'scale(0.8)';
+                setTimeout(() => lightbox.remove(), 300);
+            };
+        }
+    </script>
+</body>
+</html>

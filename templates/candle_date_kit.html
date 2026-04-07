@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Candle Date Kit | Meltix</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='candle_date_kit.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="/shop" class="back-btn"><span>✦</span> Back to Collection</a>
+    </nav>
+
+    <div id="dust-particles"></div>
+
+    <div class="fab-menu-container" id="fab-menu">
+        <button class="fab-main-btn" onclick="toggleFabMenu()"><span>✦</span> Options</button>
+        <div class="fab-options" id="fab-options">
+            <button onclick="switchVariant('Ice Breaker')">Ice Breaker</button>
+            <button onclick="switchVariant('Dine In')">Dine In</button>
+            <button onclick="switchVariant('The Cozy')">The Cozy</button>
+        </div>
+    </div>
+
+    <div class="accordion-container" id="accordion-box">
+        <div class="meltix-accordion">
+            <p onclick="handleSelection('Ice Breaker')">
+                <span>
+                    <strong class="title-main">Ice Breaker</strong>
+                    <small class="title-sub">Candle Date Kit</small>
+                </span>
+            </p>
+            <p onclick="handleSelection('Dine In')">
+                <span>
+                    <strong class="title-main">Dine In</strong>
+                    <small class="title-sub">Candle Date Kit</small>
+                </span>
+            </p>
+            <p onclick="handleSelection('The Cozy')">
+                <span>
+                    <strong class="title-main">The Cozy</strong>
+                    <small class="title-sub">Candle Date Kit</small>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div id="product-showcase" class="hidden-showcase">
+        <div class="glow-orb"></div>
+        <h1 id="bg-dynamic-title" class="bg-watermark">DATE KIT</h1>
+        
+        <div class="carousel-viewport" id="drag-area">
+            <div class="carousel-track" id="carousel-track"></div>
+        </div>
+        
+        <div class="scrubber-wrapper">
+            <input type="range" id="custom-scrubber" min="0" max="100" value="0">
+            <p class="drag-hint">← Drag to explore →</p>
+        </div>
+
+        <div class="carousel-controls">
+            <button id="stop-showcase-btn" class="meltix-btn-secondary">Stop Auto Showcasing</button>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="close-modal" onclick="closeModal()">×</button>
+
+            <div class="modal-content">
+                <div class="modal-left"> 
+                    <div class="main-image-container" style="position: relative;"> 
+                        <button class="save-later-btn absolute-wishlist" title="Save for Later" onclick="toggleWishlist(this)">
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" class="bookmark-icon">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </button>
+                        <img id="modalMainImage" src="" alt="Product Main Image" onclick="openLightbox(this.src)"> 
+                    </div> 
+                    
+                    <div class="thumbnail-gallery"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="active-thumb thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                    </div> 
+                    
+                    <div class="modal-interactions"> 
+                        <div class="rating-section"> 
+                            <h4 class="section-title-premium">Rating & Reviews</h4> 
+                            <div class="star-rating-static" id="displayStars"> 
+                                <span class="rating-text">Loading...</span> 
+                            </div> 
+                        </div> 
+                        <div class="reviews-section"> 
+                            <div class="reviews-container" id="reviewsList"></div> 
+                            <div id="reviewFormArea"> 
+                                <form class="write-review-form locked" id="reviewForm" onsubmit="submitReview(event)" style="display:none;"> 
+                                    <div class="form-stars-container"> 
+                                        <span class="form-star" data-val="1">★</span> 
+                                        <span class="form-star" data-val="2">★</span> 
+                                        <span class="form-star" data-val="3">★</span> 
+                                        <span class="form-star" data-val="4">★</span> 
+                                        <span class="form-star" data-val="5">★</span> 
+                                    </div> 
+                                    <input type="hidden" id="reviewRating" value="0"> 
+                                    <input type="text" id="reviewName" placeholder="Your name..." class="premium-input" required> 
+                                    <textarea id="reviewText" placeholder="Write your experience..." class="premium-input" rows="2" required></textarea> 
+                                    <button type="submit" class="meltix-btn-form" id="submitReviewBtn">Post Review</button> 
+                                </form> 
+                                
+                                <div id="loginToReviewPrompt" class="auth-prompt-container"> 
+                                    <p class="review-text">Sign in with Google to share your experience or save items.</p> 
+                                    <div id="g_id_onload" data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+                                    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_black" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+                                </div> 
+                                
+                                <div id="alreadyReviewedMessage" class="auth-prompt-containerReviewed" style="display:none;"> 
+                                    <p class="review-text">You have already submitted a review for this product.</p> 
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div>
+
+                <div class="modal-right">
+                    <div class="modal-header-info">
+                        <p id="modalCategory" class="product-category-title-premium">Meltix Date Kit Collection</p>
+                        <h2 id="modalTitle" class="product-title-premium shining-text">Candle Date Kit</h2>
+                    </div>
+                    
+                    <div class="details-accordion">
+                        <div class="detail-item">
+                            <h4>Significance & Speciality</h4>
+                            <p id="modalSpecialty">Product detail magic text.</p>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <h4>How to Use</h4>
+                            <p id="modalUsage">Usage instructions go here.</p>
+                        </div>
+
+                        <div class="detail-item">
+                            <h4>How It's Crafted (Process)</h4>
+                            <p id="modalProcess">Process text.</p>
+                        </div>
+                    </div>
+
+                    <div class="purchase-section">
+                        <div class="price-block">
+                            <p class="price-label">Price</p>
+                            <p class="product-price-premium">₹ 500</p>
+                        </div>
+                        
+                        <button class="magic-cart-btn">
+                            ADD TO CART
+                            <div class="star-1"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-2"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-3"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-4"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-5"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-6"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dustContainer = document.getElementById('dust-particles');
+        for (let i = 0; i < 50; i++) {
+            let particle = document.createElement('div');
+            particle.className = 'dust';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            let size = Math.random() * 3 + 1; 
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            dustContainer.appendChild(particle);
+        }
+
+        const productData = {
+            'Ice Breaker': [
+                {id: 66, src: "{{ url_for('static', filename='images/ice_breaker_1.jpg') }}"},
+                {id: 67, src: "{{ url_for('static', filename='images/ice_breaker_2.jpg') }}"},
+                {id: 68, src: "{{ url_for('static', filename='images/ice_breaker_3.jpg') }}"},
+                {id: 69, src: "{{ url_for('static', filename='images/ice_breaker_4.jpg') }}"},
+                {id: 70, src: "{{ url_for('static', filename='images/ice_breaker_5.jpg') }}"},
+                {id: 71, src: "{{ url_for('static', filename='images/ice_breaker_6.jpg') }}"}
+            ],
+            'Dine In': [
+                {id: 72, src: "{{ url_for('static', filename='images/dine_in_1.jpg') }}"},
+                {id: 73, src: "{{ url_for('static', filename='images/dine_in_2.jpg') }}"},
+                {id: 74, src: "{{ url_for('static', filename='images/dine_in_3.jpg') }}"},
+                {id: 75, src: "{{ url_for('static', filename='images/dine_in_4.jpg') }}"},
+                {id: 76, src: "{{ url_for('static', filename='images/dine_in_5.jpg') }}"}
+            ],
+            'The Cozy': [
+                {id: 77, src: "{{ url_for('static', filename='images/the_cozy_1.jpg') }}"},
+                {id: 78, src: "{{ url_for('static', filename='images/the_cozy_2.jpg') }}"},
+                {id: 79, src: "{{ url_for('static', filename='images/the_cozy_3.jpg') }}"},
+                {id: 80, src: "{{ url_for('static', filename='images/the_cozy_4.jpg') }}"},
+                {id: 81, src: "{{ url_for('static', filename='images/the_cozy_5.jpg') }}"}
+            ]
+        };
+
+        // 🔴 EXACT DATE KIT DATA INJECTED HERE 🔴
+        const productDetails = {
+            66: { title: "Coffee & Cocoa: The Ice Breaker Kit", specialty: "Yeh kit ek normal date ko ek deep interactive journey mein badal deta hai. Iski sabse badi speciality iske sath milne wala Conversation Starter Cards (Icebreaker Edition) ka deck hai. \"Coffee & Cocoa\" ki fragrance ek cozy, high-end cafe wali vibe create karti hai, jo date pe hone wali nervousness ya anxiety ko kam karne mein madad karti hai. Card draw karke—jaise ki \"What's the most interesting place you've ever explored?\"—couples boring small talk ko skip karke seedha meaningful baaton pe aa sakte hain. Yeh connection building ko effortless aur fun banata hai.", usage: "Candle jala ke room mein ek warm atmosphere create karein. Phir cards ko nikaalein aur ek-ek karke random question utha ke ek dusre se puchein. It’s like a guided tour of your partner’s mind while enjoying a premium scent.", process: "Yeh candle ek rustic, antique-copper finished tin mein hand-poured hai jo vintage vibe deti hai. Cards premium 350gsm matte-finish cardstock pe printed hain. Wax ek specialized soy-blend hai jisme roasted Arabica coffee aur dark cocoa butter ke essential oils use kiye gaye hain taaki aroma bilkul authentic lage." },
+            67: { title: "Cherry Blossom & Peony: The Blossom Ice Breaker", specialty: "This kit is designed for those moments when you want to explore the \"softer\" side of a relationship. The speciality is the Dreamer’s Edition Conversation Deck, which features lighthearted yet revealing questions like \"What is your ideal perfect day?\" The fragrance of Cherry Blossom and Peony is intentionally delicate and floral, creating a safe, non-intimidating space for vulnerability and shared laughter. It’s the perfect gift for a partner to show that you value their thoughts just as much as their company, turning a routine evening into a blooming connection.", usage: "Open the premium \"Sakura Pink\" gift box and place the ribbed glass candle on a stable surface. Light the wick and let the floral scent fill the room. Once the atmosphere is set, take turns drawing cards from the deck. It’s best used during a relaxed afternoon or a low-pressure weekend date.", process: "The candle is poured into a high-end, vertically ribbed clear glass vessel that catches the flame’s light beautifully. The wax is a clean-burning soy blend infused with natural peony extracts and cherry blossom fragrance oils. The kit comes in a luxury textured box with signature rose-gold Meltix foiling, and the cards are finished with a soft-touch coating for a premium feel." },
+            68: { title: "Lavender & Vanilla: The Deep Connect Ice Breaker", specialty: "This kit is designed for those who want to move beyond the surface and truly understand their partner's inner world. The speciality is the \"Connect Deeply\" Date Night Conversation Deck, which features profound questions designed to spark intimacy and emotional discovery. The fragrance of Lavender and Vanilla is scientifically chosen for its ability to lower cortisol levels, creating a safe, stress-free zone for deep honesty and vulnerable sharing. It’s the ultimate \"re-connection\" tool for long-term couples or a powerful way for new partners to build a solid foundation.", usage: "Open the luxury plum-purple gift box and set the candle on a heat-safe surface. Light the wooden wick and allow the crackling sound and soothing aroma to ground your energy. Once you both feel relaxed, begin drawing from the conversation deck. It’s best used as a \"digital detox\" ritual—phones away, just the two of you and the flame.", process: "Poured into a premium clear glass vessel with a sophisticated lavender-matte label and gold-foil Meltix branding. The wax is a high-quality soy-paraffin blend that ensures a 50+ hour clean burn. Features a sustainable crackling wooden wick that provides a fireplace-like ambiance. The entire kit is housed in a boutique-quality textured box with a satin-lined interior and an elegant purple silk ribbon." },
+            69: { title: "Citrus Bergamot: The Mindful Ice Breaker", specialty: "This kit is designed for couples who value intellectual stimulation and personal growth. The speciality is the \"Wisdom & Perspective\" Deck, which includes thought-provoking prompts like \"What’s the best piece of advice you’ve ever received?\" The fragrance of Citrus and Bergamot is bright, uplifting, and sharp—specifically chosen to keep the mind engaged and curious during deep discussions. It turns a casual hangout into a high-value exchange of ideas, making it perfect for a \"Sunday Morning\" date or a creative brainstorming session with your partner.", usage: "Light the candle on a clean, minimalist surface. Let the zesty aroma sharpen your focus and lift the mood. Once the vibe is set, draw a card and dive into the story behind the answer. It’s an interactive way to learn about the people, lessons, and experiences that shaped your partner’s outlook on life.", process: "The vessel is a heavy, matte-beige ceramic jar with a luxury rose-gold foil \"Meltix\" stamp. The candle features a clean-burning cotton wick and a premium soy-wax blend that ensures a soot-free experience. The card box is finished in a deep forest-green textured paper with rose-gold foil accents, and the cards are printed on high-durability, eco-friendly cardstock for a premium feel." },
+            70: { title: "Tonka & Cardamom: The Explorer's Ice Breaker", specialty: "This kit is designed for the couple who loves to dream big and plan their next great escape. The speciality is the \"Adventure & Ambition\" Deck, featuring inspiring questions like \"What’s the one adventure you’ve always dreamed of taking?\" The fragrance is a sophisticated, earthy blend of Tonka Bean and Cardamom—aromas often associated with travel and exotic spice markets. It’s crafted to stir the imagination and create a \"global\" vibe right in your living room, making it the perfect companion for a late-night planning session or a date where you want to share your wildest aspirations.", usage: "Place the hand-carved wooden vessel on a stable surface and light the wick. As the warm, spicy aroma fills the air, let it act as your \"passport\" to deeper conversation. Pull a card from the premium slider box and take turns sharing your bucket-list dreams. It turns a simple evening into a shared mental journey, strengthening your bond through common goals and exciting future plans.", process: "The candle is poured into a unique, hand-finished Natural Walnut Wood bowl, featuring a custom-fitted gold Meltix medallion. We use a premium, slow-burning soy-wax blend that complements the natural wood grain. The conversation deck is housed in a luxury charcoal-grey slider box with gold-leaf foiling, and the cards are printed on thick, rounded-edge ivory cardstock for a high-end tactile experience." },
+            71: { title: "Rose & Oud: The Unified Dream Ice Breaker", specialty: "Yeh kit Ice Breaker series ka grand finale hai, jo specifically design kiya gaya hai \"Long-term Planning\" aur \"Shared Future\" ke liye. Iski sabse badi speciality iska \"Visionary Deck\" hai, jisme deep aur constructive sawal hain jaise ki \"What is a dream we can build together?\" Fragrance mein Rose aur Oud ka blend hai—Rose romance ko trigger karta hai aur Oud ek strong, grounding effect deta hai, jisse couples bina kisi hesitation ke apne bade sapno aur goals ke baare mein baat kar sakein. Yeh sirf ek date nahi, balki ek partnership building exercise hai.", usage: "Set the mood by lighting the candle in a quiet space where you both feel comfortable dreaming big. Draw a card and take turns answering. Let the deep, luxurious aroma guide your thoughts toward the future you want to build together.", process: "Candle ko ek luxury dark-amber glass vessel mein dala gaya hai jo candle ki flame ko ek deep golden glow deta hai. Wax mein premium Bulgarian Rose extracts aur smokey Oud oils ka use kiya gaya hai for a sophisticated aroma. Iska card box ek dual-tone metallic rose aur mauve finish mein aata hai, jisme rounded-corner cards hain jo rose-gold borders ke sath aate hain, taaki har card nikaalte waqt ek premium \"gift\" jaisa feel aaye." },
+            72: { title: "Mild Rose: The Anniversary Dine-In Kit", specialty: "This kit is the crown jewel of the \"Dine In\" collection, specifically curated to transform a home-cooked anniversary dinner into a 5-star sensory experience. The speciality lies in the Aroma-Harmony technology—the \"Mild Rose\" fragrance is engineered to be exceptionally light and non-intrusive. Unlike standard candles, it complements the natural aroma of your food, enhancing the dining experience rather than competing with it. It’s designed for partners who want to bring the elegance of a luxury restaurant into their own dining room, creating a romantic, softly lit sanctuary for their special milestones.", usage: "Arrange the pillar candle as the central focus of your table and place the two taper candles on either side to create a classic \"Golden Triangle\" of light. Light the wicks 15 minutes before the meal is served to allow the subtle floral notes to settle and blend perfectly with the savory aromas of your dinner.", process: "The kit features a multi-candle arrangement: one large, textured pillar candle and two elegant, slim taper candles. All are hand-poured using a 100% premium soy wax blend to ensure a clean, soot-free, and long-lasting burn. The pillar candle is finished with a luxury parchment label and metallic gold branding. The entire set is housed in a bespoke, chocolate-brown \"Meltix\" signature box featuring intricate gold filigree embossing." },
+            73: { title: "Emerald Evening: The Gourmet Dine-In Kit", specialty: "This kit is designed for the couple that treats every home-cooked meal like a culinary event. The speciality of this set is its neutralizing scent profile—the wax is infused with very light, crisp notes of white tea and ginger, specifically chosen to cleanse the palate and clear the air of cooking smells like garlic or oils without clashing with your food. It provides the perfect \"Golden Hour\" lighting for your table, making the presentation of your dishes look as good as they taste. It's the ultimate gift for a partner who loves to host \"Dine In\" dates, turning your kitchen table into a sophisticated bistro.", usage: "Place the central pillar candle as your anchor piece and set the two taper candles in your favorite holders on either end of the table. Light all three just as you begin plating the food to signal the start of a focused, intentional meal where the conversation and the flavors are the stars of the show.", process: "This premium trio includes one wide pillar candle and two elegant taper candles, all hand-cast in a creamy, high-quality soy wax blend. The candles are wrapped in sophisticated textured parchment labels with rose-gold foiling. The entire kit is presented in a luxury forest-green gift box with a rose-gold metallic trim and a plush cream-colored insert that keeps the candles perfectly protected." },
+            74: { title: "White Musk: The Dine-In Romance Kit", specialty: "This kit is for the partner who loves a \"sensory-rich\" dining experience that goes beyond just the food. The speciality here is the Botanical-Infusion pillar and the separate White Musk Essence vial. The fragrance is designed with a \"Clean Base\" profile—it doesn't fight against the aroma of your food. Instead, the soft white musk creates a luxurious atmosphere that feels like a private fine-dining room. It makes the date interactive by allowing you to control the scent intensity throughout the meal, ensuring the atmosphere is as curated as the menu.", usage: "Arrange the petal-embedded pillar as your main center-piece and light the two taper candles to add height and a warm, flattering glow to the table. For an extra sensory boost between courses, uncork the \"White Musk Essence\" vial to refresh the air and transition the mood from dining to deep conversation.", process: "The main pillar candle is hand-poured with premium soy wax and features real, hand-pressed dried peony petals embedded within the outer layers for an organic, artisanal look. The two cream-colored taper candles are designed to be dripless and smokeless to keep your table setting pristine. The entire kit is presented in a boutique-quality taupe gift box with embossed copper branding." },
+            75: { title: "Sandalwood Infusion: The Earthy Dine-In Kit", specialty: "This kit is designed for couples who enjoy bold, rich flavors and deep, grounding conversations. The speciality of the Sandalwood Infusion is its warm, woody aroma that acts as a perfect backdrop for a hearty meal. Unlike floral scents that can clash with savory dishes, sandalwood complements the \"umami\" notes of a dinner—making it ideal for nights involving red wine, grilled specialties, or rich pastas. It creates a sophisticated, \"fine-dining\" atmosphere that makes staying at home feel like a luxury getaway, helping partners focus entirely on the food and each other.", usage: "Arrange the large, textured pillar candle in the center of your table to act as the \"heart\" of the meal. Place the two slim taper candles in gold holders on either side to add elegant, flickering height. Light the set 10 minutes before sitting down; the resulting \"Golden Triangle\" of light is specifically designed to cast a flattering, romantic glow across the table while the scent subtly preps the senses for a gourmet experience.", process: "This premium trio features one hand-cast pillar candle with a unique \"stone-texture\" finish and two elegant, dripless taper candles. All are crafted from a 100% natural soy wax blend for a clean, non-toxic burn that won't interfere with the taste of your food. The pillar is finished with a minimalist gold \"Meltix\" band. The entire kit is housed in a boutique charcoal-brown gift box with embossed gold-foil branding and a custom-molded insert for maximum protection." },
+            76: { title: "Rose & Sandalwood: The Signature Dine-In Romance Kit", specialty: "This is the flagship kit of the \"Dine In\" collection, designed for an unforgettable evening of high-end romance. The speciality is the Dual-Note Balance of delicate Rose and grounding Sandalwood. This specific combination is scientifically curated to stimulate both the heart and the mind—Rose triggers affection and romance, while Sandalwood provides a calm, steady energy. It’s the perfect companion for a multi-course dinner, ensuring the atmosphere transitions smoothly from the excitement of the meal to a deep, lingering connection long after the plates are cleared.", usage: "Place the embossed rose pillar candle in the center of your table as the centerpiece. Arrange the two taper candles in their signature twisted copper holders on either side to create a sophisticated, warm glow. Light the set 15 minutes before dining to allow the sophisticated floral-woody aroma to harmonize with your food's presentation.", process: "This kit features a premium hand-cast pillar candle with a custom-etched rose pattern and two drip-free taper candles. We use a high-grade soy wax blend for a clean, non-toxic burn. The set includes two exclusive twisted copper-finish candle holders. All elements are beautifully presented in a luxury burgundy gift box with rose-gold metallic detailing and a premium soft-touch finish." },
+            77: { title: "Toasted Caramel & Hot Chocolate: The Cozy Movie Night Kit", specialty: "This kit is designed for the ultimate \"stay-at-home\" date. The speciality of this set is the Gourmet Cinema Fragrance—a rich, indulgent blend of toasted caramel and velvety hot chocolate that instantly transforms your living room into a warm, cozy sanctuary. It moves beyond being a simple product by offering a complete ritual: from lighting the wicks with dedicated long-stem matches to extinguishing them with a premium snuffer. It’s the perfect gift for partners who value comfort and quality time, making even a casual movie marathon feel like a luxury private screening.", usage: "Place both amber glass candles on a stable, heat-resistant surface within your movie-watching nook. Use the included Meltix matches to light the wicks just as the opening credits begin. When the evening is over, use the copper snuffer to extinguish the flames; this prevents unwanted smoke from interfering with the sweet lingering aroma and keeps the wax surface pristine for your next viewing.", process: "This premium kit includes two 150g hand-poured candles in deep amber glass vessels that cast a soft, ambient glow. We use a high-quality, slow-burning soy-wax blend infused with premium, dessert-inspired fragrance oils for a long-lasting \"hot throw.\" The set is completed with a heavy-duty copper-finish snuffer and a custom matchbox, all nestled within a luxury chocolate-brown velvet-lined gift box featuring embossed rose-gold branding." },
+            78: { title: "The Cinema Lobby Duo", specialty: "Yeh kit specifically \"Netflix & Chill\" nights ke liye banaya gaya hai. Iski speciality iski Dual-Scent Layering hai. Jab aap \"Vanilla & Caramel Popcorn\" ki mithaas aur \"Dark Chocolate & Spice\" ki depth ko ek saath jalate hain, toh ghar ka mahol bilkul ek high-end cinema lobby jaisa ho jata hai. Yeh un couples ke liye perfect hai jo bahar jaane ke bajaye ghar pe movie dekhna pasand karte hain, kyunki yeh unki movie night ko ek immersive sensory experience mein badal deta hai.", usage: "Movie start hone se 15 minute pehle badi wali \"Vanilla & Caramel Popcorn\" candle jalayein taaki theatre wali base khushbu set ho jaye. Movie start hote hi choti \"Dark Chocolate & Spice\" candle jalayein jo mahol mein warmth aur depth add karegi. Movie khatam hone pe included copper snuffer ka use karein taaki smoke na ho aur popcorn ki mithi khushbu kamre mein bani rahe.", process: "Is premium kit mein do alag hand-poured candles hain: ek 250g amber jar mein popcorn scent aur ek 150g frosted vessel mein chocolate scent. Dono mein high-quality soy-wax aur lead-free wicks use ki gayi hain. Kit ke saath ek luxury wooden matchbox aur ek precision copper snuffer aata hai, jo ek navy-blue Meltix gold-foil box mein beautifully pack hota hai." },
+            79: { title: "The Sweet Marathon Trio", specialty: "This kit is for the ultimate binge-watching session where one scent just isn’t enough. The speciality of this trio is the \"Scent Transition\" experience. It features three iconic dessert aromas—Toasted Caramel, Hot Chocolate, and Cinnamon Roll—designed to be layered throughout a movie marathon. It turns your living room into a gourmet bakery, making it the perfect gift for couples who love to \"hibernation mode\" together. It’s not just a candle; it’s a full sensory menu for your night in.", usage: "Start your first movie by lighting the \"Cinnamon Roll\" candle to set a warm, bakery-fresh base. As the night progresses, light the \"Toasted Caramel\" for a deeper sweetness. Save the \"Hot Chocolate\" for the final film or late-night cuddles to bring a rich, velvety finish to the atmosphere. Use the included copper snuffer to \"edit\" your room's aroma without the smell of smoke interrupting the movie.", process: "This set features three premium 150g hand-poured glass jars with sleek silver-chrome lids. We use a high-performance soy-wax blend that provides a consistent \"hot throw\" even in large rooms. The kit includes a custom Meltix matchbox and a precision-crafted rose-gold snuffer, all designed to sit beautifully on a coffee table or bedside." },
+            80: { title: "The Netflix Sanctuary", specialty: "This kit is for the couple whose favorite date night is a \"Netflix Home\" marathon. The speciality is the Decadent Scent Fusion—the buttery, golden mithaas of \"Toasted Caramel\" meets the deep, warm, and slightly kicky \"Hot Chocolate & Spice.\" It’s designed to make your bedroom or living room feel like a high-end private suite. The spice notes are scientifically chosen to create a sense of physical warmth and comfort, making it the perfect \"Stress-Buster\" for a long week.", usage: "Set the wooden tray on your bed or coffee table. Light the \"Toasted Caramel\" candle 10 minutes before starting your show to build a sweet base layer. As soon as you hit \"Play,\" light the \"Hot Chocolate & Spice\" to add that rich, cozy depth. When the binge-watching is done, use the included bronze snuffer to extinguish the flames—it ensures the sweet aroma stays in the air without any smoky after-smell.", process: "This premium set features two large 250g hand-poured glass jars: one in a warm amber finish and the other in a deep cocoa-tinted glass. We use a high-quality, slow-burning soy wax for a clean 55-hour burn. The kit comes complete with a custom-branded walnut wooden tray, a signature Meltix gold-foil matchbox, and a professional-grade long-handle bronze snuffer." },
+            81: { title: "The Home Cinema Masterpiece", specialty: "This is the grand finale of the \"Cozy\" collection. The speciality of this duo is the Streaming Sanctuary Ambiance—it is specifically designed to harmonize with the visual and audio energy of long-form movie marathons. The blend of Madagascar Vanilla, decadent Salted Caramel, and earthy Tonka Bean creates a \"Premium Lounge\" atmosphere that mimics the comfort of a 5-star private cinema. The Salted Caramel provides a savory-sweet hit that perfectly complements a bowl of popcorn, while the Tonka adds a sophisticated, woody depth that keeps the room feeling grounded and cozy for hours.", usage: "Place both oversized jars on the coffee table to create a central glow. Light them 15 minutes before the opening credits to establish a rich, welcoming base layer of fragrance. The amber glass is designed to diffuse light softly, ensuring there is no glare on the TV screen during dark scenes. When the marathon is over, use the included copper snuffer to extinguish the flames; this preserves the sweet, lingering aroma in the room without the interruption of smoke.", process: "This flagship kit features two 400g large-format amber apothecary jars with minimalist cream labels. The wax is a proprietary, slow-burning soy blend that ensures a clean, non-toxic burn for up to 70 hours per jar. We’ve utilized a double-concentration of fragrance oils to ensure the \"hot throw\" fills even large, open living rooms. The set is completed with a heavy-duty wooden matchbox and a precision rose-gold snuffer." }
+        };
+
+        const dragArea = document.getElementById('drag-area');
+        const track = document.getElementById('carousel-track');
+        const bgTitle = document.getElementById('bg-dynamic-title');
+        let autoScrollSpeed = 1.0; 
+        let isAutoScrollActive = true; 
+        const stopBtn = document.getElementById('stop-showcase-btn');
+        
+        let isLoggedIn = false;
+        let currentUser = JSON.parse(localStorage.getItem('meltix_user')) || null;
+        if(currentUser) isLoggedIn = true;
+
+        function handleSelection(selectedType) {
+            document.getElementById('accordion-box').classList.add('fade-out-active');
+            bgTitle.innerText = selectedType.split(' ')[0].toUpperCase();
+            loadImages(selectedType);
+
+            setTimeout(() => {
+                document.getElementById('product-showcase').classList.add('show');
+                document.getElementById('fab-menu').classList.add('show');
+            }, 800);
+        }
+
+        function toggleFabMenu() {
+            document.getElementById('fab-options').classList.toggle('open');
+        }
+
+        function switchVariant(variantName) {
+            document.getElementById('fab-options').classList.remove('open');
+            const showcase = document.getElementById('product-showcase');
+            showcase.style.opacity = '0'; 
+            
+            setTimeout(() => {
+                bgTitle.innerText = variantName.split(' ')[0].toUpperCase();
+                loadImages(variantName); 
+                const images = document.querySelectorAll('.img-container');
+                images.forEach(img => img.classList.remove('center-glow'));
+                showcase.style.opacity = '1'; 
+                requestAnimationFrame(forceRenderFrame);
+            }, 500);
+        }
+
+        function forceRenderFrame() {
+            if (!dragArea || !track) return;
+            const centerPoint = dragArea.getBoundingClientRect().left + dragArea.clientWidth / 2;
+            const images = document.querySelectorAll('.img-container');
+            images.forEach(img => {
+                const imgCenter = img.getBoundingClientRect().left + img.clientWidth / 2;
+                const dist = Math.abs(centerPoint - imgCenter);
+                const maxDist = dragArea.clientWidth / 1.5; 
+                if (dist < maxDist) {
+                    const ratio = 1 - (dist / maxDist);
+                    const scale = 0.7 + (0.5 * ratio); 
+                    if (scale > 1.05) {
+                        img.classList.add('center-glow');
+                    }
+                }
+            });
+        }
+
+        let isDragging = false;
+        let isActuallyDragging = false; 
+        let mouseDownX = 0; 
+        const clickThreshold = 10; 
+        let isScrubbing = false;
+        let startX, startScrollLeft;
+        const scrubber = document.getElementById('custom-scrubber');
+
+        dragArea.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            isActuallyDragging = false; 
+            mouseDownX = e.pageX; 
+            startX = e.pageX;
+            startScrollLeft = dragArea.scrollLeft;
+            dragArea.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragArea.style.cursor = 'grab';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const diff = e.pageX - startX;
+            dragArea.scrollLeft = startScrollLeft - diff;
+
+            if (Math.abs(e.pageX - mouseDownX) > clickThreshold) {
+                isActuallyDragging = true;
+            }
+        });
+
+        scrubber.addEventListener('input', () => {
+            isScrubbing = true; let maxScroll = track.scrollWidth - dragArea.clientWidth; dragArea.scrollLeft = (scrubber.value / 100) * maxScroll;
+        });
+        scrubber.addEventListener('change', () => { isScrubbing = false; });
+        scrubber.addEventListener('mouseup', () => { isScrubbing = false; });
+        scrubber.addEventListener('touchend', () => { isScrubbing = false; });
+
+        function loadImages(category) {
+            track.innerHTML = '';
+            let likedProducts = JSON.parse(localStorage.getItem('meltix_likes')) || [];
+
+            productData[category].forEach(item => {
+                let container = document.createElement('div');
+                container.className = 'img-container';
+                
+                let img = document.createElement('img');
+                img.className = 'carousel-img';
+                img.src = item.src;
+                img.draggable = false;
+                
+                let likeBtn = document.createElement('button');
+                likeBtn.className = 'like-btn';
+                likeBtn.setAttribute('data-product-id', item.id);
+                
+                if (likedProducts.includes(item.id.toString())) {
+                    likeBtn.classList.add('liked');
+                }
+
+                likeBtn.innerHTML = `
+                    <svg class="heart-icon" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                `;
+                
+                likeBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    
+                    let isLiked = this.classList.toggle('liked');
+                    let productId = this.getAttribute('data-product-id');
+
+                    if (isLiked) {
+                        if (!likedProducts.includes(productId)) likedProducts.push(productId);
+                    } else {
+                        likedProducts = likedProducts.filter(id => id !== productId);
+                    }
+                    localStorage.setItem('meltix_likes', JSON.stringify(likedProducts));
+
+                    fetch('/like_product', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            action: isLiked ? 'like' : 'unlike',
+                            name: category + " Kit", 
+                            image_file: item.src.split('/').pop() 
+                        })
+                    })
+                    .then(response => response.json())
+                    .catch(error => console.error('Error:', error));
+                });
+
+                container.addEventListener('click', () => {
+                    if (!isActuallyDragging) {
+                        openModal(item.id);
+                    }
+                });
+
+                container.appendChild(img);
+                container.appendChild(likeBtn);
+                track.appendChild(container);
+            });
+            
+            setTimeout(() => {
+                dragArea.scrollLeft = 0;
+                scrubber.value = 0;
+            }, 50);
+        }
+
+        function renderLoop() {
+            if (document.getElementById('product-showcase').classList.contains('show')) {
+                let maxScroll = track.scrollWidth - dragArea.clientWidth;
+
+                if (!isDragging && !isScrubbing && maxScroll > 0 && isAutoScrollActive) {
+                    dragArea.scrollLeft += autoScrollSpeed;
+                    if (dragArea.scrollLeft >= maxScroll - 2) {
+                        dragArea.scrollLeft = 0; 
+                    }
+                }
+
+                if (!isScrubbing && maxScroll > 0) {
+                    scrubber.value = (dragArea.scrollLeft / maxScroll) * 100;
+                }
+
+                const centerPoint = dragArea.getBoundingClientRect().left + dragArea.clientWidth / 2;
+                const images = document.querySelectorAll('.img-container');
+
+                images.forEach(img => {
+                    const imgCenter = img.getBoundingClientRect().left + img.clientWidth / 2;
+                    const dist = Math.abs(centerPoint - imgCenter);
+                    const maxDist = dragArea.clientWidth / 1.5; 
+
+                    let scale = 0.7; 
+                    let opacity = 0.3; 
+                    let zIndex = 1;
+
+                    if (dist < maxDist) {
+                        const ratio = 1 - (dist / maxDist);
+                        scale = 0.7 + (0.5 * ratio); 
+                        opacity = 0.3 + (0.7 * ratio); 
+                        zIndex = Math.round(ratio * 10);
+                    }
+
+                    img.style.transform = `scale(${scale})`;
+                    img.style.opacity = opacity;
+                    img.style.zIndex = zIndex;
+
+                    if (scale > 1.05) {
+                        img.classList.add('center-glow');
+                    } else {
+                        img.classList.remove('center-glow');
+                    }
+                });
+            }
+            requestAnimationFrame(renderLoop);
+        }
+        requestAnimationFrame(renderLoop); 
+
+        if(stopBtn) {
+            stopBtn.addEventListener('click', function() {
+                isAutoScrollActive = !isAutoScrollActive;
+                if (isAutoScrollActive) {
+                    this.innerText = "Stop Auto Showcasing";
+                    this.style.background = "linear-gradient(to right, #d4a373 20%, #ffffff 50%, #d4a373 80%)"; 
+                    this.style.webkitBackgroundClip = "text";
+                    this.style.color = "transparent";
+                } else {
+                    this.innerText = "Start Auto Showcasing";
+                    this.style.background = "none";
+                    this.style.webkitBackgroundClip = "none";
+                    this.style.color = "#a89f91"; 
+                    this.style.backgroundColor = "rgba(10, 8, 5, 0.9)"; 
+                }
+            });
+        }
+
+        // ==========================================
+        // 🔴 MASTER MODAL JAVASCRIPT LOGIC 🔴
+        // ==========================================
+        const modal = document.getElementById('productModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSpecialty = document.getElementById('modalSpecialty');
+        const modalUsage = document.getElementById('modalUsage'); 
+        const modalProcess = document.getElementById('modalProcess');
+        const modalCategory = document.getElementById('modalCategory');
+
+        const reviewForm = document.getElementById('reviewForm');
+        const loginPrompt = document.getElementById('loginToReviewPrompt');
+        const reviewedMessage = document.getElementById('alreadyReviewedMessage');
+
+        function handleCredentialResponse(response) {
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const userData = JSON.parse(jsonPayload);
+            
+            currentUser = {
+                name: userData.name,
+                email: userData.email,
+                picture: userData.picture
+            };
+            
+            isLoggedIn = true;
+            localStorage.setItem('meltix_user', JSON.stringify(currentUser)); 
+            
+            toggleAuthFormState(activeProductId); 
+        }
+
+        function toggleAuthFormState(productId) {
+            let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+            
+            if (!isLoggedIn) {
+                reviewForm.style.display = 'none';
+                loginPrompt.style.display = 'block';
+                reviewedMessage.style.display = 'none';
+            } else if (userReviews.includes(productId.toString())) {
+                reviewForm.style.display = 'none';
+                loginPrompt.style.display = 'none';
+                reviewedMessage.style.display = 'block';
+            } else {
+                reviewForm.style.display = 'flex';
+                reviewForm.classList.remove('locked'); 
+                loginPrompt.style.display = 'none';
+                reviewedMessage.style.display = 'none';
+                
+                if (currentUser && currentUser.name) {
+                    document.getElementById('reviewName').value = currentUser.name;
+                }
+            }
+        }
+
+        const stars = document.querySelectorAll('.form-star');
+        const ratingInput = document.getElementById('reviewRating');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const val = this.getAttribute('data-val');
+                stars.forEach(s => {
+                    s.classList.toggle('active', s.getAttribute('data-val') <= val);
+                });
+            });
+            
+            star.parentElement.addEventListener('mouseleave', function() {
+                const currentVal = ratingInput.value;
+                stars.forEach(s => {
+                    s.classList.toggle('active', s.getAttribute('data-val') <= currentVal);
+                });
+            });
+
+            star.addEventListener('click', function() {
+                ratingInput.value = this.getAttribute('data-val');
+            });
+        });
+        
+        let currentReviews = []; 
+
+        async function fetchAndRenderReviews(productId) {
+            try {
+                const response = await fetch(`/get_reviews/${productId}`);
+                const data = await response.json();
+                
+                currentReviews = data.reviews_data.map((r, index) => ({
+                    ...r,
+                    id: r.id || index, 
+                    likes: r.likes !== undefined ? r.likes : 0, 
+                    userAction: null 
+                }));
+
+                renderReviewsUI(); 
+            } catch(e) {
+                console.error("Error loading reviews", e);
+            }
+        }
+
+        function renderReviewsUI() {
+            const displayStars = document.getElementById('displayStars');
+            const reviewsList = document.getElementById('reviewsList');
+
+            currentReviews.sort((a, b) => b.likes - a.likes);
+
+            let totalRating = 0;
+            currentReviews.forEach(r => totalRating += Number(r.rating));
+            let avgRating = currentReviews.length > 0 ? (totalRating / currentReviews.length) : 0;
+            
+            avgRating = Math.round(avgRating * 2) / 2;
+
+            let starsHtml = '';
+            for(let i=1; i<=5; i++) {
+                if(avgRating >= i) {
+                    starsHtml += `<span class="star gold">★</span>`; 
+                } else if(avgRating >= i - 0.5) {
+                    starsHtml += `<span class="star half-gold">★</span>`; 
+                } else {
+                    starsHtml += `<span class="star grey">★</span>`; 
+                }
+            }
+
+            if(currentReviews.length === 0) {
+                starsHtml += `<span class="rating-text">No reviews yet</span>`;
+                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
+            } else {
+                starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
+                
+                reviewsList.innerHTML = currentReviews.map((r) => {
+                    let likeActive = r.userAction === 'like' ? 'active-like' : '';
+                    let dislikeActive = r.userAction === 'dislike' ? 'active-dislike' : '';
+
+                    return `
+                    <div class="review-item">
+                        <div class="review-header-flex">
+                            <p class="review-user">${r.user_name} <span style="color:#d4a373; font-size:0.8rem; margin-left:10px;">${'★'.repeat(r.rating)}</span></p>
+                            <button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>
+                        </div>
+                        <p class="review-text">"${r.review_text}"</p>
+                        
+                        <div class="review-actions-bar">
+                            <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
+                                <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
+                            </button>
+                            <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
+                                <span class="act-icon">👎</span>
+                            </button>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+            displayStars.innerHTML = starsHtml;
+        }
+
+        function handleReviewAction(reviewId, actionType) {
+            let review = currentReviews.find(r => r.id === reviewId);
+            if(!review) return;
+
+            if (actionType === 'like') {
+                if (review.userAction === 'like') {
+                    review.likes--;
+                    review.userAction = null;
+                } else {
+                    review.likes++;
+                    review.userAction = 'like';
+                }
+            } else {
+                if (review.userAction === 'dislike') {
+                    review.userAction = null;
+                } else {
+                    if (review.userAction === 'like') review.likes--;
+                    review.userAction = 'dislike';
+                }
+            }
+            renderReviewsUI(); 
+        }
+
+        function deleteReview(reviewId) {
+            if(confirm("Are you sure you want to delete this review?")) {
+                currentReviews = currentReviews.filter(r => r.id !== reviewId);
+                
+                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+                userReviews = userReviews.filter(id => id !== activeProductId.toString());
+                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
+                toggleAuthFormState(activeProductId);
+
+                renderReviewsUI();
+
+                fetch(`/delete_review/${reviewId}`, { method: 'DELETE' }).catch(e => console.log('Pinged backend to delete'));
+            }
+        }
+
+        let activeProductId = null;
+
+        function openModal(productId) {
+            activeProductId = productId;
+            let targetProduct = null;
+            let targetCategory = "";
+            
+            for (const category in productData) {
+                targetProduct = productData[category].find(item => item.id == productId);
+                if (targetProduct) {
+                    targetCategory = category;
+                    break;
+                }
+            }
+            if (!targetProduct) return;
+
+            const mainImg = document.getElementById('modalMainImage');
+            mainImg.src = targetProduct.src;
+
+            const thumbs = document.querySelectorAll('.thumb-img');
+            thumbs.forEach((thumb, index) => {
+                thumb.src = targetProduct.src;
+                if(index === 0) thumb.classList.add('active-thumb');
+                else thumb.classList.remove('active-thumb');
+            });
+
+            // 🔴 EXACT DATE KIT DETAILS BINDED HERE 🔴
+            const details = productDetails[productId];
+            modalCategory.innerText = `Meltix Date Kit Collection`;
+            if (details) {
+                modalTitle.innerText = details.title;
+                modalSpecialty.innerText = details.specialty;
+                modalProcess.innerText = details.process;
+                
+                // Handle 'How to Use' if it exists in data
+                if (details.usage) {
+                    modalUsage.innerText = details.usage;
+                    modalUsage.parentElement.style.display = "block";
+                } else {
+                    modalUsage.parentElement.style.display = "none";
+                }
+            }
+
+            toggleAuthFormState(productId);
+            fetchAndRenderReviews(productId);
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; 
+            activeProductId = null;
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value;
+            const text = document.getElementById('reviewText').value;
+            const rating = ratingInput.value;
+
+            if(rating === "0") {
+                alert("Please select a star rating!");
+                return;
+            }
+
+            const btn = document.getElementById('submitReviewBtn');
+            btn.innerText = "Posting...";
+
+            try {
+                await fetch('/submit_review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_id: activeProductId,
+                        user_name: name,
+                        review_text: text,
+                        rating: rating
+                    })
+                });
+
+                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+                userReviews.push(activeProductId.toString());
+                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
+
+                toggleAuthFormState(activeProductId);
+                reviewForm.reset();
+                ratingInput.value = "0";
+                stars.forEach(s => s.classList.remove('active'));
+
+                fetchAndRenderReviews(activeProductId); 
+
+            } catch (err) {
+                console.error(err);
+                btn.innerText = "Error. Try Again.";
+                btn.style.borderColor = "#ff4b4b";
+            }
+        }
+
+        async function toggleWishlist(btnElement) {
+            if (!isLoggedIn || !currentUser) {
+                alert("Bhai, pehle Google se Sign In kar le!");
+                return;
+            }
+
+            try {
+                const response = await fetch('/toggle_wishlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_email: currentUser.email, 
+                        product_id: activeProductId 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === "success") {
+                    if (data.action === "added") {
+                        btnElement.classList.add('saved');
+                    } else {
+                        btnElement.classList.remove('saved');
+                    }
+                }
+            } catch(e) {
+                console.error("Wishlist error:", e);
+            }
+        }
+
+        function changeModalImage(clickedElement, imgSrc) {
+            document.getElementById('modalMainImage').src = imgSrc;
+            const thumbs = document.querySelectorAll('.thumb-img');
+            thumbs.forEach(thumb => thumb.classList.remove('active-thumb'));
+            clickedElement.classList.add('active-thumb');
+        }
+
+        function openLightbox(imageSrc) {
+            if (!imageSrc || imageSrc.includes(window.location.href)) return; 
+            
+            let existing = document.getElementById('meltix-lightbox');
+            if (existing) existing.remove();
+
+            let lightbox = document.createElement('div');
+            lightbox.id = 'meltix-lightbox';
+            lightbox.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px);';
+            
+            let img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.cssText = 'max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 12px; box-shadow: 0 0 40px rgba(212,163,115,0.6); transform: scale(0.8); transition: transform 0.3s ease;';
+            
+            lightbox.appendChild(img);
+            document.body.appendChild(lightbox); 
+            
+            setTimeout(() => {
+                lightbox.style.opacity = '1';
+                img.style.transform = 'scale(1)';
+            }, 10);
+
+            lightbox.onclick = function() {
+                lightbox.style.opacity = '0';
+                img.style.transform = 'scale(0.8)';
+                setTimeout(() => lightbox.remove(), 300);
+            };
+        }
+    </script>
+</body>
+</html>

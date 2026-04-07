@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Customer Favorites</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='suggestion.css') }}">
+</head>
+<body>
+
+    <a href="/shop" class="back-btn"><span class="pointer-star">✦</span> Back to Collection</a>
+
+    <div id="intro-screen">
+        <div class="scroll-prompt">Scroll to Explore</div>
+        <div class="scroll-arrow"></div>
+    </div>
+
+    <div id="scroll-container">
+        <div class="sticky-wrapper">
+            <canvas id="video-canvas"></canvas>
+            
+            <div id="bg-glow-wrapper" class="bg-glow-wrapper">
+                <div class="flicker-glow"></div>
+            </div>
+
+            <div class="vignette"></div> 
+            
+            <div id="text-overlay">
+                <div id="top-group">
+                    <div class="overline" id="text-1">MELTIX EXCLUSIVES</div>
+                    <div class="text-divider" id="divider-line"></div>
+                </div>
+                <h1 class="main-title" id="text-2"></h1>
+                <div class="subtitle" id="text-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="next-section">
+        <h2>The Collection Awaits</h2>
+        
+        <div class="suggestion-grid">
+            {% if top_products %}
+                {% for product in top_products %}
+                <div class="suggest-card">
+                    <div class="img-wrapper">
+                        <img src="{{ url_for('static', filename='images/' + product.image_file) }}" alt="{{ product.name }}" onerror="this.src='https://via.placeholder.com/250x250/15100c/d4a373?text=Meltix+Candle'">
+                    </div>
+                    
+                    <div class="suggest-info">
+                        <h3>{{ product.name }}</h3>
+                        <div class="like-count">
+                            <svg class="mini-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            {{ product.likes }} Loves
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-likes-msg">No candles liked yet! Go explore the collection and drop some hearts. 🤍</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+        window.addEventListener('beforeunload', function() { window.scrollTo(0, 0); });
+        window.scrollTo(0, 0);
+
+        const canvas = document.getElementById('video-canvas');
+        const context = canvas.getContext('2d');
+        const frameCount = 241; 
+        
+        const currentPath = "{{ url_for('static', filename='images/frames/ezgif-frame-') }}";
+        const currentFrame = index => (
+            currentPath + index.toString().padStart(3, '0') + '.jpg'
+        );
+
+        const images = [];
+        canvas.width = 1920; canvas.height = 1080;
+
+        for (let i = 1; i <= frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            images.push(img);
+            if (i === 1) {
+                img.onload = () => {
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.style.filter = `blur(4px) brightness(0.6)`;
+                }
+            }
+        }
+
+        function splitHTMLText(elementId, htmlString) {
+             const el = document.getElementById(elementId);
+             el.innerHTML = '';
+             const lines = htmlString.split('<br>');
+             
+             lines.forEach((line, lIdx) => {
+                 const words = line.split(' ');
+                 words.forEach((word, wIdx) => {
+                     const wordWrap = document.createElement('span');
+                     wordWrap.className = 'word-wrapper';
+                     word.split('').forEach(char => {
+                         const charSpan = document.createElement('span');
+                         charSpan.className = 'reveal-char';
+                         charSpan.innerHTML = char;
+                         wordWrap.appendChild(charSpan);
+                     });
+                     el.appendChild(wordWrap);
+                     if(wIdx < words.length - 1) {
+                         const space = document.createElement('span');
+                         space.className = 'reveal-char';
+                         space.innerHTML = '&nbsp;';
+                         el.appendChild(space);
+                     }
+                 });
+                 if(lIdx < lines.length - 1) el.appendChild(document.createElement('br'));
+             });
+        }
+
+        // NEW TEXT INJECTED HERE
+        splitHTMLText('text-2', "Exactly what<br>you'll love");
+        
+        const text3El = document.getElementById('text-3');
+        text3El.innerHTML = "on our customers' recommendation".split(' ').map(word => `<span class="reveal-word">${word}</span>`).join(' ');
+
+        const allLetterSpans = document.querySelectorAll('#text-2 .reveal-char');
+        const allWordSpans = document.querySelectorAll('.reveal-word');
+
+        const introScreen = document.getElementById('intro-screen');
+        const scrollContainer = document.getElementById('scroll-container');
+        const topGroup = document.getElementById('top-group');
+        const text1 = document.getElementById('text-1');
+        const dividerLine = document.getElementById('divider-line');
+        const bgGlowWrapper = document.getElementById('bg-glow-wrapper');
+
+        function mapRange(value, inMin, inMax) {
+            let res = (value - inMin) / (inMax - inMin);
+            return Math.max(0, Math.min(1, res));
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+
+            // Fade out intro quickly to avoid overlap
+            if (scrollTop > 50) {
+                introScreen.style.opacity = '0'; introScreen.style.pointerEvents = 'none'; 
+            } else {
+                introScreen.style.opacity = '1'; introScreen.style.pointerEvents = 'auto';
+            }
+
+            const containerTop = scrollContainer.offsetTop;
+            const containerHeight = scrollContainer.offsetHeight;
+            const windowHeight = window.innerHeight;
+            let scrollFraction = (scrollTop - containerTop) / (containerHeight - windowHeight);
+            scrollFraction = Math.max(0, Math.min(1, scrollFraction));
+
+            requestAnimationFrame(() => {
+                const frameIndex = Math.floor(scrollFraction * (frameCount - 1));
+                if (images[frameIndex] && images[frameIndex].complete) {
+                    context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
+                }
+            });
+
+            // BG Glow Flicker Fade-in
+            bgGlowWrapper.style.opacity = mapRange(scrollFraction, 0.08, 0.20);
+            
+            // Canvas slowly brightens
+            let exposureProgress = mapRange(scrollFraction, 0.08, 0.40);
+            canvas.style.filter = `blur(4px) brightness(${0.6 + (exposureProgress * 0.4)})`;
+
+            // Phase 1: Line 1 Fades in AFTER intro screen is gone (0.10 - 0.18)
+            text1.style.opacity = mapRange(scrollFraction, 0.10, 0.18);
+
+            // Phase 2: Golden Line draws underneath Line 1 with FULL length (0.18 - 0.25)
+            // Width increased to 260px to fully underline the text
+            dividerLine.style.width = `${mapRange(scrollFraction, 0.18, 0.25) * 260}px`;
+
+            // Phase 3: Line 1 & Line shift UP together (0.25 - 0.35)
+            let topShift = mapRange(scrollFraction, 0.25, 0.35);
+            topGroup.style.transform = `translateY(${90 - (90 * topShift)}px)`;
+
+            // Phase 4: Line 2 comes letter-by-letter (0.35 - 0.65)
+            let t2Progress = mapRange(scrollFraction, 0.35, 0.65);
+            let charsToShow = Math.floor(t2Progress * allLetterSpans.length);
+            allLetterSpans.forEach((span, index) => {
+                span.style.opacity = index < charsToShow ? '1' : '0';
+            });
+
+            // Phase 5: Line 3 comes word-by-word (0.70 - 0.85)
+            let t3Progress = mapRange(scrollFraction, 0.70, 0.85);
+            let wordsToShow = Math.floor(t3Progress * allWordSpans.length);
+            allWordSpans.forEach((span, index) => {
+                span.style.opacity = index < wordsToShow ? '1' : '0';
+            });
+        });
+    </script>
+</body>
+</html>

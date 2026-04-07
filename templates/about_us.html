@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Our Story</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='about_us.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="ambient-background">
+        <div class="glow-orb top-right"></div>
+        <div class="glow-orb bottom-left"></div>
+        <div id="particleContainer" class="particle-container"></div>
+    </div>
+
+    <nav class="top-nav">
+        <a href="javascript:history.back()" class="back-btn"><span>✦</span> Return</a>
+    </nav>
+
+    <div class="about-wrapper">
+        
+        <header class="about-header reveal split-section">
+            <div class="text-content">
+                <h4 class="sub-title">The Genesis</h4>
+                <h1 class="main-title">How We Made It</h1>
+                <div class="title-separator"></div>
+                <p class="story-text">
+                    Born in the vibrant heart of Delhi, Meltix started with a simple yet profound realization: gifts should speak when words fall short. We didn't just want to pour wax; we wanted to pour emotions. Countless nights of experimenting with temperatures, testing premium wax blends, and engineering the perfect 'hidden reveal' mechanism led to the birth of our signature interactive candles. From a small workspace idea to a luxury gifting phenomenon, Meltix is built on the belief that every flicker of light should uncover a beautiful memory.
+                </p>
+            </div>
+            <div class="image-content">
+                <img src="{{ url_for('static', filename='images/genesis.jpg') }}" alt="Meltix Genesis">
+            </div>
+        </header>
+
+        <section class="about-section reveal split-section reverse">
+            <div class="text-content">
+                <h2 class="section-title">Our Founder</h2>
+                <h3 class="person-name">Neha Singh</h3>
+                <div class="title-separator"></div>
+                <p class="story-text">
+                    The visionary behind the glow. Neha Singh envisioned Meltix as a bridge between luxury aesthetics and deeply personal connections. Recognizing that modern gifting lacked a tactile, emotional surprise, she pioneered the concept of embedding hidden messages within premium artisan candles. Her relentless pursuit of perfection, from selecting the finest fragrances to designing the unboxing experience, is the driving force that makes every Meltix creation a masterpiece.
+                </p>
+            </div>
+            <div class="image-content">
+                <img src="{{ url_for('static', filename='images/founder.jpg') }}" alt="Founder Neha Singh">
+            </div>
+        </section>
+
+        <div class="teams-grid">
+            
+            <div class="team-card reveal">
+                <div class="team-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/craft.jpg') }}" alt="Craft Team">
+                </div>
+                <div class="team-info">
+                    <h3 class="team-title">The Craft Team</h3>
+                    <p class="team-desc">
+                        Our artisans are the soul of Meltix. Armed with patience and precision, they hand-pour every batch of our signature wax blends. Whether it's meticulously placing golden alphabet beads or positioning our magic paper, they ensure the aesthetic integrity of every single candle before it cures.
+                    </p>
+                </div>
+            </div>
+
+            <div class="team-card reveal">
+                <div class="team-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/tech.jpg') }}" alt="Technical Team">
+                </div>
+                <div class="team-info">
+                    <h3 class="team-title">The Technical Team</h3>
+                    <p class="team-desc">
+                        Luxury doesn't stop at the physical product. Our tech wizards work tirelessly behind the scenes to craft a seamless, immersive digital experience. From intuitive web design to flawless systems, they ensure your journey with Meltix is just as enchanting online.
+                    </p>
+                </div>
+            </div>
+
+            <div class="team-card reveal">
+                <div class="team-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/security.jpg') }}" alt="Security Team">
+                </div>
+                <div class="team-info">
+                    <h3 class="team-title">Security & Clean Check</h3>
+                    <p class="team-desc">
+                        Beauty must be safe. This dedicated team rigorously tests every prototype. They calibrate wick sizes for the perfect melt pool, ensure all hidden elements are non-toxic, and verify that every candle burns clean and exactly as intended. Perfection is our baseline.
+                    </p>
+                </div>
+            </div>
+
+            <div class="team-card reveal">
+                <div class="team-img-wrapper">
+                    <img src="{{ url_for('static', filename='images/delivery.jpg') }}" alt="Delivery Team">
+                </div>
+                <div class="team-info">
+                    <h3 class="team-title">The Delivery Team</h3>
+                    <p class="team-desc">
+                        The final custodians of your gift. Handling delicate wax and fragile glass requires white-glove attention. Our dispatch experts pack every order with premium, shock-absorbent materials, ensuring your Meltix candle arrives in immaculate condition.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="footer-spacer"></div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            startDustParticles();
+            
+            const reveals = document.querySelectorAll('.reveal');
+            
+            function checkReveal() {
+                const windowHeight = window.innerHeight;
+                const elementVisible = 100;
+
+                reveals.forEach(reveal => {
+                    const elementTop = reveal.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - elementVisible) {
+                        reveal.classList.add('active');
+                    }
+                });
+            }
+            
+            checkReveal();
+            window.addEventListener('scroll', checkReveal);
+        });
+
+        function startDustParticles() {
+            const dustContainer = document.getElementById('particleContainer');
+            for (let i = 0; i < 120; i++) {
+                let particle = document.createElement('div');
+                particle.className = 'dust';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+                particle.style.animationDelay = (Math.random() * 10) + 's'; 
+                let size = Math.random() * 2 + 1; 
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                dustContainer.appendChild(particle);
+            }
+        }
+    </script>
+</body>
+</html>

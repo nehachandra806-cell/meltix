@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Profile Studio</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="ambient-background">
+        <div class="orb orb-gold"></div>
+        <div class="orb orb-rose"></div>
+        <div class="orb orb-cream"></div>
+        <div class="grain"></div>
+    </div>
+
+    <nav class="top-nav">
+        <a href="/shop" class="back-btn"><span>✦</span> Back to Shop</a>
+        <div class="brand-lockup">
+            <span class="brand-word">Meltix</span>
+            <span class="brand-sub">Profile Studio</span>
+        </div>
+    </nav>
+
+    <main class="profile-shell" id="profile-shell">
+        <section class="hero-panel">
+            <p class="eyebrow">Your Private Atelier</p>
+
+            <div class="avatar-stage">
+                <div class="avatar-ring"></div>
+                <div class="avatar-aura"></div>
+                <button class="avatar-trigger" id="avatar-trigger" type="button" aria-label="Customize avatar">
+                    <div class="avatar-empty-state" id="avatar-empty-state" aria-hidden="true">
+                        <span class="avatar-empty-title">Please Sign In</span>
+                        <span class="avatar-empty-copy">Continue with Google to reveal your profile portrait or save a custom avatar.</span>
+                    </div>
+                    <img id="hero-avatar" alt="Selected profile avatar" hidden>
+                </button>
+                <button class="avatar-edit-btn" id="open-avatar-modal" type="button" title="Customize Avatar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <h1 id="profile-name">Guest Flame</h1>
+            <p id="profile-email" class="hero-email">Continue with Google to access your saved candles, order tracking, and private profile settings.</p>
+
+            <div class="hero-stats">
+                <div class="stat-pill">
+                    <span class="stat-label">Total Reviews</span>
+                    <strong id="total-reviews">0</strong>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">Orders in Progress</span>
+                    <strong id="orders-in-progress">0</strong>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">Total Spent</span>
+                    <strong id="total-spent">INR 0</strong>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">Saved Candles</span>
+                    <strong id="wishlist-count">0</strong>
+                </div>
+            </div>
+
+            <div class="hero-actions">
+                <button class="primary-btn" id="hero-customize-btn" type="button">Open Avatar Gallery</button>
+                <a href="/shop" class="secondary-btn">Browse Collection</a>
+                <button class="secondary-btn google-cta-btn" id="google-signin-btn" type="button" hidden>Continue with Google</button>
+                <button class="danger-btn" id="sign-out-btn" type="button" hidden>Sign Out</button>
+            </div>
+        </section>
+
+        <section class="glass-card locked-gate" id="guest-gate" hidden>
+            <p class="card-kicker">Private Access</p>
+            <h2>Unlock Your Private Meltix Atelier</h2>
+            <p class="body-copy">Sign in with Google to view your saved candles, delivery timeline, rewards ledger, scent profile, and address book.</p>
+            <button class="primary-btn locked-gate-btn" id="guest-signin-btn" type="button">Continue with Google</button>
+        </section>
+
+        <section class="content-grid atelier-content" id="atelier-content">
+            <article class="glass-card account-card">
+                <div class="card-head">
+                    <p class="card-kicker">Account Snapshot</p>
+                    <h2>Profile Details</h2>
+                </div>
+
+                <div class="detail-list">
+                    <div class="detail-row">
+                        <span class="detail-label">Display Name</span>
+                        <strong class="detail-value" id="detail-name">Guest Flame</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email Address</span>
+                        <strong class="detail-value" id="detail-email">Not connected</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Current Portrait</span>
+                        <strong class="detail-value" id="detail-avatar">Awaiting sign-in</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Member Since</span>
+                        <strong class="detail-value" id="member-since">Today</strong>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Account Mode</span>
+                        <strong class="detail-value" id="detail-mode">Guest Session</strong>
+                    </div>
+                </div>
+
+                <p class="support-copy" id="support-copy">Sign in with Google to activate your private atelier and save your profile preferences.</p>
+            </article>
+
+            <article class="glass-card address-card">
+                <div class="card-head">
+                    <p class="card-kicker">Address Book</p>
+                    <h2>Shipping &amp; Billing Details</h2>
+                </div>
+
+                <form class="address-form" id="address-form">
+                    <div class="form-grid">
+                        <label class="field">
+                            <span>Phone Number</span>
+                            <input id="phone-number" type="tel" placeholder="+91 98XXXXXXXX">
+                        </label>
+                        <label class="field">
+                            <span>Shipping Name</span>
+                            <input id="shipping-name" type="text" placeholder="Recipient name">
+                        </label>
+                        <label class="field field-full">
+                            <span>Shipping Address Line 1</span>
+                            <input id="shipping-line1" type="text" placeholder="House number, street, area">
+                        </label>
+                        <label class="field field-full">
+                            <span>Shipping Address Line 2</span>
+                            <input id="shipping-line2" type="text" placeholder="Apartment, landmark, studio name">
+                        </label>
+                        <label class="field">
+                            <span>City</span>
+                            <input id="shipping-city" type="text" placeholder="City">
+                        </label>
+                        <label class="field">
+                            <span>State</span>
+                            <input id="shipping-state" type="text" placeholder="State">
+                        </label>
+                        <label class="field">
+                            <span>Postal Code</span>
+                            <input id="shipping-postal-code" type="text" placeholder="Postal code">
+                        </label>
+                        <label class="field">
+                            <span>Country</span>
+                            <input id="shipping-country" type="text" placeholder="Country">
+                        </label>
+                    </div>
+
+                    <label class="checkbox-row">
+                        <input id="billing-same" type="checkbox" checked>
+                        <span>Billing address is the same as shipping</span>
+                    </label>
+
+                    <div class="billing-panel" id="billing-panel">
+                        <div class="form-grid">
+                            <label class="field">
+                                <span>Billing Name</span>
+                                <input id="billing-name" type="text" placeholder="Billing name">
+                            </label>
+                            <label class="field field-full">
+                                <span>Billing Address Line 1</span>
+                                <input id="billing-line1" type="text" placeholder="Billing address line 1">
+                            </label>
+                            <label class="field field-full">
+                                <span>Billing Address Line 2</span>
+                                <input id="billing-line2" type="text" placeholder="Billing address line 2">
+                            </label>
+                            <label class="field">
+                                <span>City</span>
+                                <input id="billing-city" type="text" placeholder="City">
+                            </label>
+                            <label class="field">
+                                <span>State</span>
+                                <input id="billing-state" type="text" placeholder="State">
+                            </label>
+                            <label class="field">
+                                <span>Postal Code</span>
+                                <input id="billing-postal-code" type="text" placeholder="Postal code">
+                            </label>
+                            <label class="field">
+                                <span>Country</span>
+                                <input id="billing-country" type="text" placeholder="Country">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="save-row">
+                        <button class="primary-btn compact-btn" id="save-address-btn" type="submit">Save Address Book</button>
+                        <span class="inline-status" id="address-status">Your details will be saved here for faster checkout.</span>
+                    </div>
+                </form>
+            </article>
+            <article class="glass-card rewards-card">
+                <div class="card-head">
+                    <p class="card-kicker">Glow Points</p>
+                    <h2>Rewards Ledger</h2>
+                </div>
+
+                <div class="rewards-summary">
+                    <div class="reward-spotlight">
+                        <span class="reward-label">Current Balance</span>
+                        <strong id="glow-points-total">250</strong>
+                    </div>
+                    <div class="reward-next">
+                        <span class="reward-label">Next Reward</span>
+                        <strong id="next-reward">Complete your first milestone</strong>
+                    </div>
+                </div>
+
+                <div class="reward-progress-track" aria-hidden="true">
+                    <div class="reward-progress-fill" id="reward-progress-fill"></div>
+                </div>
+                <p class="body-copy reward-progress-copy" id="reward-progress-copy">Your reward progress will update as your atelier activity grows.</p>
+
+                <div class="ledger-list" id="reward-ledger"></div>
+            </article>
+
+            <article class="glass-card scent-card">
+                <div class="card-head">
+                    <p class="card-kicker">Fragrance Profile</p>
+                    <h2>Scent Persona</h2>
+                </div>
+
+                <div class="persona-panel">
+                    <p class="persona-title" id="scent-title">Discover Your Signature Notes</p>
+                    <p class="body-copy" id="scent-description">Take the scent quiz to reveal the fragrance profile that best matches your Meltix atelier.</p>
+                    <div class="notes-row" id="scent-notes"></div>
+                    <button class="primary-btn compact-btn" id="open-scent-quiz" type="button">Take the Scent Quiz</button>
+                </div>
+            </article>
+
+            <article class="glass-card impact-card">
+                <div class="card-head">
+                    <p class="card-kicker">Review Impact</p>
+                    <h2>How People Reacted</h2>
+                </div>
+
+                <div class="impact-grid">
+                    <div class="impact-tile">
+                        <span class="impact-label">Reviews Written</span>
+                        <strong id="impact-total-reviews">0</strong>
+                    </div>
+                    <div class="impact-tile">
+                        <span class="impact-label">Helpful Votes</span>
+                        <strong id="impact-liked-count">0</strong>
+                    </div>
+                    <div class="impact-tile">
+                        <span class="impact-label">Negative Votes</span>
+                        <strong id="impact-disliked-count">0</strong>
+                    </div>
+                </div>
+
+                <p class="body-copy" id="impact-copy">Review insights will appear here after you publish your first review.</p>
+            </article>
+
+            <article class="glass-card wishlist-card">
+                <div class="card-head">
+                    <p class="card-kicker">Saved For Later</p>
+                    <h2>Wishlist</h2>
+                </div>
+
+                <div id="wishlist-grid" class="wishlist-grid"></div>
+                <div id="wishlist-empty" class="empty-state">
+                    <p>Your wishlist is still empty.</p>
+                    <span>Save your favourite candles here for a faster return to the collection.</span>
+                    <a href="/shop" class="empty-cta">Explore the Collection</a>
+                </div>
+            </article>
+
+            <article class="glass-card review-card">
+                <div class="card-head">
+                    <p class="card-kicker">Your Voice</p>
+                    <h2>Recent Reviews</h2>
+                </div>
+
+                <div id="reviews-list" class="review-list"></div>
+                <div id="reviews-empty" class="empty-state">
+                    <p>No reviews published yet.</p>
+                    <span>Your latest thoughts on each candle will appear here once you begin reviewing the collection.</span>
+                    <a href="/shop" class="empty-cta">Explore the Collection</a>
+                </div>
+            </article>
+
+            <article class="glass-card orders-card">
+                <div class="card-head">
+                    <p class="card-kicker">Order Timeline</p>
+                    <h2>Your Past Orders</h2>
+                </div>
+
+                <div id="orders-list" class="orders-list"></div>
+                <div id="orders-empty" class="empty-state">
+                    <p>No orders yet.</p>
+                    <span>Once you place an order, you will be able to track wax pouring, curing, shipping, and delivery from here.</span>
+                    <a href="/shop" class="empty-cta">Explore the Collection</a>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <div class="toast" id="profile-toast"></div>
+
+    <div class="modal-overlay" id="avatar-modal" aria-hidden="true">
+        <div class="modal-card">
+            <button class="modal-close" id="close-avatar-modal" type="button" aria-label="Close avatar gallery">×</button>
+
+            <div class="modal-head">
+                <p class="card-kicker">Avatar Gallery</p>
+                <h2>Choose Your Portrait</h2>
+                <p class="body-copy">Select a custom portrait for your private atelier, or return to your Google profile photo at any time.</p>
+            </div>
+
+            <div class="avatar-mode-actions">
+                <button type="button" class="google-avatar-btn" id="use-google-photo-btn" hidden>Use Google Profile Photo</button>
+            </div>
+
+            <div class="avatar-grid">
+                {% for avatar in avatar_options %}
+                <button type="button" class="avatar-option" data-avatar="{{ avatar.filename }}" data-label="{{ avatar.label }}">
+                    <img src="{{ avatar.src }}" alt="{{ avatar.label }}">
+                    <span>{{ avatar.label }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tracking-modal" aria-hidden="true">
+        <div class="modal-card tracking-card">
+            <button class="modal-close" id="close-tracking-modal" type="button" aria-label="Close order tracking">×</button>
+
+            <div class="modal-head">
+                <p class="card-kicker">Order Tracking</p>
+                <h2 id="tracking-order-id">Order Status</h2>
+                <p class="body-copy" id="tracking-note">Order tracking details will appear here.</p>
+            </div>
+
+            <div class="tracking-summary">
+                <div class="tracking-summary-tile">
+                    <span>Status</span>
+                    <strong id="tracking-status">Order Placed</strong>
+                </div>
+                <div class="tracking-summary-tile">
+                    <span>Total</span>
+                    <strong id="tracking-total">INR 0</strong>
+                </div>
+            </div>
+
+            <div class="timeline-list" id="tracking-timeline"></div>
+            <div class="tracking-items" id="tracking-items"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="scent-quiz-modal" aria-hidden="true">
+        <div class="modal-card scent-card-modal">
+            <button class="modal-close" id="close-scent-quiz" type="button" aria-label="Close scent quiz">×</button>
+
+            <div class="modal-head">
+                <p class="card-kicker">Fragrance Quiz</p>
+                <h2>Create Your Signature Notes</h2>
+                <p class="body-copy">Select the fragrance notes that best match your personal atmosphere. Your Meltix scent persona will be saved to this profile.</p>
+            </div>
+
+            <div class="quiz-grid" id="quiz-grid">
+                <button type="button" class="quiz-option" data-note="Sandalwood">Sandalwood</button>
+                <button type="button" class="quiz-option" data-note="Vanilla">Vanilla</button>
+                <button type="button" class="quiz-option" data-note="Lavender">Lavender</button>
+                <button type="button" class="quiz-option" data-note="Rose">Rose</button>
+                <button type="button" class="quiz-option" data-note="Citrus">Citrus</button>
+                <button type="button" class="quiz-option" data-note="Amber">Amber</button>
+                <button type="button" class="quiz-option" data-note="Jasmine">Jasmine</button>
+                <button type="button" class="quiz-option" data-note="Cedar">Cedar</button>
+                <button type="button" class="quiz-option" data-note="Musk">Musk</button>
+            </div>
+
+            <div class="quiz-footer">
+                <p class="body-copy" id="quiz-status">Choose up to three signature notes.</p>
+                <button class="primary-btn compact-btn" id="save-scent-persona" type="button">Save Scent Persona</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const avatarOptions = {{ avatar_options | tojson }};
+        const bootstrapUrl = "{{ url_for('profile_bootstrap') }}";
+        const updateAvatarUrl = "{{ url_for('update_profile_avatar') }}";
+        const saveAddressUrl = "{{ url_for('save_profile_address') }}";
+        const saveScentPersonaUrl = "{{ url_for('save_scent_persona') }}";
+        const googleClientId = "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com";
+
+        const state = {
+            currentUser: null,
+            currentProfile: null,
+            selectedAvatar: avatarOptions[0] ? avatarOptions[0].filename : "avatar_1.jpg",
+            usingGoogleAvatar: false,
+            googleInitialized: false,
+            selectedQuizNotes: []
+        };
+
+        const heroAvatar = document.getElementById('hero-avatar');
+        const avatarEmptyState = document.getElementById('avatar-empty-state');
+        const avatarTrigger = document.getElementById('avatar-trigger');
+        const avatarEditBtn = document.getElementById('open-avatar-modal');
+        const heroCustomizeBtn = document.getElementById('hero-customize-btn');
+        const googleSigninBtn = document.getElementById('google-signin-btn');
+        const guestSigninBtn = document.getElementById('guest-signin-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const useGooglePhotoBtn = document.getElementById('use-google-photo-btn');
+        const guestGate = document.getElementById('guest-gate');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const totalReviews = document.getElementById('total-reviews');
+        const ordersInProgress = document.getElementById('orders-in-progress');
+        const totalSpent = document.getElementById('total-spent');
+        const wishlistCount = document.getElementById('wishlist-count');
+        const detailName = document.getElementById('detail-name');
+        const detailEmail = document.getElementById('detail-email');
+        const detailAvatar = document.getElementById('detail-avatar');
+        const detailMode = document.getElementById('detail-mode');
+        const memberSince = document.getElementById('member-since');
+        const supportCopy = document.getElementById('support-copy');
+        const impactTotalReviews = document.getElementById('impact-total-reviews');
+        const impactLikedCount = document.getElementById('impact-liked-count');
+        const impactDislikedCount = document.getElementById('impact-disliked-count');
+        const impactCopy = document.getElementById('impact-copy');
+        const glowPointsTotal = document.getElementById('glow-points-total');
+        const nextReward = document.getElementById('next-reward');
+        const rewardProgressFill = document.getElementById('reward-progress-fill');
+        const rewardProgressCopy = document.getElementById('reward-progress-copy');
+        const rewardLedger = document.getElementById('reward-ledger');
+        const scentTitle = document.getElementById('scent-title');
+        const scentDescription = document.getElementById('scent-description');
+        const scentNotes = document.getElementById('scent-notes');
+        const openScentQuizBtn = document.getElementById('open-scent-quiz');
+        const saveScentPersonaBtn = document.getElementById('save-scent-persona');
+        const quizStatus = document.getElementById('quiz-status');
+        const addressForm = document.getElementById('address-form');
+        const billingSame = document.getElementById('billing-same');
+        const billingPanel = document.getElementById('billing-panel');
+        const addressStatus = document.getElementById('address-status');
+        const wishlistGrid = document.getElementById('wishlist-grid');
+        const wishlistEmpty = document.getElementById('wishlist-empty');
+        const reviewsList = document.getElementById('reviews-list');
+        const reviewsEmpty = document.getElementById('reviews-empty');
+        const ordersList = document.getElementById('orders-list');
+        const ordersEmpty = document.getElementById('orders-empty');
+        const avatarModal = document.getElementById('avatar-modal');
+        const trackingModal = document.getElementById('tracking-modal');
+        const scentQuizModal = document.getElementById('scent-quiz-modal');
+        const trackingOrderId = document.getElementById('tracking-order-id');
+        const trackingStatus = document.getElementById('tracking-status');
+        const trackingNote = document.getElementById('tracking-note');
+        const trackingTotal = document.getElementById('tracking-total');
+        const trackingTimeline = document.getElementById('tracking-timeline');
+        const trackingItems = document.getElementById('tracking-items');
+        const toast = document.getElementById('profile-toast');
+        const quizOptions = Array.from(document.querySelectorAll('.quiz-option'));
+
+        function getAvatarMeta(filename) {
+            return avatarOptions.find((avatar) => avatar.filename === filename) || avatarOptions[0] || null;
+        }
+
+        function safeReadUser() {
+            try { return JSON.parse(localStorage.getItem('meltix_user')) || null; } catch (error) { return null; }
+        }
+
+        function safeReadOrders() {
+            try { return JSON.parse(localStorage.getItem('meltix_orders')) || []; } catch (error) { return []; }
+        }
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            window.clearTimeout(showToast.timer);
+            showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+
+        function decodeJwtPayload(credential) {
+            const base64Url = credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map((character) => '%' + (`00${character.charCodeAt(0).toString(16)}`).slice(-2)).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function initializeGoogleIdentity() {
+            if (state.googleInitialized || !window.google || !window.google.accounts || !window.google.accounts.id) return;
+            google.accounts.id.initialize({ client_id: googleClientId, callback: handleCredentialResponse, auto_select: false, cancel_on_tap_outside: false });
+            state.googleInitialized = true;
+        }
+
+        function waitForGoogleIdentity(attempt = 0) {
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                initializeGoogleIdentity();
+                return;
+            }
+            if (attempt < 40) window.setTimeout(() => waitForGoogleIdentity(attempt + 1), 250);
+        }
+
+        function promptGoogleSignIn() {
+            initializeGoogleIdentity();
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                google.accounts.id.prompt();
+            } else {
+                showToast('Google Sign-In is still loading. Please try again in a moment.');
+            }
+        }
+
+        async function handleCredentialResponse(response) {
+            try {
+                const userData = decodeJwtPayload(response.credential);
+                const currentUser = { name: userData.name || 'Meltix Collector', email: userData.email || '', picture: userData.picture || '' };
+                localStorage.setItem('meltix_user', JSON.stringify(currentUser));
+                state.currentUser = currentUser;
+                await bootstrapProfile();
+                showToast('Your private atelier is now unlocked.');
+            } catch (error) {
+                showToast('Google Sign-In could not be completed. Please try again.');
+            }
+        }
+
+        function setLockedState(isLocked) {
+            document.body.classList.toggle('profile-locked', isLocked);
+            guestGate.hidden = !isLocked;
+        }
+
+        function updateAuthControls(isSignedIn) {
+            signOutBtn.hidden = !isSignedIn;
+            googleSigninBtn.hidden = isSignedIn;
+            heroCustomizeBtn.textContent = isSignedIn ? 'Open Avatar Gallery' : 'Sign In to Customize';
+            avatarEditBtn.title = isSignedIn ? 'Customize Avatar' : 'Sign In to Customize';
+            useGooglePhotoBtn.hidden = !isSignedIn;
+        }
+
+        function showAvatarImage(imageUrl) {
+            if (!imageUrl) return showAvatarEmpty();
+            heroAvatar.src = imageUrl;
+            heroAvatar.hidden = false;
+            avatarEmptyState.hidden = true;
+            avatarTrigger.classList.add('has-avatar');
+        }
+
+        function showAvatarEmpty() {
+            heroAvatar.hidden = true;
+            heroAvatar.removeAttribute('src');
+            avatarEmptyState.hidden = false;
+            avatarTrigger.classList.remove('has-avatar');
+            document.querySelectorAll('[data-avatar]').forEach((element) => element.classList.remove('active-avatar'));
+        }
+
+        function setSelectedAvatar(filename) {
+            const avatarMeta = getAvatarMeta(filename);
+            if (!avatarMeta) return;
+            state.selectedAvatar = avatarMeta.filename;
+            state.usingGoogleAvatar = false;
+            showAvatarImage(avatarMeta.src);
+            detailAvatar.textContent = avatarMeta.label;
+            document.querySelectorAll('[data-avatar]').forEach((element) => element.classList.toggle('active-avatar', element.dataset.avatar === avatarMeta.filename));
+        }
+
+        function setGoogleAvatar(imageUrl) {
+            state.usingGoogleAvatar = true;
+            showAvatarImage(imageUrl);
+            detailAvatar.textContent = 'Google Profile Photo';
+            document.querySelectorAll('[data-avatar]').forEach((element) => element.classList.remove('active-avatar'));
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
+        }
+
+        function openModal(modalElement) {
+            modalElement.classList.add('open');
+            modalElement.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal(modalElement) {
+            modalElement.classList.remove('open');
+            modalElement.setAttribute('aria-hidden', 'true');
+        }
+
+        function openAvatarModal() {
+            if (!state.currentUser || !state.currentUser.email) {
+                showToast('Please sign in before saving a custom portrait.');
+                promptGoogleSignIn();
+                return;
+            }
+            openModal(avatarModal);
+        }
+
+        function syncQuizSelection(notes) {
+            state.selectedQuizNotes = Array.isArray(notes) ? [...notes].slice(0, 3) : [];
+            quizOptions.forEach((button) => button.classList.toggle('active', state.selectedQuizNotes.includes(button.dataset.note)));
+            quizStatus.textContent = state.selectedQuizNotes.length ? `${state.selectedQuizNotes.length} signature note${state.selectedQuizNotes.length > 1 ? 's' : ''} selected.` : 'Choose up to three signature notes.';
+        }
+
+        function openScentQuiz() {
+            if (!state.currentUser || !state.currentUser.email) {
+                showToast('Please sign in before creating your scent persona.');
+                promptGoogleSignIn();
+                return;
+            }
+            syncQuizSelection(state.currentProfile && state.currentProfile.scent_persona ? state.currentProfile.scent_persona.notes : []);
+            openModal(scentQuizModal);
+        }
+
+        function toggleQuizNote(note) {
+            if (state.selectedQuizNotes.includes(note)) return syncQuizSelection(state.selectedQuizNotes.filter((item) => item !== note));
+            if (state.selectedQuizNotes.length >= 3) return showToast('Choose up to three signature notes.');
+            syncQuizSelection([...state.selectedQuizNotes, note]);
+        }
+
+        function renderWishlist(items) {
+            wishlistGrid.innerHTML = '';
+            const hasItems = Array.isArray(items) && items.length > 0;
+            wishlistEmpty.style.display = hasItems ? 'none' : 'grid';
+            if (!hasItems) return;
+            items.forEach((item) => {
+                const card = document.createElement('article');
+                card.className = 'wishlist-item';
+                card.innerHTML = `<div class="wishlist-thumb">${item.image_url ? `<img src="${item.image_url}" alt="${item.name}">` : `<div class="wishlist-fallback">#${item.product_id}</div>`}</div><div class="wishlist-copy"><p>Saved Candle</p><h3>${item.name}</h3><span>Product ID #${item.product_id}</span></div>`;
+                wishlistGrid.appendChild(card);
+            });
+        }
+
+        function renderReviews(items) {
+            reviewsList.innerHTML = '';
+            const hasItems = Array.isArray(items) && items.length > 0;
+            reviewsEmpty.style.display = hasItems ? 'none' : 'grid';
+            if (!hasItems) return;
+            
+            items.forEach((item) => {
+                const review = document.createElement('article');
+                review.className = 'review-item';
+                
+                // 🌟 NAYA LOGIC: Bhare hue aur Khali stars dono banayega
+                const filledStars = '★'.repeat(item.rating);
+                const emptyStars = '☆'.repeat(5 - item.rating);
+                
+                review.innerHTML = `
+                    <div class="review-meta">
+                        <strong>Product #${item.product_id}</strong>
+                        <span style="color: var(--accent-gold); font-size: 1.1rem;">
+                            ${filledStars}<span style="color: rgba(255,255,255,0.2);">${emptyStars}</span> &middot; <span style="font-size:0.84rem; color:var(--text-muted);">${item.date}</span>
+                        </span>
+                    </div>
+                    <p>${item.review_text}</p>
+                    <div class="review-impact-row">
+                        <span class="review-impact-chip">Helpful ${item.likes || 0}</span>
+                        <span class="review-impact-chip muted-chip">Negative ${item.dislikes || 0}</span>
+                    </div>`;
+                reviewsList.appendChild(review);
+            });
+        }
+
+        function renderOrders(items) {
+            ordersList.innerHTML = '';
+            const hasItems = Array.isArray(items) && items.length > 0;
+            ordersEmpty.style.display = hasItems ? 'none' : 'grid';
+            if (!hasItems) return;
+            items.forEach((order) => {
+                const noteMarkup = Array.isArray(order.scent_notes) && order.scent_notes.length ? order.scent_notes.map((note) => `<span class="order-note-chip">${note}</span>`).join('') : '<span class="order-note-chip muted-order-note">Signature notes pending</span>';
+                const card = document.createElement('article');
+                card.className = 'order-item';
+                card.innerHTML = `<div class="order-top"><div><p class="order-kicker">Order</p><h3>${order.order_id}</h3></div><span class="order-status">${order.status}</span></div><div class="order-meta-grid"><div class="order-meta"><span>Date</span><strong>${order.date}</strong></div><div class="order-meta"><span>Total</span><strong>${order.total_display || formatCurrency(order.total)}</strong></div><div class="order-meta"><span>Items</span><strong>${order.item_count || 0}</strong></div></div><div class="order-notes">${noteMarkup}</div><div class="order-actions"><button class="secondary-btn compact-btn track-order-btn" type="button" data-order-id="${order.order_id}">Track Order</button></div>`;
+                ordersList.appendChild(card);
+            });
+            document.querySelectorAll('.track-order-btn').forEach((button) => button.addEventListener('click', () => openTrackingModal(button.dataset.orderId)));
+        }
+        function renderRewardLedger(rewards) {
+            const rewardData = rewards || {};
+            glowPointsTotal.textContent = rewardData.current_points || 250;
+            nextReward.textContent = rewardData.next_reward_label || 'Complete your first milestone';
+            rewardProgressFill.style.width = `${rewardData.progress_percent || 0}%`;
+            rewardProgressCopy.textContent = rewardData.points_to_next_reward > 0 ? `${rewardData.points_to_next_reward} more points until ${rewardData.next_reward_label}.` : 'You have unlocked the highest Meltix reward tier.';
+            rewardLedger.innerHTML = '';
+            const entries = Array.isArray(rewardData.ledger) ? rewardData.ledger : [];
+            entries.forEach((entry) => {
+                const row = document.createElement('article');
+                row.className = 'ledger-item';
+                row.innerHTML = `<div><p class="ledger-title">${entry.title}</p><span class="ledger-copy">${entry.description}</span></div><div class="ledger-points"><strong>+${entry.points}</strong><span>${entry.date}</span></div>`;
+                rewardLedger.appendChild(row);
+            });
+        }
+
+        function renderScentPersona(persona) {
+            const data = persona || {};
+            scentTitle.textContent = data.title || 'Discover Your Signature Notes';
+            scentDescription.textContent = data.description || 'Take the scent quiz to reveal the fragrance profile that best matches your Meltix atelier.';
+            openScentQuizBtn.textContent = data.cta_label || 'Take the Scent Quiz';
+            scentNotes.innerHTML = '';
+            const notes = Array.isArray(data.notes) ? data.notes : [];
+            if (!notes.length) {
+                const chip = document.createElement('span');
+                chip.className = 'note-chip note-chip-empty';
+                chip.textContent = 'No signature notes saved yet';
+                scentNotes.appendChild(chip);
+                return;
+            }
+            notes.forEach((note) => {
+                const chip = document.createElement('span');
+                chip.className = 'note-chip';
+                chip.textContent = note;
+                scentNotes.appendChild(chip);
+            });
+        }
+
+        function fillInput(id, value) {
+            const element = document.getElementById(id);
+            if (element) element.value = value || '';
+        }
+
+        function renderAddressBook(addressBook) {
+            const data = addressBook || {};
+            const shipping = data.shipping || {};
+            const billing = data.billing || {};
+            fillInput('phone-number', data.phone_number || '');
+            fillInput('shipping-name', shipping.name || '');
+            fillInput('shipping-line1', shipping.line1 || '');
+            fillInput('shipping-line2', shipping.line2 || '');
+            fillInput('shipping-city', shipping.city || '');
+            fillInput('shipping-state', shipping.state || '');
+            fillInput('shipping-postal-code', shipping.postal_code || '');
+            fillInput('shipping-country', shipping.country || 'India');
+            fillInput('billing-name', billing.name || '');
+            fillInput('billing-line1', billing.line1 || '');
+            fillInput('billing-line2', billing.line2 || '');
+            fillInput('billing-city', billing.city || '');
+            fillInput('billing-state', billing.state || '');
+            fillInput('billing-postal-code', billing.postal_code || '');
+            fillInput('billing-country', billing.country || 'India');
+            billingSame.checked = data.billing_same_as_shipping !== false;
+            applyBillingVisibility();
+        }
+
+        function collectAddressPayload() {
+            return {
+                email: state.currentUser ? state.currentUser.email : '',
+                phone_number: document.getElementById('phone-number').value.trim(),
+                billing_same_as_shipping: billingSame.checked,
+                shipping: {
+                    name: document.getElementById('shipping-name').value.trim(),
+                    line1: document.getElementById('shipping-line1').value.trim(),
+                    line2: document.getElementById('shipping-line2').value.trim(),
+                    city: document.getElementById('shipping-city').value.trim(),
+                    state: document.getElementById('shipping-state').value.trim(),
+                    postal_code: document.getElementById('shipping-postal-code').value.trim(),
+                    country: document.getElementById('shipping-country').value.trim() || 'India'
+                },
+                billing: {
+                    name: document.getElementById('billing-name').value.trim(),
+                    line1: document.getElementById('billing-line1').value.trim(),
+                    line2: document.getElementById('billing-line2').value.trim(),
+                    city: document.getElementById('billing-city').value.trim(),
+                    state: document.getElementById('billing-state').value.trim(),
+                    postal_code: document.getElementById('billing-postal-code').value.trim(),
+                    country: document.getElementById('billing-country').value.trim() || 'India'
+                }
+            };
+        }
+
+        function applyBillingVisibility() {
+            const hidden = billingSame.checked;
+            billingPanel.classList.toggle('is-hidden', hidden);
+            billingPanel.querySelectorAll('input').forEach((input) => { input.disabled = hidden; });
+        }
+
+        async function saveAddressBook(event) {
+            event.preventDefault();
+            if (!state.currentUser || !state.currentUser.email) {
+                showToast('Please sign in before saving your address book.');
+                promptGoogleSignIn();
+                return;
+            }
+            addressStatus.textContent = 'Saving your address book...';
+            try {
+                const response = await fetch(saveAddressUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(collectAddressPayload()) });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Address save failed');
+                renderAddressBook(data.address_book || {});
+                addressStatus.textContent = 'Your address book has been saved for faster checkout.';
+                showToast('Address book saved.');
+            } catch (error) {
+                addressStatus.textContent = 'We could not save your address details just now.';
+                showToast('We could not save your address details just now.');
+            }
+        }
+
+        function openTrackingModal(orderId) {
+            const orders = state.currentProfile && Array.isArray(state.currentProfile.orders) ? state.currentProfile.orders : [];
+            const order = orders.find((item) => item.order_id === orderId);
+            if (!order) return showToast('Tracking details are not available for that order yet.');
+            trackingOrderId.textContent = order.order_id;
+            trackingStatus.textContent = order.status;
+            trackingNote.textContent = order.tracking_note || 'Tracking updates will appear here as your order moves through the atelier.';
+            trackingTotal.textContent = order.total_display || formatCurrency(order.total);
+            trackingTimeline.innerHTML = '';
+            (order.timeline || []).forEach((step) => {
+                const row = document.createElement('article');
+                row.className = `timeline-step ${step.current ? 'is-current' : ''} ${step.complete ? 'is-complete' : ''} ${step.locked ? 'is-locked' : ''}`;
+                row.innerHTML = `<div class="timeline-dot"></div><div class="timeline-copy"><strong>${step.label}</strong><span>${step.description}</span></div>`;
+                trackingTimeline.appendChild(row);
+            });
+            trackingItems.innerHTML = '';
+            (order.items || []).forEach((item) => {
+                const row = document.createElement('article');
+                row.className = 'tracking-item';
+                row.innerHTML = `<div><strong>${item.name}</strong><span>${item.fragrance || 'Signature fragrance to be confirmed'}</span></div><div class="tracking-item-meta"><strong>x${item.quantity || 1}</strong><span>${formatCurrency(item.price || 0)}</span></div>`;
+                trackingItems.appendChild(row);
+            });
+            openModal(trackingModal);
+        }
+
+        function renderGuestProfile() {
+            state.currentProfile = null;
+            state.usingGoogleAvatar = false;
+            setLockedState(true);
+            updateAuthControls(false);
+            showAvatarEmpty();
+            profileName.textContent = 'Guest Flame';
+            profileEmail.textContent = 'Continue with Google to access your saved candles, order tracking, and private profile settings.';
+            totalReviews.textContent = '0';
+            ordersInProgress.textContent = '0';
+            totalSpent.textContent = 'INR 0';
+            wishlistCount.textContent = '0';
+            detailName.textContent = 'Guest Flame';
+            detailEmail.textContent = 'Not connected';
+            detailAvatar.textContent = 'Awaiting sign-in';
+            memberSince.textContent = 'Today';
+            detailMode.textContent = 'Guest Session';
+            supportCopy.textContent = 'Sign in with Google to activate your private atelier and save your profile preferences.';
+            impactTotalReviews.textContent = '0';
+            impactLikedCount.textContent = '0';
+            impactDislikedCount.textContent = '0';
+            impactCopy.textContent = 'Review insights will appear here after you publish your first review.';
+            renderAddressBook({});
+            renderRewardLedger({ current_points: 250, progress_percent: 25, points_to_next_reward: 250, next_reward_label: 'Your first bespoke reward', ledger: [{ title: 'Welcome Bonus', description: 'Sign in to activate your rewards ledger.', points: 250, date: 'Today' }] });
+            renderScentPersona({ title: 'Discover Your Signature Notes', description: 'Take the scent quiz after signing in to create your fragrance profile.', notes: [], cta_label: 'Take the Scent Quiz' });
+            renderWishlist([]);
+            renderReviews([]);
+            renderOrders([]);
+            addressStatus.textContent = 'Sign in to save shipping and billing details.';
+        }
+
+        function renderProfile(profile) {
+            state.currentProfile = profile;
+            const signedIn = Boolean(profile && profile.email);
+            setLockedState(!signedIn);
+            updateAuthControls(signedIn);
+            if (profile.avatar_filename) {
+                setSelectedAvatar(profile.avatar_filename);
+            } else if (state.currentUser && state.currentUser.picture) {
+                setGoogleAvatar(state.currentUser.picture);
+            } else if (profile.avatar_url) {
+                showAvatarImage(profile.avatar_url);
+                detailAvatar.textContent = profile.avatar_label || 'Profile Photo';
+            } else {
+                showAvatarEmpty();
+                detailAvatar.textContent = 'No portrait selected';
+            }
+            profileName.textContent = profile.display_name || 'Guest Flame';
+            profileEmail.textContent = profile.email || 'Not connected';
+            totalReviews.textContent = profile.stats ? profile.stats.review_count || 0 : 0;
+            ordersInProgress.textContent = profile.stats ? profile.stats.orders_in_progress || 0 : 0;
+            totalSpent.textContent = profile.stats ? profile.stats.total_spent_display || formatCurrency(profile.stats.total_spent || 0) : 'INR 0';
+            wishlistCount.textContent = profile.stats ? profile.stats.wishlist_count || 0 : 0;
+            detailName.textContent = profile.display_name || 'Guest Flame';
+            detailEmail.textContent = profile.email || 'Not connected';
+            memberSince.textContent = profile.member_since || 'Today';
+            detailMode.textContent = signedIn ? 'Signed-In Account' : 'Guest Session';
+            supportCopy.textContent = signedIn ? 'Your Google profile photo remains active until you choose and save a custom portrait.' : 'Sign in with Google to activate your private atelier and save your profile preferences.';
+            impactTotalReviews.textContent = profile.stats ? profile.stats.review_count || 0 : 0;
+            impactLikedCount.textContent = profile.stats ? profile.stats.review_likes || 0 : 0;
+            impactDislikedCount.textContent = profile.stats ? profile.stats.review_dislikes || 0 : 0;
+            impactCopy.textContent = profile.stats && profile.stats.review_count > 0 ? `Your reviews have received ${profile.stats.review_likes || 0} helpful votes and ${profile.stats.review_dislikes || 0} negative votes so far.` : 'Review insights will appear here after you publish your first review.';
+            renderAddressBook(profile.address_book || {});
+            renderRewardLedger(profile.rewards || {});
+            renderScentPersona(profile.scent_persona || {});
+            renderWishlist(profile.wishlist_items || []);
+            renderReviews(profile.recent_reviews || []);
+            renderOrders(profile.orders || []);
+            addressStatus.textContent = 'Your address book is ready for your next checkout.';
+        }
+        async function bootstrapProfile() {
+            const storedUser = safeReadUser();
+            state.currentUser = storedUser;
+            if (!storedUser || !storedUser.email) {
+                renderGuestProfile();
+                return;
+            }
+            try {
+                const response = await fetch(bootstrapUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: storedUser.email, name: storedUser.name || 'Meltix Collector', picture: storedUser.picture || '', orders: safeReadOrders() })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Profile sync failed');
+                renderProfile(data.profile);
+            } catch (error) {
+                renderGuestProfile();
+                showToast('We could not sync your profile right now. Showing guest view instead.');
+            }
+        }
+
+        async function persistAvatar(filename) {
+            if (!state.currentUser || !state.currentUser.email) {
+                showToast('Please sign in before saving a custom portrait.');
+                promptGoogleSignIn();
+                closeModal(avatarModal);
+                return;
+            }
+            const avatarMeta = getAvatarMeta(filename);
+            if (!avatarMeta) return;
+            setSelectedAvatar(avatarMeta.filename);
+            try {
+                const response = await fetch(updateAvatarUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: state.currentUser.email, name: state.currentUser.name || '', avatar: avatarMeta.filename }) });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Avatar save failed');
+                renderProfile(data.profile || state.currentProfile || {});
+                closeModal(avatarModal);
+                showToast('Your custom portrait has been saved.');
+            } catch (error) {
+                closeModal(avatarModal);
+                showToast('Your portrait preview updated, but we could not save it yet.');
+            }
+        }
+
+        async function switchToGooglePhoto() {
+            if (!state.currentUser || !state.currentUser.email) {
+                showToast('Please sign in before enabling your Google profile photo.');
+                promptGoogleSignIn();
+                closeModal(avatarModal);
+                return;
+            }
+            try {
+                const response = await fetch(updateAvatarUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: state.currentUser.email, name: state.currentUser.name || '', picture: state.currentUser.picture || '', use_google_photo: true }) });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Google photo enable failed');
+                renderProfile(data.profile || state.currentProfile || {});
+                closeModal(avatarModal);
+                showToast('Your Google profile photo is now active.');
+            } catch (error) {
+                closeModal(avatarModal);
+                showToast('We could not enable your Google profile photo just now.');
+            }
+        }
+
+        async function saveScentPersona() {
+            if (!state.currentUser || !state.currentUser.email) {
+                showToast('Please sign in before saving your scent persona.');
+                promptGoogleSignIn();
+                return;
+            }
+            if (!state.selectedQuizNotes.length) return showToast('Choose at least one signature note.');
+            const profileDisplayName = state.currentProfile && state.currentProfile.display_name ? state.currentProfile.display_name : 'Your atelier';
+            const payload = { email: state.currentUser.email, title: 'Your Signature Notes', description: `${profileDisplayName} is drawn to ${state.selectedQuizNotes.join(', ')}.`, notes: state.selectedQuizNotes };
+            try {
+                const response = await fetch(saveScentPersonaUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Scent persona save failed');
+                if (state.currentProfile) state.currentProfile.scent_persona = data.scent_persona;
+                renderScentPersona(data.scent_persona);
+                closeModal(scentQuizModal);
+                showToast('Your scent persona has been saved.');
+            } catch (error) {
+                showToast('We could not save your scent persona just now.');
+            }
+        }
+
+        function logoutUser() {
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                google.accounts.id.disableAutoSelect();
+            }
+            localStorage.removeItem('meltix_user');
+            state.currentUser = null;
+            state.currentProfile = null;
+            
+            // Modal band karo aur message dikhao
+            closeModal(avatarModal);
+            closeModal(trackingModal);
+            closeModal(scentQuizModal);
+            showToast('Safely signed out of your atelier. Redirecting...');
+            
+            // 🌟 NAYA: 1.5 second baad smoothly shop pe bhej do
+            setTimeout(() => {
+                window.location.href = '/shop';
+            }, 1500);
+        }
+
+        avatarTrigger.addEventListener('click', openAvatarModal);
+        avatarEditBtn.addEventListener('click', openAvatarModal);
+        heroCustomizeBtn.addEventListener('click', openAvatarModal);
+        googleSigninBtn.addEventListener('click', promptGoogleSignIn);
+        guestSigninBtn.addEventListener('click', promptGoogleSignIn);
+        signOutBtn.addEventListener('click', logoutUser);
+        useGooglePhotoBtn.addEventListener('click', switchToGooglePhoto);
+        openScentQuizBtn.addEventListener('click', openScentQuiz);
+        saveScentPersonaBtn.addEventListener('click', saveScentPersona);
+        addressForm.addEventListener('submit', saveAddressBook);
+        billingSame.addEventListener('change', applyBillingVisibility);
+        document.getElementById('close-avatar-modal').addEventListener('click', () => closeModal(avatarModal));
+        document.getElementById('close-tracking-modal').addEventListener('click', () => closeModal(trackingModal));
+        document.getElementById('close-scent-quiz').addEventListener('click', () => closeModal(scentQuizModal));
+        document.querySelectorAll('.avatar-option').forEach((button) => button.addEventListener('click', () => persistAvatar(button.dataset.avatar)));
+        quizOptions.forEach((button) => button.addEventListener('click', () => toggleQuizNote(button.dataset.note)));
+        [avatarModal, trackingModal, scentQuizModal].forEach((modalElement) => modalElement.addEventListener('click', (event) => { if (event.target === modalElement) closeModal(modalElement); }));
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeModal(avatarModal); closeModal(trackingModal); closeModal(scentQuizModal); } });
+
+        window.handleCredentialResponse = handleCredentialResponse;
+        applyBillingVisibility();
+        bootstrapProfile();
+        waitForGoogleIdentity();
+    </script>
+</body>
+</html>

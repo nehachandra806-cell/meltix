@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Light Up</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        /* 🌟 NAYA: Popup Message ka CSS (Luxury Style) */
+        #toast-msg {
+            position: fixed;
+            bottom: 20vh; /* Button ke thoda upar aayega */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(5, 4, 3, 0.85);
+            border: 1px solid rgba(212, 163, 115, 0.5);
+            color: #d4a373;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        #toast-msg.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <img src="{{ url_for('static', filename='images/meltix-logo.png') }}" alt="Meltix Glow Logo" class="glow-logo">
+    </div>
+
+    <div id="video-container">
+        <video id="vid-unlit" class="bg-video active" src="{{ url_for('static', filename='videos/unlit.mp4') }}" autoplay loop muted playsinline preload="auto"></video>
+        
+        <video id="vid-trans" class="bg-video" src="{{ url_for('static', filename='videos/lightup.mp4') }}" muted playsinline preload="auto"></video>
+        
+        <video id="vid-lit" class="bg-video" src="{{ url_for('static', filename='videos/lit.mp4') }}" loop muted playsinline preload="auto"></video>
+    </div>
+
+    <div id="toast-msg">Please light up the candle to go to the next page </div>
+
+    <button id="lite-up-btn" class="lite-btn">Lite Up</button>
+
+    <script>
+        // 1. Intro Fade-out aur Button Dikhana (Waisa ka waisa)
+        setTimeout(function() {
+            var intro = document.getElementById('intro-screen');
+            intro.style.opacity = '0'; 
+            setTimeout(function() {
+                intro.style.display = 'none';
+                
+                const btn = document.getElementById('lite-up-btn');
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }, 1500); 
+        }, 3500);
+
+        // 2. 🧠 SMART LOGIC: State Management
+        const btn = document.getElementById('lite-up-btn');
+        const vidUnlit = document.getElementById('vid-unlit');
+        const vidTrans = document.getElementById('vid-trans');
+        const vidLit = document.getElementById('vid-lit');
+        const toastMsg = document.getElementById('toast-msg');
+        
+        let candleState = 'waiting'; // Do states honge: 'waiting' ya 'lighting'
+        let toastTimeout;
+
+        // 🛑 IMPATIENT USER HANDLER (Screen pe tap karna)
+        document.body.addEventListener('click', function(e) {
+            // Agar galti se Lite Up button pe tap hua hai, toh is function ko kuch mat karne do
+            if (e.target.id === 'lite-up-btn') return;
+
+            if (candleState === 'waiting') {
+                // Agar abhi tak candle nahi jalayi, toh warning popup dikhao
+                toastMsg.classList.add('show');
+                
+                // Puraana timeout clear karke naya lagao taaki bar bar tap karne pe hide na ho jaye
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toastMsg.classList.remove('show');
+                }, 2500); // 2.5 seconds baad popup gayab
+                
+            } else if (candleState === 'lighting') {
+                // Agar candle jal rahi hai aur wo fir bhi tap karta hai, seedha skip!
+                window.location.href = '/shop';
+            }
+        });
+
+        // 🔥 THE LITE UP BUTTON LOGIC
+        btn.addEventListener('click', function(e) {
+            candleState = 'lighting'; // State change kar di! Ab tap karne pe next page jayega
+            toastMsg.classList.remove('show'); // Warning popup hata do agar dikh raha ho
+
+            // Button gayab karo
+            this.style.opacity = '0';
+            this.style.pointerEvents = 'none';
+
+            // Video change karo
+            vidUnlit.classList.remove('active');
+            vidTrans.classList.add('active');
+            
+            vidTrans.playbackRate = 1.5; 
+            vidTrans.play();
+
+            vidTrans.onended = function() {
+                vidTrans.classList.remove('active');
+                vidLit.classList.add('active');
+                vidLit.play();
+                
+                // AUTO-REDIRECT MAGIC
+                setTimeout(function() {
+                    window.location.href = '/shop'; 
+                }, 1800);
+            };
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix | Connect With Us</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='contact_us.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="ambient-background">
+        <div class="glow-orb top-right"></div>
+        <div class="glow-orb bottom-left"></div>
+        <div id="particleContainer" class="particle-container"></div>
+    </div>
+
+    <a href="javascript:history.back()" class="back-btn" id="backBtn"><span>✦</span> Return</a>
+
+    <div class="intro-screen" id="introScreen">
+        <h1 class="intro-text">
+            <span style="--delay: 0.1s">Stay in</span>
+            <span style="--delay: 0.25s">touch</span>
+            <span style="--delay: 0.4s">with us</span>
+            <span style="--delay: 0.55s">to</span>
+            <span style="--delay: 0.7s">create</span><br>
+            <span style="--delay: 0.85s">something</span>
+            <span style="--delay: 1.0s">truly</span>
+            <span style="--delay: 1.15s">glowing.</span> 
+        </h1>
+    </div>
+
+    <div class="cards-container" id="mainGrid">
+        
+        <div class="flip-card" onclick="flipCard(this)" style="--brand: #b145e9;">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </div>
+                    <p class="tap-hint">Tap to see<br>Instagram info</p>
+                </div>
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/insta_bg.jpg') }}');">
+                    <div class="back-overlay">
+                        <h2>Instagram</h2>
+                        <p class="tagline">Slide into our DMs or tag us for a feature! 📸</p>
+                        <a href="https://instagram.com/meltix.candles" target="_blank" onclick="event.stopPropagation()" class="card-btn">Follow Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" onclick="flipCard(this)" style="--brand: #1877f2;">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
+                    </div>
+                    <p class="tap-hint">Tap to see<br>Facebook info</p>
+                </div>
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/fb_bg.jpg') }}');">
+                    <div class="back-overlay">
+                        <h2>Facebook</h2>
+                        <p class="tagline">Join our community & stay updated. 🤝</p>
+                        <a href="https://facebook.com/meltixofficial" target="_blank" onclick="event.stopPropagation()" class="card-btn">Join Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" onclick="flipCard(this)" style="--brand: #25d366;">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </div>
+                    <p class="tap-hint">Tap to see<br>WhatsApp info</p>
+                </div>
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/wa_bg.jpg') }}');">
+                    <div class="back-overlay">
+                        <h2>WhatsApp</h2>
+                        <p class="tagline">Quick queries? Drop us a text anytime. 💬</p>
+                        <a href="https://wa.me/919876543210" target="_blank" onclick="event.stopPropagation()" class="card-btn">Chat With Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flip-card" onclick="flipCard(this)" style="--brand: #ffffff;">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+                    </div>
+                    <p class="tap-hint">Tap to see<br>Email info</p>
+                </div>
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/mail_bg.jpg') }}');">
+                    <div class="back-overlay">
+                        <h2 style="color: #000; text-shadow: 0 0 10px #fff;">Email Us</h2>
+                        <p class="tagline" style="color: #333; text-shadow: 0 0 10px #fff;">For bulk orders & detailed support. ✉️</p>
+                        <a href="mailto:hello@meltix.com" onclick="event.stopPropagation()" class="card-btn" style="color: #000; border-color: #000;">Send Mail</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 🌟 TIMING LOGIC 🌟
+        window.addEventListener('load', () => {
+            const introScreen = document.getElementById('introScreen');
+            const mainGrid = document.getElementById('mainGrid');
+            const backBtn = document.getElementById('backBtn');
+
+            // 1. Wait for text reading
+            setTimeout(() => {
+                // 2. Fade out text
+                introScreen.style.opacity = '0';
+                
+                // 3. Bring cards immediately 
+                setTimeout(() => {
+                    mainGrid.classList.add('visible');
+                    backBtn.classList.add('visible');
+                    
+                    setTimeout(() => { introScreen.style.display = 'none'; }, 800);
+                    
+                    // 4. Start DUST effect AFTER cards appear
+                    setTimeout(() => {
+                        startDustParticles();
+                    }, 600); 
+
+                }, 400); 
+
+            }, 2800); 
+        });
+
+        function flipCard(clickedCard) {
+            let isAlreadyFlipped = clickedCard.classList.contains('flipped');
+            let allCards = document.querySelectorAll('.flip-card');
+            allCards.forEach(card => card.classList.remove('flipped'));
+
+            if (!isAlreadyFlipped) {
+                clickedCard.classList.add('flipped');
+            }
+        }
+
+        // 🌟 NAYA: Dust Effect Logic from hidden_message.html 🌟
+        function startDustParticles() {
+            const dustContainer = document.getElementById('particleContainer');
+            // Intensity badhani ho toh 100 ko badha dena
+            for (let i = 0; i < 100; i++) {
+                let particle = document.createElement('div');
+                particle.className = 'dust';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+                particle.style.animationDelay = (Math.random() * 10) + 's'; // Random delay se ekdum se pragat nahi honge
+                let size = Math.random() * 2 + 1; // Size chhota rakha hai (1px to 3px)
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                dustContainer.appendChild(particle);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Break to Reveal Candle | Meltix</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='break_to_reveal.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <a href="/shop" class="back-btn"><span>✦</span> Back to Collection</a>
+    </nav>
+
+    <div id="dust-particles"></div>
+
+    <div class="fab-menu-container" id="fab-menu">
+        <button class="fab-main-btn" onclick="toggleFabMenu()"><span>✦</span> Options</button>
+        <div class="fab-options" id="fab-options">
+            <button onclick="switchVariant('The Treasure Hunt')">The Treasure Hunt</button>
+            <button onclick="switchVariant('The Stress Buster')">The Stress Buster</button>
+        </div>
+    </div>
+
+    <div class="accordion-container" id="accordion-box">
+        <div class="meltix-accordion">
+            <p onclick="handleSelection('The Treasure Hunt')">
+                <span>
+                    <strong class="title-main">The Treasure Hunt</strong>
+                    <small class="title-sub">Break to Reveal Candle</small>
+                </span>
+            </p>
+            <p onclick="handleSelection('The Stress Buster')">
+                <span>
+                    <strong class="title-main">The Stress Buster</strong>
+                    <small class="title-sub">Break to Reveal Candle</small>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div id="product-showcase" class="hidden-showcase">
+        <div class="glow-orb"></div>
+        <h1 id="bg-dynamic-title" class="bg-watermark">REVEAL</h1>
+        
+        <div class="carousel-viewport" id="drag-area">
+            <div class="carousel-track" id="carousel-track"></div>
+        </div>
+        
+        <div class="scrubber-wrapper">
+            <input type="range" id="custom-scrubber" min="0" max="100" value="0">
+            <p class="drag-hint">← Drag to explore →</p>
+        </div>
+
+        <div class="carousel-controls">
+            <button id="stop-showcase-btn" class="meltix-btn-secondary">Stop Auto Showcasing</button>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="close-modal" onclick="closeModal()">×</button>
+
+            <div class="modal-content">
+                <div class="modal-left"> 
+                    <div class="main-image-container" style="position: relative;"> 
+                        <button class="save-later-btn absolute-wishlist" title="Save for Later" onclick="toggleWishlist(this)">
+                            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" class="bookmark-icon">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </button>
+                        <img id="modalMainImage" src="" alt="Product Main Image" onclick="openLightbox(this.src)"> 
+                    </div> 
+                    
+                    <div class="thumbnail-gallery"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="active-thumb thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                        <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
+                    </div> 
+                    
+                    <div class="modal-interactions"> 
+                        <div class="rating-section"> 
+                            <h4 class="section-title-premium">Rating & Reviews</h4> 
+                            <div class="star-rating-static" id="displayStars"> 
+                                <span class="rating-text">Loading...</span> 
+                            </div> 
+                        </div> 
+                        <div class="reviews-section"> 
+                            <div class="reviews-container" id="reviewsList"></div> 
+                            <div id="reviewFormArea"> 
+                                <form class="write-review-form locked" id="reviewForm" onsubmit="submitReview(event)" style="display:none;"> 
+                                    <div class="form-stars-container"> 
+                                        <span class="form-star" data-val="1">★</span> 
+                                        <span class="form-star" data-val="2">★</span> 
+                                        <span class="form-star" data-val="3">★</span> 
+                                        <span class="form-star" data-val="4">★</span> 
+                                        <span class="form-star" data-val="5">★</span> 
+                                    </div> 
+                                    <input type="hidden" id="reviewRating" value="0"> 
+                                    <input type="text" id="reviewName" placeholder="Your name..." class="premium-input" required> 
+                                    <textarea id="reviewText" placeholder="Write your experience..." class="premium-input" rows="2" required></textarea> 
+                                    <button type="submit" class="meltix-btn-form" id="submitReviewBtn">Post Review</button> 
+                                </form> 
+                                
+                                <div id="loginToReviewPrompt" class="auth-prompt-container"> 
+                                    <p class="review-text">Sign in with Google to share your experience or save items.</p> 
+                                    <div id="g_id_onload" data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+                                    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_black" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+                                </div> 
+                                
+                                <div id="alreadyReviewedMessage" class="auth-prompt-containerReviewed" style="display:none;"> 
+                                    <p class="review-text">You have already submitted a review for this product.</p> 
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div>
+
+                <div class="modal-right">
+                    <div class="modal-header-info">
+                        <p id="modalCategory" class="product-category-title-premium">Meltix Interactive Collection</p>
+                        <h2 id="modalTitle" class="product-title-premium shining-text">Reveal Candle</h2>
+                    </div>
+                    
+                    <div class="details-accordion">
+                        <div class="detail-item">
+                            <h4>Significance & Speciality</h4>
+                            <p id="modalSpecialty">Product detail magic text.</p>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <h4>How to Use</h4>
+                            <p id="modalUsage">Usage instructions go here.</p>
+                        </div>
+
+                        <div class="detail-item">
+                            <h4>How It's Crafted (Process)</h4>
+                            <p id="modalProcess">Process text.</p>
+                        </div>
+                    </div>
+
+                    <div class="purchase-section">
+                        <div class="price-block">
+                            <p class="price-label">Price</p>
+                            <p class="product-price-premium">₹ 500</p>
+                        </div>
+                        
+                        <button class="magic-cart-btn">
+                            ADD TO CART
+                            <div class="star-1"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-2"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-3"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-4"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-5"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                            <div class="star-6"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" viewBox="0 0 784.11 815.53"><g><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dustContainer = document.getElementById('dust-particles');
+        for (let i = 0; i < 50; i++) {
+            let particle = document.createElement('div');
+            particle.className = 'dust';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            let size = Math.random() * 3 + 1; 
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            dustContainer.appendChild(particle);
+        }
+
+        const productData = {
+            'The Treasure Hunt': [
+                {id: 58, src: "{{ url_for('static', filename='images/treasure_hunt_1.jpg') }}"},
+                {id: 59, src: "{{ url_for('static', filename='images/treasure_hunt_2.jpg') }}"},
+                {id: 60, src: "{{ url_for('static', filename='images/treasure_hunt_3.jpg') }}"},
+                {id: 61, src: "{{ url_for('static', filename='images/treasure_hunt_4.jpg') }}"}
+            ],
+            'The Stress Buster': [
+                {id: 62, src: "{{ url_for('static', filename='images/stress_buster_1.jpg') }}"},
+                {id: 63, src: "{{ url_for('static', filename='images/stress_buster_2.jpg') }}"},
+                {id: 64, src: "{{ url_for('static', filename='images/stress_buster_3.jpg') }}"},
+                {id: 65, src: "{{ url_for('static', filename='images/stress_buster_4.jpg') }}"}
+            ]
+        };
+
+        // 🔴 EXACT BREAK TO REVEAL DATA INJECTED HERE 🔴
+        const productDetails = {
+            58: { title: "The Gilded Path: Crystal Quest", specialty: "This is the ultimate \"Milestone\" gift. Whether it’s an anniversary, a birthday, or a surprise proposal, this candle is designed for your partner or a very close friend. The speciality lies in its dual-purpose design—it starts as a stunning hand-sculpted crystal cluster decor piece and transforms into a life-changing moment as the wax melts to reveal a Diamond-style ring. It represents the idea that the most beautiful things in life are often hidden, waiting for the right moment and the right light to be found.", usage: "Place the candle on a heat-safe surface and light the central wick. As the \"inner core\" of the crystal melts, the ring (safely tucked in a heat-resistant pouch) will begin to surface. Once the pouch is visible, extinguish the flame, use a pair of tweezers to carefully retrieve it, and let it cool before unwrapping the treasure.", process: "The exterior is hand-poured into a custom-made crystal cluster mold using a high-melting-point hard wax to maintain its shape, while the center features a softer, premium soy-blend \"melt pool\" wax. The surprise is double-wrapped in medical-grade foil and positioned at a precise depth to ensure a safe and magical reveal." },
+            59: { title: "Oceanic Echo: The Seashell Reveal", specialty: "This candle is a tribute to the beauty of discovery, making it a \"precious find\" for a partner, best friend, or anyone who finds peace by the sea. The speciality of this piece is its incredible hand-sculpted conch shell design, which functions as high-end home decor long before the fire even touches it. Hidden within the \"mouth\" of the shell is a delicate, diamond-studded shell pendant in rose gold. It symbolizes that the most beautiful treasures are often found in quiet, unexpected places. It’s a deeply thoughtful way to show someone they are your \"one in a million\" find.", usage: "Place the seashell on a flat, heat-resistant surface. Light the wick at the crown and allow the fragrance to drift. As the inner wax liquefies, the treasure pouch will begin to emerge. Once the pouch is clear of the melt pool, blow out the candle, use tweezers to carefully remove the foil, and let it cool before unveiling the rose-gold pendant inside.", process: "Hand-sculpted using a high-density, matte-finish ivory wax to mimic the realistic texture and weight of a natural conch shell. The inner core is poured with a specialized low-heat soy wax blend to ensure the jewelry pouch is revealed safely without damage. The pendant is crafted with high-quality rose-gold plating and premium accents, double-wrapped in medical-grade protective foil for a pristine reveal." },
+            60: { title: "The Sun-Kissed Surprise: Celestial Reveal", specialty: "This candle is designed to \"light up\" the life of someone truly special—be it your partner, a parent, or that one friend who is your personal sunshine. The speciality of this piece is its smooth, minimalist organic design that hides a brilliant, gold-finish Sunburst necklace encrusted with shimmering crystals. It’s a powerful metaphor: no matter how much life \"melts\" you down, your inner light and beauty will always shine through. It’s the perfect way to tell someone, \"You are the center of my universe,\" making it an unforgettable gift for anniversaries or birthdays.", usage: "Place the candle on a stable, heat-resistant tray. Light the wick at the top and enjoy the warm, ambient glow. After a few hours of burning, the golden treasure pouch will become visible within the wax pool. Carefully extinguish the flame, use tweezers to lift the pouch out, and let it cool. Once opened, the celestial sunburst pendant is ready to be worn and cherished.", process: "Hand-poured using a premium, high-luster wax that gives the candle its signature marble-smooth finish. We use a specialty soy-blend wax for the core to ensure a clean, even melt and an easy reveal. The sunburst pendant is crafted with a high-quality golden finish and precision-cut crystals, double-wrapped in medical-grade protective foil to ensure it stays pristine and sparkling until the very moment it is found." },
+            61: { title: "The Geometric Garden: Leaf of Life Reveal", specialty: "This candle is a celebration of growth and new beginnings, making it the perfect gift for a partner starting a new chapter or a close friend who is \"blooming\" in their own way. The speciality of this piece is its striking, polyhedral geometric design—a modern architectural masterpiece for any room. Hidden within the core is a minimalist, 24k gold-finish leaf pendant on a delicate chain. It signifies that even in the most structured and complex lives, there is always room for natural growth and organic beauty. It’s a quiet, elegant way to say, \"I’m proud of who you are becoming.\"", usage: "Place the geometric vessel on a heat-safe coaster. Light the central wick and let the crisp fragrance fill the air. As the polyhedral \"walls\" begin to soften inward, the jewelry pouch will surface in the melt pool. Carefully extinguish the flame, use tweezers to retrieve the foil, and let it cool. Unwrap it to reveal the gold-leaf necklace, a lasting token of your shared journey.", process: "Hand-poured using a high-density, matte-finish soy wax that holds the sharp, modern angles of the polyhedral mold perfectly. The inner core is made with a clean-burning vegetable wax blend designed for a slow, hypnotic reveal. The leaf pendant is crafted with premium gold plating and precision engraving, double-wrapped in medical-grade protective foil to ensure it stays flawless until the moment of discovery." },
+            62: { title: "The Zen Unboxing: Concrete Calm", specialty: "This is the ultimate \"Stress Buster\" for those days when just breathing isn't enough. It’s designed for a partner or a friend who is feeling completely overwhelmed and needs a moment of physical catharsis. The speciality here is the interactive smash experience. Before you get to the soothing candle, you have to break through the \"hard exterior\" of stress. It’s a powerful metaphor: you are physically breaking your tension to find the serenity waiting underneath. It turns a simple gift into a therapeutic event that starts with a release and ends with a calm, glowing atmosphere.", usage: "Place the concrete block on a sturdy, protected surface. Use the included premium brass-headed hammer to gently but firmly strike the \"cracked\" sections of the shell. Once the outer concrete layer is broken away, you'll reveal the \"Serenity Core.\" Clear away the debris, light the wick, and let the scent of Chamomile take over as the stress of the day disappears.", process: "The outer shell is crafted from a proprietary \"Eco-Shatter\" concrete blend that is designed to crack safely without creating sharp dust. The inner candle is hand-poured with an ultra-calming Chamomile & Serenity soy wax blend. It comes as a complete kit, including the custom-branded Meltix wooden and brass hammer, all housed in our signature charcoal-grey luxury gift box." },
+            63: { title: "Serenity Stone: The Cylindrical Smash", specialty: "This is for the friend or partner who feels like they’re carrying the weight of the world on their shoulders. The speciality is the sensory transition—moving from the hard, cold, grey concrete to the soft, warm, white wax hidden inside. It represents the idea that even when life feels rigid and unbreakable, there is a gentle light inside you waiting to be set free. It’s a physical manifestation of \"breaking through\" your limits, making it an incredibly empowering gift for someone who needs a reminder of their own inner warmth.", usage: "Place the cylinder on a solid, protected surface. Take a deep breath and use the brass-tipped hammer to strike the pre-fractured concrete. Once you’ve \"unboxed\" your peace, clear away the fragments and light the wick. As the candle burns, it creates a sanctuary of light and scent, effectively washing away the remnants of a hard day.", process: "We’ve used a specialized \"stress-fracture\" concrete mold that allows for a clean break without the mess of traditional stone. The candle inside is a high-grade soy blend, infused with Lavender & Serenity essential oils for maximum relaxation. The set is completed with a hand-turned wooden hammer and a luxury charcoal gift box." },
+            64: { title: "The Orb of Serenity: Spherical Smash", specialty: "This piece is designed for the person who needs a complete \"reset.\" The speciality of this design is its perfect spherical shape—a symbol of wholeness and cycles. Breaking into this orb feels like cracking open a new day. It’s a powerful gift for a partner or a close friend who is struggling to find a \"center\" amidst a chaotic week. By physically shattering the concrete shell, they are performing a ritual of letting go, uncovering a soft, glowing light that smells like a field of wildflowers. The addition of real dried chamomile botanicals inside the wax adds a beautiful, organic touch that only becomes visible once the \"armor\" is removed.", usage: "Place the \"Orb of Serenity\" on the provided marble or heat-safe base. Using the brass-weighted hammer, strike the pre-etched cracks on the surface. Once the concrete \"peels\" away, you are left with a smooth, egg-shaped candle core. Light the wick and let the calming botanical aroma fill the room. It’s not just a candle; it’s a 10-minute therapy session followed by hours of peace.", process: "The outer sphere is cast in a specialized \"light-impact\" concrete that mimics the look of natural stone but shatters cleanly. The inner core is hand-poured with a premium, slow-burning soy wax infused with Soothing Chamomile & Serenity essential oils. Each candle features hand-placed dried chamomile flowers for a \"botanical surprise\" as it burns. The set comes with our most premium ornate wooden and brass hammer." },
+            65: { title: "The Golden Sanctuary: Sandalwood Smash", specialty: "This is the ultimate \"Stress Buster\" for those who appreciate the finer things in life even during their most chaotic moments. It’s a perfect gift for a partner or a best friend who needs a physical release and a mental reset. The speciality of this piece is the Gold-Leaf infusion—as you break through the rugged, industrial concrete shell, you aren’t just finding a candle; you’re uncovering a luxury sanctuary. The combination of the physical \"smash\" and the grounding, earthy aroma of Sandalwood represents the transformation of raw tension into refined peace. It’s a physical reminder that even when things feel heavy, there is a golden light inside you waiting to be revealed.", usage: "Place the concrete sphere on the included brass tray or a sturdy, protected surface. Use the weighted copper-headed hammer to strike the \"fault lines\" of the concrete. Once the shell gives way, clear the fragments to reveal the gold-flecked wax core. Light the wick and let the warm, woody scent of Sandalwood ground your energy and melt away the remaining stress of the day.", process: "The outer \"Armor\" is cast in a high-texture, matte-grey concrete blend designed for a clean, satisfying fracture. The inner core is hand-poured with a premium soy wax infused with Genuine Sandalwood essential oils and topped with hand-placed 24k-style gold leaf flakes for a touch of opulence. The set is completed with a professional-grade rose-gold and walnut wood hammer, all housed in our signature bronze-foiled luxury gift box." }
+        };
+
+        const dragArea = document.getElementById('drag-area');
+        const track = document.getElementById('carousel-track');
+        const bgTitle = document.getElementById('bg-dynamic-title');
+        let autoScrollSpeed = 1.0; 
+        let isAutoScrollActive = true; 
+        const stopBtn = document.getElementById('stop-showcase-btn');
+        
+        let isLoggedIn = false;
+        let currentUser = JSON.parse(localStorage.getItem('meltix_user')) || null;
+        if(currentUser) isLoggedIn = true;
+
+        function handleSelection(selectedType) {
+            document.getElementById('accordion-box').classList.add('fade-out-active');
+            bgTitle.innerText = selectedType.split(' ')[0].toUpperCase();
+            loadImages(selectedType);
+
+            setTimeout(() => {
+                document.getElementById('product-showcase').classList.add('show');
+                document.getElementById('fab-menu').classList.add('show');
+            }, 800);
+        }
+
+        function toggleFabMenu() {
+            document.getElementById('fab-options').classList.toggle('open');
+        }
+
+        function switchVariant(variantName) {
+            document.getElementById('fab-options').classList.remove('open');
+            const showcase = document.getElementById('product-showcase');
+            showcase.style.opacity = '0'; 
+            
+            setTimeout(() => {
+                bgTitle.innerText = variantName.split(' ')[0].toUpperCase();
+                loadImages(variantName); 
+                const images = document.querySelectorAll('.img-container');
+                images.forEach(img => img.classList.remove('center-glow'));
+                showcase.style.opacity = '1'; 
+                requestAnimationFrame(forceRenderFrame);
+            }, 500);
+        }
+
+        function forceRenderFrame() {
+            if (!dragArea || !track) return;
+            const centerPoint = dragArea.getBoundingClientRect().left + dragArea.clientWidth / 2;
+            const images = document.querySelectorAll('.img-container');
+            images.forEach(img => {
+                const imgCenter = img.getBoundingClientRect().left + img.clientWidth / 2;
+                const dist = Math.abs(centerPoint - imgCenter);
+                const maxDist = dragArea.clientWidth / 1.5; 
+                if (dist < maxDist) {
+                    const ratio = 1 - (dist / maxDist);
+                    const scale = 0.7 + (0.5 * ratio); 
+                    if (scale > 1.05) {
+                        img.classList.add('center-glow');
+                    }
+                }
+            });
+        }
+
+        let isDragging = false;
+        let isActuallyDragging = false; 
+        let mouseDownX = 0; 
+        const clickThreshold = 10; 
+        let isScrubbing = false;
+        let startX, startScrollLeft;
+        const scrubber = document.getElementById('custom-scrubber');
+
+        dragArea.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            isActuallyDragging = false; 
+            mouseDownX = e.pageX; 
+            startX = e.pageX;
+            startScrollLeft = dragArea.scrollLeft;
+            dragArea.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragArea.style.cursor = 'grab';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const diff = e.pageX - startX;
+            dragArea.scrollLeft = startScrollLeft - diff;
+
+            if (Math.abs(e.pageX - mouseDownX) > clickThreshold) {
+                isActuallyDragging = true;
+            }
+        });
+
+        scrubber.addEventListener('input', () => {
+            isScrubbing = true; let maxScroll = track.scrollWidth - dragArea.clientWidth; dragArea.scrollLeft = (scrubber.value / 100) * maxScroll;
+        });
+        scrubber.addEventListener('change', () => { isScrubbing = false; });
+        scrubber.addEventListener('mouseup', () => { isScrubbing = false; });
+        scrubber.addEventListener('touchend', () => { isScrubbing = false; });
+
+        function loadImages(category) {
+            track.innerHTML = '';
+            let likedProducts = JSON.parse(localStorage.getItem('meltix_likes')) || [];
+
+            productData[category].forEach(item => {
+                let container = document.createElement('div');
+                container.className = 'img-container';
+                
+                let img = document.createElement('img');
+                img.className = 'carousel-img';
+                img.src = item.src;
+                img.draggable = false;
+                
+                let likeBtn = document.createElement('button');
+                likeBtn.className = 'like-btn';
+                likeBtn.setAttribute('data-product-id', item.id);
+                
+                if (likedProducts.includes(item.id.toString())) {
+                    likeBtn.classList.add('liked');
+                }
+
+                likeBtn.innerHTML = `
+                    <svg class="heart-icon" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                `;
+                
+                likeBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); 
+                    e.stopPropagation(); 
+                    
+                    let isLiked = this.classList.toggle('liked');
+                    let productId = this.getAttribute('data-product-id');
+
+                    if (isLiked) {
+                        if (!likedProducts.includes(productId)) likedProducts.push(productId);
+                    } else {
+                        likedProducts = likedProducts.filter(id => id !== productId);
+                    }
+                    localStorage.setItem('meltix_likes', JSON.stringify(likedProducts));
+
+                    fetch('/like_product', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            action: isLiked ? 'like' : 'unlike',
+                            name: category + " Break to Reveal Candle", 
+                            image_file: item.src.split('/').pop() 
+                        })
+                    })
+                    .then(response => response.json())
+                    .catch(error => console.error('Error:', error));
+                });
+
+                container.addEventListener('click', () => {
+                    if (!isActuallyDragging) {
+                        openModal(item.id);
+                    }
+                });
+
+                container.appendChild(img);
+                container.appendChild(likeBtn);
+                track.appendChild(container);
+            });
+            
+            setTimeout(() => {
+                dragArea.scrollLeft = 0;
+                scrubber.value = 0;
+            }, 50);
+        }
+
+        function renderLoop() {
+            if (document.getElementById('product-showcase').classList.contains('show')) {
+                let maxScroll = track.scrollWidth - dragArea.clientWidth;
+
+                if (!isDragging && !isScrubbing && maxScroll > 0 && isAutoScrollActive) {
+                    dragArea.scrollLeft += autoScrollSpeed;
+                    if (dragArea.scrollLeft >= maxScroll - 2) {
+                        dragArea.scrollLeft = 0; 
+                    }
+                }
+
+                if (!isScrubbing && maxScroll > 0) {
+                    scrubber.value = (dragArea.scrollLeft / maxScroll) * 100;
+                }
+
+                const centerPoint = dragArea.getBoundingClientRect().left + dragArea.clientWidth / 2;
+                const images = document.querySelectorAll('.img-container');
+
+                images.forEach(img => {
+                    const imgCenter = img.getBoundingClientRect().left + img.clientWidth / 2;
+                    const dist = Math.abs(centerPoint - imgCenter);
+                    const maxDist = dragArea.clientWidth / 1.5; 
+
+                    let scale = 0.7; 
+                    let opacity = 0.3; 
+                    let zIndex = 1;
+
+                    if (dist < maxDist) {
+                        const ratio = 1 - (dist / maxDist);
+                        scale = 0.7 + (0.5 * ratio); 
+                        opacity = 0.3 + (0.7 * ratio); 
+                        zIndex = Math.round(ratio * 10);
+                    }
+
+                    img.style.transform = `scale(${scale})`;
+                    img.style.opacity = opacity;
+                    img.style.zIndex = zIndex;
+
+                    if (scale > 1.05) {
+                        img.classList.add('center-glow');
+                    } else {
+                        img.classList.remove('center-glow');
+                    }
+                });
+            }
+            requestAnimationFrame(renderLoop);
+        }
+        requestAnimationFrame(renderLoop); 
+
+        if(stopBtn) {
+            stopBtn.addEventListener('click', function() {
+                isAutoScrollActive = !isAutoScrollActive;
+                if (isAutoScrollActive) {
+                    this.innerText = "Stop Auto Showcasing";
+                    this.style.background = "linear-gradient(to right, #d4a373 20%, #ffffff 50%, #d4a373 80%)"; 
+                    this.style.webkitBackgroundClip = "text";
+                    this.style.color = "transparent";
+                } else {
+                    this.innerText = "Start Auto Showcasing";
+                    this.style.background = "none";
+                    this.style.webkitBackgroundClip = "none";
+                    this.style.color = "#a89f91"; 
+                    this.style.backgroundColor = "rgba(10, 8, 5, 0.9)"; 
+                }
+            });
+        }
+
+        // ==========================================
+        // 🔴 MASTER MODAL JAVASCRIPT LOGIC 🔴
+        // ==========================================
+        const modal = document.getElementById('productModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSpecialty = document.getElementById('modalSpecialty');
+        const modalUsage = document.getElementById('modalUsage'); // 🔴 NEW FIELD 🔴
+        const modalProcess = document.getElementById('modalProcess');
+        const modalCategory = document.getElementById('modalCategory');
+
+        const reviewForm = document.getElementById('reviewForm');
+        const loginPrompt = document.getElementById('loginToReviewPrompt');
+        const reviewedMessage = document.getElementById('alreadyReviewedMessage');
+
+        function handleCredentialResponse(response) {
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const userData = JSON.parse(jsonPayload);
+            
+            currentUser = {
+                name: userData.name,
+                email: userData.email,
+                picture: userData.picture
+            };
+            
+            isLoggedIn = true;
+            localStorage.setItem('meltix_user', JSON.stringify(currentUser)); 
+            
+            toggleAuthFormState(activeProductId); 
+        }
+
+        function toggleAuthFormState(productId) {
+            let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+            
+            if (!isLoggedIn) {
+                reviewForm.style.display = 'none';
+                loginPrompt.style.display = 'block';
+                reviewedMessage.style.display = 'none';
+            } else if (userReviews.includes(productId.toString())) {
+                reviewForm.style.display = 'none';
+                loginPrompt.style.display = 'none';
+                reviewedMessage.style.display = 'block';
+            } else {
+                reviewForm.style.display = 'flex';
+                reviewForm.classList.remove('locked'); 
+                loginPrompt.style.display = 'none';
+                reviewedMessage.style.display = 'none';
+                
+                if (currentUser && currentUser.name) {
+                    document.getElementById('reviewName').value = currentUser.name;
+                }
+            }
+        }
+
+        const stars = document.querySelectorAll('.form-star');
+        const ratingInput = document.getElementById('reviewRating');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const val = this.getAttribute('data-val');
+                stars.forEach(s => {
+                    s.classList.toggle('active', s.getAttribute('data-val') <= val);
+                });
+            });
+            
+            star.parentElement.addEventListener('mouseleave', function() {
+                const currentVal = ratingInput.value;
+                stars.forEach(s => {
+                    s.classList.toggle('active', s.getAttribute('data-val') <= currentVal);
+                });
+            });
+
+            star.addEventListener('click', function() {
+                ratingInput.value = this.getAttribute('data-val');
+            });
+        });
+        
+        let currentReviews = []; 
+
+        async function fetchAndRenderReviews(productId) {
+            try {
+                const response = await fetch(`/get_reviews/${productId}`);
+                const data = await response.json();
+                
+                currentReviews = data.reviews_data.map((r, index) => ({
+                    ...r,
+                    id: r.id || index, 
+                    likes: r.likes !== undefined ? r.likes : 0, 
+                    userAction: null 
+                }));
+
+                renderReviewsUI(); 
+            } catch(e) {
+                console.error("Error loading reviews", e);
+            }
+        }
+
+        function renderReviewsUI() {
+            const displayStars = document.getElementById('displayStars');
+            const reviewsList = document.getElementById('reviewsList');
+
+            currentReviews.sort((a, b) => b.likes - a.likes);
+
+            let totalRating = 0;
+            currentReviews.forEach(r => totalRating += Number(r.rating));
+            let avgRating = currentReviews.length > 0 ? (totalRating / currentReviews.length) : 0;
+            
+            avgRating = Math.round(avgRating * 2) / 2;
+
+            let starsHtml = '';
+            for(let i=1; i<=5; i++) {
+                if(avgRating >= i) {
+                    starsHtml += `<span class="star gold">★</span>`; 
+                } else if(avgRating >= i - 0.5) {
+                    starsHtml += `<span class="star half-gold">★</span>`; 
+                } else {
+                    starsHtml += `<span class="star grey">★</span>`; 
+                }
+            }
+
+            if(currentReviews.length === 0) {
+                starsHtml += `<span class="rating-text">No reviews yet</span>`;
+                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
+            } else {
+                starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
+                
+                reviewsList.innerHTML = currentReviews.map((r) => {
+                    let likeActive = r.userAction === 'like' ? 'active-like' : '';
+                    let dislikeActive = r.userAction === 'dislike' ? 'active-dislike' : '';
+
+                    return `
+                    <div class="review-item">
+                        <div class="review-header-flex">
+                            <p class="review-user">${r.user_name} <span style="color:#d4a373; font-size:0.8rem; margin-left:10px;">${'★'.repeat(r.rating)}</span></p>
+                            <button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>
+                        </div>
+                        <p class="review-text">"${r.review_text}"</p>
+                        
+                        <div class="review-actions-bar">
+                            <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
+                                <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
+                            </button>
+                            <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
+                                <span class="act-icon">👎</span>
+                            </button>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+            displayStars.innerHTML = starsHtml;
+        }
+
+        function handleReviewAction(reviewId, actionType) {
+            let review = currentReviews.find(r => r.id === reviewId);
+            if(!review) return;
+
+            if (actionType === 'like') {
+                if (review.userAction === 'like') {
+                    review.likes--;
+                    review.userAction = null;
+                } else {
+                    review.likes++;
+                    review.userAction = 'like';
+                }
+            } else {
+                if (review.userAction === 'dislike') {
+                    review.userAction = null;
+                } else {
+                    if (review.userAction === 'like') review.likes--;
+                    review.userAction = 'dislike';
+                }
+            }
+            renderReviewsUI(); 
+        }
+
+        function deleteReview(reviewId) {
+            if(confirm("Are you sure you want to delete this review?")) {
+                currentReviews = currentReviews.filter(r => r.id !== reviewId);
+                
+                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+                userReviews = userReviews.filter(id => id !== activeProductId.toString());
+                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
+                toggleAuthFormState(activeProductId);
+
+                renderReviewsUI();
+
+                fetch(`/delete_review/${reviewId}`, { method: 'DELETE' }).catch(e => console.log('Pinged backend to delete'));
+            }
+        }
+
+        let activeProductId = null;
+
+        function openModal(productId) {
+            activeProductId = productId;
+            let targetProduct = null;
+            let targetCategory = "";
+            
+            for (const category in productData) {
+                targetProduct = productData[category].find(item => item.id == productId);
+                if (targetProduct) {
+                    targetCategory = category;
+                    break;
+                }
+            }
+            if (!targetProduct) return;
+
+            const mainImg = document.getElementById('modalMainImage');
+            mainImg.src = targetProduct.src;
+
+            const thumbs = document.querySelectorAll('.thumb-img');
+            thumbs.forEach((thumb, index) => {
+                thumb.src = targetProduct.src;
+                if(index === 0) thumb.classList.add('active-thumb');
+                else thumb.classList.remove('active-thumb');
+            });
+
+            // 🔴 EXACT BREAK TO REVEAL DETAILS BINDED HERE 🔴
+            const details = productDetails[productId];
+            modalCategory.innerText = `Meltix Break To Reveal Collection`;
+            if (details) {
+                modalTitle.innerText = details.title;
+                modalSpecialty.innerText = details.specialty;
+                modalProcess.innerText = details.process;
+                
+                // 🔴 Handle How to Use Field 🔴
+                if (details.usage) {
+                    modalUsage.innerText = details.usage;
+                    modalUsage.parentElement.style.display = "block";
+                } else {
+                    modalUsage.parentElement.style.display = "none";
+                }
+            }
+
+            toggleAuthFormState(productId);
+            fetchAndRenderReviews(productId);
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; 
+            activeProductId = null;
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        async function submitReview(e) {
+            e.preventDefault();
+            const name = document.getElementById('reviewName').value;
+            const text = document.getElementById('reviewText').value;
+            const rating = ratingInput.value;
+
+            if(rating === "0") {
+                alert("Please select a star rating!");
+                return;
+            }
+
+            const btn = document.getElementById('submitReviewBtn');
+            btn.innerText = "Posting...";
+
+            try {
+                await fetch('/submit_review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_id: activeProductId,
+                        user_name: name,
+                        review_text: text,
+                        rating: rating
+                    })
+                });
+
+                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
+                userReviews.push(activeProductId.toString());
+                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
+
+                toggleAuthFormState(activeProductId);
+                reviewForm.reset();
+                ratingInput.value = "0";
+                stars.forEach(s => s.classList.remove('active'));
+
+                fetchAndRenderReviews(activeProductId); 
+
+            } catch (err) {
+                console.error(err);
+                btn.innerText = "Error. Try Again.";
+                btn.style.borderColor = "#ff4b4b";
+            }
+        }
+
+        async function toggleWishlist(btnElement) {
+            if (!isLoggedIn || !currentUser) {
+                alert("Bhai, pehle Google se Sign In kar le!");
+                return;
+            }
+
+            try {
+                const response = await fetch('/toggle_wishlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_email: currentUser.email, 
+                        product_id: activeProductId 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === "success") {
+                    if (data.action === "added") {
+                        btnElement.classList.add('saved');
+                    } else {
+                        btnElement.classList.remove('saved');
+                    }
+                }
+            } catch(e) {
+                console.error("Wishlist error:", e);
+            }
+        }
+
+        function changeModalImage(clickedElement, imgSrc) {
+            document.getElementById('modalMainImage').src = imgSrc;
+            const thumbs = document.querySelectorAll('.thumb-img');
+            thumbs.forEach(thumb => thumb.classList.remove('active-thumb'));
+            clickedElement.classList.add('active-thumb');
+        }
+
+        function openLightbox(imageSrc) {
+            if (!imageSrc || imageSrc.includes(window.location.href)) return; 
+            
+            let existing = document.getElementById('meltix-lightbox');
+            if (existing) existing.remove();
+
+            let lightbox = document.createElement('div');
+            lightbox.id = 'meltix-lightbox';
+            lightbox.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px);';
+            
+            let img = document.createElement('img');
+            img.src = imageSrc;
+            img.style.cssText = 'max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 12px; box-shadow: 0 0 40px rgba(212,163,115,0.6); transform: scale(0.8); transition: transform 0.3s ease;';
+            
+            lightbox.appendChild(img);
+            document.body.appendChild(lightbox); 
+            
+            setTimeout(() => {
+                lightbox.style.opacity = '1';
+                img.style.transform = 'scale(1)';
+            }, 10);
+
+            lightbox.onclick = function() {
+                lightbox.style.opacity = '0';
+                img.style.transform = 'scale(0.8)';
+                setTimeout(() => lightbox.remove(), 300);
+            };
+        }
+    </script>
+</body>
+</html>
