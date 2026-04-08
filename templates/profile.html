@@ -15,7 +15,7 @@
         <div class="orb orb-cream"></div>
         <div class="grain"></div>
     </div>
-
+    <div id="g_id_onload" data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
     <nav class="top-nav">
         <a href="/shop" class="back-btn"><span>✦</span>Back to Shop</a>
         <div class="brand-lockup">
@@ -77,7 +77,9 @@
             <div class="hero-actions">
                 <button class="primary-btn" id="hero-customize-btn" type="button">Open Avatar Gallery</button>
                 <a href="/shop" class="secondary-btn">Browse Collection</a>
-                <button class="secondary-btn google-cta-btn" id="google-signin-btn" type="button" hidden>Continue with Google</button>
+                <div id="google-signin-btn" hidden style="display:flex;">
+                    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_black" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+                </div>
                 <button class="danger-btn" id="sign-out-btn" type="button" hidden>Sign Out</button>
             </div>
         </section>
@@ -86,7 +88,9 @@
             <p class="card-kicker">Private Access</p>
             <h2>Unlock Your Private Meltix Atelier</h2>
             <p class="body-copy">Sign in with Google to view your saved candles, delivery timeline, rewards ledger, scent profile, and address book.</p>
-            <button class="primary-btn locked-gate-btn" id="guest-signin-btn" type="button">Continue with Google</button>
+            <div id="guest-signin-btn" style="margin-top: 24px; display: flex; justify-content: center;">
+                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_black" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
+            </div>
         </section>
 
         <section class="content-grid atelier-content" id="atelier-content">
@@ -458,27 +462,8 @@
             return JSON.parse(jsonPayload);
         }
 
-        function initializeGoogleIdentity() {
-            if (state.googleInitialized || !window.google || !window.google.accounts || !window.google.accounts.id) return;
-            google.accounts.id.initialize({ client_id: googleClientId, callback: handleCredentialResponse, auto_select: false, cancel_on_tap_outside: false });
-            state.googleInitialized = true;
-        }
-
-        function waitForGoogleIdentity(attempt = 0) {
-            if (window.google && window.google.accounts && window.google.accounts.id) {
-                initializeGoogleIdentity();
-                return;
-            }
-            if (attempt < 40) window.setTimeout(() => waitForGoogleIdentity(attempt + 1), 250);
-        }
-
         function promptGoogleSignIn() {
-            initializeGoogleIdentity();
-            if (window.google && window.google.accounts && window.google.accounts.id) {
-                google.accounts.id.prompt();
-            } else {
-                showToast('Google Sign-In is still loading. Please try again in a moment.');
-            }
+            showToast('Please sign in using the Google button.');
         }
 
         async function handleCredentialResponse(response) {
@@ -956,8 +941,6 @@
         avatarTrigger.addEventListener('click', openAvatarModal);
         avatarEditBtn.addEventListener('click', openAvatarModal);
         heroCustomizeBtn.addEventListener('click', openAvatarModal);
-        googleSigninBtn.addEventListener('click', promptGoogleSignIn);
-        guestSigninBtn.addEventListener('click', promptGoogleSignIn);
         signOutBtn.addEventListener('click', logoutUser);
         useGooglePhotoBtn.addEventListener('click', switchToGooglePhoto);
         openScentQuizBtn.addEventListener('click', openScentQuiz);
@@ -975,7 +958,6 @@
         window.handleCredentialResponse = handleCredentialResponse;
         applyBillingVisibility();
         bootstrapProfile();
-        waitForGoogleIdentity();
     </script>
 </body>
 </html>
