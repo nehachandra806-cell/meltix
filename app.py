@@ -136,13 +136,14 @@ class Product(db.Model):
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, nullable=False) # Ye batayega kis candle ka review hai
+    user_id = db.Column(db.Integer, db.ForeignKey('user_account.id'), nullable=False)
     user_name = db.Column(db.String(100), nullable=False)
     review_text = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False) # 1 se 5 tak star rating
     created_at = db.Column(db.DateTime, default=datetime.utcnow) # Review ka time
 
     # 🔴 STRICT RULE: 1 User = 1 Review per product
-    __table_args__ = (db.UniqueConstraint('user_name', 'product_id', name='unique_user_review'),)
+    __table_args__ = (db.UniqueConstraint('user_id', 'product_id', name='unique_user_review'),)
 
     # Cascade Delete: Review delete hoga toh uske saare likes bhi automatically ud jayenge
     review_likes = db.relationship('ReviewLike', backref='review', cascade="all, delete-orphan")
@@ -154,14 +155,16 @@ class Review(db.Model):
 class ReviewLike(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     review_id = db.Column(db.Integer, db.ForeignKey('review.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_account.id'), nullable=False)
     user_name = db.Column(db.String(100), nullable=False)
     action_type = db.Column(db.String(10), nullable=False) # 'like' ya 'dislike'
 
     # STRICT RULE: Ek review pe ek banda ek hi baar like/dislike save kar sake
-    __table_args__ = (db.UniqueConstraint('review_id', 'user_name', name='unique_user_review_like'),)
+    __table_args__ = (db.UniqueConstraint('review_id', 'user_id', name='unique_user_review_like'),)
 
 
-class UserProfile(db.Model):
+class UserAccount(db.Model):
+    __tablename__ = 'user_account'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     display_name = db.Column(db.String(120), nullable=False, default='Guest')
@@ -170,15 +173,7 @@ class UserProfile(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    def __repr__(self):
-        return f"UserProfile('{self.email}', Avatar: {self.avatar_filename})"
-
-
-# 🔴 NAYA TABLE: Saved Products (Wishlist / Buy Later)
-class UserAddress(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_email = db.Column(db.String(120), unique=True, nullable=False, index=True)
-    phone_number = db.Column(db.String(25), nullable=False, default='')
+    phone = db.Column(db.String(25), nullable=False, default='')
     shipping_name = db.Column(db.String(120), nullable=False, default='')
     shipping_line1 = db.Column(db.String(160), nullable=False, default='')
     shipping_line2 = db.Column(db.String(160), nullable=False, default='')
@@ -186,6 +181,7 @@ class UserAddress(db.Model):
     shipping_state = db.Column(db.String(80), nullable=False, default='')
     shipping_postal_code = db.Column(db.String(20), nullable=False, default='')
     shipping_country = db.Column(db.String(60), nullable=False, default='India')
+
     billing_same_as_shipping = db.Column(db.Boolean, nullable=False, default=True)
     billing_name = db.Column(db.String(120), nullable=False, default='')
     billing_line1 = db.Column(db.String(160), nullable=False, default='')
@@ -194,7 +190,11 @@ class UserAddress(db.Model):
     billing_state = db.Column(db.String(80), nullable=False, default='')
     billing_postal_code = db.Column(db.String(20), nullable=False, default='')
     billing_country = db.Column(db.String(60), nullable=False, default='India')
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    reviews = db.relationship('Review', backref='author', lazy='dynamic')
+
+    def __repr__(self):
+        return f"UserAccount('{self.email}', Avatar: {self.avatar_filename})"
 
 
 class ProfileOrder(db.Model):
@@ -441,7 +441,7 @@ def serialize_address(address_record):
         }
 
     return {
-        "phone_number": address_record.phone_number,
+        "phone_number": address_record.phone,
         "shipping": {
             "name": address_record.shipping_name,
             "line1": address_record.shipping_line1,
@@ -588,26 +588,19 @@ def get_or_create_profile(email, display_name=None):
     normalized_email = (email or '').strip().lower()
     readable_name = (display_name or '').strip() or normalized_email.split('@')[0] or 'Guest'
 
-    profile_record = UserProfile.query.filter_by(email=normalized_email).first()
+    profile_record = UserAccount.query.filter_by(email=normalized_email).first()
     if not profile_record:
-        profile_record = UserProfile(
+        profile_record = UserAccount(
             email=normalized_email,
             display_name=readable_name,
             avatar_filename=''
         )
         db.session.add(profile_record)
     else:
-        profile_record.display_name = readable_name or profile_record.display_name
+        if readable_name and readable_name != 'Guest':
+            profile_record.display_name = readable_name
 
     return profile_record
-
-
-def get_or_create_address(user_email):
-    address_record = UserAddress.query.filter_by(user_email=user_email).first()
-    if not address_record:
-        address_record = UserAddress(user_email=user_email)
-        db.session.add(address_record)
-    return address_record
 
 
 def sync_profile_orders(user_email, orders_payload):
@@ -671,7 +664,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
             )
         })
 
-    all_reviews = Review.query.filter_by(user_name=profile_record.display_name).order_by(Review.created_at.desc()).all()
+    all_reviews = Review.query.filter(Review.user_id == profile_record.id).order_by(Review.created_at.desc()).all()
     review_ids = [review.id for review in all_reviews]
 
     total_review_likes = 0
@@ -720,8 +713,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         }
     scent_persona = derive_scent_persona(profile_record, orders, explicit_persona=explicit_persona)
 
-    address_record = UserAddress.query.filter_by(user_email=profile_record.email).first()
-    address_book = serialize_address(address_record)
+    address_book = serialize_address(profile_record)
 
     has_custom_avatar = bool(profile_record.avatar_filename)
     avatar_url = None
@@ -830,10 +822,39 @@ def bug_report():
 
 @app.route('/profile')
 def profile():
+    session_email = (session.get('profile_email') or '').strip().lower()
+    session_name = (session.get('profile_name') or '').strip()
+    session_picture = (session.get('profile_picture') or '').strip()
+    profile_data = {}
+    current_user = {"name": "", "email": "", "picture": ""}
+
+    if session_email:
+        try:
+            profile_record = get_or_create_profile(session_email, session_name)
+            db.session.commit()
+            profile_data = serialize_profile(
+                profile_record,
+                google_picture_url=session_picture,
+                use_google_picture=bool(session_picture and not profile_record.avatar_filename)
+            )
+            current_user = {
+                "name": session_name or profile_record.display_name,
+                "email": profile_record.email,
+                "picture": session_picture,
+            }
+        except Exception:
+            db.session.rollback()
+            profile_data = {}
+            current_user = {"name": "", "email": "", "picture": ""}
+
     return render_template(
         'profile.html',
         avatar_options=build_avatar_options(),
-        default_avatar=url_for('static', filename=f'images/avatar/{DEFAULT_AVATAR_FILENAME}')
+        default_avatar=url_for('static', filename=f'images/avatar/{DEFAULT_AVATAR_FILENAME}'),
+        profile_data=profile_data,
+        stats=profile_data.get('stats', {}),
+        recent_reviews=profile_data.get('recent_reviews', []),
+        current_user=current_user
     )
 
 
@@ -882,14 +903,25 @@ def like_product():
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
     data = request.get_json()
-    new_review = Review(
-        product_id=int(data.get('product_id')),
-        user_name=data.get('user_name'),
-        review_text=data.get('review_text'),
-        rating=int(data.get('rating'))
-    )
-    
     try:
+        user_email = data.get('user_email')
+        
+        user_account = None
+        if user_email:
+            user_account = UserAccount.query.filter_by(email=user_email).first()
+        elif 'profile_email' in session:
+            user_account = UserAccount.query.filter_by(email=session['profile_email']).first()
+            
+        if not user_account:
+            return jsonify({'success': False, 'message': 'Login required to post a review'}), 401
+
+        new_review = Review(
+            product_id=int(data.get('product_id')),
+            user_id=user_account.id,
+            user_name=data.get('user_name') or user_account.display_name,
+            review_text=data.get('review_text'),
+            rating=int(data.get('rating'))
+        )
         db.session.add(new_review)
         db.session.commit()
         return jsonify({'success': True, 'message': 'Review posted successfully!'}), 200
@@ -912,19 +944,39 @@ def get_reviews(product_id):
     
     total_stars = sum(r.rating for r in reviews)
     avg_rating = round(total_stars / len(reviews), 1)
+    review_ids = [review.id for review in reviews]
+    review_actions = ReviewLike.query.filter(ReviewLike.review_id.in_(review_ids)).all()
+    action_counts = {}
+    current_user_action_map = {}
+    session_email = (session.get('profile_email') or '').strip().lower()
+    current_user = UserAccount.query.filter_by(email=session_email).first() if session_email else None
+    current_user_id = current_user.id if current_user else None
+
+    for action in review_actions:
+        counts = action_counts.setdefault(action.review_id, {'likes': 0, 'dislikes': 0})
+        if action.action_type == 'like':
+            counts['likes'] += 1
+        elif action.action_type == 'dislike':
+            counts['dislikes'] += 1
+
+        if current_user_id and action.user_id == current_user_id:
+            current_user_action_map[action.review_id] = action.action_type
     
     reviews_list = []
     for r in reviews:
-        # Is review ke total 'like' count karo
-        likes_count = ReviewLike.query.filter_by(review_id=r.id, action_type='like').count()
+        author = db.session.get(UserAccount, r.user_id)
+        counts = action_counts.get(r.id, {'likes': 0, 'dislikes': 0})
         
         reviews_list.append({
             'id': r.id, # 🔴 FIX: ID bhejna zaroori hai Javascript ko delete/like ke liye
             'user_name': r.user_name,
+            'author_email': author.email if author else "",
             'review_text': r.review_text,
             'rating': r.rating,
             'date': r.created_at.strftime("%d %b %Y"),
-            'likes': likes_count
+            'likes': counts['likes'],
+            'dislikes': counts['dislikes'],
+            'current_user_action': current_user_action_map.get(r.id)
         })
         
     return jsonify({
@@ -935,15 +987,31 @@ def get_reviews(product_id):
 
 
 # 3. NAYA: Delete Review Route
-@app.route('/delete_review/<int:review_id>', methods=['DELETE'])
+@app.route('/delete_review/<int:review_id>', methods=['POST', 'DELETE'])
 def delete_review_route(review_id):
     try:
+        data = request.get_json() or {}
+        user_email = data.get('user_email')
+        
+        user_account = None
+        if user_email:
+            user_account = UserAccount.query.filter_by(email=user_email).first()
+        elif 'profile_email' in session:
+            user_account = UserAccount.query.filter_by(email=session['profile_email']).first()
+            
+        if not user_account:
+            return jsonify({'status': 'error', 'message': 'Login required'}), 401
+            
         review = db.session.get(Review, review_id)
-        if review:
-            db.session.delete(review) # Cascade ki wajah se likes automatically delete ho jayenge
-            db.session.commit()
-            return jsonify({"status": "success"}), 200
-        return jsonify({"status": "error", "message": "Review not found"}), 404
+        if not review:
+            return jsonify({"status": "error", "message": "Review not found"}), 404
+            
+        if review.user_id != user_account.id:
+            return jsonify({"status": "error", "message": "Unauthorized"}), 403
+            
+        db.session.delete(review) # Cascade deletes likes
+        db.session.commit()
+        return jsonify({"status": "success"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -955,20 +1023,41 @@ def toggle_review_like():
     data = request.get_json()
     review_id = data.get('review_id')
     user_name = data.get('user_name')
+    user_email = data.get('user_email')
     action = data.get('action')
 
     try:
+        user_account = None
+        if user_email:
+            user_account = UserAccount.query.filter_by(email=user_email).first()
+        elif 'profile_email' in session:
+            user_account = UserAccount.query.filter_by(email=session['profile_email']).first()
+            
+        if not user_account:
+            return jsonify({'status': 'error', 'message': 'Login required'}), 401
+            
         # Check karo agar user ne pehle se koi action liya hai
-        existing_action = ReviewLike.query.filter_by(review_id=review_id, user_name=user_name).first()
+        existing_action = ReviewLike.query.filter_by(review_id=review_id, user_id=user_account.id).first()
 
         if existing_action:
-            existing_action.action_type = action # Update kar do (like -> dislike ya vice versa)
+            if existing_action.action_type == action:
+                db.session.delete(existing_action)
+            else:
+                existing_action.action_type = action # Update kar do (like -> dislike ya vice versa)
         else:
-            new_action = ReviewLike(review_id=review_id, user_name=user_name, action_type=action) # Naya banao
+            new_action = ReviewLike(review_id=review_id, user_id=user_account.id, user_name=user_name or user_account.display_name, action_type=action) # Naya banao
             db.session.add(new_action)
 
         db.session.commit()
-        return jsonify({"status": "success"}), 200
+        likes_count = ReviewLike.query.filter_by(review_id=review_id, action_type='like').count()
+        dislikes_count = ReviewLike.query.filter_by(review_id=review_id, action_type='dislike').count()
+        active_action = ReviewLike.query.filter_by(review_id=review_id, user_id=user_account.id).first()
+        return jsonify({
+            "status": "success",
+            "likes": likes_count,
+            "dislikes": dislikes_count,
+            "current_user_action": active_action.action_type if active_action else None
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -1020,6 +1109,9 @@ def profile_bootstrap():
         profile_record = get_or_create_profile(email, display_name)
         sync_profile_orders(profile_record.email, orders_payload)
         session['profile_email'] = profile_record.email
+        session['profile_name'] = display_name or profile_record.display_name
+        if google_picture_url:
+            session['profile_picture'] = google_picture_url
         db.session.commit()
         prefer_google_picture = bool(google_picture_url and not profile_record.avatar_filename)
         return jsonify({
@@ -1033,6 +1125,14 @@ def profile_bootstrap():
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route('/api/profile/logout', methods=['POST'])
+def profile_logout():
+    session.pop('profile_email', None)
+    session.pop('profile_name', None)
+    session.pop('profile_picture', None)
+    return jsonify({"success": True}), 200
 
 
 @app.route('/api/profile/avatar', methods=['POST'])
@@ -1083,12 +1183,15 @@ def save_profile_address():
         return jsonify({"success": False, "message": "Sign in required"}), 401
 
     try:
-        address_record = get_or_create_address(email)
+        address_record = UserAccount.query.filter_by(email=email).first()
+        if not address_record:
+            return jsonify({"success": False, "message": "User not found"}), 404
+            
         shipping = data.get('shipping') or {}
         billing = data.get('billing') or {}
         billing_same_as_shipping = bool(data.get('billing_same_as_shipping', True))
 
-        address_record.phone_number = (data.get('phone_number') or '').strip()
+        address_record.phone = (data.get('phone_number') or '').strip()
         address_record.shipping_name = (shipping.get('name') or '').strip()
         address_record.shipping_line1 = (shipping.get('line1') or '').strip()
         address_record.shipping_line2 = (shipping.get('line2') or '').strip()

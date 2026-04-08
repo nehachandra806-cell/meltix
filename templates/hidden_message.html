@@ -191,6 +191,8 @@
     </div>
 
     <script>
+        const currentUserEmail = "{{ session.get('profile_email', '') }}";
+        const profileBootstrapUrl = "{{ url_for('profile_bootstrap') }}";
         const dustContainer = document.getElementById('dust-particles');
         for (let i = 0; i < 50; i++) {
             let particle = document.createElement('div');
@@ -253,9 +255,7 @@
         let isAutoScrollActive = true; 
         const stopBtn = document.getElementById('stop-showcase-btn');
         
-        let isLoggedIn = false;
-        let currentUser = JSON.parse(localStorage.getItem('meltix_user')) || null;
-        if(currentUser) isLoggedIn = true;
+        let isLoggedIn = currentUserEmail !== "";
 
         function handleSelection(selectedType) {
             document.getElementById('accordion-box').classList.add('fade-out-active');
@@ -494,7 +494,7 @@
         const loginPrompt = document.getElementById('loginToReviewPrompt');
         const reviewedMessage = document.getElementById('alreadyReviewedMessage');
 
-        function handleCredentialResponse(response) {
+        async function handleCredentialResponse(response) {
             const base64Url = response.credential.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
             const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -502,27 +502,33 @@
             }).join(''));
 
             const userData = JSON.parse(jsonPayload);
-            
-            currentUser = {
-                name: userData.name,
-                email: userData.email,
-                picture: userData.picture
-            };
-            
-            isLoggedIn = true;
-            localStorage.setItem('meltix_user', JSON.stringify(currentUser)); 
-            
-            toggleAuthFormState(activeProductId); 
+
+            try {
+                const response = await fetch(profileBootstrapUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userData.email,
+                        name: userData.name || 'Meltix Collector',
+                        picture: userData.picture || '',
+                        orders: []
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Profile sync failed');
+                window.location.reload();
+            } catch (error) {
+                console.error(error);
+                alert("Sign in could not be completed. Please try again.");
+            }
         }
 
         function toggleAuthFormState(productId) {
-            let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
-            
             if (!isLoggedIn) {
                 reviewForm.style.display = 'none';
                 loginPrompt.style.display = 'block';
                 reviewedMessage.style.display = 'none';
-            } else if (userReviews.includes(productId.toString())) {
+            } else if (currentReviews.some((review) => review.author_email === currentUserEmail)) {
                 reviewForm.style.display = 'none';
                 loginPrompt.style.display = 'none';
                 reviewedMessage.style.display = 'block';
@@ -531,10 +537,6 @@
                 reviewForm.classList.remove('locked'); 
                 loginPrompt.style.display = 'none';
                 reviewedMessage.style.display = 'none';
-                
-                if (currentUser && currentUser.name) {
-                    document.getElementById('reviewName').value = currentUser.name;
-                }
             }
         }
 
@@ -571,10 +573,12 @@
                 currentReviews = data.reviews_data.map((r, index) => ({
                     ...r,
                     id: r.id || index, 
-                    likes: r.likes !== undefined ? r.likes : 0, 
-                    userAction: null 
+                    likes: r.likes !== undefined ? r.likes : 0,
+                    dislikes: r.dislikes !== undefined ? r.dislikes : 0,
+                    userAction: r.current_user_action || null 
                 }));
 
+                toggleAuthFormState(productId);
                 renderReviewsUI(); 
             } catch(e) {
                 console.error("Error loading reviews", e);
@@ -613,12 +617,17 @@
                 reviewsList.innerHTML = currentReviews.map((r) => {
                     let likeActive = r.userAction === 'like' ? 'active-like' : '';
                     let dislikeActive = r.userAction === 'dislike' ? 'active-dislike' : '';
+                    let deleteButtonMarkup = '';
+
+                    if (currentUserEmail !== "" && r.author_email === currentUserEmail) {
+                        deleteButtonMarkup = `<button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>`;
+                    }
 
                     return `
                     <div class="review-item">
                         <div class="review-header-flex">
                             <p class="review-user">${r.user_name} <span style="color:#d4a373; font-size:0.8rem; margin-left:10px;">${'★'.repeat(r.rating)}</span></p>
-                            <button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>
+                            ${deleteButtonMarkup}
                         </div>
                         <p class="review-text">"${r.review_text}"</p>
                         
@@ -627,7 +636,7 @@
                                 <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
                             </button>
                             <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
-                                <span class="act-icon">👎</span>
+                                <span class="act-icon">👎</span> <span class="cnt">${r.dislikes}</span>
                             </button>
                         </div>
                     </div>
@@ -636,41 +645,46 @@
             displayStars.innerHTML = starsHtml;
         }
 
-        function handleReviewAction(reviewId, actionType) {
-            let review = currentReviews.find(r => r.id === reviewId);
-            if(!review) return;
-
-            if (actionType === 'like') {
-                if (review.userAction === 'like') {
-                    review.likes--;
-                    review.userAction = null;
-                } else {
-                    review.likes++;
-                    review.userAction = 'like';
-                }
-            } else {
-                if (review.userAction === 'dislike') {
-                    review.userAction = null;
-                } else {
-                    if (review.userAction === 'like') review.likes--;
-                    review.userAction = 'dislike';
-                }
+        async function handleReviewAction(reviewId, actionType) {
+            if (currentUserEmail === "") {
+                alert("Bhai, pehle Google se Sign In kar le!");
+                return;
             }
-            renderReviewsUI(); 
+
+            try {
+                const response = await fetch('/toggle_review_like', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        review_id: reviewId,
+                        action: actionType,
+                        user_email: currentUserEmail
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || data.status !== 'success') throw new Error(data.message || 'Could not update review reaction');
+                await fetchAndRenderReviews(activeProductId);
+            } catch (error) {
+                console.error(error);
+            }
         }
 
-        function deleteReview(reviewId) {
-            if(confirm("Are you sure you want to delete this review?")) {
-                currentReviews = currentReviews.filter(r => r.id !== reviewId);
-                
-                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
-                userReviews = userReviews.filter(id => id !== activeProductId.toString());
-                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
-                toggleAuthFormState(activeProductId);
+        async function deleteReview(reviewId) {
+            if (!confirm("Are you sure you want to delete this review?")) {
+                return;
+            }
 
-                renderReviewsUI();
-
-                fetch(`/delete_review/${reviewId}`, { method: 'DELETE' }).catch(e => console.log('Pinged backend to delete'));
+            try {
+                const response = await fetch(`/delete_review/${reviewId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_email: currentUserEmail })
+                });
+                const data = await response.json();
+                if (!response.ok || data.status !== 'success') throw new Error(data.message || 'Could not delete review');
+                await fetchAndRenderReviews(activeProductId);
+            } catch (error) {
+                console.error(error);
             }
         }
 
@@ -708,7 +722,6 @@
                 modalProcess.innerText = details.process;
             }
 
-            toggleAuthFormState(productId);
             fetchAndRenderReviews(productId);
 
             modal.classList.add('show');
@@ -740,27 +753,26 @@
             btn.innerText = "Posting...";
 
             try {
-                await fetch('/submit_review', {
+                const response = await fetch('/submit_review', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         product_id: activeProductId,
                         user_name: name,
+                        user_email: currentUserEmail,
                         review_text: text,
                         rating: rating
                     })
                 });
-
-                let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
-                userReviews.push(activeProductId.toString());
-                localStorage.setItem('meltix_submitted_reviews', JSON.stringify(userReviews));
-
-                toggleAuthFormState(activeProductId);
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Review post failed');
                 reviewForm.reset();
                 ratingInput.value = "0";
                 stars.forEach(s => s.classList.remove('active'));
 
-                fetchAndRenderReviews(activeProductId); 
+                await fetchAndRenderReviews(activeProductId); 
+                toggleAuthFormState(activeProductId);
+                btn.innerText = "Post Review";
 
             } catch (err) {
                 console.error(err);
@@ -770,7 +782,7 @@
         }
 
         async function toggleWishlist(btnElement) {
-            if (!isLoggedIn || !currentUser) {
+            if (!isLoggedIn || currentUserEmail === "") {
                 alert("Bhai, pehle Google se Sign In kar le!");
                 return;
             }
@@ -780,7 +792,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        user_email: currentUser.email, 
+                        user_email: currentUserEmail, 
                         product_id: activeProductId 
                     })
                 });

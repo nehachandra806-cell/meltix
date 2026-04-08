@@ -60,6 +60,10 @@
                     <strong id="total-reviews">0</strong>
                 </div>
                 <div class="stat-pill">
+                    <span class="stat-label">Review Impact</span>
+                    <strong id="review-impact">{{ stats.review_likes or 0 }}</strong>
+                </div>
+                <div class="stat-pill">
                     <span class="stat-label">Orders in Progress</span>
                     <strong id="orders-in-progress">0</strong>
                 </div>
@@ -259,8 +263,24 @@
                     <h2>Recent Reviews</h2>
                 </div>
 
-                <div id="reviews-list" class="review-list"></div>
-                <div id="reviews-empty" class="empty-state">
+                <div id="reviews-list" class="review-list">
+                    {% for review in recent_reviews %}
+                    <article class="review-item">
+                        <div class="review-meta">
+                            <strong>Product #{{ review.product_id }}</strong>
+                            <span style="color: var(--accent-gold); font-size: 1.1rem;">
+                                {{ "★" * review.rating }}<span style="color: rgba(255,255,255,0.2);">{{ "☆" * (5 - review.rating) }}</span> &middot; <span style="font-size:0.84rem; color:var(--text-muted);">{{ review.date }}</span>
+                            </span>
+                        </div>
+                        <p>{{ review.review_text }}</p>
+                        <div class="review-impact-row">
+                            <span class="review-impact-chip">Helpful {{ review.likes }}</span>
+                            <span class="review-impact-chip muted-chip">Negative {{ review.dislikes }}</span>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                <div id="reviews-empty" class="empty-state" {% if recent_reviews %}style="display:none;"{% endif %}>
                     <p>No reviews published yet.</p>
                     <span>Your latest thoughts on each candle will appear here once you begin reviewing the collection.</span>
                     <a href="/shop" class="empty-cta">Explore the Collection</a>
@@ -368,14 +388,17 @@
     <script>
         const avatarOptions = {{ avatar_options | tojson }};
         const bootstrapUrl = "{{ url_for('profile_bootstrap') }}";
+        const logoutUrl = "{{ url_for('profile_logout') }}";
         const updateAvatarUrl = "{{ url_for('update_profile_avatar') }}";
         const saveAddressUrl = "{{ url_for('save_profile_address') }}";
         const saveScentPersonaUrl = "{{ url_for('save_scent_persona') }}";
         const googleClientId = "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com";
+        const initialProfile = {{ profile_data | tojson }};
+        const initialUser = {{ current_user | tojson }};
 
         const state = {
-            currentUser: null,
-            currentProfile: null,
+            currentUser: initialUser && initialUser.email ? initialUser : null,
+            currentProfile: initialProfile && initialProfile.email ? initialProfile : null,
             selectedAvatar: avatarOptions[0] ? avatarOptions[0].filename : "avatar_1.jpg",
             usingGoogleAvatar: false,
             googleInitialized: false,
@@ -395,6 +418,7 @@
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
         const totalReviews = document.getElementById('total-reviews');
+        const reviewImpact = document.getElementById('review-impact');
         const ordersInProgress = document.getElementById('orders-in-progress');
         const totalSpent = document.getElementById('total-spent');
         const wishlistCount = document.getElementById('wishlist-count');
@@ -439,10 +463,6 @@
             return avatarOptions.find((avatar) => avatar.filename === filename) || avatarOptions[0] || null;
         }
 
-        function safeReadUser() {
-            try { return JSON.parse(localStorage.getItem('meltix_user')) || null; } catch (error) { return null; }
-        }
-
         function safeReadOrders() {
             try { return JSON.parse(localStorage.getItem('meltix_orders')) || []; } catch (error) { return []; }
         }
@@ -469,9 +489,20 @@
             try {
                 const userData = decodeJwtPayload(response.credential);
                 const currentUser = { name: userData.name || 'Meltix Collector', email: userData.email || '', picture: userData.picture || '' };
-                localStorage.setItem('meltix_user', JSON.stringify(currentUser));
                 state.currentUser = currentUser;
-                await bootstrapProfile();
+                const bootstrapResponse = await fetch(bootstrapUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        name: currentUser.name,
+                        picture: currentUser.picture,
+                        orders: safeReadOrders()
+                    })
+                });
+                const data = await bootstrapResponse.json();
+                if (!bootstrapResponse.ok || !data.success) throw new Error(data.message || 'Profile sync failed');
+                renderProfile(data.profile);
                 showToast('Your private atelier is now unlocked.');
             } catch (error) {
                 showToast('Google Sign-In could not be completed. Please try again.');
@@ -605,8 +636,8 @@
                     </div>
                     <p>${item.review_text}</p>
                     <div class="review-impact-row">
-                        <span class="review-impact-chip">Helpful ${item.likes || 0}</span>
-                        <span class="review-impact-chip muted-chip">Negative ${item.dislikes || 0}</span>
+                        <span class="review-impact-chip">Helpful ${item.likes}</span>
+                        <span class="review-impact-chip muted-chip">Negative ${item.dislikes}</span>
                     </div>`;
                 reviewsList.appendChild(review);
             });
@@ -777,6 +808,7 @@
             profileName.textContent = 'Guest Flame';
             profileEmail.textContent = 'Continue with Google to access your saved candles, order tracking, and private profile settings.';
             totalReviews.textContent = '0';
+            reviewImpact.textContent = '0';
             ordersInProgress.textContent = '0';
             totalSpent.textContent = 'INR 0';
             wishlistCount.textContent = '0';
@@ -814,6 +846,7 @@
             profileName.textContent = profile.display_name || 'Guest Flame';
             profileEmail.textContent = profile.email || 'Not connected';
             totalReviews.textContent = profile.stats ? profile.stats.review_count || 0 : 0;
+            reviewImpact.textContent = profile.stats ? profile.stats.review_likes || 0 : 0;
             ordersInProgress.textContent = profile.stats ? profile.stats.orders_in_progress || 0 : 0;
             totalSpent.textContent = profile.stats ? profile.stats.total_spent_display || formatCurrency(profile.stats.total_spent || 0) : 'INR 0';
             wishlistCount.textContent = profile.stats ? profile.stats.wishlist_count || 0 : 0;
@@ -830,26 +863,13 @@
             renderOrders(profile.orders || []);
             addressStatus.textContent = 'Your address book is ready for your next checkout.';
         }
-        async function bootstrapProfile() {
-            const storedUser = safeReadUser();
-            state.currentUser = storedUser;
-            if (!storedUser || !storedUser.email) {
-                renderGuestProfile();
+
+        function hydrateProfileFromTemplate() {
+            if (state.currentProfile && state.currentProfile.email) {
+                renderProfile(state.currentProfile);
                 return;
             }
-            try {
-                const response = await fetch(bootstrapUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: storedUser.email, name: storedUser.name || 'Meltix Collector', picture: storedUser.picture || '', orders: safeReadOrders() })
-                });
-                const data = await response.json();
-                if (!response.ok || !data.success) throw new Error(data.message || 'Profile sync failed');
-                renderProfile(data.profile);
-            } catch (error) {
-                renderGuestProfile();
-                showToast('We could not sync your profile right now. Showing guest view instead.');
-            }
+            renderGuestProfile();
         }
 
         async function persistAvatar(filename) {
@@ -917,11 +937,17 @@
             }
         }
 
-        function logoutUser() {
+        async function logoutUser() {
             if (window.google && window.google.accounts && window.google.accounts.id) {
                 google.accounts.id.disableAutoSelect();
             }
-            localStorage.removeItem('meltix_user');
+
+            try {
+                await fetch(logoutUrl, { method: 'POST' });
+            } catch (error) {
+                console.error('Logout failed', error);
+            }
+
             state.currentUser = null;
             state.currentProfile = null;
             
@@ -956,7 +982,7 @@
 
         window.handleCredentialResponse = handleCredentialResponse;
         applyBillingVisibility();
-        bootstrapProfile();
+        hydrateProfileFromTemplate();
     </script>
 </body>
 </html>

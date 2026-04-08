@@ -635,7 +635,8 @@
                 await fetch('/submit_review', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_id: activeProductId, user_name: name, review_text: text, rating: rating })
+                    body: JSON.stringify({ product_id: activeProductId, user_name: name, user_email: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.email : null,
+                        review_text: text, rating: rating })
                 });
 
                 let userReviews = JSON.parse(localStorage.getItem('meltix_submitted_reviews')) || [];
@@ -672,7 +673,8 @@
             fetch('/toggle_review_like', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ review_id: reviewId, user_name: loggedInUser.name, action: actionType })
+                body: JSON.stringify({ review_id: reviewId, user_email: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.email : null,
+                                user_name: loggedInUser.name, action: actionType })
             }).catch(e => console.log(e));
         }
 

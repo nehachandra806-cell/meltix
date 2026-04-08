@@ -1,0 +1,2 @@
+                            <button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>
+        function deleteReview(reviewId) {
