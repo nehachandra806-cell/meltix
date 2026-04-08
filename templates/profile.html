@@ -54,26 +54,18 @@
                 <button class="secondary-btn compact-btn edit-scent-btn" id="open-scent-quiz" type="button" title="Edit Scent Signature">Edit</button>
             </div>
 
-            <div class="hero-stats">
-                <div class="stat-pill">
-                    <span class="stat-label">Total Reviews</span>
-                    <strong id="total-reviews">0</strong>
+            <div class="hero-stats" style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
+                    <span class="stat-label">Member Since</span>
+                    <strong id="hero-member-since">Today</strong>
                 </div>
-                <div class="stat-pill">
-                    <span class="stat-label">Review Impact</span>
-                    <strong id="review-impact">{{ stats.review_likes or 0 }}</strong>
-                </div>
-                <div class="stat-pill">
+                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
                     <span class="stat-label">Orders in Progress</span>
                     <strong id="orders-in-progress">0</strong>
                 </div>
-                <div class="stat-pill">
+                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
                     <span class="stat-label">Total Spent</span>
                     <strong id="total-spent">INR 0</strong>
-                </div>
-                <div class="stat-pill">
-                    <span class="stat-label">Saved Candles</span>
-                    <strong id="wishlist-count">0</strong>
                 </div>
             </div>
 
@@ -417,12 +409,11 @@
         const guestGate = document.getElementById('guest-gate');
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
-        const totalReviews = document.getElementById('total-reviews');
-        const reviewImpact = document.getElementById('review-impact');
+                const reviewImpact = document.getElementById('review-impact');
         const ordersInProgress = document.getElementById('orders-in-progress');
+        const heroMemberSince = document.getElementById('hero-member-since');
         const totalSpent = document.getElementById('total-spent');
-        const wishlistCount = document.getElementById('wishlist-count');
-        const detailName = document.getElementById('detail-name');
+                const detailName = document.getElementById('detail-name');
         const detailEmail = document.getElementById('detail-email');
         const detailAvatar = document.getElementById('detail-avatar');
         const detailMode = document.getElementById('detail-mode');
@@ -463,10 +454,6 @@
             return avatarOptions.find((avatar) => avatar.filename === filename) || avatarOptions[0] || null;
         }
 
-        function safeReadOrders() {
-            try { return JSON.parse(localStorage.getItem('meltix_orders')) || []; } catch (error) { return []; }
-        }
-
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add('show');
@@ -495,8 +482,7 @@
                     body: JSON.stringify({
                         email: userData.email || '',
                         name: userData.name || 'Meltix Collector',
-                        picture: userData.picture || '',
-                        orders: safeReadOrders()
+                        picture: userData.picture || ''
                     })
                 });
                 
@@ -811,12 +797,11 @@
             showAvatarEmpty();
             profileName.textContent = 'Guest Flame';
             profileEmail.textContent = 'Continue with Google to access your saved candles, order tracking, and private profile settings.';
-            totalReviews.textContent = '0';
-            reviewImpact.textContent = '0';
+                        reviewImpact.textContent = '0';
+            heroMemberSince.textContent = 'Today';
             ordersInProgress.textContent = '0';
             totalSpent.textContent = 'INR 0';
-            wishlistCount.textContent = '0';
-            detailName.textContent = 'Guest Flame';
+                        detailName.textContent = 'Guest Flame';
             detailEmail.textContent = 'Not connected';
             detailAvatar.textContent = 'Awaiting sign-in';
             memberSince.textContent = 'Today';

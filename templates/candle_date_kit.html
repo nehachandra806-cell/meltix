@@ -174,6 +174,7 @@
     <script>
         const currentUserEmail = "{{ session.get('profile_email', '') }}";
         const profileBootstrapUrl = "{{ url_for('profile_bootstrap') }}";
+        const productStatesUrl = "{{ url_for('product_states') }}";
         const dustContainer = document.getElementById('dust-particles');
         for (let i = 0; i < 50; i++) {
             let particle = document.createElement('div');
@@ -240,6 +241,61 @@
         const stopBtn = document.getElementById('stop-showcase-btn');
         
         let isLoggedIn = currentUserEmail !== "";
+        let likedProductIds = new Set();
+        let wishlistProductIds = new Set();
+
+        function syncRenderedLikeButtons() {
+            document.querySelectorAll('.like-btn[data-product-id]').forEach((button) => {
+                const productId = button.getAttribute('data-product-id');
+                button.classList.toggle('liked', likedProductIds.has(String(productId)));
+            });
+        }
+
+        async function refreshProductStates(productIds) {
+            const uniqueIds = [...new Set((productIds || []).map((productId) => Number(productId)).filter((productId) => Number.isInteger(productId) && productId > 0))];
+
+            uniqueIds.forEach((productId) => {
+                likedProductIds.delete(String(productId));
+                wishlistProductIds.delete(String(productId));
+            });
+
+            if (!uniqueIds.length) {
+                syncRenderedLikeButtons();
+                return;
+            }
+
+            try {
+                const response = await fetch(productStatesUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_ids: uniqueIds })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Product state sync failed');
+                }
+
+                (data.liked_product_ids || []).forEach((productId) => {
+                    likedProductIds.add(String(productId));
+                });
+                (data.wishlist_product_ids || []).forEach((productId) => {
+                    wishlistProductIds.add(String(productId));
+                });
+            } catch (error) {
+                console.error('Product state error:', error);
+            }
+
+            syncRenderedLikeButtons();
+            if (activeProductId !== null) {
+                setSaveButtonState(activeProductId);
+            }
+        }
+
+        function setSaveButtonState(productId) {
+            const saveBtn = document.querySelector('.absolute-wishlist');
+            if (!saveBtn) return;
+            saveBtn.classList.toggle('saved', wishlistProductIds.has(String(productId)));
+        }
 
         function handleSelection(selectedType) {
             document.getElementById('accordion-box').classList.add('fade-out-active');
@@ -331,7 +387,7 @@
 
         function loadImages(category) {
             track.innerHTML = '';
-            let likedProducts = JSON.parse(localStorage.getItem('meltix_likes')) || [];
+            refreshProductStates(productData[category].map((item) => item.id));
 
             productData[category].forEach(item => {
                 let container = document.createElement('div');
@@ -346,7 +402,7 @@
                 likeBtn.className = 'like-btn';
                 likeBtn.setAttribute('data-product-id', item.id);
                 
-                if (likedProducts.includes(item.id.toString())) {
+                if (likedProductIds.has(item.id.toString())) {
                     likeBtn.classList.add('liked');
                 }
 
@@ -356,32 +412,44 @@
                     </svg>
                 `;
                 
-                likeBtn.addEventListener('click', function(e) {
+                likeBtn.addEventListener('click', async function(e) {
                     e.preventDefault(); 
                     e.stopPropagation(); 
-                    
-                    let isLiked = this.classList.toggle('liked');
-                    let productId = this.getAttribute('data-product-id');
 
-                    if (isLiked) {
-                        if (!likedProducts.includes(productId)) likedProducts.push(productId);
-                    } else {
-                        likedProducts = likedProducts.filter(id => id !== productId);
+                    if (currentUserEmail === "") {
+                        alert("Bhai, pehle Google se Sign In kar le!");
+                        return;
                     }
-                    localStorage.setItem('meltix_likes', JSON.stringify(likedProducts));
 
-                    fetch('/like_product', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            product_id: productId,
-                            action: isLiked ? 'like' : 'unlike',
-                            name: category + " Kit", 
-                            image_file: item.src.split('/').pop() 
-                        })
-                    })
-                    .then(response => response.json())
-                    .catch(error => console.error('Error:', error));
+                    let productId = this.getAttribute('data-product-id');
+                    const nextAction = this.classList.contains('liked') ? 'unlike' : 'like';
+
+                    try {
+                        const response = await fetch('/like_product', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                product_id: productId,
+                                action: nextAction,
+                                name: category + " Kit", 
+                                image_file: item.src.split('/').pop() 
+                            })
+                        });
+                        const data = await response.json();
+                        if (!response.ok || !data.success) {
+                            throw new Error(data.message || 'Like update failed');
+                        }
+
+                        if (data.liked_by_user) {
+                            likedProductIds.add(productId);
+                        } else {
+                            likedProductIds.delete(productId);
+                        }
+
+                        this.classList.toggle('liked', data.liked_by_user === true);
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
                 });
 
                 container.addEventListener('click', () => {
@@ -498,8 +566,7 @@
                     body: JSON.stringify({
                         email: userData.email,
                         name: userData.name || 'Meltix Collector',
-                        picture: userData.picture || '',
-                        orders: []
+                        picture: userData.picture || ''
                     })
                 });
                 const data = await response.json();
@@ -645,8 +712,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         review_id: reviewId,
-                        action: actionType,
-                        user_email: currentUserEmail
+                        action: actionType
                     })
                 });
                 const data = await response.json();
@@ -664,9 +730,7 @@
 
             try {
                 const response = await fetch(`/delete_review/${reviewId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_email: currentUserEmail })
+                    method: 'POST'
                 });
                 const data = await response.json();
                 if (!response.ok || data.status !== 'success') throw new Error(data.message || 'Could not delete review');
@@ -678,7 +742,7 @@
 
         let activeProductId = null;
 
-        function openModal(productId) {
+        async function openModal(productId) {
             activeProductId = productId;
             let targetProduct = null;
             let targetCategory = "";
@@ -719,6 +783,8 @@
                 }
             }
 
+            await refreshProductStates([productId]);
+            setSaveButtonState(productId);
             fetchAndRenderReviews(productId);
 
             modal.classList.add('show');
@@ -756,7 +822,6 @@
                     body: JSON.stringify({
                         product_id: activeProductId,
                         user_name: name,
-                        user_email: currentUserEmail,
                         review_text: text,
                         rating: rating
                     })
@@ -788,21 +853,22 @@
                 const response = await fetch('/toggle_wishlist', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        user_email: currentUserEmail, 
-                        product_id: activeProductId 
-                    })
+                    body: JSON.stringify({ product_id: activeProductId })
                 });
 
                 const data = await response.json();
                 
-                if (data.status === "success") {
-                    if (data.action === "added") {
-                        btnElement.classList.add('saved');
-                    } else {
-                        btnElement.classList.remove('saved');
-                    }
+                if (!response.ok || data.status !== "success") {
+                    throw new Error(data.message || 'Wishlist update failed');
                 }
+
+                if (data.saved_in_wishlist) {
+                    wishlistProductIds.add(String(activeProductId));
+                } else {
+                    wishlistProductIds.delete(String(activeProductId));
+                }
+
+                setSaveButtonState(activeProductId);
             } catch(e) {
                 console.error("Wishlist error:", e);
             }

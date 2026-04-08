@@ -349,10 +349,26 @@
 
         const videoIdle = "{{ url_for('static', filename='images/bot_idle.webm') }}";
         const videoDrag = "{{ url_for('static', filename='images/bot_drag.webm') }}";
+        const uiPrefsKey = 'meltix_ui_prefs';
 
-        let botActive = localStorage.getItem('meltixBotActive') === 'true';
-        let xOffset = parseFloat(localStorage.getItem('meltixBotX')) || -500;
-        let yOffset = parseFloat(localStorage.getItem('meltixBotY')) || -500;
+        function readUiPrefs() {
+            try {
+                return JSON.parse(localStorage.getItem(uiPrefsKey)) || {};
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function writeUiPrefs(updates) {
+            const nextPrefs = { ...readUiPrefs(), ...updates };
+            localStorage.setItem(uiPrefsKey, JSON.stringify(nextPrefs));
+            return nextPrefs;
+        }
+
+        const initialUiPrefs = readUiPrefs();
+        let botActive = initialUiPrefs.meltixBotActive === true;
+        let xOffset = Number.isFinite(Number(initialUiPrefs.meltixBotX)) ? Number(initialUiPrefs.meltixBotX) : -500;
+        let yOffset = Number.isFinite(Number(initialUiPrefs.meltixBotY)) ? Number(initialUiPrefs.meltixBotY) : -500;
 
         let isDraggingBot = false;
         let currentX, currentY, initialX, initialY;
@@ -469,7 +485,7 @@
         document.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'c' && !botActive) {
                 botActive = true;
-                localStorage.setItem('meltixBotActive', 'true'); 
+                writeUiPrefs({ meltixBotActive: true }); 
                 
                 closeToast(); 
                 
@@ -486,8 +502,11 @@
                 
                 xOffset = finalX;
                 yOffset = finalY;
-                localStorage.setItem('meltixBotX', xOffset); 
-                localStorage.setItem('meltixBotY', yOffset); 
+                writeUiPrefs({
+                    meltixBotActive: true,
+                    meltixBotX: xOffset,
+                    meltixBotY: yOffset
+                }); 
 
                 setTimeout(() => {
                     showBotMessage("Hey! I am Meltix Bot, here to help you. ✨", 3500);
@@ -497,7 +516,7 @@
             
             if (e.key.toLowerCase() === 'g' && botActive) {
                 botActive = false;
-                localStorage.setItem('meltixBotActive', 'false'); 
+                writeUiPrefs({ meltixBotActive: false }); 
                 
                 closeSidePanel(); 
                 botChatBubble.classList.remove('show'); 
@@ -555,8 +574,11 @@
             initialY = currentY;
             isDraggingBot = false;
             
-            localStorage.setItem('meltixBotX', xOffset);
-            localStorage.setItem('meltixBotY', yOffset);
+            writeUiPrefs({
+                meltixBotActive: botActive,
+                meltixBotX: xOffset,
+                meltixBotY: yOffset
+            });
 
             botVideo.src = videoIdle;
             botVideo.play();

@@ -50,7 +50,7 @@
                         <form id="reportForm" onsubmit="handleFormSubmit(event)">
                             <div class="form-group">
                                 <label class="form-label">Your Email</label>
-                                <input type="email" id="userEmail" class="premium-input" placeholder="hello@example.com" required>
+                                <input type="email" id="userEmail" class="premium-input" placeholder="hello@example.com" value="{{ session.get('profile_email', '') }}" required>
                             </div>
 
                             <div class="form-group">
@@ -76,18 +76,6 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const storedUser = localStorage.getItem('meltix_user');
-            if (storedUser) {
-                try {
-                    const userData = JSON.parse(storedUser);
-                    if (userData && userData.email) {
-                        document.getElementById('userEmail').value = userData.email;
-                    }
-                } catch(e) { console.error("Error reading user data", e); }
-            }
-        });
-
         function handleFormSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');

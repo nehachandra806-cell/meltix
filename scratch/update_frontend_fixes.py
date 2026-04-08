@@ -66,9 +66,7 @@ def update_profile():
     with open(path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    # The user asks to remove JS checking localStorage.getItem('meltix')
-    html = re.sub(r'JSON\.parse\(localStorage\.getItem\(\'meltix_user\'\)\)', 'null', html)
-    html = re.sub(r'localStorage\.getItem\(\'meltix_user\'\)', 'null', html)
+    # Profile now hydrates from backend session/bootstrap data only.
     
     # "Find the Recent Reviews section where HELPFUL 0 and NEGATIVE 0 are currently hardcoded. Replace 0 with Jinja variables"
     # Actually in JS the variable is `item.likes` and `item.dislikes`.

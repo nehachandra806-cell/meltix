@@ -132,6 +132,14 @@ class Product(db.Model):
     def __repr__(self):
         return f"Product('{self.name}', Likes: {self.likes})"
 
+
+class ProductLike(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_account.id'), nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('product_id', 'user_id', name='unique_user_product_like'),)
+
 # Tera Review Table Model
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -248,6 +256,13 @@ def safe_json_loads(raw_value, fallback):
         return json.loads(raw_value)
     except (TypeError, ValueError, json.JSONDecodeError):
         return fallback
+
+
+def get_session_user():
+    session_email = (session.get('profile_email') or '').strip().lower()
+    if not session_email:
+        return None
+    return UserAccount.query.filter_by(email=session_email).first()
 
 
 def parse_money_value(value):
@@ -864,12 +879,16 @@ def profile():
 
 @app.route('/like_product', methods=['POST'])
 def like_product():
-    data = request.get_json()
+    data = request.get_json() or {}
     product_id = int(data.get('product_id'))
     action = data.get('action')
+    user_account = get_session_user()
     
     real_name = data.get('name', f"Meltix Candle #{product_id}")
     real_image = data.get('image_file', f"candle_{product_id}.jpg")
+
+    if not user_account:
+        return jsonify({'success': False, 'message': 'Login required'}), 401
 
     product = db.session.get(Product, product_id)
 
@@ -886,13 +905,76 @@ def like_product():
         product.name = real_name
         product.image_file = real_image
 
+    existing_like = ProductLike.query.filter_by(product_id=product_id, user_id=user_account.id).first()
+
     if action == 'like':
-        product.likes += 1
-    elif action == 'unlike' and product.likes > 0:
-        product.likes -= 1
+        if not existing_like:
+            db.session.add(ProductLike(product_id=product_id, user_id=user_account.id))
+    elif action == 'unlike':
+        if existing_like:
+            db.session.delete(existing_like)
+    else:
+        return jsonify({'success': False, 'message': 'Invalid like action'}), 400
+
+    db.session.flush()
+    product.likes = ProductLike.query.filter_by(product_id=product_id).count()
 
     db.session.commit()
-    return jsonify({'success': True, 'total_likes': product.likes})
+    return jsonify({
+        'success': True,
+        'total_likes': product.likes,
+        'liked_by_user': action == 'like' and ProductLike.query.filter_by(product_id=product_id, user_id=user_account.id).first() is not None
+    })
+
+
+@app.route('/api/product-states', methods=['POST'])
+def product_states():
+    data = request.get_json() or {}
+    raw_product_ids = data.get('product_ids') or []
+    product_ids = []
+
+    for raw_product_id in raw_product_ids:
+        try:
+            product_ids.append(int(raw_product_id))
+        except (TypeError, ValueError):
+            continue
+
+    product_ids = sorted(set(product_ids))
+    like_counts = {str(product_id): 0 for product_id in product_ids}
+
+    if product_ids:
+        products = Product.query.filter(Product.id.in_(product_ids)).all()
+        for product in products:
+            like_counts[str(product.id)] = product.likes or 0
+
+    user_account = get_session_user()
+    if not user_account:
+        return jsonify({
+            'success': True,
+            'liked_product_ids': [],
+            'wishlist_product_ids': [],
+            'product_like_counts': like_counts
+        }), 200
+
+    liked_rows = []
+    wishlist_rows = []
+
+    if product_ids:
+        liked_rows = ProductLike.query.filter(
+            ProductLike.user_id == user_account.id,
+            ProductLike.product_id.in_(product_ids)
+        ).all()
+        wishlist_rows = Wishlist.query.filter(
+            Wishlist.user_email == user_account.email,
+            Wishlist.product_id.in_(product_ids)
+        ).all()
+
+    return jsonify({
+        'success': True,
+        'liked_product_ids': [row.product_id for row in liked_rows],
+        'wishlist_product_ids': [row.product_id for row in wishlist_rows],
+        'product_like_counts': like_counts
+    }), 200
 
 
 # ==========================================
@@ -902,16 +984,10 @@ def like_product():
 # 1. Review Save Route
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
-    data = request.get_json()
+    data = request.get_json() or {}
     try:
-        user_email = data.get('user_email')
-        
-        user_account = None
-        if user_email:
-            user_account = UserAccount.query.filter_by(email=user_email).first()
-        elif 'profile_email' in session:
-            user_account = UserAccount.query.filter_by(email=session['profile_email']).first()
-            
+        user_account = get_session_user()
+
         if not user_account:
             return jsonify({'success': False, 'message': 'Login required to post a review'}), 401
 
@@ -990,15 +1066,8 @@ def get_reviews(product_id):
 @app.route('/delete_review/<int:review_id>', methods=['POST', 'DELETE'])
 def delete_review_route(review_id):
     try:
-        data = request.get_json() or {}
-        user_email = data.get('user_email')
-        
-        user_account = None
-        if user_email:
-            user_account = UserAccount.query.filter_by(email=user_email).first()
-        elif 'profile_email' in session:
-            user_account = UserAccount.query.filter_by(email=session['profile_email']).first()
-            
+        user_account = get_session_user()
+
         if not user_account:
             return jsonify({'status': 'error', 'message': 'Login required'}), 401
             
@@ -1020,19 +1089,14 @@ def delete_review_route(review_id):
 # 4. NAYA: Toggle Like/Dislike Route
 @app.route('/toggle_review_like', methods=['POST'])
 def toggle_review_like():
-    data = request.get_json()
+    data = request.get_json() or {}
     review_id = data.get('review_id')
     user_name = data.get('user_name')
-    user_email = data.get('user_email')
     action = data.get('action')
 
     try:
-        user_account = None
-        if user_email:
-            user_account = UserAccount.query.filter_by(email=user_email).first()
-        elif 'profile_email' in session:
-            user_account = UserAccount.query.filter_by(email=session['profile_email']).first()
-            
+        user_account = get_session_user()
+
         if not user_account:
             return jsonify({'status': 'error', 'message': 'Login required'}), 401
             
@@ -1068,27 +1132,31 @@ def toggle_review_like():
 # ==========================================
 @app.route('/toggle_wishlist', methods=['POST'])
 def toggle_wishlist():
-    data = request.get_json()
-    user_email = data.get('user_email')
+    data = request.get_json() or {}
     product_id = data.get('product_id')
+    user_account = get_session_user()
 
-    if not user_email:
+    if not user_account:
         return jsonify({"status": "error", "message": "Login required"}), 401
 
     try:
         # Check karo agar pehle se saved hai
-        existing = Wishlist.query.filter_by(user_email=user_email, product_id=product_id).first()
+        existing = Wishlist.query.filter_by(user_email=user_account.email, product_id=product_id).first()
         
         if existing:
             db.session.delete(existing) # Un-save kar do
             action = "removed"
         else:
-            new_saved = Wishlist(user_email=user_email, product_id=product_id) # Save kar do
+            new_saved = Wishlist(user_email=user_account.email, product_id=product_id) # Save kar do
             db.session.add(new_saved)
             action = "added"
             
         db.session.commit()
-        return jsonify({"status": "success", "action": action}), 200
+        return jsonify({
+            "status": "success",
+            "action": action,
+            "saved_in_wishlist": action == "added"
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -1100,18 +1168,18 @@ def profile_bootstrap():
     email = (data.get('email') or '').strip().lower()
     display_name = (data.get('name') or '').strip()
     google_picture_url = (data.get('picture') or '').strip()
-    orders_payload = data.get('orders') or []
 
     if not email:
         return jsonify({"success": False, "message": "Email required"}), 400
 
     try:
         profile_record = get_or_create_profile(email, display_name)
-        sync_profile_orders(profile_record.email, orders_payload)
         session['profile_email'] = profile_record.email
         session['profile_name'] = display_name or profile_record.display_name
         if google_picture_url:
             session['profile_picture'] = google_picture_url
+        else:
+            session.pop('profile_picture', None)
         db.session.commit()
         prefer_google_picture = bool(google_picture_url and not profile_record.avatar_filename)
         return jsonify({
