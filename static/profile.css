@@ -398,6 +398,38 @@ body {
     font-size: 1.02rem;
 }
 
+.hero-scent-profile {
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.scent-signature-label {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.inline-notes {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.edit-scent-btn {
+    min-height: 32px !important;
+    padding: 4px 14px !important;
+    font-size: 0.78rem;
+    border-radius: 999px;
+}
+
 .hero-stats {
     position: relative;
     z-index: 1;
@@ -1118,8 +1150,7 @@ body {
 
 .account-card { grid-column: span 4; }
 .address-card { grid-column: span 8; }
-.rewards-card { grid-column: span 7; }
-.scent-card { grid-column: span 5; }
+.rewards-card { grid-column: span 12; }
 .wishlist-card,
 .review-card { grid-column: span 6; }
 .orders-card { grid-column: span 12; }
@@ -1285,16 +1316,7 @@ body {
     color: var(--accent-cream);
 }
 
-.persona-panel {
-    display: grid;
-    gap: 16px;
-}
 
-.persona-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.5rem, 3vw, 2.1rem);
-    color: var(--accent-cream);
-}
 
 .notes-row,
 .order-notes {
@@ -1455,8 +1477,6 @@ body {
     .account-card,
     .address-card,
     .rewards-card,
-    .scent-card,
-    .impact-card,
     .wishlist-card,
     .review-card,
     .orders-card {

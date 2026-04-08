@@ -49,6 +49,12 @@
             <h1 id="profile-name">Guest Flame</h1>
             <p id="profile-email" class="hero-email">Continue with Google to access your saved candles, order tracking, and private profile settings.</p>
 
+            <div class="hero-scent-profile">
+                <span class="scent-signature-label">Your Scent Signature:</span>
+                <div class="notes-row inline-notes" id="scent-notes"></div>
+                <button class="secondary-btn compact-btn edit-scent-btn" id="open-scent-quiz" type="button" title="Edit Scent Signature">Edit</button>
+            </div>
+
             <div class="hero-stats">
                 <div class="stat-pill">
                     <span class="stat-label">Total Reviews</span>
@@ -227,19 +233,7 @@
                 <div class="ledger-list" id="reward-ledger"></div>
             </article>
 
-            <article class="glass-card scent-card">
-                <div class="card-head">
-                    <p class="card-kicker">Fragrance Profile</p>
-                    <h2>Scent Persona</h2>
-                </div>
 
-                <div class="persona-panel">
-                    <p class="persona-title" id="scent-title">Discover Your Signature Notes</p>
-                    <p class="body-copy" id="scent-description">Take the scent quiz to reveal the fragrance profile that best matches your Meltix atelier.</p>
-                    <div class="notes-row" id="scent-notes"></div>
-                    <button class="primary-btn compact-btn" id="open-scent-quiz" type="button">Take the Scent Quiz</button>
-                </div>
-            </article>
 
 
             <article class="glass-card wishlist-card">
@@ -412,8 +406,6 @@
         const rewardProgressFill = document.getElementById('reward-progress-fill');
         const rewardProgressCopy = document.getElementById('reward-progress-copy');
         const rewardLedger = document.getElementById('reward-ledger');
-        const scentTitle = document.getElementById('scent-title');
-        const scentDescription = document.getElementById('scent-description');
         const scentNotes = document.getElementById('scent-notes');
         const openScentQuizBtn = document.getElementById('open-scent-quiz');
         const saveScentPersonaBtn = document.getElementById('save-scent-persona');
@@ -668,9 +660,7 @@
 
         function renderScentPersona(persona) {
             const data = persona || {};
-            scentTitle.textContent = data.title || 'Discover Your Signature Notes';
-            scentDescription.textContent = data.description || 'Take the scent quiz to reveal the fragrance profile that best matches your Meltix atelier.';
-            openScentQuizBtn.textContent = data.cta_label || 'Take the Scent Quiz';
+            openScentQuizBtn.textContent = (data.notes && data.notes.length) ? 'Edit' : 'Take Scent Quiz';
             scentNotes.innerHTML = '';
             const notes = Array.isArray(data.notes) ? data.notes : [];
             if (!notes.length) {
