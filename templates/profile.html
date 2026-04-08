@@ -241,29 +241,6 @@
                 </div>
             </article>
 
-            <article class="glass-card impact-card">
-                <div class="card-head">
-                    <p class="card-kicker">Review Impact</p>
-                    <h2>How People Reacted</h2>
-                </div>
-
-                <div class="impact-grid">
-                    <div class="impact-tile">
-                        <span class="impact-label">Reviews Written</span>
-                        <strong id="impact-total-reviews">0</strong>
-                    </div>
-                    <div class="impact-tile">
-                        <span class="impact-label">Helpful Votes</span>
-                        <strong id="impact-liked-count">0</strong>
-                    </div>
-                    <div class="impact-tile">
-                        <span class="impact-label">Negative Votes</span>
-                        <strong id="impact-disliked-count">0</strong>
-                    </div>
-                </div>
-
-                <p class="body-copy" id="impact-copy">Review insights will appear here after you publish your first review.</p>
-            </article>
 
             <article class="glass-card wishlist-card">
                 <div class="card-head">
@@ -430,10 +407,6 @@
         const detailMode = document.getElementById('detail-mode');
         const memberSince = document.getElementById('member-since');
         const supportCopy = document.getElementById('support-copy');
-        const impactTotalReviews = document.getElementById('impact-total-reviews');
-        const impactLikedCount = document.getElementById('impact-liked-count');
-        const impactDislikedCount = document.getElementById('impact-disliked-count');
-        const impactCopy = document.getElementById('impact-copy');
         const glowPointsTotal = document.getElementById('glow-points-total');
         const nextReward = document.getElementById('next-reward');
         const rewardProgressFill = document.getElementById('reward-progress-fill');
@@ -839,10 +812,6 @@
             memberSince.textContent = 'Today';
             detailMode.textContent = 'Guest Session';
             supportCopy.textContent = 'Sign in with Google to activate your private atelier and save your profile preferences.';
-            impactTotalReviews.textContent = '0';
-            impactLikedCount.textContent = '0';
-            impactDislikedCount.textContent = '0';
-            impactCopy.textContent = 'Review insights will appear here after you publish your first review.';
             renderAddressBook({});
             renderRewardLedger({ current_points: 250, progress_percent: 25, points_to_next_reward: 250, next_reward_label: 'Your first bespoke reward', ledger: [{ title: 'Welcome Bonus', description: 'Sign in to activate your rewards ledger.', points: 250, date: 'Today' }] });
             renderScentPersona({ title: 'Discover Your Signature Notes', description: 'Take the scent quiz after signing in to create your fragrance profile.', notes: [], cta_label: 'Take the Scent Quiz' });
@@ -879,10 +848,6 @@
             memberSince.textContent = profile.member_since || 'Today';
             detailMode.textContent = signedIn ? 'Signed-In Account' : 'Guest Session';
             supportCopy.textContent = signedIn ? 'Your Google profile photo remains active until you choose and save a custom portrait.' : 'Sign in with Google to activate your private atelier and save your profile preferences.';
-            impactTotalReviews.textContent = profile.stats ? profile.stats.review_count || 0 : 0;
-            impactLikedCount.textContent = profile.stats ? profile.stats.review_likes || 0 : 0;
-            impactDislikedCount.textContent = profile.stats ? profile.stats.review_dislikes || 0 : 0;
-            impactCopy.textContent = profile.stats && profile.stats.review_count > 0 ? `Your reviews have received ${profile.stats.review_likes || 0} helpful votes and ${profile.stats.review_dislikes || 0} negative votes so far.` : 'Review insights will appear here after you publish your first review.';
             renderAddressBook(profile.address_book || {});
             renderRewardLedger(profile.rewards || {});
             renderScentPersona(profile.scent_persona || {});

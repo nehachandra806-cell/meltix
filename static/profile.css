@@ -504,8 +504,7 @@ body {
     padding: 28px;
 }
 
-.account-card,
-.impact-card {
+.account-card {
     grid-column: span 6;
 }
 
@@ -567,34 +566,7 @@ body {
     background: rgba(255, 255, 255, 0.04);
 }
 
-.impact-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 18px;
-}
 
-.impact-tile {
-    padding: 18px;
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(212, 163, 115, 0.1);
-}
-
-.impact-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.78rem;
-    letter-spacing: 0.16rem;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-.impact-tile strong {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    color: var(--accent-cream);
-}
 
 .wishlist-grid,
 .review-list,
@@ -924,7 +896,6 @@ body {
 
 @media (max-width: 1120px) {
     .account-card,
-    .impact-card,
     .wishlist-card,
     .review-card,
     .orders-card {
@@ -935,9 +906,7 @@ body {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .impact-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+
 
     .order-meta-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1002,9 +971,7 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .impact-grid {
-        grid-template-columns: 1fr;
-    }
+
 
     .order-top {
         flex-direction: column;
@@ -1153,9 +1120,8 @@ body {
 .address-card { grid-column: span 8; }
 .rewards-card { grid-column: span 7; }
 .scent-card { grid-column: span 5; }
-.impact-card,
 .wishlist-card,
-.review-card { grid-column: span 4; }
+.review-card { grid-column: span 6; }
 .orders-card { grid-column: span 12; }
 
 .address-form {
