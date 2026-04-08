@@ -1,0 +1,23 @@
+async function handleCredentialResponse(response) {
+            try {
+                const userData = decodeJwtPayload(response.credential);
+                const currentUser = { name: userData.name || 'Meltix Collector', email: userData.email || '', picture: userData.picture || '' };
+                state.currentUser = currentUser;
+                const bootstrapResponse = await fetch(bootstrapUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentUser.email,
+                        name: currentUser.name,
+                        picture: currentUser.picture,
+                        orders: safeReadOrders()
+                    })
+                });
+                const data = await bootstrapResponse.json();
+                if (!bootstrapResponse.ok || !data.success) throw new Error(data.message || 'Profile sync failed');
+                renderProfile(data.profile);
+                showToast('Your private atelier is now unlocked.');
+            } catch (error) {
+                showToast('Google Sign-In could not be completed. Please try again.');
+            }
+        }
