@@ -1,0 +1,8 @@
+$file = 'd:\meltix\templates\profile.html'
+$lines = Get-Content $file
+
+# Line 385 (0-indexed: 384) — replace garbled lock emoji with clean SVG lock icon
+$lines[384] = '                    <span class="avatar-lock-indicator" {% if profile and profile.level and profile.level >= avatar.required_level %}hidden{% endif %}><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></span>'
+
+$lines | Set-Content $file -Encoding UTF8
+Write-Host "Done."

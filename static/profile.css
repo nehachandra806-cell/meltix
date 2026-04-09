@@ -123,25 +123,26 @@ body {
     font-family: 'Playfair Display', serif;
     color: #d4a373;
     text-decoration: none;
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
 }
 
 .back-btn span {
-    color: #d4a373;
-    font-size: 1.2rem;
+    color: currentColor;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, color 0.25s ease;
 }
 
 .back-btn:hover {
     color: #fff;
-    text-shadow: 0 0 10px rgba(212, 163, 115, 0.8);
+    text-shadow: 0 0 12px rgba(212, 163, 115, 0.70);
 }
 
 .back-btn:hover span {
-    color: #fff;
+    transform: translateX(-3px);
 }
 
 .brand-lockup {
@@ -812,29 +813,37 @@ body {
 
 .modal-close {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    background: linear-gradient(145deg, #d4a373, #c28c55);
-    border: 3px solid #15100c;
+    top: 22px;
+    right: 22px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    color: #000;
-    font-size: 1.8rem;
-    font-weight: 300;
-    line-height: 1;
+    background: rgba(20, 13, 8, 0.90);
+    border: 1.5px solid rgba(212, 163, 115, 0.35);
+    color: rgba(242, 201, 138, 0.90);
     cursor: pointer;
     display: flex;
-    justify-content: center;
     align-items: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.9);
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
     z-index: 10;
-    transition: transform 0.4s ease, filter 0.3s ease;
+    transition: transform 0.3s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.modal-close svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    flex-shrink: 0;
 }
 
 .modal-close:hover {
-    filter: brightness(1.2);
-    transform: rotate(90deg) scale(1.1);
+    background: rgba(212, 163, 115, 0.18);
+    border-color: rgba(242, 201, 138, 0.60);
+    box-shadow: 0 8px 28px rgba(212, 163, 115, 0.22);
+    transform: rotate(90deg) scale(1.08);
+    color: rgba(255, 236, 173, 1);
 }
 
 .modal-head {
@@ -880,6 +889,7 @@ body {
     padding: 12px;
     border-radius: 24px;
     text-align: center;
+    position: relative; /* Lock badge ko corner pe rakhe */
 }
 
 .avatar-option img {
@@ -896,7 +906,85 @@ body {
     color: var(--accent-cream);
 }
 
-.avatar-option:hover,
+/* ── Lock Badge (top-right circular icon) ── */
+.avatar-lock-indicator {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(28, 16, 8, 0.86);
+    border: 1.5px solid rgba(212, 163, 115, 0.40);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(212, 163, 115, 0.90);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 0 6px rgba(212, 163, 115, 0.08);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.avatar-lock-indicator svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+/* ── Locked Avatar — Blur + Frosted Overlay ── */
+.avatar-option.is-locked {
+    overflow: hidden;
+    cursor: not-allowed;
+    opacity: 1;
+    filter: none;
+    border-color: rgba(212, 163, 115, 0.24);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(24, 17, 12, 0.92));
+}
+
+.avatar-option.is-locked img {
+    filter: blur(8px);
+    transform: scale(1.08);
+    transition: none;
+}
+
+.avatar-option.is-locked .avatar-lock-indicator {
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 250, 224, 0.98), rgba(244, 212, 132, 0.96) 42%, rgba(176, 121, 44, 0.98) 100%);
+    border: 1px solid rgba(255, 238, 187, 0.95);
+    box-shadow:
+        0 18px 28px rgba(0, 0, 0, 0.30),
+        0 0 0 8px rgba(212, 163, 115, 0.12),
+        inset 0 2px 8px rgba(255, 255, 255, 0.72),
+        inset 0 -10px 18px rgba(122, 80, 22, 0.34);
+    color: #3f2a11;
+    backdrop-filter: none;
+}
+
+.avatar-option.is-locked .avatar-lock-indicator svg {
+    width: 28px;
+    height: 28px;
+    color: currentColor;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.55));
+}
+
+/* No glow/lift on hover for locked cards */
+.avatar-option.is-locked:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.avatar-option:not(.is-locked):hover,
 .active-avatar {
     transform: translateY(-3px);
     border-color: rgba(242, 201, 138, 0.48);
@@ -1084,6 +1172,527 @@ body {
 .hero-actions {
     gap: 12px;
     padding: 12px 14px;
+}
+
+.missions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+/* ── Base mission card ── */
+.mission-card {
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.mission-card-empty {
+    grid-column: 1 / -1;
+    align-items: center;
+    text-align: center;
+}
+
+/* ── STATE 1: Claimable — gold glow, alive ── */
+@keyframes missionGlowPulse {
+    0%, 100% { box-shadow: 0 0 16px rgba(212, 163, 115, 0.20), inset 0 0 12px rgba(212, 163, 115, 0.06); }
+    50%       { box-shadow: 0 0 34px rgba(242, 201, 138, 0.40), inset 0 0 20px rgba(242, 201, 138, 0.12); }
+}
+
+.mission-card.mission-claimable {
+    border-color: rgba(212, 163, 115, 0.45);
+    background: linear-gradient(160deg, rgba(38, 26, 16, 0.88), rgba(18, 12, 8, 0.92));
+    animation: missionGlowPulse 2.8s ease-in-out infinite;
+}
+
+/* ── STATE 2: Completed — green tint, dimmed ── */
+.mission-card.mission-completed {
+    border-color: rgba(96, 190, 130, 0.28);
+    background: rgba(60, 120, 80, 0.08);
+    opacity: 0.72;
+}
+
+/* ── STATE 3: Locked — dull, no animation ── */
+.mission-card.mission-locked {
+    border-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+    opacity: 0.5;
+}
+
+.mission-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mission-copy strong {
+    color: var(--accent-cream);
+    font-size: 1.1rem;
+}
+
+.mission-level-tag,
+.mission-points {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 6px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+}
+
+.mission-level-tag {
+    background: rgba(212, 163, 115, 0.16);
+    border: 1px solid rgba(212, 163, 115, 0.22);
+    color: var(--accent-gold);
+}
+
+.mission-points {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--accent-cream);
+}
+
+/* ── Mission Buttons ── */
+.mission-status-btn {
+    border-radius: 999px;
+    min-height: 46px;
+    padding: 11px 18px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.04rem;
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Glowing "Claim Points" button */
+@keyframes claimBtnPulse {
+    0%, 100% { box-shadow: 0 0 14px rgba(212, 163, 115, 0.35), 0 6px 18px rgba(0,0,0,0.20); }
+    50%       { box-shadow: 0 0 30px rgba(242, 201, 138, 0.60), 0 8px 24px rgba(0,0,0,0.28); }
+}
+
+.mission-glow-btn {
+    background: linear-gradient(135deg, var(--accent-gold), #f2c98a);
+    color: #1b100a;
+    border: 1px solid rgba(242, 201, 138, 0.4);
+    animation: claimBtnPulse 2.4s ease-in-out infinite;
+}
+
+.mission-glow-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* "Completed ✓" button */
+.mission-done-btn {
+    background: rgba(80, 160, 100, 0.16);
+    color: #7dcf9e;
+    border: 1px solid rgba(80, 180, 100, 0.28);
+    cursor: default;
+}
+
+/* "Complete mission to earn points" button */
+.mission-locked-btn {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: not-allowed;
+    font-size: 0.78rem;
+}
+
+.reward-vault-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.coupon-ticket {
+    position: relative;
+    overflow: hidden;
+    min-height: 230px;
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px dashed rgba(242, 201, 138, 0.28);
+    background:
+        radial-gradient(circle at top right, rgba(242, 201, 138, 0.16), transparent 38%),
+        linear-gradient(145deg, rgba(38, 24, 16, 0.96), rgba(17, 12, 9, 0.98));
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+}
+
+.coupon-ticket::before,
+.coupon-ticket::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--page-bg);
+    transform: translateY(-50%);
+    box-shadow: inset 0 0 0 1px rgba(242, 201, 138, 0.08);
+}
+
+.coupon-ticket::before {
+    left: -14px;
+}
+
+.coupon-ticket::after {
+    right: -14px;
+}
+
+.coupon-ticket.is-unavailable {
+    opacity: 0.68;
+    filter: saturate(0.82);
+}
+
+.coupon-ticket-empty {
+    grid-column: 1 / -1;
+    min-height: auto;
+    justify-content: center;
+    text-align: center;
+}
+
+.coupon-ticket-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.coupon-level,
+.coupon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+.coupon-level {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+}
+
+.coupon-badge {
+    background: rgba(212, 163, 115, 0.16);
+    border: 1px solid rgba(212, 163, 115, 0.24);
+    color: var(--accent-gold);
+    font-weight: 800;
+}
+
+.coupon-ticket-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.coupon-ticket-copy strong {
+    color: var(--accent-cream);
+    font-size: 1.12rem;
+}
+
+.coupon-ticket-meta {
+    margin-top: auto;
+    display: grid;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.coupon-ticket-meta strong {
+    color: var(--accent-cream);
+}
+
+.avatar-option {
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-lock-indicator {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(8, 6, 4, 0.86);
+    border: 1px solid rgba(242, 201, 138, 0.34);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.28);
+    font-size: 1rem;
+}
+
+.avatar-unlock-note {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.72rem;
+    letter-spacing: 0.06rem;
+    color: var(--text-muted);
+}
+
+.avatar-option.is-locked {
+    cursor: not-allowed;
+    opacity: 1;
+    filter: none;
+}
+
+.avatar-option.is-locked:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(212, 163, 115, 0.15);
+}
+
+.level-up-card {
+    width: min(560px, 100%);
+    text-align: center;
+    border: 1px solid rgba(242, 201, 138, 0.22);
+    background:
+        radial-gradient(circle at top, rgba(242, 201, 138, 0.18), transparent 58%),
+        linear-gradient(160deg, rgba(18, 12, 8, 0.96), rgba(8, 6, 4, 0.98));
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+}
+
+.level-up-card .modal-head {
+    padding-right: 0;
+}
+
+.level-up-card h2 {
+    color: var(--accent-gold);
+}
+
+.avatar-stage.avatar-ring-lvl-1 .avatar-ring {
+    border-color: rgba(212, 163, 115, 0.35);
+    box-shadow: 0 0 22px rgba(212, 163, 115, 0.12);
+}
+
+.avatar-stage.avatar-ring-lvl-1::before {
+    background: radial-gradient(circle, rgba(212, 163, 115, 0.24), transparent 72%);
+    opacity: 0.74;
+}
+
+.avatar-stage.avatar-ring-lvl-1::after {
+    background: radial-gradient(circle, rgba(242, 201, 138, 0.14), transparent 72%);
+    opacity: 0.52;
+}
+
+.avatar-stage.avatar-ring-lvl-1 .avatar-aura {
+    background: radial-gradient(circle, rgba(255, 233, 198, 0.28), rgba(212, 163, 115, 0.1), transparent 72%);
+    opacity: 0.72;
+}
+
+.avatar-stage.avatar-ring-lvl-1 .avatar-trigger {
+    border-color: rgba(242, 201, 138, 0.85);
+    box-shadow: 0 0 26px rgba(212, 163, 115, 0.18), inset 0 0 18px rgba(212, 163, 115, 0.08);
+}
+
+.avatar-stage.avatar-ring-lvl-2 .avatar-ring {
+    border: 2px solid rgba(214, 145, 118, 0.76);
+    box-shadow:
+        0 0 36px rgba(214, 145, 118, 0.26),
+        0 0 74px rgba(188, 120, 102, 0.16);
+}
+
+.avatar-stage.avatar-ring-lvl-2::before {
+    background: radial-gradient(circle, rgba(214, 145, 118, 0.42), transparent 70%);
+    opacity: 0.96;
+}
+
+.avatar-stage.avatar-ring-lvl-2::after {
+    background: radial-gradient(circle, rgba(246, 190, 165, 0.24), transparent 68%);
+    opacity: 0.8;
+}
+
+.avatar-stage.avatar-ring-lvl-2 .avatar-aura {
+    background: radial-gradient(circle, rgba(255, 224, 206, 0.42), rgba(214, 145, 118, 0.2), transparent 70%);
+    opacity: 0.94;
+}
+
+.avatar-stage.avatar-ring-lvl-2 .avatar-trigger {
+    border-color: rgba(231, 173, 153, 0.95);
+    outline-color: rgba(214, 145, 118, 0.5);
+    box-shadow:
+        0 0 70px rgba(214, 145, 118, 0.36),
+        0 0 120px rgba(188, 120, 102, 0.2),
+        inset 0 0 34px rgba(231, 173, 153, 0.2);
+}
+
+.avatar-stage.avatar-ring-lvl-2 .avatar-trigger::after {
+    box-shadow:
+        0 0 46px rgba(231, 173, 153, 0.4),
+        0 0 88px rgba(214, 145, 118, 0.24);
+}
+
+.avatar-stage.avatar-ring-lvl-3 .avatar-ring {
+    border-color: rgba(96, 171, 153, 0.58);
+    box-shadow: 0 0 34px rgba(96, 171, 153, 0.24);
+}
+
+.avatar-stage.avatar-ring-lvl-3 .avatar-trigger {
+    border-color: rgba(129, 205, 184, 0.92);
+    box-shadow: 0 0 56px rgba(96, 171, 153, 0.24), inset 0 0 30px rgba(129, 205, 184, 0.14);
+}
+
+/* ─────────────────────────────────────────────
+   🟡 LEVEL 4 — Molten Gold (Rotating Halo)
+───────────────────────────────────────────── */
+@keyframes moltenSpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes moltenPulse {
+    0%, 100% { box-shadow: 0 0 44px rgba(238, 177, 85, 0.36), inset 0 0 28px rgba(255, 210, 120, 0.14); }
+    50%       { box-shadow: 0 0 80px rgba(255, 200, 80, 0.56), inset 0 0 42px rgba(255, 230, 140, 0.22); }
+}
+
+.avatar-stage.avatar-ring-lvl-4 .avatar-ring {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.avatar-stage.avatar-ring-lvl-4 .avatar-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 2px;
+    background: conic-gradient(
+        rgba(255, 210, 80, 0.0)  0deg,
+        rgba(238, 177, 85, 0.9) 90deg,
+        rgba(255, 236, 140, 1)  180deg,
+        rgba(238, 177, 85, 0.9) 270deg,
+        rgba(255, 210, 80, 0.0) 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: moltenSpin 4s linear infinite;
+    box-shadow: 0 0 28px rgba(238, 177, 85, 0.4);
+}
+
+.avatar-stage.avatar-ring-lvl-4 .avatar-trigger {
+    border-color: rgba(255, 210, 120, 0.92);
+    animation: candleRingShadow 2.6s ease-in-out infinite, candleBreath 2.9s ease-in-out infinite, moltenPulse 2.8s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   👑 LEVEL 5 — Royal Crown (Full Prestige)
+───────────────────────────────────────────── */
+@keyframes royalSpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes royalCounterSpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(-360deg); }
+}
+
+@keyframes royalCrownGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 60px rgba(255, 236, 173, 0.50),
+            0 0 110px rgba(255, 215, 100, 0.30),
+            inset 0 0 36px rgba(255, 248, 210, 0.24);
+    }
+    50% {
+        box-shadow:
+            0 0 100px rgba(255, 245, 190, 0.70),
+            0 0 180px rgba(255, 230, 120, 0.42),
+            inset 0 0 60px rgba(255, 248, 210, 0.36);
+    }
+}
+
+@keyframes royalHaloShimmer {
+    0%   { opacity: 0.7; }
+    50%  { opacity: 1.0; }
+    100% { opacity: 0.7; }
+}
+
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+/* Outer spinning ring — slow majestic rotation */
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    padding: 2.5px;
+    background: conic-gradient(
+        rgba(255, 248, 210, 0.0)   0deg,
+        rgba(255, 220, 100, 1.0)  60deg,
+        rgba(255, 248, 210, 1.0) 120deg,
+        rgba(242, 201, 138, 0.9) 180deg,
+        rgba(255, 248, 210, 1.0) 240deg,
+        rgba(255, 220, 100, 1.0) 300deg,
+        rgba(255, 248, 210, 0.0) 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: royalSpin 6s linear infinite;
+    box-shadow: 0 0 40px rgba(255, 230, 140, 0.55);
+}
+
+/* Inner counter-spinning ring — double halo effect */
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring::after {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    padding: 1.5px;
+    background: conic-gradient(
+        rgba(255, 248, 210, 0.0)   0deg,
+        rgba(255, 236, 173, 0.7)  90deg,
+        rgba(255, 248, 210, 0.9) 180deg,
+        rgba(255, 236, 173, 0.7) 270deg,
+        rgba(255, 248, 210, 0.0) 360deg
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: royalCounterSpin 9s linear infinite;
+    opacity: 0.8;
+    animation: royalCounterSpin 9s linear infinite, royalHaloShimmer 3s ease-in-out infinite;
+}
+
+.avatar-stage.avatar-ring-lvl-5 .avatar-trigger {
+    border-color: rgba(255, 248, 210, 1);
+    animation: candleRingShadow 2.6s ease-in-out infinite, candleBreath 2.9s ease-in-out infinite, royalCrownGlow 2.6s ease-in-out infinite;
+}
+
+.avatar-stage.avatar-ring-lvl-5 .avatar-trigger::after {
+    box-shadow:
+        0 0 60px rgba(255, 248, 210, 0.55),
+        0 0 120px rgba(255, 230, 140, 0.38),
+        0 0 200px rgba(242, 201, 138, 0.26);
+    animation: candlePulseStrong 2.4s ease-in-out infinite, royalHaloShimmer 2s ease-in-out infinite;
 }
 
 .google-cta-btn {

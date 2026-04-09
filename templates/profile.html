@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
     </div>
     <div id="g_id_onload" data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
     <nav class="top-nav">
-        <a href="/shop" class="back-btn"><span>✦</span>Back to Shop</a>
+        <a href="/shop" class="back-btn"><span>✦</span> Back to Shop</a>
         <div class="brand-lockup">
             <span class="brand-word">Meltix</span>
             <span class="brand-sub">Profile Studio</span>
@@ -28,7 +28,7 @@
         <section class="hero-panel">
             <p class="eyebrow">Your Private Atelier</p>
 
-            <div class="avatar-stage">
+            <div class="avatar-stage avatar-ring-lvl-{{ profile.level if profile and profile.level else 1 }}" id="avatar-stage">
                 <div class="avatar-ring"></div>
                 <div class="avatar-aura"></div>
                 <button class="avatar-trigger" id="avatar-trigger" type="button" aria-label="Customize avatar">
@@ -58,14 +58,6 @@
                 <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
                     <span class="stat-label">Member Since</span>
                     <strong id="hero-member-since">Today</strong>
-                </div>
-                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
-                    <span class="stat-label">Total Reviews</span>
-                    <strong id="total-reviews">0</strong>
-                </div>
-                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
-                    <span class="stat-label">Review Impact</span>
-                    <strong id="review-impact">{{ stats.review_likes if stats else 0 }}</strong>
                 </div>
                 <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
                     <span class="stat-label">Orders in Progress</span>
@@ -228,7 +220,7 @@
                 <div class="rewards-summary">
                     <div class="reward-spotlight">
                         <span class="reward-label">Current Balance</span>
-                        <strong id="glow-points-total">{{ profile.rewards.current_points if profile and profile.rewards else 250 }}</strong>
+                        <strong id="glow-points-total">{{ profile.rewards.current_points if profile and profile.rewards else 0 }}</strong>
                     </div>
                     <div class="reward-next">
                         <span class="reward-label">Next Reward</span>
@@ -252,63 +244,67 @@
                 <div class="ledger-list" id="reward-ledger"></div>
             </article>
 
-            {% set completed_missions = profile.completed_missions %}
+            <article class="glass-card rewards-card vault-card">
+                <div class="card-head">
+                    <p class="card-kicker">Reward Vault</p>
+                    <h2>Your Reward Vault</h2>
+                    <p class="body-copy">Every promotion can unlock a private reward code for your next checkout.</p>
+                </div>
+
+                <div id="reward-vault-grid" class="reward-vault-grid">
+                    {% if profile and profile.reward_vault %}
+                        {% for coupon in profile.reward_vault %}
+                        <article class="coupon-ticket{% if not coupon.is_available %} is-unavailable{% endif %}">
+                            <div class="coupon-ticket-top">
+                                <span class="coupon-level">{% if coupon.level %}Level {{ coupon.level }}{% else %}Reward Vault{% endif %}</span>
+                                <span class="coupon-badge">{{ coupon.discount_percentage }}% OFF</span>
+                            </div>
+                            <div class="coupon-ticket-copy">
+                                <strong>{{ coupon.title }}</strong>
+                                <p class="body-copy">{{ coupon.description }}</p>
+                            </div>
+                            <div class="coupon-ticket-meta">
+                                <span>Code: <strong>{{ coupon.code }}</strong></span>
+                                <span>{{ coupon.status_text }}</span>
+                                <span>Expires: {{ coupon.expires_at_display }}</span>
+                            </div>
+                            <button class="primary-btn compact-btn" type="button" onclick="copyRewardCode('{{ coupon.code }}', this)" {% if not coupon.is_available %}disabled{% endif %}>
+                                {% if coupon.is_available %}Copy Code{% else %}Unavailable{% endif %}
+                            </button>
+                        </article>
+                        {% endfor %}
+                    {% else %}
+                    <article class="coupon-ticket coupon-ticket-empty">
+                        <div class="coupon-ticket-copy">
+                            <strong>Reward Codes Await</strong>
+                            <p class="body-copy">Level up your Atelier to unlock exclusive reward codes!</p>
+                        </div>
+                    </article>
+                    {% endif %}
+                </div>
+            </article>
+
             <article class="glass-card rewards-card">
                 <div class="card-head">
                     <p class="card-kicker">Mission Board</p>
                     <h2>Your Atelier Missions</h2>
+                    <p class="body-copy" id="mission-level-copy">Level {{ profile.level if profile and profile.level else 1 }} missions are active right now.</p>
                 </div>
 
-                <div id="missions-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
-                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
-                        <div>
-                            <strong style="display:block; margin-bottom:6px;">Activate Your Atelier</strong>
-                            <p class="body-copy" style="margin:0;">Claim your welcome mission and lock in your first 250 Glow Points.</p>
+                <div id="missions-grid" class="missions-grid">
+                    {% for mission in profile.current_level_missions if profile and profile.current_level_missions %}
+                    <article class="mission-card">
+                        <div class="mission-copy">
+                            <span class="mission-level-tag">Level {{ mission.level }}</span>
+                            <strong>{{ mission.title }}</strong>
+                            <p class="body-copy">{{ mission.description }}</p>
+                            <span class="mission-points">+{{ mission.points }} Glow Points</span>
                         </div>
-                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="welcome" data-default-label="Claim Welcome Mission" onclick="claimMission('welcome', this)" {% if 'welcome' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
-                            {% if 'welcome' in completed_missions %}Completed ✅{% else %}Claim Welcome Mission{% endif %}
+                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="{{ mission.key }}" data-default-label="Claim Mission" onclick="claimMission('{{ mission.key }}', this)" {% if mission.completed %}disabled{% endif %}>
+                            {% if mission.completed %}Completed Ã¢Å“â€¦{% else %}Claim Mission{% endif %}
                         </button>
-                    </div>
-
-                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
-                        <div>
-                            <strong style="display:block; margin-bottom:6px;">Place Your First Order</strong>
-                            <p class="body-copy" style="margin:0;">Convert your first Meltix checkout into a permanent progress boost.</p>
-                        </div>
-                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="first_order" data-default-label="Claim First Order" onclick="claimMission('first_order', this)" {% if 'first_order' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
-                            {% if 'first_order' in completed_missions %}Completed ✅{% else %}Claim First Order{% endif %}
-                        </button>
-                    </div>
-
-                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
-                        <div>
-                            <strong style="display:block; margin-bottom:6px;">Post a Review</strong>
-                            <p class="body-copy" style="margin:0;">Share your candle thoughts and cash in another mission reward.</p>
-                        </div>
-                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="first_review" data-default-label="Claim Review Mission" onclick="claimMission('first_review', this)" {% if 'first_review' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
-                            {% if 'first_review' in completed_missions %}Completed ✅{% else %}Claim Review Mission{% endif %}
-                        </button>
-                    </div>
-
-                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
-                        <div>
-                            <strong style="display:block; margin-bottom:6px;">Take the Scent Quiz</strong>
-                            <p class="body-copy" style="margin:0;">Complete your scent persona ritual and unlock a fresh chunk of Glow Points.</p>
-                        </div>
-                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="scent_quiz" data-default-label="Claim Quiz Mission" onclick="claimMission('scent_quiz', this)" {% if 'scent_quiz' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
-                            {% if 'scent_quiz' in completed_missions %}Completed ✅{% else %}Claim Quiz Mission{% endif %}
-                        </button>
-                    </div>
-
-                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
-                        <div>
-                            <strong style="display:block; margin-bottom:6px;">Find the Secret Egg</strong>
-                            <p class="body-copy" style="margin:0;">Secret-hunters get rewarded too. Discover the egg and claim the bonus.</p>
-                        </div>
-                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="easter_egg" data-default-label="Claim Secret Mission" onclick="claimMission('easter_egg', this)" {% if 'easter_egg' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
-                            {% if 'easter_egg' in completed_missions %}Completed ✅{% else %}Claim Secret Mission{% endif %}
-                        </button>
-                    </div>
+                    </article>
+                    {% endfor %}
                 </div>
             </article>
 
@@ -335,24 +331,8 @@
                     <h2>Recent Reviews</h2>
                 </div>
 
-                <div id="reviews-list" class="review-list">
-                    {% for review in recent_reviews %}
-                    <article class="review-item">
-                        <div class="review-meta">
-                            <strong>Product #{{ review.product_id }}</strong>
-                            <span style="color: var(--accent-gold); font-size: 1.1rem;">
-                                {{ "★" * review.rating }}<span style="color: rgba(255,255,255,0.2);">{{ "☆" * (5 - review.rating) }}</span> &middot; <span style="font-size:0.84rem; color:var(--text-muted);">{{ review.date }}</span>
-                            </span>
-                        </div>
-                        <p>{{ review.review_text }}</p>
-                        <div class="review-impact-row">
-                            <span class="review-impact-chip">Helpful {{ review.likes }}</span>
-                            <span class="review-impact-chip muted-chip">Negative {{ review.dislikes }}</span>
-                        </div>
-                    </article>
-                    {% endfor %}
-                </div>
-                <div id="reviews-empty" class="empty-state" {% if recent_reviews %}style="display:none;"{% endif %}>
+                <div id="reviews-list" class="review-list"></div>
+                <div id="reviews-empty" class="empty-state">
                     <p>No reviews published yet.</p>
                     <span>Your latest thoughts on each candle will appear here once you begin reviewing the collection.</span>
                     <a href="/shop" class="empty-cta">Explore the Collection</a>
@@ -379,7 +359,7 @@
 
     <div class="modal-overlay" id="avatar-modal" aria-hidden="true">
         <div class="modal-card">
-            <button class="modal-close" id="close-avatar-modal" type="button" aria-label="Close avatar gallery">×</button>
+            <button class="modal-close" id="close-avatar-modal" type="button" aria-label="Close avatar gallery"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
 
             <div class="modal-head">
                 <p class="card-kicker">Avatar Gallery</p>
@@ -393,18 +373,34 @@
 
             <div class="avatar-grid">
                 {% for avatar in avatar_options %}
-                <button type="button" class="avatar-option" data-avatar="{{ avatar.filename }}" data-label="{{ avatar.label }}">
+                <button type="button" class="avatar-option" data-avatar="{{ avatar.filename }}" data-label="{{ avatar.label }}" data-required-level="{{ avatar.required_level }}">
+                    <span class="avatar-lock-indicator" {% if profile and profile.level and profile.level >= avatar.required_level %}hidden{% endif %}><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1C9.24 1 7 3.24 7 6v1H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2h-2V6c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v1H9V6c0-1.66 1.34-3 3-3zm0 9a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg></span>
                     <img src="{{ avatar.src }}" alt="{{ avatar.label }}">
                     <span>{{ avatar.label }}</span>
+                    <small class="avatar-unlock-note">{% if avatar.required_level > 1 %}Unlocks at Level {{ avatar.required_level }}{% else %}Available from Level 1{% endif %}</small>
                 </button>
                 {% endfor %}
             </div>
         </div>
     </div>
 
+    <div class="modal-overlay" id="level-up-modal" aria-hidden="true">
+        <div class="modal-card level-up-card">
+            <button class="modal-close" id="close-level-up-modal" type="button" aria-label="Close level up modal"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <div class="modal-head">
+                <p class="card-kicker">Level Up</p>
+                <h2 id="level-up-title">Congrats!</h2>
+                <p class="body-copy" id="level-up-copy">Congrats! You have been promoted to Level 2.</p>
+            </div>
+            <div class="save-row">
+                <button class="primary-btn compact-btn" id="close-level-up-cta" type="button">Continue</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="tracking-modal" aria-hidden="true">
         <div class="modal-card tracking-card">
-            <button class="modal-close" id="close-tracking-modal" type="button" aria-label="Close order tracking">×</button>
+            <button class="modal-close" id="close-tracking-modal" type="button" aria-label="Close order tracking"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
 
             <div class="modal-head">
                 <p class="card-kicker">Order Tracking</p>
@@ -430,7 +426,7 @@
 
     <div class="modal-overlay" id="scent-quiz-modal" aria-hidden="true">
         <div class="modal-card scent-card-modal">
-            <button class="modal-close" id="close-scent-quiz" type="button" aria-label="Close scent quiz">×</button>
+            <button class="modal-close" id="close-scent-quiz" type="button" aria-label="Close scent quiz"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
 
             <div class="modal-head">
                 <p class="card-kicker">Fragrance Quiz</p>
@@ -488,11 +484,10 @@
         const guestSigninBtn = document.getElementById('guest-signin-btn');
         const signOutBtn = document.getElementById('sign-out-btn');
         const useGooglePhotoBtn = document.getElementById('use-google-photo-btn');
+        const avatarStage = document.getElementById('avatar-stage');
         const guestGate = document.getElementById('guest-gate');
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
-        const totalReviews = document.getElementById('total-reviews');
-        const reviewImpact = document.getElementById('review-impact');
         const ordersInProgress = document.getElementById('orders-in-progress');
         const heroMemberSince = document.getElementById('hero-member-since');
         const totalSpent = document.getElementById('total-spent');
@@ -508,7 +503,9 @@
         const rewardProgressFill = document.getElementById('reward-progress-fill');
         const rewardProgressCopy = document.getElementById('reward-progress-copy');
         const rewardLedger = document.getElementById('reward-ledger');
-        const missionButtons = Array.from(document.querySelectorAll('.mission-claim-btn'));
+        const rewardVaultGrid = document.getElementById('reward-vault-grid');
+        const missionLevelCopy = document.getElementById('mission-level-copy');
+        const missionsGrid = document.getElementById('missions-grid');
         const scentNotes = document.getElementById('scent-notes');
         const openScentQuizBtn = document.getElementById('open-scent-quiz');
         const saveScentPersonaBtn = document.getElementById('save-scent-persona');
@@ -526,6 +523,9 @@
         const avatarModal = document.getElementById('avatar-modal');
         const trackingModal = document.getElementById('tracking-modal');
         const scentQuizModal = document.getElementById('scent-quiz-modal');
+        const levelUpModal = document.getElementById('level-up-modal');
+        const levelUpTitle = document.getElementById('level-up-title');
+        const levelUpCopy = document.getElementById('level-up-copy');
         const trackingOrderId = document.getElementById('tracking-order-id');
         const trackingStatus = document.getElementById('tracking-status');
         const trackingNote = document.getElementById('tracking-note');
@@ -539,11 +539,107 @@
             return avatarOptions.find((avatar) => avatar.filename === filename) || avatarOptions[0] || null;
         }
 
+        function normalizeLevel(levelValue) {
+            const parsed = Number(levelValue || 1);
+            if (!Number.isFinite(parsed)) return 1;
+            return Math.max(1, Math.min(5, Math.floor(parsed)));
+        }
+
+        function applyAvatarLevelRing(levelValue) {
+            const normalizedLevel = normalizeLevel(levelValue);
+            avatarStage.className = `avatar-stage avatar-ring-lvl-${normalizedLevel}`;
+        }
+
+        function updateAvatarLocks(levelValue) {
+            const normalizedLevel = normalizeLevel(levelValue);
+            document.querySelectorAll('.avatar-option').forEach((button) => {
+                const requiredLevel = Number(button.dataset.requiredLevel || 1);
+                const isLocked = requiredLevel > normalizedLevel;
+                const lockIndicator = button.querySelector('.avatar-lock-indicator');
+                const unlockNote = button.querySelector('.avatar-unlock-note');
+
+                button.classList.toggle('is-locked', isLocked);
+                button.disabled = isLocked;
+
+                if (lockIndicator) {
+                    lockIndicator.hidden = !isLocked;
+                }
+                if (unlockNote) {
+                    unlockNote.textContent = isLocked ? `Unlocks at Level ${requiredLevel}` : `Level ${requiredLevel}+`;
+                }
+            });
+        }
+
+        function isAvatarLocked(avatarMeta, levelValue) {
+            if (!avatarMeta) return true;
+            return Number(avatarMeta.required_level || 1) > normalizeLevel(levelValue);
+        }
+
+        function showLevelUpModal(levelValue) {
+            const normalizedLevel = normalizeLevel(levelValue);
+            levelUpTitle.textContent = `Level ${normalizedLevel} Unlocked`;
+            levelUpCopy.textContent = `Congrats! You have been promoted to Level ${normalizedLevel}.`;
+            openModal(levelUpModal);
+        }
+
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add('show');
             window.clearTimeout(showToast.timer);
             showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2600);
+        }
+
+        function fallbackCopyText(textValue) {
+            const helper = document.createElement('textarea');
+            helper.value = textValue;
+            helper.setAttribute('readonly', '');
+            helper.style.position = 'absolute';
+            helper.style.left = '-9999px';
+            document.body.appendChild(helper);
+            helper.select();
+
+            let copied = false;
+            try {
+                copied = document.execCommand('copy');
+            } catch (error) {
+                copied = false;
+            }
+
+            helper.remove();
+            return copied;
+        }
+
+        async function copyRewardCode(code, btnElement) {
+            if (!code) {
+                showToast('Reward code missing.');
+                return;
+            }
+
+            let copied = false;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(code);
+                    copied = true;
+                } else {
+                    copied = fallbackCopyText(code);
+                }
+            } catch (error) {
+                copied = fallbackCopyText(code);
+            }
+
+            if (!copied) {
+                showToast('We could not copy the reward code just now.');
+                return;
+            }
+
+            const originalLabel = btnElement ? btnElement.textContent : 'Copy Code';
+            if (btnElement) {
+                btnElement.textContent = 'Copied!';
+                window.setTimeout(() => {
+                    btnElement.textContent = originalLabel;
+                }, 1400);
+            }
+            showToast(`Reward code ${code} copied.`);
         }
 
         function decodeJwtPayload(credential) {
@@ -650,6 +746,7 @@
                 promptGoogleSignIn();
                 return;
             }
+            updateAvatarLocks(state.currentProfile && state.currentProfile.level ? state.currentProfile.level : 1);
             openModal(avatarModal);
         }
 
@@ -698,9 +795,9 @@
                 const review = document.createElement('article');
                 review.className = 'review-item';
                 
-                // 🌟 NAYA LOGIC: Bhare hue aur Khali stars dono banayega
-                const filledStars = '★'.repeat(item.rating);
-                const emptyStars = '☆'.repeat(5 - item.rating);
+                // Ã°Å¸Å’Å¸ NAYA LOGIC: Bhare hue aur Khali stars dono banayega
+                const filledStars = 'Ã¢Ëœâ€¦'.repeat(item.rating);
+                const emptyStars = 'Ã¢Ëœâ€ '.repeat(5 - item.rating);
                 
                 review.innerHTML = `
                     <div class="review-meta">
@@ -734,7 +831,7 @@
         }
         function renderRewardLedger(rewards) {
             const rewardData = rewards || {};
-            glowPointsTotal.textContent = rewardData.current_points || 250;
+            glowPointsTotal.textContent = rewardData.current_points ?? 0;
             nextReward.textContent = rewardData.next_reward_label || 'Complete your first milestone';
             rewardProgressFill.style.width = `${rewardData.progress_percent || 0}%`;
             if (rewardData.is_max_level) {
@@ -757,15 +854,44 @@
             });
         }
 
-        function renderMissionStates(completedMissions) {
-            const completedSet = new Set(Array.isArray(completedMissions) ? completedMissions : []);
-            missionButtons.forEach((button) => {
-                const missionKey = button.dataset.missionKey;
-                const isCompleted = completedSet.has(missionKey);
-                button.disabled = isCompleted;
-                button.textContent = isCompleted ? 'Completed ✅' : (button.dataset.defaultLabel || 'Claim Mission');
-                button.style.opacity = isCompleted ? '0.55' : '1';
-                button.style.cursor = isCompleted ? 'not-allowed' : 'pointer';
+        function renderRewardVault(vaultItems) {
+            const coupons = Array.isArray(vaultItems) ? vaultItems : [];
+            rewardVaultGrid.innerHTML = '';
+
+            if (!coupons.length) {
+                rewardVaultGrid.innerHTML = `
+                    <article class="coupon-ticket coupon-ticket-empty">
+                        <div class="coupon-ticket-copy">
+                            <strong>Reward Codes Await</strong>
+                            <p class="body-copy">Level up your Atelier to unlock exclusive reward codes!</p>
+                        </div>
+                    </article>
+                `;
+                return;
+            }
+
+            coupons.forEach((coupon) => {
+                const card = document.createElement('article');
+                card.className = `coupon-ticket ${coupon.is_available ? '' : 'is-unavailable'}`.trim();
+                card.innerHTML = `
+                    <div class="coupon-ticket-top">
+                        <span class="coupon-level">${coupon.level ? `Level ${coupon.level}` : 'Reward Vault'}</span>
+                        <span class="coupon-badge">${coupon.discount_percentage || 0}% OFF</span>
+                    </div>
+                    <div class="coupon-ticket-copy">
+                        <strong>${coupon.title || 'Exclusive Reward Code'}</strong>
+                        <p class="body-copy">${coupon.description || 'Use this code during checkout to redeem your atelier reward.'}</p>
+                    </div>
+                    <div class="coupon-ticket-meta">
+                        <span>Code: <strong>${coupon.code}</strong></span>
+                        <span>${coupon.status_text || 'Ready to use'}</span>
+                        <span>Expires: ${coupon.expires_at_display || 'No expiry'}</span>
+                    </div>
+                    <button class="primary-btn compact-btn" type="button" onclick="copyRewardCode('${coupon.code}', this)" ${coupon.is_available ? '' : 'disabled'}>
+                        ${coupon.is_available ? 'Copy Code' : 'Unavailable'}
+                    </button>
+                `;
+                rewardVaultGrid.appendChild(card);
             });
         }
 
@@ -895,17 +1021,89 @@
             openModal(trackingModal);
         }
 
+        function isMissionClaimable(missionKey, profile) {
+            const p = profile || {};
+            const stats = p.stats || {};
+            switch (missionKey) {
+                case 'welcome':
+                    return true; // Account hona hi kaafi hai
+                case 'portrait_pick':
+                    return !!(p.avatar_filename);
+                case 'wishlist_spark':
+                    return (p.wishlist_items && p.wishlist_items.length > 0) || (stats.wishlist_count > 0);
+                case 'scent_quiz':
+                    return !!(p.scent_persona && p.scent_persona.notes && p.scent_persona.notes.length > 0);
+                case 'first_review':
+                    return (p.recent_reviews && p.recent_reviews.length > 0) || (stats.review_count > 0);
+                case 'first_order':
+                    return (p.orders && p.orders.length > 0) || (stats.order_count > 0);
+                case 'special_date':
+                    return (p.orders && p.orders.length > 0) || (stats.order_count > 0);
+                default:
+                    return true; // Honour system missions â€” always claimable
+            }
+        }
+
+        function renderMissionStates(missions, levelValue) {
+            const normalizedLevel = normalizeLevel(levelValue);
+            const missionList = Array.isArray(missions) ? missions : [];
+
+            missionLevelCopy.textContent = `Level ${normalizedLevel} missions are active right now.`;
+            missionsGrid.innerHTML = '';
+
+            if (!missionList.length) {
+                missionsGrid.innerHTML = `<article class="mission-card mission-card-empty"><div class="mission-copy"><strong>Private Missions Await</strong><p class="body-copy">Sign in to unlock your current level quests and start climbing the Meltix ranks.</p></div></article>`;
+                return;
+            }
+
+            const profile = state.currentProfile || null;
+
+            missionList.forEach((mission) => {
+                const card = document.createElement('article');
+                const claimable = !mission.completed && isMissionClaimable(mission.key, profile);
+
+                // 3 states: completed | claimable | locked
+                if (mission.completed) {
+                    card.className = 'mission-card mission-completed';
+                } else if (claimable) {
+                    card.className = 'mission-card mission-claimable';
+                } else {
+                    card.className = 'mission-card mission-locked';
+                }
+
+                let btnHTML;
+                if (mission.completed) {
+                    btnHTML = `<button class="mission-status-btn mission-done-btn" type="button" disabled>Completed &#10003;</button>`;
+                } else if (claimable) {
+                    btnHTML = `<button class="mission-status-btn mission-claim-btn mission-glow-btn" type="button" data-mission-key="${mission.key}" onclick="claimMission('${mission.key}', this)">Claim Points</button>`;
+                } else {
+                    btnHTML = `<button class="mission-status-btn mission-locked-btn" type="button" disabled>Complete mission to earn points</button>`;
+                }
+
+                card.innerHTML = `
+                    <div class="mission-copy">
+                        <span class="mission-level-tag">Level ${mission.level}</span>
+                        <strong>${mission.title}</strong>
+                        <p class="body-copy">${mission.description}</p>
+                        <span class="mission-points">+${mission.points || 250} Glow Points</span>
+                    </div>
+                    ${btnHTML}
+                `;
+                missionsGrid.appendChild(card);
+            });
+        }
+
         function renderGuestProfile() {
             state.currentProfile = null;
             state.usingGoogleAvatar = false;
             currentUserEmail = '';
+            applyAvatarLevelRing(1);
+            updateAvatarLocks(1);
             setLockedState(true);
             updateAuthControls(false);
             showAvatarEmpty();
             profileName.textContent = 'Guest Flame';
             profileEmail.textContent = 'Continue with Google to access your saved candles, order tracking, and private profile settings.';
-            totalReviews.textContent = '0';
-            reviewImpact.textContent = '0';
             heroMemberSince.textContent = 'Today';
             ordersInProgress.textContent = '0';
             totalSpent.textContent = 'INR 0';
@@ -917,8 +1115,9 @@
             detailMode.textContent = 'Guest Session';
             supportCopy.textContent = 'Sign in with Google to activate your private atelier and save your profile preferences.';
             renderAddressBook({});
-            renderRewardLedger({ current_points: 250, progress_percent: 25, points_to_next_reward: 250, next_reward_label: 'Your first bespoke reward', ledger: [{ title: 'Welcome Bonus', description: 'Sign in to activate your rewards ledger.', points: 250, date: 'Today' }] });
-            renderMissionStates([]);
+            renderRewardLedger({ current_points: 0, progress_percent: 0, points_to_next_reward: 1000, next_reward_label: 'Your first bespoke reward', ledger: [] });
+            renderRewardVault([]);
+            renderMissionStates([], 1);
             renderScentPersona({ title: 'Discover Your Signature Notes', description: 'Take the scent quiz after signing in to create your fragrance profile.', notes: [], cta_label: 'Take the Scent Quiz' });
             renderWishlist([]);
             renderReviews([]);
@@ -930,6 +1129,8 @@
             state.currentProfile = profile;
             const signedIn = Boolean(profile && profile.email);
             currentUserEmail = signedIn ? (profile.email || '') : '';
+            applyAvatarLevelRing(profile.level || 1);
+            updateAvatarLocks(profile.level || 1);
             setLockedState(!signedIn);
             updateAuthControls(signedIn);
             if (profile.avatar_filename) {
@@ -945,8 +1146,7 @@
             }
             profileName.textContent = profile.display_name || 'Guest Flame';
             profileEmail.textContent = profile.email || 'Not connected';
-            totalReviews.textContent = profile.stats ? profile.stats.review_count || 0 : 0;
-            reviewImpact.textContent = profile.stats ? profile.stats.review_likes || 0 : 0;
+            heroMemberSince.textContent = profile.member_since || 'Today';
             ordersInProgress.textContent = profile.stats ? profile.stats.orders_in_progress || 0 : 0;
             totalSpent.textContent = profile.stats ? profile.stats.total_spent_display || formatCurrency(profile.stats.total_spent || 0) : 'INR 0';
             wishlistCount.textContent = profile.stats ? profile.stats.wishlist_count || 0 : 0;
@@ -957,7 +1157,8 @@
             supportCopy.textContent = signedIn ? 'Your Google profile photo remains active until you choose and save a custom portrait.' : 'Sign in with Google to activate your private atelier and save your profile preferences.';
             renderAddressBook(profile.address_book || {});
             renderRewardLedger(profile.rewards || {});
-            renderMissionStates(profile.completed_missions || []);
+            renderRewardVault(profile.reward_vault || []);
+            renderMissionStates(profile.current_level_missions || [], profile.level || 1);
             renderScentPersona(profile.scent_persona || {});
             renderWishlist(profile.wishlist_items || []);
             renderReviews(profile.recent_reviews || []);
@@ -982,6 +1183,10 @@
             }
             const avatarMeta = getAvatarMeta(filename);
             if (!avatarMeta) return;
+            if (isAvatarLocked(avatarMeta, state.currentProfile && state.currentProfile.level ? state.currentProfile.level : 1)) {
+                showToast(`Reach Level ${avatarMeta.required_level} to unlock this avatar.`);
+                return;
+            }
             setSelectedAvatar(avatarMeta.filename);
             try {
                 const response = await fetch(updateAvatarUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: state.currentUser.email, name: state.currentUser.name || '', avatar: avatarMeta.filename }) });
@@ -1045,7 +1250,7 @@
                 return;
             }
 
-            const button = btnElement || missionButtons.find((item) => item.dataset.missionKey === missionKey);
+            const button = btnElement || document.querySelector(`.mission-claim-btn[data-mission-key="${missionKey}"]`);
             if (!button) return;
 
             const originalText = button.textContent;
@@ -1070,7 +1275,15 @@
                     const completed = new Set(state.currentProfile && Array.isArray(state.currentProfile.completed_missions) ? state.currentProfile.completed_missions : []);
                     completed.add(missionKey);
                     if (state.currentProfile) state.currentProfile.completed_missions = Array.from(completed);
-                    renderMissionStates(Array.from(completed));
+                    renderMissionStates([], state.currentProfile && state.currentProfile.level ? state.currentProfile.level : 1);
+                }
+
+                if (data.new_coupon_code) {
+                    showToast(`Reward Vault unlocked: ${data.new_coupon_code}`);
+                }
+
+                if (data.level_up) {
+                    showLevelUpModal(data.level || (data.profile && data.profile.level) || (state.currentProfile && state.currentProfile.level) || 1);
                 }
 
                 showToast(data.already_claimed ? 'Mission was already completed.' : 'Mission claimed. 250 Glow Points added.');
@@ -1100,9 +1313,10 @@
             closeModal(avatarModal);
             closeModal(trackingModal);
             closeModal(scentQuizModal);
+            closeModal(levelUpModal);
             showToast('Safely signed out of your atelier. Redirecting...');
             
-            // 🌟 NAYA: 1.5 second baad smoothly shop pe bhej do
+            // Ã°Å¸Å’Å¸ NAYA: 1.5 second baad smoothly shop pe bhej do
             setTimeout(() => {
                 window.location.href = '/shop';
             }, 1500);
@@ -1120,13 +1334,16 @@
         document.getElementById('close-avatar-modal').addEventListener('click', () => closeModal(avatarModal));
         document.getElementById('close-tracking-modal').addEventListener('click', () => closeModal(trackingModal));
         document.getElementById('close-scent-quiz').addEventListener('click', () => closeModal(scentQuizModal));
+        document.getElementById('close-level-up-modal').addEventListener('click', () => closeModal(levelUpModal));
+        document.getElementById('close-level-up-cta').addEventListener('click', () => closeModal(levelUpModal));
         document.querySelectorAll('.avatar-option').forEach((button) => button.addEventListener('click', () => persistAvatar(button.dataset.avatar)));
         quizOptions.forEach((button) => button.addEventListener('click', () => toggleQuizNote(button.dataset.note)));
-        [avatarModal, trackingModal, scentQuizModal].forEach((modalElement) => modalElement.addEventListener('click', (event) => { if (event.target === modalElement) closeModal(modalElement); }));
-        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeModal(avatarModal); closeModal(trackingModal); closeModal(scentQuizModal); } });
+        [avatarModal, trackingModal, scentQuizModal, levelUpModal].forEach((modalElement) => modalElement.addEventListener('click', (event) => { if (event.target === modalElement) closeModal(modalElement); }));
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeModal(avatarModal); closeModal(trackingModal); closeModal(scentQuizModal); closeModal(levelUpModal); } });
 
         window.handleCredentialResponse = handleCredentialResponse;
         window.claimMission = claimMission;
+        window.copyRewardCode = copyRewardCode;
         applyBillingVisibility();
         hydrateProfileFromTemplate();
     </script>

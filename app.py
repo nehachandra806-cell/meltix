@@ -64,12 +64,87 @@ REWARD_TIERS = [
 ]
 
 MISSION_CATALOG = {
-    'welcome': 'Account Created',
-    'first_order': 'First Order Placed',
-    'first_review': 'First Review Posted',
-    'scent_quiz': 'Scent Quiz Completed',
-    'easter_egg': 'Found the Secret Egg',
-    'special_date': 'Special Date Added',
+    1: [
+        {"key": "welcome", "title": "Account Created", "description": "Activate your atelier and start your Meltix RPG journey."},
+        {"key": "portrait_pick", "title": "Portrait Selected", "description": "Choose your first custom avatar portrait."},
+        {"key": "wishlist_spark", "title": "Wishlist Spark", "description": "Save your first candle to the wishlist."},
+        {"key": "scent_quiz", "title": "Scent Quiz Completed", "description": "Complete your scent quiz and reveal your signature notes."},
+    ],
+    2: [
+        {"key": "first_review", "title": "First Review Posted", "description": "Publish your first review for the Meltix collection."},
+        {"key": "first_order", "title": "First Order Placed", "description": "Place your first order and unlock deeper rewards."},
+        {"key": "special_date", "title": "Special Date Added", "description": "Plan a special date moment inside your candle ritual."},
+        {"key": "studio_visit", "title": "Studio Explorer", "description": "Explore the Meltix craft studio experience."},
+    ],
+    3: [
+        {"key": "zodiac_hunter", "title": "Zodiac Hunter", "description": "Discover the zodiac candle that matches your sign."},
+        {"key": "story_keeper", "title": "Story Keeper", "description": "Unlock the Story Candle collection and claim its lore."},
+        {"key": "hidden_message", "title": "Hidden Message Found", "description": "Explore the Hidden Message candle experience."},
+        {"key": "craft_studio", "title": "Craft Studio Visit", "description": "Dive deeper into how Meltix candles are crafted."},
+    ],
+    4: [
+        {"key": "break_to_reveal", "title": "Break to Reveal Master", "description": "Explore the Break to Reveal collection."},
+        {"key": "date_night", "title": "Date Night Curator", "description": "Check out the Candle Date Kit and plan the mood."},
+        {"key": "gift_set_scout", "title": "Gift Set Scout", "description": "Explore the Gift Set collection for your next surprise."},
+        {"key": "feedback_share", "title": "Atelier Feedback Shared", "description": "Submit feedback and help shape the Meltix experience."},
+    ],
+    5: [
+        {"key": "easter_egg", "title": "Found the Secret Egg", "description": "Discover the secret Meltix easter egg hidden in the atelier."},
+        {"key": "head_to_explorer", "title": "Head To Explorer", "description": "Unlock the Head To experience and complete the route."},
+        {"key": "bug_reporter", "title": "Bug Hunter", "description": "Report a bug and help refine the atelier."},
+        {"key": "melt_master", "title": "Melt Master", "description": "Complete your final prestige mission and become Meltix royalty."},
+    ],
+}
+
+MAX_PLAYER_LEVEL = 5
+MISSION_POINTS = 250
+MISSION_LOOKUP = {
+    mission["key"]: {**mission, "level": level}
+    for level, missions in MISSION_CATALOG.items()
+    for mission in missions
+}
+
+LEVEL_REWARD_COUPONS = {
+    2: {
+        "code": "LVL2-WELCOME20",
+        "title": "Level 2 Welcome Drop",
+        "description": "20% off your next Meltix checkout.",
+        "discount_percentage": 20,
+        "max_uses": 1,
+        "expires_at": None,
+        "is_active": True,
+    },
+    3: {
+        "code": "LVL3-GLOW30",
+        "title": "Level 3 Glow Boost",
+        "description": "30% off your next handcrafted candle order.",
+        "discount_percentage": 30,
+        "max_uses": 1,
+        "expires_at": None,
+        "is_active": True,
+    },
+    4: {
+        "code": "LVL4-ROYAL40",
+        "title": "Level 4 Royal Vault",
+        "description": "40% off your next multi-item atelier haul.",
+        "discount_percentage": 40,
+        "max_uses": 1,
+        "expires_at": None,
+        "is_active": True,
+    },
+    5: {
+        "code": "LVL5-CROWN50",
+        "title": "Level 5 Crown Reward",
+        "description": "50% off your prestige Meltix reward order.",
+        "discount_percentage": 50,
+        "max_uses": 1,
+        "expires_at": None,
+        "is_active": True,
+    },
+}
+LEVEL_REWARD_COUPONS_BY_CODE = {
+    coupon_data["code"]: {**coupon_data, "level": level}
+    for level, coupon_data in LEVEL_REWARD_COUPONS.items()
 }
 
 SCENT_KEYWORDS = {
@@ -87,8 +162,35 @@ SCENT_KEYWORDS = {
 }
 
 
-def sanitize_avatar_filename(filename):
-    return filename if filename in AVATAR_FILENAMES else ''
+def avatar_required_level(avatar_index):
+    if avatar_index <= 5:
+        return 1
+    if avatar_index <= 8:
+        return 2
+    if avatar_index <= 11:
+        return 3
+    if avatar_index <= 14:
+        return 4
+    return 5
+
+
+def avatar_required_level_for_filename(filename):
+    try:
+        avatar_index = AVATAR_FILENAMES.index(filename) + 1
+    except ValueError:
+        return None
+    return avatar_required_level(avatar_index)
+
+
+def sanitize_avatar_filename(filename, player_level=None):
+    if filename not in AVATAR_FILENAMES:
+        return ''
+
+    required_level = avatar_required_level_for_filename(filename)
+    if player_level is not None and required_level and player_level < required_level:
+        return ''
+
+    return filename
 
 
 AVATAR_NAMES = {
@@ -116,7 +218,8 @@ def build_avatar_options():
         {
             'filename': filename,
             'label': AVATAR_NAMES.get(filename, f"Avatar {index:02d}"),
-            'src': url_for('static', filename=f'images/avatar/{filename}')
+            'src': url_for('static', filename=f'images/avatar/{filename}'),
+            'required_level': avatar_required_level(index)
         }
         for index, filename in enumerate(AVATAR_FILENAMES, start=1)
     ]
@@ -182,14 +285,31 @@ class ReviewLike(db.Model):
     __table_args__ = (db.UniqueConstraint('review_id', 'user_id', name='unique_user_review_like'),)
 
 
+class Coupon(db.Model):
+    __tablename__ = 'coupon'
+
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    discount_percentage = db.Column(db.Integer, nullable=False)
+    max_uses = db.Column(db.Integer, nullable=True)
+    current_uses = db.Column(db.Integer, nullable=False, default=0)
+    expires_at = db.Column(db.DateTime, nullable=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+
+    def __repr__(self):
+        return f"Coupon('{self.code}', {self.discount_percentage}% off)"
+
+
 class UserAccount(db.Model):
     __tablename__ = 'user_account'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     display_name = db.Column(db.String(120), nullable=False, default='Guest')
     avatar_filename = db.Column(db.String(50), nullable=False, default='')
-    glow_points = db.Column(db.Integer, nullable=False, default=250)
+    glow_points = db.Column(db.Integer, nullable=False, default=0)
+    level = db.Column(db.Integer, nullable=False, default=1)
     completed_missions_json = db.Column(db.Text, nullable=False, default='[]')
+    unlocked_coupons = db.Column(db.Text, nullable=False, default='[]')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -260,17 +380,65 @@ def ensure_profile_schema():
     inspector = inspect(db.engine)
     user_columns = {column['name'] for column in inspector.get_columns('user_account')}
 
+    if 'level' not in user_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE user_account ADD COLUMN level INTEGER NOT NULL DEFAULT 1")
+            )
+
     if 'completed_missions_json' not in user_columns:
         with db.engine.begin() as connection:
             connection.execute(
                 text("ALTER TABLE user_account ADD COLUMN completed_missions_json TEXT NOT NULL DEFAULT '[]'")
             )
 
+    if 'unlocked_coupons' not in user_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE user_account ADD COLUMN unlocked_coupons TEXT NOT NULL DEFAULT '[]'")
+            )
+
+
+def ensure_coupon_catalog():
+    reward_codes = [coupon_data["code"] for coupon_data in LEVEL_REWARD_COUPONS.values()]
+    existing_coupons = {
+        coupon.code: coupon
+        for coupon in Coupon.query.filter(Coupon.code.in_(reward_codes)).all()
+    }
+
+    catalog_changed = False
+    for level, coupon_data in LEVEL_REWARD_COUPONS.items():
+        coupon = existing_coupons.get(coupon_data["code"])
+        if not coupon:
+            coupon = Coupon(code=coupon_data["code"])
+            db.session.add(coupon)
+            catalog_changed = True
+
+        if coupon.discount_percentage != coupon_data["discount_percentage"]:
+            coupon.discount_percentage = coupon_data["discount_percentage"]
+            catalog_changed = True
+        if coupon.max_uses != coupon_data["max_uses"]:
+            coupon.max_uses = coupon_data["max_uses"]
+            catalog_changed = True
+        if coupon.expires_at != coupon_data["expires_at"]:
+            coupon.expires_at = coupon_data["expires_at"]
+            catalog_changed = True
+        if coupon.is_active != coupon_data["is_active"]:
+            coupon.is_active = coupon_data["is_active"]
+            catalog_changed = True
+        if coupon.current_uses is None:
+            coupon.current_uses = 0
+            catalog_changed = True
+
+    if catalog_changed:
+        db.session.commit()
+
 
 # Ye line chalte hi PostgreSQL mein saari tables aur rules ban jayenge
 with app.app_context():
     db.create_all()
     ensure_profile_schema()
+    ensure_coupon_catalog()
 
 
 def safe_json_loads(raw_value, fallback):
@@ -286,9 +454,135 @@ def normalize_completed_missions(raw_value):
     normalized = []
     for mission_key in safe_json_loads(raw_value, []):
         clean_key = str(mission_key).strip()
-        if clean_key and clean_key in MISSION_CATALOG and clean_key not in normalized:
+        if clean_key and clean_key in MISSION_LOOKUP and clean_key not in normalized:
             normalized.append(clean_key)
     return normalized
+
+
+def normalize_unlocked_coupons(raw_value):
+    normalized = []
+    for coupon_code in safe_json_loads(raw_value, []):
+        clean_code = str(coupon_code).strip().upper()
+        if clean_code and clean_code not in normalized:
+            normalized.append(clean_code)
+    return normalized
+
+
+def normalize_level(level_value):
+    try:
+        normalized = int(level_value or 1)
+    except (TypeError, ValueError):
+        normalized = 1
+    return max(1, min(MAX_PLAYER_LEVEL, normalized))
+
+
+def get_level_missions(level_value, completed_missions=None):
+    current_level = normalize_level(level_value)
+    completed_set = set(completed_missions or [])
+    missions = []
+
+    for mission in MISSION_CATALOG.get(current_level, []):
+        missions.append(
+            {
+                "key": mission["key"],
+                "title": mission["title"],
+                "description": mission["description"],
+                "level": current_level,
+                "points": MISSION_POINTS,
+                "completed": mission["key"] in completed_set,
+            }
+        )
+
+    return missions
+
+
+def coupon_is_available(coupon_record):
+    if not coupon_record:
+        return False
+    if not coupon_record.is_active:
+        return False
+    if coupon_record.expires_at and coupon_record.expires_at < datetime.utcnow():
+        return False
+    if coupon_record.max_uses is not None and coupon_record.current_uses >= coupon_record.max_uses:
+        return False
+    return True
+
+
+def build_reward_vault(unlocked_coupons):
+    if not unlocked_coupons:
+        return []
+
+    coupon_rows = {
+        coupon.code: coupon
+        for coupon in Coupon.query.filter(Coupon.code.in_(unlocked_coupons)).all()
+    }
+    reward_vault = []
+
+    for coupon_code in unlocked_coupons:
+        coupon = coupon_rows.get(coupon_code)
+        catalog_coupon = LEVEL_REWARD_COUPONS_BY_CODE.get(coupon_code, {})
+        max_uses = coupon.max_uses if coupon else catalog_coupon.get("max_uses")
+        current_uses = coupon.current_uses if coupon else 0
+        expires_at = coupon.expires_at if coupon else catalog_coupon.get("expires_at")
+        is_active = coupon.is_active if coupon else catalog_coupon.get("is_active", True)
+        remaining_uses = None if max_uses is None else max(max_uses - current_uses, 0)
+
+        reward_vault.append(
+            {
+                "code": coupon_code,
+                "title": catalog_coupon.get("title", "Exclusive Reward Code"),
+                "description": catalog_coupon.get("description", "Use this code during checkout to redeem your atelier reward."),
+                "level": catalog_coupon.get("level"),
+                "discount_percentage": coupon.discount_percentage if coupon else catalog_coupon.get("discount_percentage", 0),
+                "max_uses": max_uses,
+                "current_uses": current_uses,
+                "remaining_uses": remaining_uses,
+                "expires_at": expires_at.isoformat() if expires_at else None,
+                "expires_at_display": expires_at.strftime("%d %b %Y") if expires_at else "No expiry",
+                "is_active": bool(is_active),
+                "is_available": coupon_is_available(coupon) if coupon else bool(is_active),
+                "status_text": (
+                    "Ready to use"
+                    if (coupon_is_available(coupon) if coupon else bool(is_active))
+                    else (
+                        "Expired"
+                        if expires_at and expires_at < datetime.utcnow()
+                        else "Unavailable"
+                    )
+                ),
+            }
+        )
+
+    return reward_vault
+
+
+def unlock_level_coupon(profile_record, level_value):
+    unlocked_coupons = normalize_unlocked_coupons(profile_record.unlocked_coupons)
+    reward_coupon = LEVEL_REWARD_COUPONS.get(normalize_level(level_value))
+    granted_code = None
+
+    if reward_coupon and reward_coupon["code"] not in unlocked_coupons:
+        unlocked_coupons.append(reward_coupon["code"])
+        granted_code = reward_coupon["code"]
+
+    profile_record.unlocked_coupons = json.dumps(unlocked_coupons)
+    return unlocked_coupons, granted_code
+
+
+def sync_unlocked_coupons_for_level(profile_record):
+    unlocked_coupons = normalize_unlocked_coupons(profile_record.unlocked_coupons)
+    changed = False
+
+    for level_value in range(2, normalize_level(profile_record.level) + 1):
+        reward_coupon = LEVEL_REWARD_COUPONS.get(level_value)
+        if reward_coupon and reward_coupon["code"] not in unlocked_coupons:
+            unlocked_coupons.append(reward_coupon["code"])
+            changed = True
+
+    if changed or profile_record.unlocked_coupons in (None, ''):
+        profile_record.unlocked_coupons = json.dumps(unlocked_coupons)
+
+    return unlocked_coupons, changed
 
 
 def get_session_user():
@@ -537,14 +831,7 @@ def serialize_order(order_record):
 
 
 def build_glow_ledger(profile_record, orders, reviews):
-    entries = [
-        {
-            "title": "Welcome Bonus",
-            "description": "Your Meltix Atelier was activated.",
-            "points": 250,
-            "date_value": profile_record.created_at,
-        }
-    ]
+    entries = []
 
     for order in orders:
         entries.append(
@@ -568,13 +855,14 @@ def build_glow_ledger(profile_record, orders, reviews):
 
     claimed_missions = normalize_completed_missions(profile_record.completed_missions_json)
     for mission_key in claimed_missions:
-        mission_title = MISSION_CATALOG.get(mission_key, mission_key.replace('_', ' ').title())
+        mission_data = MISSION_LOOKUP.get(mission_key, {"title": mission_key.replace('_', ' ').title()})
+        mission_title = mission_data["title"]
         mission_date = profile_record.created_at if mission_key == 'welcome' else (profile_record.updated_at or profile_record.created_at)
         entries.append(
             {
                 "title": mission_title,
                 "description": f"Mission cleared: {mission_title}.",
-                "points": 250,
+                "points": MISSION_POINTS,
                 "date_value": mission_date,
             }
         )
@@ -669,6 +957,8 @@ def get_or_create_profile(email, display_name=None):
         if readable_name and readable_name != 'Guest':
             profile_record.display_name = readable_name
 
+    sync_unlocked_coupons_for_level(profile_record)
+
     return profile_record
 
 
@@ -718,6 +1008,10 @@ def sync_profile_orders(user_email, orders_payload):
 
 def serialize_profile(profile_record, google_picture_url=None, use_google_picture=False):
     completed_missions = normalize_completed_missions(profile_record.completed_missions_json)
+    unlocked_coupons = normalize_unlocked_coupons(profile_record.unlocked_coupons)
+    current_level = normalize_level(profile_record.level)
+    current_level_missions = get_level_missions(current_level, completed_missions)
+    reward_vault = build_reward_vault(unlocked_coupons)
     wishlist_rows = Wishlist.query.filter_by(user_email=profile_record.email).order_by(Wishlist.id.desc()).all()
     wishlist_items = []
 
@@ -803,6 +1097,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         'avatar_url': avatar_url,
         'avatar_label': avatar_label,
         'using_google_avatar': bool(use_google_picture and google_picture_url),
+        'level': current_level,
         'member_since': profile_record.created_at.strftime("%b %Y"),
         'stats': {
             'wishlist_count': len(wishlist_items),
@@ -813,7 +1108,8 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
             'order_count': len(orders),
             'total_spent': total_spent,
             'total_spent_display': format_money(total_spent),
-            'avatar_count': len(AVATAR_FILENAMES)
+            'avatar_count': len(AVATAR_FILENAMES),
+            'level': current_level
         },
         'wishlist_items': wishlist_items,
         'recent_reviews': review_items,
@@ -821,7 +1117,10 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         'address_book': address_book,
         'rewards': rewards,
         'scent_persona': scent_persona,
-        'completed_missions': completed_missions
+        'completed_missions': completed_missions,
+        'current_level_missions': current_level_missions,
+        'unlocked_coupons': unlocked_coupons,
+        'reward_vault': reward_vault
     }
 
 # ==========================================
@@ -919,6 +1218,10 @@ def profile():
             current_user = {"name": "", "email": "", "picture": ""}
 
     profile_data.setdefault('completed_missions', [])
+    profile_data.setdefault('current_level_missions', [])
+    profile_data.setdefault('unlocked_coupons', [])
+    profile_data.setdefault('reward_vault', [])
+    profile_data.setdefault('level', 1)
     profile_data.setdefault('rewards', {})
     profile_data.setdefault('stats', {})
     profile_data.setdefault('recent_reviews', [])
@@ -1272,7 +1575,6 @@ def update_profile_avatar():
     data = request.get_json() or {}
     email = (data.get('email') or session.get('profile_email') or '').strip().lower()
     use_google_photo = bool(data.get('use_google_photo'))
-    avatar_filename = '' if use_google_photo else sanitize_avatar_filename(data.get('avatar'))
     display_name = (data.get('name') or '').strip()
     google_picture_url = (data.get('picture') or '').strip()
 
@@ -1280,10 +1582,13 @@ def update_profile_avatar():
         if not email:
             return jsonify({"success": False, "message": "Sign in required"}), 401
 
-        if not avatar_filename and not use_google_photo:
-            return jsonify({"success": False, "message": "Valid avatar required"}), 400
-
         profile_record = get_or_create_profile(email, display_name)
+        player_level = normalize_level(profile_record.level)
+        avatar_filename = '' if use_google_photo else sanitize_avatar_filename(data.get('avatar'), player_level=player_level)
+
+        if not avatar_filename and not use_google_photo:
+            return jsonify({"success": False, "message": "This avatar is locked for your current level"}), 403
+
         profile_record.avatar_filename = avatar_filename
         session['profile_email'] = profile_record.email
         db.session.commit()
@@ -1406,7 +1711,8 @@ def claim_mission():
     if not user_email:
         return jsonify({"success": False, "message": "Sign in required"}), 401
 
-    if mission_key not in MISSION_CATALOG:
+    mission_data = MISSION_LOOKUP.get(mission_key)
+    if not mission_data:
         return jsonify({"success": False, "message": "Invalid mission key"}), 400
 
     try:
@@ -1414,18 +1720,130 @@ def claim_mission():
         if not profile_record:
             return jsonify({"success": False, "message": "User not found"}), 404
 
+        current_level = normalize_level(profile_record.level)
+        unlocked_coupons, _ = sync_unlocked_coupons_for_level(profile_record)
         completed_missions = normalize_completed_missions(profile_record.completed_missions_json)
         already_claimed = mission_key in completed_missions
+        level_up = False
+        new_coupon_code = None
+
+        if not already_claimed and mission_data["level"] != current_level:
+            return jsonify({
+                "success": False,
+                "message": f"This mission unlocks at Level {mission_data['level']}."
+            }), 403
+
+        # ═══════════════════════════════════════════════════════════
+        # 🔒 ANTI-CHEAT VALIDATION — Har mission ke liye real proof
+        # ═══════════════════════════════════════════════════════════
+        if not already_claimed:
+            if mission_key == 'welcome':
+                # Sirf account hona chahiye — already verified above
+                pass
+
+            elif mission_key == 'portrait_pick':
+                # User ne avatar select kiya hona chahiye
+                if not profile_record.avatar_filename:
+                    return jsonify({
+                        "success": False,
+                        "message": "Please select a custom portrait first from the Avatar Gallery."
+                    }), 403
+
+            elif mission_key == 'wishlist_spark':
+                # Wishlist mein koi item hona chahiye
+                wishlist_count = Wishlist.query.filter_by(user_email=user_email).count()
+                if wishlist_count < 1:
+                    return jsonify({
+                        "success": False,
+                        "message": "Add at least one candle to your wishlist first."
+                    }), 403
+
+            elif mission_key == 'scent_quiz':
+                # Scent persona saved honi chahiye
+                persona_record = UserScentPersona.query.filter_by(user_email=user_email).first()
+                if not persona_record or not safe_json_loads(persona_record.notes_json, []):
+                    return jsonify({
+                        "success": False,
+                        "message": "Complete the Scent Quiz and save your persona first."
+                    }), 403
+
+            elif mission_key == 'first_review':
+                # User ka real review hona chahiye database mein
+                review_count = Review.query.filter_by(user_id=profile_record.id).count()
+                if review_count < 1:
+                    return jsonify({
+                        "success": False,
+                        "message": "Post your first review on a candle before claiming this mission."
+                    }), 403
+
+            elif mission_key == 'first_order':
+                # User ka real order hona chahiye database mein
+                order_count = ProfileOrder.query.filter_by(user_email=user_email).count()
+                if order_count < 1:
+                    return jsonify({
+                        "success": False,
+                        "message": "Place your first order before claiming this mission."
+                    }), 403
+
+            elif mission_key == 'special_date':
+                # Candle Date Kit page visit — order ya real engagement check
+                order_count = ProfileOrder.query.filter_by(user_email=user_email).count()
+                if order_count < 1:
+                    return jsonify({
+                        "success": False,
+                        "message": "Explore the Candle Date Kit and place an order first."
+                    }), 403
+
+            elif mission_key == 'studio_visit':
+                # No strict server-side proof needed, page visit is enough (honour system)
+                pass
+
+            elif mission_key in ('zodiac_hunter', 'story_keeper', 'hidden_message',
+                                  'craft_studio', 'break_to_reveal', 'date_night',
+                                  'gift_set_scout', 'easter_egg', 'head_to_explorer'):
+                # Page exploration missions — honour system (frontend handles navigation)
+                pass
+
+            elif mission_key == 'feedback_share':
+                # No strict backend proof needed — honour system
+                pass
+
+            elif mission_key == 'bug_reporter':
+                # No strict backend proof needed — honour system
+                pass
+
+            elif mission_key == 'melt_master':
+                # Final prestige — user must have completed all Level 5 missions except this one
+                level5_keys = [m["key"] for m in MISSION_CATALOG.get(5, []) if m["key"] != 'melt_master']
+                if not all(key in completed_missions for key in level5_keys):
+                    return jsonify({
+                        "success": False,
+                        "message": "Complete all other Level 5 missions before claiming Melt Master."
+                    }), 403
 
         if not already_claimed:
             completed_missions.append(mission_key)
             profile_record.completed_missions_json = json.dumps(completed_missions)
-            db.session.commit()
+
+        current_level_keys = [mission["key"] for mission in MISSION_CATALOG.get(current_level, [])]
+        if current_level < MAX_PLAYER_LEVEL and current_level_keys and all(key in completed_missions for key in current_level_keys):
+            profile_record.level = current_level + 1
+            unlocked_coupons, new_coupon_code = unlock_level_coupon(profile_record, profile_record.level)
+            level_up = True
+        else:
+            profile_record.level = current_level
+            profile_record.unlocked_coupons = json.dumps(unlocked_coupons)
+
+        db.session.commit()
 
         return jsonify({
             "success": True,
             "already_claimed": already_claimed,
+            "level_up": level_up,
+            "level": normalize_level(profile_record.level),
             "completed_missions": completed_missions,
+            "unlocked_coupons": unlocked_coupons,
+            "new_coupon_code": new_coupon_code,
             "profile": serialize_profile(
                 profile_record,
                 google_picture_url=(session.get('profile_picture') or '').strip(),
@@ -1435,6 +1853,38 @@ def claim_mission():
     except Exception as e:
         db.session.rollback()
         return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route('/api/validate_coupon', methods=['POST'])
+def validate_coupon():
+    data = request.get_json() or {}
+    coupon_code = (data.get('code') or '').strip().upper()
+
+    if not coupon_code:
+        return jsonify({"success": False, "message": "Coupon code is required"}), 400
+
+    coupon = Coupon.query.filter_by(code=coupon_code).first()
+    if not coupon:
+        return jsonify({"success": False, "message": "Coupon code not found"}), 404
+
+    if not coupon.is_active:
+        return jsonify({"success": False, "message": "This coupon is inactive"}), 400
+
+    if coupon.expires_at and coupon.expires_at < datetime.utcnow():
+        return jsonify({"success": False, "message": "This coupon has expired"}), 400
+
+    if coupon.max_uses is not None and coupon.current_uses >= coupon.max_uses:
+        return jsonify({"success": False, "message": "This coupon has reached its usage limit"}), 400
+
+    remaining_uses = None if coupon.max_uses is None else max(coupon.max_uses - coupon.current_uses, 0)
+    return jsonify({
+        "success": True,
+        "code": coupon.code,
+        "discount_percentage": coupon.discount_percentage,
+        "remaining_uses": remaining_uses,
+        "expires_at": coupon.expires_at.isoformat() if coupon.expires_at else None,
+        "message": "Coupon is valid"
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
