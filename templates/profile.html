@@ -60,8 +60,20 @@
                     <strong id="hero-member-since">Today</strong>
                 </div>
                 <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
+                    <span class="stat-label">Total Reviews</span>
+                    <strong id="total-reviews">0</strong>
+                </div>
+                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
+                    <span class="stat-label">Review Impact</span>
+                    <strong id="review-impact">{{ stats.review_likes if stats else 0 }}</strong>
+                </div>
+                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
                     <span class="stat-label">Orders in Progress</span>
                     <strong id="orders-in-progress">0</strong>
+                </div>
+                <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
+                    <span class="stat-label">Wishlist</span>
+                    <strong id="wishlist-count">0</strong>
                 </div>
                 <div class="stat-pill" style="flex: 1 1 30%; max-width: 180px;">
                     <span class="stat-label">Total Spent</span>
@@ -216,20 +228,88 @@
                 <div class="rewards-summary">
                     <div class="reward-spotlight">
                         <span class="reward-label">Current Balance</span>
-                        <strong id="glow-points-total">250</strong>
+                        <strong id="glow-points-total">{{ profile.rewards.current_points if profile and profile.rewards else 250 }}</strong>
                     </div>
                     <div class="reward-next">
                         <span class="reward-label">Next Reward</span>
-                        <strong id="next-reward">Complete your first milestone</strong>
+                        <strong id="next-reward">{{ profile.rewards.next_reward_label if profile and profile.rewards else 'Complete your first milestone' }}</strong>
                     </div>
                 </div>
 
-                <div class="reward-progress-track" aria-hidden="true">
-                    <div class="reward-progress-fill" id="reward-progress-fill"></div>
+                <div class="reward-progress-track w-full bg-gray-800 rounded-full h-2.5 mt-4" aria-hidden="true">
+                    <div class="reward-progress-fill bg-amber-600 h-2.5 rounded-full transition-all duration-1000 ease-out" id="reward-progress-fill" style="width: {{ profile.rewards.progress_percent if profile and profile.rewards else 0 }}%;"></div>
                 </div>
-                <p class="body-copy reward-progress-copy" id="reward-progress-copy">Your reward progress will update as your atelier activity grows.</p>
+                <p class="body-copy reward-progress-copy" id="reward-progress-copy"{% if profile and profile.rewards and profile.rewards.is_max_level %} style="color: var(--accent-gold);"{% endif %}>
+                    {% if profile and profile.rewards and profile.rewards.is_max_level %}
+                    You have achieved max lvl. Stay tuned for more challenges!
+                    {% elif profile and profile.rewards %}
+                    {{ profile.rewards.points_to_next_reward }} more points until {{ profile.rewards.next_reward_label }}.
+                    {% else %}
+                    Your reward progress will update as your atelier activity grows.
+                    {% endif %}
+                </p>
 
                 <div class="ledger-list" id="reward-ledger"></div>
+            </article>
+
+            {% set completed_missions = profile.completed_missions %}
+            <article class="glass-card rewards-card">
+                <div class="card-head">
+                    <p class="card-kicker">Mission Board</p>
+                    <h2>Your Atelier Missions</h2>
+                </div>
+
+                <div id="missions-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <strong style="display:block; margin-bottom:6px;">Activate Your Atelier</strong>
+                            <p class="body-copy" style="margin:0;">Claim your welcome mission and lock in your first 250 Glow Points.</p>
+                        </div>
+                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="welcome" data-default-label="Claim Welcome Mission" onclick="claimMission('welcome', this)" {% if 'welcome' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
+                            {% if 'welcome' in completed_missions %}Completed ✅{% else %}Claim Welcome Mission{% endif %}
+                        </button>
+                    </div>
+
+                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <strong style="display:block; margin-bottom:6px;">Place Your First Order</strong>
+                            <p class="body-copy" style="margin:0;">Convert your first Meltix checkout into a permanent progress boost.</p>
+                        </div>
+                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="first_order" data-default-label="Claim First Order" onclick="claimMission('first_order', this)" {% if 'first_order' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
+                            {% if 'first_order' in completed_missions %}Completed ✅{% else %}Claim First Order{% endif %}
+                        </button>
+                    </div>
+
+                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <strong style="display:block; margin-bottom:6px;">Post a Review</strong>
+                            <p class="body-copy" style="margin:0;">Share your candle thoughts and cash in another mission reward.</p>
+                        </div>
+                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="first_review" data-default-label="Claim Review Mission" onclick="claimMission('first_review', this)" {% if 'first_review' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
+                            {% if 'first_review' in completed_missions %}Completed ✅{% else %}Claim Review Mission{% endif %}
+                        </button>
+                    </div>
+
+                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <strong style="display:block; margin-bottom:6px;">Take the Scent Quiz</strong>
+                            <p class="body-copy" style="margin:0;">Complete your scent persona ritual and unlock a fresh chunk of Glow Points.</p>
+                        </div>
+                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="scent_quiz" data-default-label="Claim Quiz Mission" onclick="claimMission('scent_quiz', this)" {% if 'scent_quiz' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
+                            {% if 'scent_quiz' in completed_missions %}Completed ✅{% else %}Claim Quiz Mission{% endif %}
+                        </button>
+                    </div>
+
+                    <div style="padding:18px; border:1px solid rgba(255,255,255,0.08); border-radius:22px; background:rgba(255,255,255,0.03); display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <strong style="display:block; margin-bottom:6px;">Find the Secret Egg</strong>
+                            <p class="body-copy" style="margin:0;">Secret-hunters get rewarded too. Discover the egg and claim the bonus.</p>
+                        </div>
+                        <button class="secondary-btn compact-btn mission-claim-btn" type="button" data-mission-key="easter_egg" data-default-label="Claim Secret Mission" onclick="claimMission('easter_egg', this)" {% if 'easter_egg' in completed_missions %}disabled style="opacity:0.55; cursor:not-allowed;"{% endif %}>
+                            {% if 'easter_egg' in completed_missions %}Completed ✅{% else %}Claim Secret Mission{% endif %}
+                        </button>
+                    </div>
+                </div>
             </article>
 
 
@@ -384,6 +464,7 @@
         const updateAvatarUrl = "{{ url_for('update_profile_avatar') }}";
         const saveAddressUrl = "{{ url_for('save_profile_address') }}";
         const saveScentPersonaUrl = "{{ url_for('save_scent_persona') }}";
+        const claimMissionUrl = "{{ url_for('claim_mission') }}";
         const googleClientId = "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com";
         const initialProfile = {{ profile_data | tojson }};
         const initialUser = {{ current_user | tojson }};
@@ -396,6 +477,7 @@
             googleInitialized: false,
             selectedQuizNotes: []
         };
+        let currentUserEmail = initialUser && initialUser.email ? initialUser.email : (initialProfile && initialProfile.email ? initialProfile.email : '');
 
         const heroAvatar = document.getElementById('hero-avatar');
         const avatarEmptyState = document.getElementById('avatar-empty-state');
@@ -409,11 +491,13 @@
         const guestGate = document.getElementById('guest-gate');
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
-                const reviewImpact = document.getElementById('review-impact');
+        const totalReviews = document.getElementById('total-reviews');
+        const reviewImpact = document.getElementById('review-impact');
         const ordersInProgress = document.getElementById('orders-in-progress');
         const heroMemberSince = document.getElementById('hero-member-since');
         const totalSpent = document.getElementById('total-spent');
-                const detailName = document.getElementById('detail-name');
+        const wishlistCount = document.getElementById('wishlist-count');
+        const detailName = document.getElementById('detail-name');
         const detailEmail = document.getElementById('detail-email');
         const detailAvatar = document.getElementById('detail-avatar');
         const detailMode = document.getElementById('detail-mode');
@@ -424,6 +508,7 @@
         const rewardProgressFill = document.getElementById('reward-progress-fill');
         const rewardProgressCopy = document.getElementById('reward-progress-copy');
         const rewardLedger = document.getElementById('reward-ledger');
+        const missionButtons = Array.from(document.querySelectorAll('.mission-claim-btn'));
         const scentNotes = document.getElementById('scent-notes');
         const openScentQuizBtn = document.getElementById('open-scent-quiz');
         const saveScentPersonaBtn = document.getElementById('save-scent-persona');
@@ -652,7 +737,16 @@
             glowPointsTotal.textContent = rewardData.current_points || 250;
             nextReward.textContent = rewardData.next_reward_label || 'Complete your first milestone';
             rewardProgressFill.style.width = `${rewardData.progress_percent || 0}%`;
-            rewardProgressCopy.textContent = rewardData.points_to_next_reward > 0 ? `${rewardData.points_to_next_reward} more points until ${rewardData.next_reward_label}.` : 'You have unlocked the highest Meltix reward tier.';
+            if (rewardData.is_max_level) {
+                rewardProgressCopy.textContent = 'You have achieved max lvl. Stay tuned for more challenges!';
+                rewardProgressCopy.style.color = 'var(--accent-gold)';
+            } else if ((rewardData.points_to_next_reward || 0) > 0) {
+                rewardProgressCopy.textContent = `${rewardData.points_to_next_reward} more points until ${rewardData.next_reward_label}.`;
+                rewardProgressCopy.style.color = '';
+            } else {
+                rewardProgressCopy.textContent = 'Your reward progress will update as your atelier activity grows.';
+                rewardProgressCopy.style.color = '';
+            }
             rewardLedger.innerHTML = '';
             const entries = Array.isArray(rewardData.ledger) ? rewardData.ledger : [];
             entries.forEach((entry) => {
@@ -660,6 +754,18 @@
                 row.className = 'ledger-item';
                 row.innerHTML = `<div><p class="ledger-title">${entry.title}</p><span class="ledger-copy">${entry.description}</span></div><div class="ledger-points"><strong>+${entry.points}</strong><span>${entry.date}</span></div>`;
                 rewardLedger.appendChild(row);
+            });
+        }
+
+        function renderMissionStates(completedMissions) {
+            const completedSet = new Set(Array.isArray(completedMissions) ? completedMissions : []);
+            missionButtons.forEach((button) => {
+                const missionKey = button.dataset.missionKey;
+                const isCompleted = completedSet.has(missionKey);
+                button.disabled = isCompleted;
+                button.textContent = isCompleted ? 'Completed ✅' : (button.dataset.defaultLabel || 'Claim Mission');
+                button.style.opacity = isCompleted ? '0.55' : '1';
+                button.style.cursor = isCompleted ? 'not-allowed' : 'pointer';
             });
         }
 
@@ -792,16 +898,19 @@
         function renderGuestProfile() {
             state.currentProfile = null;
             state.usingGoogleAvatar = false;
+            currentUserEmail = '';
             setLockedState(true);
             updateAuthControls(false);
             showAvatarEmpty();
             profileName.textContent = 'Guest Flame';
             profileEmail.textContent = 'Continue with Google to access your saved candles, order tracking, and private profile settings.';
-                        reviewImpact.textContent = '0';
+            totalReviews.textContent = '0';
+            reviewImpact.textContent = '0';
             heroMemberSince.textContent = 'Today';
             ordersInProgress.textContent = '0';
             totalSpent.textContent = 'INR 0';
-                        detailName.textContent = 'Guest Flame';
+            wishlistCount.textContent = '0';
+            detailName.textContent = 'Guest Flame';
             detailEmail.textContent = 'Not connected';
             detailAvatar.textContent = 'Awaiting sign-in';
             memberSince.textContent = 'Today';
@@ -809,6 +918,7 @@
             supportCopy.textContent = 'Sign in with Google to activate your private atelier and save your profile preferences.';
             renderAddressBook({});
             renderRewardLedger({ current_points: 250, progress_percent: 25, points_to_next_reward: 250, next_reward_label: 'Your first bespoke reward', ledger: [{ title: 'Welcome Bonus', description: 'Sign in to activate your rewards ledger.', points: 250, date: 'Today' }] });
+            renderMissionStates([]);
             renderScentPersona({ title: 'Discover Your Signature Notes', description: 'Take the scent quiz after signing in to create your fragrance profile.', notes: [], cta_label: 'Take the Scent Quiz' });
             renderWishlist([]);
             renderReviews([]);
@@ -819,6 +929,7 @@
         function renderProfile(profile) {
             state.currentProfile = profile;
             const signedIn = Boolean(profile && profile.email);
+            currentUserEmail = signedIn ? (profile.email || '') : '';
             setLockedState(!signedIn);
             updateAuthControls(signedIn);
             if (profile.avatar_filename) {
@@ -846,6 +957,7 @@
             supportCopy.textContent = signedIn ? 'Your Google profile photo remains active until you choose and save a custom portrait.' : 'Sign in with Google to activate your private atelier and save your profile preferences.';
             renderAddressBook(profile.address_book || {});
             renderRewardLedger(profile.rewards || {});
+            renderMissionStates(profile.completed_missions || []);
             renderScentPersona(profile.scent_persona || {});
             renderWishlist(profile.wishlist_items || []);
             renderReviews(profile.recent_reviews || []);
@@ -926,6 +1038,49 @@
             }
         }
 
+        async function claimMission(missionKey, btnElement) {
+            if (!currentUserEmail) {
+                showToast('Please sign in before claiming atelier missions.');
+                promptGoogleSignIn();
+                return;
+            }
+
+            const button = btnElement || missionButtons.find((item) => item.dataset.missionKey === missionKey);
+            if (!button) return;
+
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Claiming...';
+
+            try {
+                const response = await fetch(claimMissionUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_email: currentUserEmail,
+                        mission_key: missionKey
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Mission claim failed');
+
+                if (data.profile) {
+                    renderProfile(data.profile);
+                } else {
+                    const completed = new Set(state.currentProfile && Array.isArray(state.currentProfile.completed_missions) ? state.currentProfile.completed_missions : []);
+                    completed.add(missionKey);
+                    if (state.currentProfile) state.currentProfile.completed_missions = Array.from(completed);
+                    renderMissionStates(Array.from(completed));
+                }
+
+                showToast(data.already_claimed ? 'Mission was already completed.' : 'Mission claimed. 250 Glow Points added.');
+            } catch (error) {
+                button.disabled = false;
+                button.textContent = originalText;
+                showToast('We could not claim that mission just now.');
+            }
+        }
+
         async function logoutUser() {
             if (window.google && window.google.accounts && window.google.accounts.id) {
                 google.accounts.id.disableAutoSelect();
@@ -939,6 +1094,7 @@
 
             state.currentUser = null;
             state.currentProfile = null;
+            currentUserEmail = '';
             
             // Modal band karo aur message dikhao
             closeModal(avatarModal);
@@ -970,6 +1126,7 @@
         document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeModal(avatarModal); closeModal(trackingModal); closeModal(scentQuizModal); } });
 
         window.handleCredentialResponse = handleCredentialResponse;
+        window.claimMission = claimMission;
         applyBillingVisibility();
         hydrateProfileFromTemplate();
     </script>

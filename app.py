@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect, text
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 import hashlib
@@ -55,11 +56,21 @@ ORDER_STAGE_FLOW = [
 ]
 
 REWARD_TIERS = [
-    {"points": 500, "label": "Complimentary Wick Trimmer"},
-    {"points": 900, "label": "Signature Gift Wrap Upgrade"},
-    {"points": 1400, "label": "Private Atelier Access"},
-    {"points": 2200, "label": "Founders Circle Reward"},
+    {"level": 1, "points": 1000, "label": "Level 1: 50% Off Coupon"},
+    {"level": 2, "points": 2000, "label": "Level 2: Free Scented Candle"},
+    {"level": 3, "points": 3000, "label": "Level 3: 70% Off Meltix Studio"},
+    {"level": 4, "points": 4000, "label": "Level 4: 70% Off on 2+ Items"},
+    {"level": 5, "points": 5000, "label": "Level 5: 1 Free Candle of your choice"},
 ]
+
+MISSION_CATALOG = {
+    'welcome': 'Account Created',
+    'first_order': 'First Order Placed',
+    'first_review': 'First Review Posted',
+    'scent_quiz': 'Scent Quiz Completed',
+    'easter_egg': 'Found the Secret Egg',
+    'special_date': 'Special Date Added',
+}
 
 SCENT_KEYWORDS = {
     "Vanilla": ["vanilla", "cream", "dessert", "cake", "sweet"],
@@ -178,6 +189,7 @@ class UserAccount(db.Model):
     display_name = db.Column(db.String(120), nullable=False, default='Guest')
     avatar_filename = db.Column(db.String(50), nullable=False, default='')
     glow_points = db.Column(db.Integer, nullable=False, default=250)
+    completed_missions_json = db.Column(db.Text, nullable=False, default='[]')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -244,9 +256,21 @@ class Wishlist(db.Model):
     # STRICT RULE: Ek user ek product ko ek hi baar wishlist me daal sake
     __table_args__ = (db.UniqueConstraint('user_email', 'product_id', name='unique_user_wishlist'),)
 
+def ensure_profile_schema():
+    inspector = inspect(db.engine)
+    user_columns = {column['name'] for column in inspector.get_columns('user_account')}
+
+    if 'completed_missions_json' not in user_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE user_account ADD COLUMN completed_missions_json TEXT NOT NULL DEFAULT '[]'")
+            )
+
+
 # Ye line chalte hi PostgreSQL mein saari tables aur rules ban jayenge
 with app.app_context():
-    db.create_all() 
+    db.create_all()
+    ensure_profile_schema()
 
 
 def safe_json_loads(raw_value, fallback):
@@ -256,6 +280,15 @@ def safe_json_loads(raw_value, fallback):
         return json.loads(raw_value)
     except (TypeError, ValueError, json.JSONDecodeError):
         return fallback
+
+
+def normalize_completed_missions(raw_value):
+    normalized = []
+    for mission_key in safe_json_loads(raw_value, []):
+        clean_key = str(mission_key).strip()
+        if clean_key and clean_key in MISSION_CATALOG and clean_key not in normalized:
+            normalized.append(clean_key)
+    return normalized
 
 
 def get_session_user():
@@ -533,32 +566,53 @@ def build_glow_ledger(profile_record, orders, reviews):
             }
         )
 
+    claimed_missions = normalize_completed_missions(profile_record.completed_missions_json)
+    for mission_key in claimed_missions:
+        mission_title = MISSION_CATALOG.get(mission_key, mission_key.replace('_', ' ').title())
+        mission_date = profile_record.created_at if mission_key == 'welcome' else (profile_record.updated_at or profile_record.created_at)
+        entries.append(
+            {
+                "title": mission_title,
+                "description": f"Mission cleared: {mission_title}.",
+                "points": 250,
+                "date_value": mission_date,
+            }
+        )
+
     entries.sort(key=lambda entry: entry["date_value"], reverse=True)
     total_points = sum(entry["points"] for entry in entries)
 
-    previous_tier = 0
-    next_tier = None
-    for tier in REWARD_TIERS:
-        if total_points < tier["points"]:
-            next_tier = tier
-            break
-        previous_tier = tier["points"]
-
-    if next_tier:
-        tier_span = max(next_tier["points"] - previous_tier, 1)
-        progress_percent = int(((total_points - previous_tier) / tier_span) * 100)
-        points_to_next = max(next_tier["points"] - total_points, 0)
-        next_reward_label = next_tier["label"]
-    else:
+    if total_points >= 5000:
+        is_max_level = True
         progress_percent = 100
         points_to_next = 0
-        next_reward_label = "Founders Circle Reward Unlocked"
+        next_reward_label = "You have achieved max lvl. Stay tuned for more challenges!"
+    else:
+        is_max_level = False
+        previous_tier = 0
+        next_tier = None
+        for tier in REWARD_TIERS:
+            if total_points < tier["points"]:
+                next_tier = tier
+                break
+            previous_tier = tier["points"]
+
+        if next_tier:
+            tier_span = max(next_tier["points"] - previous_tier, 1)
+            progress_percent = int(((total_points - previous_tier) / tier_span) * 100)
+            points_to_next = max(next_tier["points"] - total_points, 0)
+            next_reward_label = next_tier["label"]
+        else:
+            progress_percent = 100
+            points_to_next = 0
+            next_reward_label = "You have achieved max lvl. Stay tuned for more challenges!"
 
     return {
         "current_points": total_points,
         "progress_percent": progress_percent,
         "points_to_next_reward": points_to_next,
         "next_reward_label": next_reward_label,
+        "is_max_level": is_max_level,
         "ledger": [
             {
                 "title": entry["title"],
@@ -663,6 +717,7 @@ def sync_profile_orders(user_email, orders_payload):
 
 
 def serialize_profile(profile_record, google_picture_url=None, use_google_picture=False):
+    completed_missions = normalize_completed_missions(profile_record.completed_missions_json)
     wishlist_rows = Wishlist.query.filter_by(user_email=profile_record.email).order_by(Wishlist.id.desc()).all()
     wishlist_items = []
 
@@ -765,7 +820,8 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         'orders': serialized_orders,
         'address_book': address_book,
         'rewards': rewards,
-        'scent_persona': scent_persona
+        'scent_persona': scent_persona,
+        'completed_missions': completed_missions
     }
 
 # ==========================================
@@ -862,10 +918,18 @@ def profile():
             profile_data = {}
             current_user = {"name": "", "email": "", "picture": ""}
 
+    profile_data.setdefault('completed_missions', [])
+    profile_data.setdefault('rewards', {})
+    profile_data.setdefault('stats', {})
+    profile_data.setdefault('recent_reviews', [])
+    profile_data.setdefault('wishlist_items', [])
+    profile_data.setdefault('orders', [])
+
     return render_template(
         'profile.html',
         avatar_options=build_avatar_options(),
         default_avatar=url_for('static', filename=f'images/avatar/{DEFAULT_AVATAR_FILENAME}'),
+        profile=profile_data,
         profile_data=profile_data,
         stats=profile_data.get('stats', {}),
         recent_reviews=profile_data.get('recent_reviews', []),
@@ -1327,6 +1391,46 @@ def save_scent_persona():
                 "has_data": True,
                 "cta_label": "Refresh Persona"
             }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route('/api/claim_mission', methods=['POST'])
+def claim_mission():
+    data = request.get_json() or {}
+    user_email = (data.get('user_email') or session.get('profile_email') or '').strip().lower()
+    mission_key = (data.get('mission_key') or '').strip()
+
+    if not user_email:
+        return jsonify({"success": False, "message": "Sign in required"}), 401
+
+    if mission_key not in MISSION_CATALOG:
+        return jsonify({"success": False, "message": "Invalid mission key"}), 400
+
+    try:
+        profile_record = UserAccount.query.filter_by(email=user_email).first()
+        if not profile_record:
+            return jsonify({"success": False, "message": "User not found"}), 404
+
+        completed_missions = normalize_completed_missions(profile_record.completed_missions_json)
+        already_claimed = mission_key in completed_missions
+
+        if not already_claimed:
+            completed_missions.append(mission_key)
+            profile_record.completed_missions_json = json.dumps(completed_missions)
+            db.session.commit()
+
+        return jsonify({
+            "success": True,
+            "already_claimed": already_claimed,
+            "completed_missions": completed_missions,
+            "profile": serialize_profile(
+                profile_record,
+                google_picture_url=(session.get('profile_picture') or '').strip(),
+                use_google_picture=bool((session.get('profile_picture') or '').strip() and not profile_record.avatar_filename)
+            )
         }), 200
     except Exception as e:
         db.session.rollback()
