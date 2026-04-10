@@ -29,6 +29,7 @@
             <p class="eyebrow">Your Private Atelier</p>
 
             <div class="avatar-stage avatar-ring-lvl-{{ profile.level if profile and profile.level else 1 }}" id="avatar-stage">
+                <div class="diamond-mark"></div>
                 <div class="avatar-ring"></div>
                 <div class="avatar-aura"></div>
                 <button class="avatar-trigger" id="avatar-trigger" type="button" aria-label="Customize avatar">
@@ -795,9 +796,9 @@
                 const review = document.createElement('article');
                 review.className = 'review-item';
                 
-                // Ã°Å¸Å’Å¸ NAYA LOGIC: Bhare hue aur Khali stars dono banayega
-                const filledStars = 'Ã¢Ëœâ€¦'.repeat(item.rating);
-                const emptyStars = 'Ã¢Ëœâ€ '.repeat(5 - item.rating);
+                // SAFE LOGIC: Using Unicode for Stars to prevent encoding corruption
+                const filledStars = '\u2605'.repeat(item.rating);
+                const emptyStars = '\u2606'.repeat(5 - item.rating);
                 
                 review.innerHTML = `
                     <div class="review-meta">

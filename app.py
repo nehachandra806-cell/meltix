@@ -57,9 +57,9 @@ ORDER_STAGE_FLOW = [
 
 REWARD_TIERS = [
     {"level": 1, "points": 1000, "label": "Level 1: 50% Off Coupon"},
-    {"level": 2, "points": 2000, "label": "Level 2: Free Scented Candle"},
-    {"level": 3, "points": 3000, "label": "Level 3: 70% Off Meltix Studio"},
-    {"level": 4, "points": 4000, "label": "Level 4: 70% Off on 2+ Items"},
+    {"level": 2, "points": 2000, "label": "Level 2: 70% Off Single Product"},
+    {"level": 3, "points": 3000, "label": "Level 3: 80% Off Multiple Products"},
+    {"level": 4, "points": 4000, "label": "Level 4: Premium Milestone"},
     {"level": 5, "points": 5000, "label": "Level 5: 1 Free Candle of your choice"},
 ]
 
@@ -106,37 +106,28 @@ MISSION_LOOKUP = {
 
 LEVEL_REWARD_COUPONS = {
     2: {
-        "code": "LVL2-WELCOME20",
+        "code": "LVL2-HALF50",
         "title": "Level 2 Welcome Drop",
-        "description": "20% off your next Meltix checkout.",
-        "discount_percentage": 20,
+        "description": "50% off your next Meltix checkout.",
+        "discount_percentage": 50,
         "max_uses": 1,
         "expires_at": None,
         "is_active": True,
     },
     3: {
-        "code": "LVL3-GLOW30",
-        "title": "Level 3 Glow Boost",
-        "description": "30% off your next handcrafted candle order.",
-        "discount_percentage": 30,
+        "code": "LVL3-SINGLE70",
+        "title": "Level 3 Solo Boost",
+        "description": "70% off on any single handcrafted candle.",
+        "discount_percentage": 70,
         "max_uses": 1,
         "expires_at": None,
         "is_active": True,
     },
     4: {
-        "code": "LVL4-ROYAL40",
-        "title": "Level 4 Royal Vault",
-        "description": "40% off your next multi-item atelier haul.",
-        "discount_percentage": 40,
-        "max_uses": 1,
-        "expires_at": None,
-        "is_active": True,
-    },
-    5: {
-        "code": "LVL5-CROWN50",
-        "title": "Level 5 Crown Reward",
-        "description": "50% off your prestige Meltix reward order.",
-        "discount_percentage": 50,
+        "code": "LVL4-MULTI80",
+        "title": "Level 4 Haul Reward",
+        "description": "80% off your entire cart when buying multiple items.",
+        "discount_percentage": 80,
         "max_uses": 1,
         "expires_at": None,
         "is_active": True,
@@ -146,6 +137,7 @@ LEVEL_REWARD_COUPONS_BY_CODE = {
     coupon_data["code"]: {**coupon_data, "level": level}
     for level, coupon_data in LEVEL_REWARD_COUPONS.items()
 }
+ALLOWED_REWARD_COUPON_CODES = set(LEVEL_REWARD_COUPONS_BY_CODE.keys())
 
 SCENT_KEYWORDS = {
     "Vanilla": ["vanilla", "cream", "dessert", "cake", "sweet"],
@@ -430,6 +422,11 @@ def ensure_coupon_catalog():
             coupon.current_uses = 0
             catalog_changed = True
 
+    for coupon in Coupon.query.filter(Coupon.code.like('LVL%')).all():
+        if coupon.code not in ALLOWED_REWARD_COUPON_CODES and coupon.is_active:
+            coupon.is_active = False
+            catalog_changed = True
+
     if catalog_changed:
         db.session.commit()
 
@@ -463,7 +460,7 @@ def normalize_unlocked_coupons(raw_value):
     normalized = []
     for coupon_code in safe_json_loads(raw_value, []):
         clean_code = str(coupon_code).strip().upper()
-        if clean_code and clean_code not in normalized:
+        if clean_code and clean_code in ALLOWED_REWARD_COUPON_CODES and clean_code not in normalized:
             normalized.append(clean_code)
     return normalized
 
@@ -570,8 +567,16 @@ def unlock_level_coupon(profile_record, level_value):
 
 
 def sync_unlocked_coupons_for_level(profile_record):
+    raw_coupons = safe_json_loads(profile_record.unlocked_coupons, [])
     unlocked_coupons = normalize_unlocked_coupons(profile_record.unlocked_coupons)
-    changed = False
+    normalized_existing = []
+
+    for coupon_code in raw_coupons:
+        clean_code = str(coupon_code).strip().upper()
+        if clean_code and clean_code not in normalized_existing:
+            normalized_existing.append(clean_code)
+
+    changed = unlocked_coupons != normalized_existing
 
     for level_value in range(2, normalize_level(profile_record.level) + 1):
         reward_coupon = LEVEL_REWARD_COUPONS.get(level_value)
@@ -1862,6 +1867,9 @@ def validate_coupon():
 
     if not coupon_code:
         return jsonify({"success": False, "message": "Coupon code is required"}), 400
+
+    if coupon_code not in ALLOWED_REWARD_COUPON_CODES:
+        return jsonify({"success": False, "message": "Coupon code not found"}), 404
 
     coupon = Coupon.query.filter_by(code=coupon_code).first()
     if not coupon:

@@ -1314,24 +1314,37 @@ body {
 .reward-vault-grid {
     margin-top: 18px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 22px;
 }
 
 .coupon-ticket {
     position: relative;
     overflow: hidden;
-    min-height: 230px;
-    padding: 20px;
+    width: 100%;
+    min-height: 290px;
+    padding: 28px 24px 24px;
     border-radius: 24px;
-    border: 1px dashed rgba(242, 201, 138, 0.28);
+    border: 1px dashed rgba(242, 201, 138, 0.4);
     background:
-        radial-gradient(circle at top right, rgba(242, 201, 138, 0.16), transparent 38%),
-        linear-gradient(145deg, rgba(38, 24, 16, 0.96), rgba(17, 12, 9, 0.98));
+        linear-gradient(145deg, rgba(22, 14, 10, 0.94), rgba(10, 6, 4, 0.98)),
+        url('images/coupon_bg.jpg');
+    background-size: cover, 180px;
+    background-position: center, center;
+    background-blend-mode: normal, overlay;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 14px;
-    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.coupon-ticket:hover {
+    transform: translateY(-4px);
+    border-color: rgba(242, 201, 138, 0.8);
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(242, 201, 138, 0.08);
 }
 
 .coupon-ticket::before,
@@ -1339,20 +1352,21 @@ body {
     content: "";
     position: absolute;
     top: 50%;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: var(--page-bg);
+    background: var(--bg-panel);
     transform: translateY(-50%);
-    box-shadow: inset 0 0 0 1px rgba(242, 201, 138, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(242, 201, 138, 0.15);
+    z-index: 2;
 }
 
 .coupon-ticket::before {
-    left: -14px;
+    left: -16px;
 }
 
 .coupon-ticket::after {
-    right: -14px;
+    right: -16px;
 }
 
 .coupon-ticket.is-unavailable {
@@ -1362,15 +1376,18 @@ body {
 
 .coupon-ticket-empty {
     grid-column: 1 / -1;
-    min-height: auto;
+    aspect-ratio: auto;
+    min-height: 200px;
     justify-content: center;
     text-align: center;
+    background: linear-gradient(145deg, rgba(38, 24, 16, 0.96), rgba(17, 12, 9, 0.98));
 }
 
 .coupon-ticket-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    width: 100%;
     gap: 12px;
 }
 
@@ -1402,24 +1419,41 @@ body {
 .coupon-ticket-copy {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 12px;
 }
 
 .coupon-ticket-copy strong {
     color: var(--accent-cream);
-    font-size: 1.12rem;
+    font-size: 1.18rem;
+    line-height: 1.2;
+}
+
+.coupon-ticket .body-copy {
+    margin: 0;
+    line-height: 1.6;
 }
 
 .coupon-ticket-meta {
     margin-top: auto;
     display: grid;
     gap: 6px;
+    width: 100%;
+    padding-top: 12px;
+    border-top: 1px solid rgba(242, 201, 138, 0.1);
     font-size: 0.82rem;
     color: var(--text-muted);
 }
 
 .coupon-ticket-meta strong {
     color: var(--accent-cream);
+}
+
+.coupon-ticket .primary-btn {
+    align-self: center;
+    min-width: 136px;
+    box-shadow: 0 12px 24px rgba(212, 163, 115, 0.22);
 }
 
 .avatar-option {
@@ -1481,218 +1515,202 @@ body {
     color: var(--accent-gold);
 }
 
-.avatar-stage.avatar-ring-lvl-1 .avatar-ring {
-    border-color: rgba(212, 163, 115, 0.35);
-    box-shadow: 0 0 22px rgba(212, 163, 115, 0.12);
-}
+/* =========================================
+   ✨ THE GEOMETRIC PRESTIGE RINGS (L1-L5) ✨
+   ========================================= */
 
-.avatar-stage.avatar-ring-lvl-1::before {
-    background: radial-gradient(circle, rgba(212, 163, 115, 0.24), transparent 72%);
-    opacity: 0.74;
-}
-
-.avatar-stage.avatar-ring-lvl-1::after {
-    background: radial-gradient(circle, rgba(242, 201, 138, 0.14), transparent 72%);
-    opacity: 0.52;
-}
-
-.avatar-stage.avatar-ring-lvl-1 .avatar-aura {
-    background: radial-gradient(circle, rgba(255, 233, 198, 0.28), rgba(212, 163, 115, 0.1), transparent 72%);
-    opacity: 0.72;
-}
-
-.avatar-stage.avatar-ring-lvl-1 .avatar-trigger {
-    border-color: rgba(242, 201, 138, 0.85);
-    box-shadow: 0 0 26px rgba(212, 163, 115, 0.18), inset 0 0 18px rgba(212, 163, 115, 0.08);
-}
-
-.avatar-stage.avatar-ring-lvl-2 .avatar-ring {
-    border: 2px solid rgba(214, 145, 118, 0.76);
-    box-shadow:
-        0 0 36px rgba(214, 145, 118, 0.26),
-        0 0 74px rgba(188, 120, 102, 0.16);
-}
-
-.avatar-stage.avatar-ring-lvl-2::before {
-    background: radial-gradient(circle, rgba(214, 145, 118, 0.42), transparent 70%);
-    opacity: 0.96;
-}
-
-.avatar-stage.avatar-ring-lvl-2::after {
-    background: radial-gradient(circle, rgba(246, 190, 165, 0.24), transparent 68%);
-    opacity: 0.8;
-}
-
-.avatar-stage.avatar-ring-lvl-2 .avatar-aura {
-    background: radial-gradient(circle, rgba(255, 224, 206, 0.42), rgba(214, 145, 118, 0.2), transparent 70%);
-    opacity: 0.94;
-}
-
-.avatar-stage.avatar-ring-lvl-2 .avatar-trigger {
-    border-color: rgba(231, 173, 153, 0.95);
-    outline-color: rgba(214, 145, 118, 0.5);
-    box-shadow:
-        0 0 70px rgba(214, 145, 118, 0.36),
-        0 0 120px rgba(188, 120, 102, 0.2),
-        inset 0 0 34px rgba(231, 173, 153, 0.2);
-}
-
-.avatar-stage.avatar-ring-lvl-2 .avatar-trigger::after {
-    box-shadow:
-        0 0 46px rgba(231, 173, 153, 0.4),
-        0 0 88px rgba(214, 145, 118, 0.24);
-}
-
-.avatar-stage.avatar-ring-lvl-3 .avatar-ring {
-    border-color: rgba(96, 171, 153, 0.58);
-    box-shadow: 0 0 34px rgba(96, 171, 153, 0.24);
-}
-
-.avatar-stage.avatar-ring-lvl-3 .avatar-trigger {
-    border-color: rgba(129, 205, 184, 0.92);
-    box-shadow: 0 0 56px rgba(96, 171, 153, 0.24), inset 0 0 30px rgba(129, 205, 184, 0.14);
-}
-
-/* ─────────────────────────────────────────────
-   🟡 LEVEL 4 — Molten Gold (Rotating Halo)
-───────────────────────────────────────────── */
-@keyframes moltenSpin {
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes moltenPulse {
-    0%, 100% { box-shadow: 0 0 44px rgba(238, 177, 85, 0.36), inset 0 0 28px rgba(255, 210, 120, 0.14); }
-    50%       { box-shadow: 0 0 80px rgba(255, 200, 80, 0.56), inset 0 0 42px rgba(255, 230, 140, 0.22); }
-}
-
-.avatar-stage.avatar-ring-lvl-4 .avatar-ring {
-    border: none;
-    box-shadow: none;
-    background: transparent;
-}
-
-.avatar-stage.avatar-ring-lvl-4 .avatar-ring::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    padding: 2px;
-    background: conic-gradient(
-        rgba(255, 210, 80, 0.0)  0deg,
-        rgba(238, 177, 85, 0.9) 90deg,
-        rgba(255, 236, 140, 1)  180deg,
-        rgba(238, 177, 85, 0.9) 270deg,
-        rgba(255, 210, 80, 0.0) 360deg
-    );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: moltenSpin 4s linear infinite;
-    box-shadow: 0 0 28px rgba(238, 177, 85, 0.4);
-}
-
-.avatar-stage.avatar-ring-lvl-4 .avatar-trigger {
-    border-color: rgba(255, 210, 120, 0.92);
-    animation: candleRingShadow 2.6s ease-in-out infinite, candleBreath 2.9s ease-in-out infinite, moltenPulse 2.8s ease-in-out infinite;
-}
-
-/* ─────────────────────────────────────────────
-   👑 LEVEL 5 — Royal Crown (Full Prestige)
-───────────────────────────────────────────── */
-@keyframes royalSpin {
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes royalCounterSpin {
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(-360deg); }
-}
-
-@keyframes royalCrownGlow {
+@keyframes sweep { 100% { transform: rotate(360deg); } }
+@keyframes sweepReverse { 100% { transform: rotate(-360deg); } }
+@keyframes royalDiamondBlueGlow {
     0%, 100% {
         box-shadow:
-            0 0 60px rgba(255, 236, 173, 0.50),
-            0 0 110px rgba(255, 215, 100, 0.30),
-            inset 0 0 36px rgba(255, 248, 210, 0.24);
+            0 0 18px rgba(255, 255, 255, 0.55),
+            0 0 34px rgba(140, 226, 255, 0.24),
+            0 0 68px rgba(74, 174, 255, 0.14);
     }
     50% {
         box-shadow:
-            0 0 100px rgba(255, 245, 190, 0.70),
-            0 0 180px rgba(255, 230, 120, 0.42),
-            inset 0 0 60px rgba(255, 248, 210, 0.36);
+            0 0 26px rgba(255, 255, 255, 0.78),
+            0 0 44px rgba(150, 234, 255, 0.36),
+            0 0 82px rgba(80, 184, 255, 0.24);
     }
 }
 
-@keyframes royalHaloShimmer {
-    0%   { opacity: 0.7; }
-    50%  { opacity: 1.0; }
-    100% { opacity: 0.7; }
+.avatar-ring {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.5s ease;
 }
 
-.avatar-stage.avatar-ring-lvl-5 .avatar-ring {
-    border: none;
-    box-shadow: none;
+.diamond-mark {
+    display: none; 
+}
+
+.avatar-stage.avatar-ring-lvl-5 .diamond-mark {
+    display: none;
+}
+
+/* 🥉 LEVEL 1: BRONZE */
+.avatar-stage.avatar-ring-lvl-1 .avatar-ring {
+    inset: -8px;
+    border: 1px solid rgba(176, 141, 106, 0.4);
+    box-shadow: 0 0 15px rgba(176, 141, 106, 0.05);
+}
+.avatar-stage.avatar-ring-lvl-1:hover .avatar-ring {
+    border-color: rgba(176, 141, 106, 0.85);
+    box-shadow: 0 0 20px rgba(176, 141, 106, 0.2);
+    transform: scale(1.03);
+}
+
+/* 🥈 LEVEL 2: SILVER */
+.avatar-stage.avatar-ring-lvl-2 .avatar-ring {
+    inset: -10px;
+    border: 1px solid rgba(224, 224, 224, 0.6);
+    box-shadow: 0 0 15px rgba(224, 224, 224, 0.1);
+}
+.avatar-stage.avatar-ring-lvl-2 .avatar-ring::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    transition: all 0.6s ease-out;
+    pointer-events: none;
+}
+.avatar-stage.avatar-ring-lvl-2:hover .avatar-ring {
+    border-color: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+.avatar-stage.avatar-ring-lvl-2:hover .avatar-ring::before {
+    border-color: rgba(224, 224, 224, 0.7);
+    transform: scale(1.15);
+    opacity: 0; 
+}
+
+/* =========================================
+   🥇 LEVEL 3: GOLD (Crossed Needles FIX)
+   ========================================= */
+.avatar-stage.avatar-ring-lvl-3 .avatar-ring {
+    inset: -12px;
+    padding: 1px; 
+    background: conic-gradient(from 0deg, transparent 0%, transparent 60%, rgba(212, 175, 55, 0.8) 80%, #fff 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: sweep 4s linear infinite;
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.2);
+}
+
+/* FIX: Using diamond-mark as an unmasked wrapper for the swords */
+.avatar-stage.avatar-ring-lvl-3 .diamond-mark {
+    display: block;
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 1px;
+    height: 125%;
     background: transparent;
+    box-shadow: none;
+    transform: none;
+    z-index: 0;
 }
 
-/* Outer spinning ring — slow majestic rotation */
-.avatar-stage.avatar-ring-lvl-5 .avatar-ring::before {
-    content: "";
+/* The two swords attached to the unmasked diamond-mark */
+.avatar-stage.avatar-ring-lvl-3 .diamond-mark::before,
+.avatar-stage.avatar-ring-lvl-3 .diamond-mark::after {
+    content: '';
     position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    padding: 2.5px;
-    background: conic-gradient(
-        rgba(255, 248, 210, 0.0)   0deg,
-        rgba(255, 220, 100, 1.0)  60deg,
-        rgba(255, 248, 210, 1.0) 120deg,
-        rgba(242, 201, 138, 0.9) 180deg,
-        rgba(255, 248, 210, 1.0) 240deg,
-        rgba(255, 220, 100, 1.0) 300deg,
-        rgba(255, 248, 210, 0.0) 360deg
-    );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: royalSpin 6s linear infinite;
-    box-shadow: 0 0 40px rgba(255, 230, 140, 0.55);
+    inset: 0;
+    margin: auto;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, #fff, rgba(212, 175, 55, 1), #fff, transparent);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    opacity: 0;
+    border: none;
+    border-radius: 0;
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.3, 1);
 }
 
-/* Inner counter-spinning ring — double halo effect */
-.avatar-stage.avatar-ring-lvl-5 .avatar-ring::after {
-    content: "";
+.avatar-stage.avatar-ring-lvl-3 .diamond-mark::before { transform: rotate(45deg) scaleY(0); }
+.avatar-stage.avatar-ring-lvl-3 .diamond-mark::after { transform: rotate(-45deg) scaleY(0); }
+
+.avatar-stage.avatar-ring-lvl-3:hover .diamond-mark::before { opacity: 1; transform: rotate(45deg) scaleY(1); }
+.avatar-stage.avatar-ring-lvl-3:hover .diamond-mark::after { opacity: 1; transform: rotate(-45deg) scaleY(1); }
+/* 🏆 LEVEL 4: PLATINUM (Diamond Frame) */
+.avatar-stage.avatar-ring-lvl-4 .avatar-ring {
+    inset: -12px;
+    border: 1px solid rgba(245, 245, 245, 0.85);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+.avatar-stage.avatar-ring-lvl-4 .avatar-ring::before {
+    content: '';
     position: absolute;
-    inset: 8px;
+    inset: -8px;
     border-radius: 50%;
-    padding: 1.5px;
-    background: conic-gradient(
-        rgba(255, 248, 210, 0.0)   0deg,
-        rgba(255, 236, 173, 0.7)  90deg,
-        rgba(255, 248, 210, 0.9) 180deg,
-        rgba(255, 236, 173, 0.7) 270deg,
-        rgba(255, 248, 210, 0.0) 360deg
-    );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: royalCounterSpin 9s linear infinite;
-    opacity: 0.8;
-    animation: royalCounterSpin 9s linear infinite, royalHaloShimmer 3s ease-in-out infinite;
+    border: 1px dashed rgba(245, 245, 245, 0.4);
+    animation: sweepReverse 20s linear infinite;
+}
+.avatar-stage.avatar-ring-lvl-4 .avatar-ring::after {
+    content: '';
+    position: absolute;
+    width: 155px;
+    height: 155px;
+    inset: 0; margin: auto;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    z-index: 0;
+    border-radius: 0; 
+    transform: rotate(0deg) scale(0.5); 
+    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.avatar-stage.avatar-ring-lvl-4:hover .avatar-ring::after {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.18); 
 }
 
-.avatar-stage.avatar-ring-lvl-5 .avatar-trigger {
-    border-color: rgba(255, 248, 210, 1);
-    animation: candleRingShadow 2.6s ease-in-out infinite, candleBreath 2.9s ease-in-out infinite, royalCrownGlow 2.6s ease-in-out infinite;
-}
-
-.avatar-stage.avatar-ring-lvl-5 .avatar-trigger::after {
+/* 💎 LEVEL 5: DIAMOND (Royal Star) */
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring {
+    inset: -14px;
+    border: 1px solid rgba(232, 247, 255, 0.98);
     box-shadow:
-        0 0 60px rgba(255, 248, 210, 0.55),
-        0 0 120px rgba(255, 230, 140, 0.38),
-        0 0 200px rgba(242, 201, 138, 0.26);
-    animation: candlePulseStrong 2.4s ease-in-out infinite, royalHaloShimmer 2s ease-in-out infinite;
+        0 0 18px rgba(255, 255, 255, 0.55),
+        0 0 34px rgba(140, 226, 255, 0.24),
+        0 0 68px rgba(74, 174, 255, 0.14);
+    animation: royalDiamondBlueGlow 3.8s ease-in-out infinite;
+}
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring::before,
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring::after {
+    content: '';
+    position: absolute;
+    width: 165px;
+    height: 165px;
+    inset: 0; margin: auto;
+    border: 1px solid rgba(232, 246, 255, 0.76);
+    box-shadow:
+        0 0 18px rgba(255, 255, 255, 0.24),
+        0 0 28px rgba(122, 220, 255, 0.18),
+        inset 0 0 16px rgba(72, 204, 255, 0.38);
+    opacity: 0.38;
+    z-index: 0;
+    border-radius: 0;
+    transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring::before { transform: rotate(22.5deg) scale(1.03); }
+.avatar-stage.avatar-ring-lvl-5 .avatar-ring::after { transform: rotate(67.5deg) scale(1.03); }
+
+.avatar-stage.avatar-ring-lvl-5:hover .avatar-ring::before {
+    opacity: 1;
+    transform: rotate(22.5deg) scale(1.16);
+}
+.avatar-stage.avatar-ring-lvl-5:hover .avatar-ring::after {
+    opacity: 1;
+    transform: rotate(67.5deg) scale(1.16);
 }
 
 .google-cta-btn {
