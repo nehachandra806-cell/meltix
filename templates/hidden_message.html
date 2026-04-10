@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Hidden Message Candle | Meltix</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='hidden_message.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -110,7 +111,6 @@
                                         <span class="form-star" data-val="5">★</span> 
                                     </div> 
                                     <input type="hidden" id="reviewRating" value="0"> 
-                                    <input type="text" id="reviewName" placeholder="Your name..." class="premium-input" required> 
                                     <textarea id="reviewText" placeholder="Write your experience..." class="premium-input" rows="2" required></textarea> 
                                     <button type="submit" class="meltix-btn-form" id="submitReviewBtn">Post Review</button> 
                                 </form> 
@@ -155,6 +155,26 @@
                         <div class="detail-item">
                             <h4>How It's Crafted (Process)</h4>
                             <p id="modalProcess">Process text.</p>
+                        </div>
+                               <div class="custom-order-section" style="margin: 25px 0; padding-top: 20px; border-top: 1px solid rgba(220, 220, 240, 0.1);">
+                        <div style="margin-bottom: 20px;">
+                            <label for="secretMessageInput" style="display: block; font-family: 'Playfair Display', serif; color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 10px; font-style: italic;">
+                                Write Your Hidden Message
+                            </label>
+                            <textarea id="secretMessageInput" rows="2" maxlength="20" placeholder="e.g., Will you marry me? / Happy Anniversary!" style="width: 100%; padding: 15px; background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(220, 220, 240, 0.2); border-radius: 8px; color: #fff; font-family: 'Lato', sans-serif; font-size: 1rem; resize: none; transition: border 0.3s ease; box-sizing: border-box;" onfocus="this.style.borderColor='var(--accent-gold)'" onblur="this.style.borderColor='rgba(220, 220, 240, 0.2)'"></textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                                <span style="font-size: 0.8rem; color: #a89f91; font-family: 'Lato', sans-serif;">*Max 20 characters (letters & numbers only).</span>
+                                <span id="charCounter" style="font-size: 0.85rem; color: var(--accent-gold); font-weight: bold; font-family: 'Lato', sans-serif;">0/20</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <label style="font-family: 'Lato', sans-serif; color: #eaddcf; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Quantity</label>
+                            <div style="display: flex; align-items: center; background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(220, 220, 240, 0.2); border-radius: 6px; overflow: hidden;">
+                                <button type="button" id="qtyMinus" style="background: none; border: none; color: #fff; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">-</button>
+                                <input type="number" id="qtyInput" value="1" min="1" readonly style="background: none; border: none; color: var(--accent-gold); text-align: center; width: 40px; font-weight: bold; font-size: 1.1rem; pointer-events: none;">
+                                <button type="button" id="qtyPlus" style="background: none; border: none; color: #fff; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">+</button>
+                            </div>
                         </div>
                     </div>
 
@@ -642,7 +662,7 @@
                     id: r.id || index, 
                     likes: r.likes !== undefined ? r.likes : 0,
                     dislikes: r.dislikes !== undefined ? r.dislikes : 0,
-                    userAction: r.current_user_action || null 
+                    current_user_action: r.current_user_action || null 
                 }));
 
                 toggleAuthFormState(productId);
@@ -674,6 +694,79 @@
                     starsHtml += `<span class="star grey">★</span>`; 
                 }
             }
+
+            if (currentReviews.length === 0) {
+                starsHtml += `<span class="rating-text">No reviews yet</span>`;
+                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
+                displayStars.innerHTML = starsHtml;
+                return;
+            }
+
+            starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
+            reviewsList.innerHTML = currentReviews.map((r) => {
+                let likeActive = r.current_user_action === 'like' ? 'active-like' : '';
+                let dislikeActive = r.current_user_action === 'dislike' ? 'active-dislike' : '';
+                let deleteButtonMarkup = '';
+
+                if (currentUserEmail !== "" && r.author_email === currentUserEmail) {
+                    deleteButtonMarkup = `<button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>`;
+                }
+
+                let userLevel = r.author_level || r.level || 1;
+                let vipClass = '';
+                if (userLevel === 4) vipClass = 'vip-review-lvl4';
+                if (userLevel === 5) vipClass = 'vip-review-lvl5';
+
+                let avatarContent = '';
+                if (r.author_avatar_filename || r.avatar_filename) {
+                    let filename = r.author_avatar_filename || r.avatar_filename;
+                    let avatarUrl = "/static/images/avatar/" + filename;
+                    avatarContent = `<img src="${avatarUrl}" alt="Avatar">`;
+                } else if (r.author_avatar_url || r.avatar_url) {
+                    let url = r.author_avatar_url || r.avatar_url;
+                    avatarContent = `<img src="${url}" alt="Avatar">`;
+                } else {
+                    let initial = (r.display_name || r.user_name || 'U').charAt(0).toUpperCase();
+                    avatarContent = `<div class="avatar-empty-state"><span class="avatar-empty-title" style="color:var(--accent-gold); font-family:'Playfair Display', serif; font-style:italic;">${initial}</span></div>`;
+                }
+
+                let displayName = r.display_name || r.user_name || 'Guest';
+
+                return `
+<div class="review-item ${vipClass}">
+    <div class="review-header-flex">
+        <div class="review-user-info">
+            <div class="avatar-micro-wrapper">
+                <div class="avatar-stage avatar-ring-lvl-${userLevel}">
+                    <div class="diamond-mark"></div>
+                    <div class="avatar-ring"></div>
+                    <div class="avatar-trigger" style="animation:none; box-shadow:none;">
+                        ${avatarContent}
+                    </div>
+                </div>
+            </div>
+            <div class="review-user-text">
+                <p class="review-user">${displayName} <span style="color:#d4a373; font-size:0.8rem; margin-left:5px;">${'★'.repeat(r.rating)}</span></p>
+                <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Level ${userLevel}</span>
+            </div>
+        </div>
+        ${deleteButtonMarkup}
+    </div>
+    <p class="review-text" style="margin-top: 12px;">"${r.review_text}"</p>
+    
+    <div class="review-actions-bar">
+        <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
+            <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
+        </button>
+        <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
+            <span class="act-icon">👎</span> <span class="cnt">${r.dislikes}</span>
+        </button>
+    </div>
+</div>
+`;
+            }).join('');
+            displayStars.innerHTML = starsHtml;
+            return;
 
             if(currentReviews.length === 0) {
                 starsHtml += `<span class="rating-text">No reviews yet</span>`;
@@ -806,7 +899,6 @@
 
         async function submitReview(e) {
             e.preventDefault();
-            const name = document.getElementById('reviewName').value;
             const text = document.getElementById('reviewText').value;
             const rating = ratingInput.value;
 
@@ -824,7 +916,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         product_id: activeProductId,
-                        user_name: name,
                         review_text: text,
                         rating: rating
                     })
@@ -913,5 +1004,84 @@
             };
         }
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messageInput = document.getElementById('secretMessageInput');
+    // Select the main Add to Cart button (adjusted to the actual class used on this page)
+    const addToCartBtn = document.querySelector('.magic-cart-btn'); 
+    
+    const qtyMinus = document.getElementById('qtyMinus');
+    const qtyPlus = document.getElementById('qtyPlus');
+    const qtyInput = document.getElementById('qtyInput');
+
+    if (!addToCartBtn || !messageInput) return; // safeguard
+
+    // Store original button text/styles
+    const originalBtnText = addToCartBtn.innerHTML;
+
+    // Initial Locked State
+    function lockButton() {
+        addToCartBtn.disabled = true;
+        addToCartBtn.style.opacity = '0.5';
+        addToCartBtn.style.cursor = 'not-allowed';
+        addToCartBtn.style.background = '#333';
+        addToCartBtn.style.border = '1px solid #555';
+        addToCartBtn.innerHTML = 'Enter Message to Unlock 🔒';
+    }
+
+    // Unlocked State
+    function unlockButton() {
+        addToCartBtn.disabled = false;
+        addToCartBtn.style.opacity = '1';
+        addToCartBtn.style.cursor = 'pointer';
+        addToCartBtn.style.background = ''; // Revert to CSS
+        addToCartBtn.style.border = ''; // Revert to CSS
+        addToCartBtn.innerHTML = originalBtnText; // Restore original 'Add to Cart' and stars
+    }
+
+    // Apply initial state
+    lockButton();
+    
+    // Listen for typing
+    const charCounter = document.getElementById('charCounter');
+    const MAX_CHARS = 20;
+
+    messageInput.addEventListener('input', () => {
+        let currentText = messageInput.value;
+        let textLength = currentText.length;
+        
+        // Update Counter Text
+        charCounter.innerText = textLength + '/' + MAX_CHARS;
+
+        // Change color if approaching limit
+        if (textLength >= MAX_CHARS) {
+            charCounter.style.color = '#ff4d4d'; // Red when full
+        } else {
+            charCounter.style.color = 'var(--accent-gold)'; // Normal gold
+        }
+
+        // Lock/Unlock Logic (must have at least 1 valid char)
+        if (currentText.trim().length > 0 && textLength <= MAX_CHARS) {
+            unlockButton();
+        } else {
+            lockButton();
+        }
+    });
+
+    // Quantity Counter Logic
+    if (qtyPlus && qtyMinus && qtyInput) {
+        qtyPlus.addEventListener('click', () => {
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        });
+
+        qtyMinus.addEventListener('click', () => {
+            if (parseInt(qtyInput.value) > 1) {
+                qtyInput.value = parseInt(qtyInput.value) - 1;
+            }
+        });
+    }
+});
+</script>
 </body>
 </html>

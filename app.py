@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import inspect, text
+from sqlalchemy import event, inspect, text
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 import hashlib
@@ -223,6 +223,40 @@ def avatar_label_for_filename(filename):
             return avatar['label']
     return "Custom Avatar"
 
+
+def public_avatar_filename(filename):
+    return sanitize_avatar_filename(filename) or DEFAULT_AVATAR_FILENAME
+
+
+def public_avatar_url(filename):
+    return url_for('static', filename=f'images/avatar/{public_avatar_filename(filename)}')
+
+
+def public_profile_identity(profile_record, fallback_name='Meltix Collector'):
+    display_name = fallback_name
+    level = 1
+    avatar_filename = DEFAULT_AVATAR_FILENAME
+    avatar_url = public_avatar_url(avatar_filename)
+
+    if profile_record:
+        display_name = (profile_record.display_name or '').strip() or fallback_name
+        level = normalize_level(profile_record.level)
+        
+        # KEY FIX: Serve Google Photo if custom avatar is empty
+        if not profile_record.avatar_filename and profile_record.google_picture_url:
+            avatar_filename = '' 
+            avatar_url = profile_record.google_picture_url
+        else:
+            avatar_filename = public_avatar_filename(profile_record.avatar_filename)
+            avatar_url = public_avatar_url(avatar_filename)
+
+    return {
+        'display_name': display_name,
+        'level': level,
+        'avatar_filename': avatar_filename,
+        'avatar_url': avatar_url,
+    }
+
 # ==========================================
 # 🔴 DATABASE MODELS (TABLES) 🔴
 # ==========================================
@@ -298,10 +332,12 @@ class UserAccount(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     display_name = db.Column(db.String(120), nullable=False, default='Guest')
     avatar_filename = db.Column(db.String(50), nullable=False, default='')
+    google_picture_url = db.Column(db.Text, nullable=False, default='')
     glow_points = db.Column(db.Integer, nullable=False, default=0)
     level = db.Column(db.Integer, nullable=False, default=1)
     completed_missions_json = db.Column(db.Text, nullable=False, default='[]')
     unlocked_coupons = db.Column(db.Text, nullable=False, default='[]')
+    lifetime_spend = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -368,6 +404,64 @@ class Wishlist(db.Model):
     # STRICT RULE: Ek user ek product ko ek hi baar wishlist me daal sake
     __table_args__ = (db.UniqueConstraint('user_email', 'product_id', name='unique_user_wishlist'),)
 
+
+def calculate_lifetime_spend_total(user_email, executor=None):
+    if not user_email:
+        return 0
+
+    runner = executor or db.session
+    result = runner.execute(
+        text("""
+            SELECT COALESCE(SUM(CASE WHEN total_amount > 0 THEN total_amount ELSE 0 END), 0)
+            FROM profile_order
+            WHERE user_email = :user_email
+        """),
+        {"user_email": user_email},
+    )
+    return int(result.scalar() or 0)
+
+
+def sync_lifetime_spend_for_user(user_email, connection=None):
+    if not user_email:
+        return 0
+
+    total_spend = calculate_lifetime_spend_total(user_email, executor=connection)
+    if connection is not None:
+        connection.execute(
+            text("""
+                UPDATE user_account
+                SET lifetime_spend = :total_spend
+                WHERE email = :user_email
+            """),
+            {"user_email": user_email, "total_spend": total_spend},
+        )
+    else:
+        profile_record = UserAccount.query.filter_by(email=user_email).first()
+        if profile_record:
+            profile_record.lifetime_spend = total_spend
+    return total_spend
+
+
+def backfill_all_lifetime_spend():
+    with db.engine.begin() as connection:
+        connection.execute(
+            text("""
+                UPDATE user_account AS ua
+                SET lifetime_spend = COALESCE((
+                    SELECT SUM(CASE WHEN po.total_amount > 0 THEN po.total_amount ELSE 0 END)
+                    FROM profile_order AS po
+                    WHERE po.user_email = ua.email
+                ), 0)
+            """)
+        )
+
+
+@event.listens_for(ProfileOrder, 'after_insert')
+@event.listens_for(ProfileOrder, 'after_update')
+@event.listens_for(ProfileOrder, 'after_delete')
+def update_lifetime_spend_after_order_change(mapper, connection, target):
+    sync_lifetime_spend_for_user(getattr(target, 'user_email', ''), connection=connection)
+
 def ensure_profile_schema():
     inspector = inspect(db.engine)
     user_columns = {column['name'] for column in inspector.get_columns('user_account')}
@@ -388,6 +482,18 @@ def ensure_profile_schema():
         with db.engine.begin() as connection:
             connection.execute(
                 text("ALTER TABLE user_account ADD COLUMN unlocked_coupons TEXT NOT NULL DEFAULT '[]'")
+            )
+
+    if 'lifetime_spend' not in user_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE user_account ADD COLUMN lifetime_spend INTEGER NOT NULL DEFAULT 0")
+            )
+
+    if 'google_picture_url' not in user_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE user_account ADD COLUMN google_picture_url TEXT NOT NULL DEFAULT ''")
             )
 
 
@@ -435,6 +541,7 @@ def ensure_coupon_catalog():
 with app.app_context():
     db.create_all()
     ensure_profile_schema()
+    backfill_all_lifetime_spend()
     ensure_coupon_catalog()
 
 
@@ -1010,11 +1117,14 @@ def sync_profile_orders(user_email, orders_payload):
         order_record.scent_notes_json = json.dumps(scent_notes)
         order_record.created_at = parse_datetime_value(raw_order.get("date") or raw_order.get("created_at"))
 
+    sync_lifetime_spend_for_user(user_email)
+
 
 def serialize_profile(profile_record, google_picture_url=None, use_google_picture=False):
     completed_missions = normalize_completed_missions(profile_record.completed_missions_json)
     unlocked_coupons = normalize_unlocked_coupons(profile_record.unlocked_coupons)
     current_level = normalize_level(profile_record.level)
+    current_identity = public_profile_identity(profile_record, fallback_name=profile_record.display_name or 'Meltix Collector')
     current_level_missions = get_level_missions(current_level, completed_missions)
     reward_vault = build_reward_vault(unlocked_coupons)
     wishlist_rows = Wishlist.query.filter_by(user_email=profile_record.email).order_by(Wishlist.id.desc()).all()
@@ -1059,7 +1169,11 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
             'review_text': review.review_text,
             'date': review.created_at.strftime("%d %b %Y"),
             'likes': review_action_map.get(review.id, {}).get('likes', 0),
-            'dislikes': review_action_map.get(review.id, {}).get('dislikes', 0)
+            'dislikes': review_action_map.get(review.id, {}).get('dislikes', 0),
+            'display_name': current_identity['display_name'],
+            'author_level': current_identity['level'],
+            'author_avatar_filename': current_identity['avatar_filename'],
+            'author_avatar_url': current_identity['avatar_url'],
         }
         for review in recent_reviews
     ]
@@ -1068,6 +1182,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
     serialized_orders = [serialize_order(order) for order in orders]
     orders_in_progress = sum(1 for order in orders if order.stage_key != 'delivered')
     total_spent = sum(max(order.total_amount, 0) for order in orders)
+    lifetime_spend = max(int(profile_record.lifetime_spend or 0), total_spent)
     rewards = build_glow_ledger(profile_record, orders, all_reviews)
 
     scent_persona_record = UserScentPersona.query.filter_by(user_email=profile_record.email).first()
@@ -1111,8 +1226,10 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
             'review_dislikes': total_review_dislikes,
             'orders_in_progress': orders_in_progress,
             'order_count': len(orders),
-            'total_spent': total_spent,
-            'total_spent_display': format_money(total_spent),
+            'total_spent': lifetime_spend,
+            'total_spent_display': format_money(lifetime_spend),
+            'lifetime_spend': lifetime_spend,
+            'lifetime_spend_display': format_money(lifetime_spend),
             'avatar_count': len(AVATAR_FILENAMES),
             'level': current_level
         },
@@ -1413,12 +1530,17 @@ def get_reviews(product_id):
     reviews_list = []
     for r in reviews:
         author = db.session.get(UserAccount, r.user_id)
+        author_identity = public_profile_identity(author, fallback_name=r.user_name or 'Meltix Collector')
         counts = action_counts.get(r.id, {'likes': 0, 'dislikes': 0})
         
         reviews_list.append({
             'id': r.id, # 🔴 FIX: ID bhejna zaroori hai Javascript ko delete/like ke liye
-            'user_name': r.user_name,
+            'user_name': author_identity['display_name'],
+            'display_name': author_identity['display_name'],
             'author_email': author.email if author else "",
+            'author_level': author_identity['level'],
+            'author_avatar_filename': author_identity['avatar_filename'],
+            'author_avatar_url': author_identity['avatar_url'],
             'review_text': r.review_text,
             'rating': r.rating,
             'date': r.created_at.strftime("%d %b %Y"),
@@ -1539,13 +1661,14 @@ def profile_bootstrap():
     data = request.get_json() or {}
     email = (data.get('email') or '').strip().lower()
     display_name = (data.get('name') or '').strip()
-    google_picture_url = (data.get('picture') or '').strip()
+    google_picture_url = data.get('google_picture_url') or data.get('picture') or ''
 
     if not email:
         return jsonify({"success": False, "message": "Email required"}), 400
 
     try:
         profile_record = get_or_create_profile(email, display_name)
+        if google_picture_url: profile_record.google_picture_url = google_picture_url
         session['profile_email'] = profile_record.email
         session['profile_name'] = display_name or profile_record.display_name
         if google_picture_url:
@@ -1581,7 +1704,7 @@ def update_profile_avatar():
     email = (data.get('email') or session.get('profile_email') or '').strip().lower()
     use_google_photo = bool(data.get('use_google_photo'))
     display_name = (data.get('name') or '').strip()
-    google_picture_url = (data.get('picture') or '').strip()
+    google_picture_url = data.get('google_picture_url') or data.get('picture') or ''
 
     try:
         if not email:
@@ -1595,6 +1718,7 @@ def update_profile_avatar():
             return jsonify({"success": False, "message": "This avatar is locked for your current level"}), 403
 
         profile_record.avatar_filename = avatar_filename
+        if google_picture_url: profile_record.google_picture_url = google_picture_url
         session['profile_email'] = profile_record.email
         db.session.commit()
 
@@ -1893,6 +2017,31 @@ def validate_coupon():
         "expires_at": coupon.expires_at.isoformat() if coupon.expires_at else None,
         "message": "Coupon is valid"
     }), 200
+
+
+@app.route('/api/leaderboard', methods=['GET'])
+def leaderboard_api():
+    top_accounts = (
+        UserAccount.query
+        .order_by(UserAccount.lifetime_spend.desc(), UserAccount.level.desc(), UserAccount.display_name.asc())
+        .limit(50)
+        .all()
+    )
+
+    leaderboard_items = []
+    for account in top_accounts:
+        identity = public_profile_identity(account, fallback_name=account.email.split('@')[0] if account.email else 'Meltix Collector')
+        leaderboard_items.append({
+            "name": identity['display_name'],
+            "display_name": identity['display_name'],
+            "level": identity['level'],
+            "avatar_filename": identity['avatar_filename'],
+            "avatar_url": identity['avatar_url'],
+            "lifetime_spend": int(account.lifetime_spend or 0),
+            "lifetime_spend_display": format_money(int(account.lifetime_spend or 0)),
+        })
+
+    return jsonify({"success": True, "items": leaderboard_items}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

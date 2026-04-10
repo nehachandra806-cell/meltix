@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Candle Date Kit | Meltix</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='candle_date_kit.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -108,7 +109,6 @@
                                         <span class="form-star" data-val="5">★</span> 
                                     </div> 
                                     <input type="hidden" id="reviewRating" value="0"> 
-                                    <input type="text" id="reviewName" placeholder="Your name..." class="premium-input" required> 
                                     <textarea id="reviewText" placeholder="Write your experience..." class="premium-input" rows="2" required></textarea> 
                                     <button type="submit" class="meltix-btn-form" id="submitReviewBtn">Post Review</button> 
                                 </form> 
@@ -630,7 +630,7 @@
                     id: r.id || index, 
                     likes: r.likes !== undefined ? r.likes : 0,
                     dislikes: r.dislikes !== undefined ? r.dislikes : 0,
-                    userAction: r.current_user_action || null 
+                    current_user_action: r.current_user_action || null 
                 }));
 
                 toggleAuthFormState(productId);
@@ -662,6 +662,79 @@
                     starsHtml += `<span class="star grey">★</span>`; 
                 }
             }
+
+            if (currentReviews.length === 0) {
+                starsHtml += `<span class="rating-text">No reviews yet</span>`;
+                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
+                displayStars.innerHTML = starsHtml;
+                return;
+            }
+
+            starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
+            reviewsList.innerHTML = currentReviews.map((r) => {
+                let likeActive = r.current_user_action === 'like' ? 'active-like' : '';
+                let dislikeActive = r.current_user_action === 'dislike' ? 'active-dislike' : '';
+                let deleteButtonMarkup = '';
+
+                if (currentUserEmail !== "" && r.author_email === currentUserEmail) {
+                    deleteButtonMarkup = `<button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>`;
+                }
+
+                let userLevel = r.author_level || r.level || 1;
+                let vipClass = '';
+                if (userLevel === 4) vipClass = 'vip-review-lvl4';
+                if (userLevel === 5) vipClass = 'vip-review-lvl5';
+
+                let avatarContent = '';
+                if (r.author_avatar_filename || r.avatar_filename) {
+                    let filename = r.author_avatar_filename || r.avatar_filename;
+                    let avatarUrl = "/static/images/avatar/" + filename;
+                    avatarContent = `<img src="${avatarUrl}" alt="Avatar">`;
+                } else if (r.author_avatar_url || r.avatar_url) {
+                    let url = r.author_avatar_url || r.avatar_url;
+                    avatarContent = `<img src="${url}" alt="Avatar">`;
+                } else {
+                    let initial = (r.display_name || r.user_name || 'U').charAt(0).toUpperCase();
+                    avatarContent = `<div class="avatar-empty-state"><span class="avatar-empty-title" style="color:var(--accent-gold); font-family:'Playfair Display', serif; font-style:italic;">${initial}</span></div>`;
+                }
+
+                let displayName = r.display_name || r.user_name || 'Guest';
+
+                return `
+<div class="review-item ${vipClass}">
+    <div class="review-header-flex">
+        <div class="review-user-info">
+            <div class="avatar-micro-wrapper">
+                <div class="avatar-stage avatar-ring-lvl-${userLevel}">
+                    <div class="diamond-mark"></div>
+                    <div class="avatar-ring"></div>
+                    <div class="avatar-trigger" style="animation:none; box-shadow:none;">
+                        ${avatarContent}
+                    </div>
+                </div>
+            </div>
+            <div class="review-user-text">
+                <p class="review-user">${displayName} <span style="color:#d4a373; font-size:0.8rem; margin-left:5px;">${'★'.repeat(r.rating)}</span></p>
+                <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Level ${userLevel}</span>
+            </div>
+        </div>
+        ${deleteButtonMarkup}
+    </div>
+    <p class="review-text" style="margin-top: 12px;">"${r.review_text}"</p>
+    
+    <div class="review-actions-bar">
+        <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
+            <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
+        </button>
+        <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
+            <span class="act-icon">👎</span> <span class="cnt">${r.dislikes}</span>
+        </button>
+    </div>
+</div>
+`;
+            }).join('');
+            displayStars.innerHTML = starsHtml;
+            return;
 
             if(currentReviews.length === 0) {
                 starsHtml += `<span class="rating-text">No reviews yet</span>`;
@@ -803,7 +876,6 @@
 
         async function submitReview(e) {
             e.preventDefault();
-            const name = document.getElementById('reviewName').value;
             const text = document.getElementById('reviewText').value;
             const rating = ratingInput.value;
 
@@ -821,7 +893,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         product_id: activeProductId,
-                        user_name: name,
                         review_text: text,
                         rating: rating
                     })

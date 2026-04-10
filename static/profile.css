@@ -523,6 +523,7 @@ body {
     grid-column: span 6;
 }
 
+.leaderboard-card,
 .orders-card {
     grid-column: span 12;
 }
@@ -642,15 +643,80 @@ body {
 
 .review-meta {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
     margin-bottom: 10px;
 }
 
+.avatar-micro-wrapper {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.avatar-micro-wrapper .avatar-stage {
+    margin: 0;
+    transform: scale(0.25);
+    transform-origin: left center;
+}
+
+.avatar-micro-wrapper .avatar-edit-btn {
+    display: none !important;
+}
+
+.avatar-micro-wrapper .avatar-trigger-static {
+    pointer-events: none;
+    cursor: default;
+}
+
+.review-author-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.review-author-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.review-author-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.16rem;
+    color: var(--accent-cream);
+}
+
+.review-author-level,
+.leaderboard-sub {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+.review-rating-block {
+    display: grid;
+    justify-items: end;
+    gap: 6px;
+    text-align: right;
+}
+
+.review-product-label {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
 .review-item p {
     color: var(--accent-cream);
     line-height: 1.7;
+    margin: 0;
 }
 
 .review-impact-row {
@@ -674,6 +740,103 @@ body {
 .muted-chip {
     background: rgba(255, 255, 255, 0.04);
     color: var(--text-muted);
+}
+
+.leaderboard-list {
+    display: grid;
+    gap: 14px;
+}
+
+.leaderboard-empty {
+    margin-top: 16px;
+}
+
+.leaderboard-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(212, 163, 115, 0.1);
+    transition: transform 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+}
+
+.leaderboard-row:hover {
+    transform: translateY(-2px);
+    border-color: rgba(242, 201, 138, 0.24);
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.leaderboard-rank {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(242, 201, 138, 0.14);
+    border: 1px solid rgba(242, 201, 138, 0.2);
+    color: var(--accent-gold);
+    font-weight: 900;
+    letter-spacing: 0.04rem;
+}
+
+.leaderboard-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.leaderboard-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.leaderboard-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.18rem;
+    color: var(--accent-cream);
+}
+
+.leaderboard-spend-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(102, 192, 255, 0.14);
+    border: 1px solid rgba(112, 205, 255, 0.24);
+    color: #dff7ff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+    .review-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .review-rating-block {
+        justify-items: start;
+        text-align: left;
+    }
+
+    .leaderboard-row {
+        grid-template-columns: auto 1fr;
+    }
+
+    .leaderboard-spend-badge {
+        grid-column: 1 / -1;
+        justify-self: start;
+        margin-left: 62px;
+    }
 }
 
 .order-item {
@@ -995,6 +1158,7 @@ body {
     .account-card,
     .wishlist-card,
     .review-card,
+    .leaderboard-card,
     .orders-card {
         grid-column: span 12;
     }
@@ -1757,6 +1921,7 @@ body {
 .rewards-card { grid-column: span 12; }
 .wishlist-card,
 .review-card { grid-column: span 6; }
+.leaderboard-card,
 .orders-card { grid-column: span 12; }
 
 .address-form {
@@ -1881,8 +2046,9 @@ body {
     height: 100%;
     border-radius: inherit;
     background: linear-gradient(90deg, var(--accent-gold), #f2c98a, #fff0d7);
-    box-shadow: 0 0 22px rgba(242, 201, 138, 0.34);
-    transition: width 0.3s ease;
+    /* Liquid Gold Glow & Inset */
+    box-shadow: 0 0 12px rgba(212, 163, 115, 0.6), inset 0 0 5px rgba(255, 255, 255, 0.3);
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reward-progress-copy {
@@ -1893,6 +2059,12 @@ body {
     margin-top: 18px;
     display: grid;
     gap: 12px;
+    /* Fading scroll */
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 10px;
+    -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
 }
 
 .ledger-item,
@@ -2083,6 +2255,7 @@ body {
     .rewards-card,
     .wishlist-card,
     .review-card,
+    .leaderboard-card,
     .orders-card {
         grid-column: span 12;
     }
@@ -2136,4 +2309,125 @@ body {
     .hero-stats {
         grid-template-columns: 1fr;
     }
+}
+
+/* =========================================
+   👑 MICRO-AVATARS & VIP REVIEWS (GLOBAL)
+   ========================================= */
+.avatar-micro-wrapper {
+    position: relative;
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Fix Document Flow Overflow & Centering */
+.avatar-micro-wrapper .avatar-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.19);
+    margin: 0 !important;
+    pointer-events: none;
+}
+
+.avatar-micro-wrapper .avatar-trigger {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.avatar-micro-wrapper .avatar-trigger img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    margin: 0 !important;
+}
+
+.avatar-micro-wrapper .avatar-empty-state {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute !important;
+    inset: 0 !important;
+}
+
+.avatar-micro-wrapper .avatar-empty-title {
+    font-size: 4.5rem !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+.review-user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.review-user-text {
+    display: flex;
+    flex-direction: column;
+}
+
+/* VIP Glows */
+.vip-review-lvl4 {
+    background: linear-gradient(145deg, rgba(30, 30, 35, 0.8), rgba(15, 15, 18, 0.9)) !important;
+    border: 1px solid rgba(220, 220, 240, 0.4) !important;
+    box-shadow: 0 5px 25px rgba(220, 220, 240, 0.08) !important;
+}
+
+.vip-review-lvl5 {
+    background: linear-gradient(145deg, rgba(35, 25, 15, 0.9), rgba(15, 10, 5, 0.9)) !important;
+    border: 1px solid rgba(242, 201, 138, 0.6) !important;
+    box-shadow: 0 5px 30px rgba(242, 201, 138, 0.15), inset 0 0 20px rgba(242, 201, 138, 0.05) !important;
+}
+
+
+/* --- Premium Empty Vault --- */
+.vault-empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 1.5rem;
+    border: 1px dashed rgba(242, 201, 138, 0.25);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(10, 6, 4, 0.3));
+    border-radius: 24px;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.2);
+}
+
+.empty-icon-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin-bottom: 24px;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle, rgba(212, 163, 115, 0.12), rgba(20, 15, 10, 0.6));
+    border: 1px solid rgba(212, 163, 115, 0.2);
+    color: var(--accent-gold);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.empty-icon-ring svg {
+    filter: drop-shadow(0 2px 8px rgba(242, 201, 138, 0.4));
+}
+
+
+/* Fading scroll for reviews */
+.review-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+    -webkit-mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
 }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +6,7 @@
     <title>Meltix | Profile Studio</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -275,12 +276,17 @@
                         </article>
                         {% endfor %}
                     {% else %}
-                    <article class="coupon-ticket coupon-ticket-empty">
-                        <div class="coupon-ticket-copy">
-                            <strong>Reward Codes Await</strong>
-                            <p class="body-copy">Level up your Atelier to unlock exclusive reward codes!</p>
+                    <div class="empty-state vault-empty-state">
+                        <div class="empty-icon-ring">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
                         </div>
-                    </article>
+                        <p>Your vault is secured.</p>
+                        <span>Complete active missions and elevate your atelier level to unlock exclusive reward codes.</span>
+                        <button type="button" class="secondary-btn compact-btn" style="margin-top: 18px; padding: 6px 14px; min-height: 36px; font-size: 0.85rem;" onclick="document.getElementById('missions-grid').scrollIntoView({behavior: 'smooth'})">View Missions</button>
+                    </div>
                     {% endif %}
                 </div>
             </article>
@@ -351,6 +357,20 @@
                     <p>No orders yet.</p>
                     <span>Once you place an order, you will be able to track wax pouring, curing, shipping, and delivery from here.</span>
                     <a href="/shop" class="empty-cta">Explore the Collection</a>
+                </div>
+            </article>
+
+            <article class="glass-card leaderboard-card">
+                <div class="card-head">
+                    <p class="card-kicker">Status Flex</p>
+                    <h2>Meltix Royalty (Top 50)</h2>
+                    <p class="body-copy">The atelier's highest spenders and most elevated collectors, updated with their current avatar and ring status.</p>
+                </div>
+
+                <div id="leaderboard-list" class="leaderboard-list"></div>
+                <div id="leaderboard-empty" class="empty-state leaderboard-empty">
+                    <p>Loading Meltix Royalty...</p>
+                    <span>The top collectors will appear here in a moment.</span>
                 </div>
             </article>
         </section>
@@ -462,9 +482,12 @@
         const saveAddressUrl = "{{ url_for('save_profile_address') }}";
         const saveScentPersonaUrl = "{{ url_for('save_scent_persona') }}";
         const claimMissionUrl = "{{ url_for('claim_mission') }}";
+        const leaderboardUrl = "{{ url_for('leaderboard_api') }}";
+        const defaultAvatarUrl = "{{ default_avatar }}";
         const googleClientId = "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com";
         const initialProfile = {{ profile_data | tojson }};
         const initialUser = {{ current_user | tojson }};
+        const avatarSrcMap = new Map(avatarOptions.map((avatar) => [avatar.filename, avatar.src]));
 
         const state = {
             currentUser: initialUser && initialUser.email ? initialUser : null,
@@ -472,7 +495,9 @@
             selectedAvatar: avatarOptions[0] ? avatarOptions[0].filename : "avatar_1.jpg",
             usingGoogleAvatar: false,
             googleInitialized: false,
-            selectedQuizNotes: []
+            selectedQuizNotes: [],
+            leaderboard: [],
+            hasLoadedLeaderboard: false
         };
         let currentUserEmail = initialUser && initialUser.email ? initialUser.email : (initialProfile && initialProfile.email ? initialProfile.email : '');
 
@@ -521,6 +546,8 @@
         const reviewsEmpty = document.getElementById('reviews-empty');
         const ordersList = document.getElementById('orders-list');
         const ordersEmpty = document.getElementById('orders-empty');
+        const leaderboardList = document.getElementById('leaderboard-list');
+        const leaderboardEmpty = document.getElementById('leaderboard-empty');
         const avatarModal = document.getElementById('avatar-modal');
         const trackingModal = document.getElementById('tracking-modal');
         const scentQuizModal = document.getElementById('scent-quiz-modal');
@@ -731,6 +758,41 @@
             return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Number(value || 0));
         }
 
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function resolveAvatarSrc(filename, explicitUrl) {
+            if (explicitUrl) return explicitUrl;
+            if (filename && avatarSrcMap.has(filename)) return avatarSrcMap.get(filename);
+            return defaultAvatarUrl;
+        }
+
+        function buildMicroAvatarMarkup(userLike) {
+            const level = normalizeLevel(userLike && userLike.author_level ? userLike.author_level : (userLike && userLike.level ? userLike.level : 1));
+            const avatarFilename = userLike && (userLike.author_avatar_filename || userLike.avatar_filename) ? (userLike.author_avatar_filename || userLike.avatar_filename) : '';
+            const avatarUrl = resolveAvatarSrc(avatarFilename, userLike && (userLike.author_avatar_url || userLike.avatar_url));
+            const displayName = escapeHtml(userLike && (userLike.display_name || userLike.name || userLike.user_name) ? (userLike.display_name || userLike.name || userLike.user_name) : 'Meltix Collector');
+
+            return `
+                <div class="avatar-micro-wrapper" aria-hidden="true">
+                    <div class="avatar-stage avatar-ring-lvl-${level}">
+                        <div class="diamond-mark"></div>
+                        <div class="avatar-ring"></div>
+                        <div class="avatar-aura"></div>
+                        <div class="avatar-trigger avatar-trigger-static has-avatar">
+                            <img src="${avatarUrl}" alt="${displayName}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function openModal(modalElement) {
             modalElement.classList.add('open');
             modalElement.setAttribute('aria-hidden', 'false');
@@ -795,25 +857,93 @@
             items.forEach((item) => {
                 const review = document.createElement('article');
                 review.className = 'review-item';
-                
-                // SAFE LOGIC: Using Unicode for Stars to prevent encoding corruption
+                const displayName = item.display_name || item.user_name || 'Meltix Collector';
                 const filledStars = '\u2605'.repeat(item.rating);
                 const emptyStars = '\u2606'.repeat(5 - item.rating);
-                
+                const microAvatar = buildMicroAvatarMarkup(item);
+
                 review.innerHTML = `
                     <div class="review-meta">
-                        <strong>Product #${item.product_id}</strong>
-                        <span style="color: var(--accent-gold); font-size: 1.1rem;">
-                            ${filledStars}<span style="color: rgba(255,255,255,0.2);">${emptyStars}</span> &middot; <span style="font-size:0.84rem; color:var(--text-muted);">${item.date}</span>
-                        </span>
+                        <div class="review-author-block">
+                            ${microAvatar}
+                            <div class="review-author-copy">
+                                <strong class="review-author-name">${escapeHtml(displayName)}</strong>
+                                <span class="review-author-level">Level ${normalizeLevel(item.author_level || item.level || 1)} Atelier Member</span>
+                            </div>
+                        </div>
+                        <div class="review-rating-block">
+                            <span style="color: var(--accent-gold); font-size: 1.1rem;">
+                                ${filledStars}<span style="color: rgba(255,255,255,0.2);">${emptyStars}</span>
+                            </span>
+                            <span class="review-product-label">Product #${escapeHtml(item.product_id)} &middot; ${escapeHtml(item.date)}</span>
+                        </div>
                     </div>
-                    <p>${item.review_text}</p>
+                    <p>${escapeHtml(item.review_text).replace(/\n/g, '<br>')}</p>
                     <div class="review-impact-row">
                         <span class="review-impact-chip">Helpful ${item.likes}</span>
                         <span class="review-impact-chip muted-chip">Negative ${item.dislikes}</span>
                     </div>`;
                 reviewsList.appendChild(review);
             });
+        }
+
+        function renderLeaderboard(items) {
+            leaderboardList.innerHTML = '';
+            const hasItems = Array.isArray(items) && items.length > 0;
+            leaderboardEmpty.style.display = hasItems ? 'none' : 'grid';
+            if (!hasItems) {
+                leaderboardEmpty.innerHTML = `
+                    <p>No collectors ranked yet.</p>
+                    <span>Your Meltix Royalty board will populate as spend history grows.</span>
+                `;
+                return;
+            }
+
+            items.forEach((item, index) => {
+                const row = document.createElement('article');
+                row.className = 'leaderboard-row';
+                row.innerHTML = `
+                    <span class="leaderboard-rank">#${index + 1}</span>
+                    <div class="leaderboard-user">
+                        ${buildMicroAvatarMarkup(item)}
+                        <div class="leaderboard-copy">
+                            <strong class="leaderboard-name">${escapeHtml(item.display_name || item.name || 'Meltix Collector')}</strong>
+                            <span class="leaderboard-sub">Level ${normalizeLevel(item.level || 1)} Collector</span>
+                        </div>
+                    </div>
+                    <span class="leaderboard-spend-badge">Top Collector</span>
+                `;
+                leaderboardList.appendChild(row);
+            });
+        }
+
+        async function loadLeaderboard(force = false) {
+            if (state.hasLoadedLeaderboard && !force) {
+                renderLeaderboard(state.leaderboard || []);
+                return;
+            }
+
+            leaderboardEmpty.style.display = 'grid';
+            leaderboardEmpty.innerHTML = `
+                <p>Loading Meltix Royalty...</p>
+                <span>The top collectors will appear here in a moment.</span>
+            `;
+
+            try {
+                const response = await fetch(leaderboardUrl);
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Leaderboard load failed');
+                state.leaderboard = Array.isArray(data.items) ? data.items : [];
+                state.hasLoadedLeaderboard = true;
+                renderLeaderboard(state.leaderboard);
+            } catch (error) {
+                leaderboardList.innerHTML = '';
+                leaderboardEmpty.style.display = 'grid';
+                leaderboardEmpty.innerHTML = `
+                    <p>Royalty board unavailable.</p>
+                    <span>We could not load the leaderboard just now.</span>
+                `;
+            }
         }
 
         function renderOrders(items) {
@@ -861,12 +991,17 @@
 
             if (!coupons.length) {
                 rewardVaultGrid.innerHTML = `
-                    <article class="coupon-ticket coupon-ticket-empty">
-                        <div class="coupon-ticket-copy">
-                            <strong>Reward Codes Await</strong>
-                            <p class="body-copy">Level up your Atelier to unlock exclusive reward codes!</p>
+                    <div class="empty-state vault-empty-state">
+                        <div class="empty-icon-ring">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
                         </div>
-                    </article>
+                        <p>Your vault is secured.</p>
+                        <span>Complete active missions and elevate your atelier level to unlock exclusive reward codes.</span>
+                        <button type="button" class="secondary-btn compact-btn" style="margin-top: 18px; padding: 6px 14px; min-height: 36px; font-size: 0.85rem;" onclick="document.getElementById('missions-grid').scrollIntoView({behavior: 'smooth'})">View Missions</button>
+                    </div>
                 `;
                 return;
             }
@@ -1124,6 +1259,7 @@
             renderReviews([]);
             renderOrders([]);
             addressStatus.textContent = 'Sign in to save shipping and billing details.';
+            loadLeaderboard(false);
         }
 
         function renderProfile(profile) {
@@ -1165,6 +1301,7 @@
             renderReviews(profile.recent_reviews || []);
             renderOrders(profile.orders || []);
             addressStatus.textContent = 'Your address book is ready for your next checkout.';
+            loadLeaderboard(true);
         }
 
         function hydrateProfileFromTemplate() {
