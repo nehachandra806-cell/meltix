@@ -591,7 +591,7 @@ body {
 .modal-left::-webkit-scrollbar { width: 4px; }
 .modal-left::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
 
-/* 🔴 NAYA MAIN IMAGE CONTAINER (FALLBACK KE SAATH) 🔴 */
+/* MAIN IMAGE CONTAINER */
 .main-image-container { 
     width: 100%; 
     min-height: 350px; 
@@ -658,13 +658,13 @@ body {
 .star.gold { color: #d4a373; text-shadow: 0 0 8px rgba(212,163,115,0.6); }
 .star.grey { color: rgba(255, 255, 255, 0.15); }
 .rating-text { font-family: 'Lato', sans-serif; font-size: 0.95rem; color: #a89f91; margin-left: 12px; }
-/* 🔴 NAYA: HALF STAR CSS 🔴 */
+
 .star.half-gold {
     background: linear-gradient(90deg, #d4a373 50%, rgba(255, 255, 255, 0.15) 50%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: none; /* Shadow se gradient kharab hota hai */
+    text-shadow: none;
 }
 
 .reviews-container {
@@ -743,9 +743,10 @@ body {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible; 
     padding-left: 10px;
     padding-right: 10px;
+    padding-bottom: 30px; 
 }
 .modal-right::-webkit-scrollbar { width: 4px; }
 .modal-right::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
@@ -791,54 +792,85 @@ body {
 .detail-item h4 { font-family: 'Playfair Display', serif; color: #eaddcf; font-size: 1.3rem; margin: 0 0 8px 0; font-weight: 400;}
 .detail-item p { font-family: 'Lato', sans-serif; color: rgba(255,255,255,0.6); font-size: 1.05rem; margin: 0; line-height: 1.6; font-weight: 300;}
 
-/* Add to Cart Section Fixed at Bottom */
-.purchase-section {
-    margin-top: 30px;
-    background: rgba(20, 15, 10, 0.8);
-    padding: 25px;
-    border-radius: 16px;
-    border: 1px solid rgba(212, 163, 115, 0.2);
+.price-block {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-    flex-wrap: wrap !important;
+    margin-top: 10px;
+    padding: 20px 0;
+    border-top: 1px dashed rgba(212, 163, 115, 0.2);
+    border-bottom: 1px dashed rgba(212, 163, 115, 0.2);
 }
-.price-block { display: flex; flex-direction: column; }
-.price-label { margin: 0 0 2px 0; color: rgba(212,163,115,0.6); font-family: 'Lato', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;}
-.product-price-premium { font-family: 'Lato', sans-serif; font-size: 2.2rem; color: #fff; margin: 0; font-weight: 700; }
+
+.price-label {
+    margin: 0;
+    color: rgba(212,163,115,0.6);
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.product-price-premium {
+    font-family: 'Lato', sans-serif;
+    font-size: 2.2rem;
+    color: #fff;
+    margin: 0;
+    font-weight: 700;
+}
 
 /* ==========================================
-   🔴 MAGICAL UIVERSE ADD TO CART BUTTON 🔴
+   9. ADD TO CART — same as Story Candle (magic-cart-btn)
    ========================================== */
+
+.custom-order-section { 
+    margin-top: 35px; 
+    padding-top: 20px; 
+    border-top: 1px solid rgba(212, 163, 115, 0.1); 
+}
+.quantity-wrapper { 
+    margin-top: 25px; 
+    margin-bottom: 25px; 
+}
+
+.purchase-section {
+    width: 100%;
+    margin-top: 30px;
+    padding: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible !important;
+}
+
 .magic-cart-btn {
     position: relative;
-    padding: 15px 10px !important;
-    background: #d4a373; /* Meltix Gold */
+    padding: 14px 35px;
+    background: #d4a373;
     font-family: 'Lato', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #030201; /* Dark Text */
+    color: #030201;
     border: 2px solid #d4a373;
-    border-radius: 30px; /* Pill shape to match design */
+    border-radius: 30px;
     box-shadow: 0 0 0 rgba(212, 163, 115, 0.5);
     transition: all 0.3s ease-in-out;
     cursor: pointer;
     overflow: visible;
+}
 
-    /* Strict layout per user request to prevent layout shifts */
-    width: 280px !important;
-    max-width: 100%;
-    min-height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    white-space: nowrap;
-    box-sizing: border-box;
-    flex-shrink: 0 !important;
+.magic-cart-btn:disabled {
+    background: #111;
+    color: #555;
+    border: 1px solid #333;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.magic-cart-btn:disabled .fil0 {
+    fill: #555;
 }
 
 .magic-cart-btn .star-1 {
@@ -907,78 +939,67 @@ body {
     transition: all 0.8s ease;
 }
 
-/* 🔴 Hover State (Jadoo Yahan Hai) 🔴 */
-.magic-cart-btn:hover {
-    background: rgba(10, 8, 5, 0.8); /* Transparent blackish */
-    color: #d4a373; /* Text Gold ho jayega */
+.magic-cart-btn:not(:disabled):hover {
+    background: rgba(10, 8, 5, 0.8);
+    color: #d4a373;
     box-shadow: 0 0 25px rgba(212, 163, 115, 0.5);
 }
 
-.magic-cart-btn:hover .star-1 {
-    position: absolute;
+.magic-cart-btn:not(:disabled):hover .star-1 {
     top: -80%;
     left: -30%;
     width: 25px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-2 {
-    position: absolute;
+.magic-cart-btn:not(:disabled):hover .star-2 {
     top: -25%;
     left: 10%;
     width: 15px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-3 {
-    position: absolute;
+.magic-cart-btn:not(:disabled):hover .star-3 {
     top: 55%;
     left: 25%;
     width: 5px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-4 {
-    position: absolute;
+.magic-cart-btn:not(:disabled):hover .star-4 {
     top: 30%;
     left: 80%;
     width: 8px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-5 {
-    position: absolute;
+.magic-cart-btn:not(:disabled):hover .star-5 {
     top: 25%;
     left: 115%;
     width: 15px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-6 {
-    position: absolute;
+.magic-cart-btn:not(:disabled):hover .star-6 {
     top: 5%;
     left: 60%;
     width: 5px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-/* SVG Fill Color */
 .magic-cart-btn .fil0 {
-    fill: #d4a373; /* Gold colored stars */
+    fill: #d4a373;
 }
 
+/* ==========================================
+   OTHER MODAL ELEMENTS (Auth, Reviews, Wishlist)
+   ========================================== */
 .auth-prompt-container {
     text-align: center;
     background: rgba(10, 8, 5, 0.6);
@@ -995,7 +1016,6 @@ body {
     border: 1px solid rgba(212, 163, 115, 0.1);
 }
 
-/* 🔴 NAYA: AESTHETIC REVIEW LIKE/DISLIKE & DELETE BUTTONS 🔴 */
 .review-actions-bar {
     display: flex;
     gap: 15px;
@@ -1011,7 +1031,6 @@ body {
 }
 .rev-act-btn:hover { color: #d4a373; }
 
-/* Pop Animation Keyframes */
 @keyframes popIcon {
     0% { transform: scale(1); }
     50% { transform: scale(1.4) rotate(-10deg); }
@@ -1020,7 +1039,6 @@ body {
 
 .act-icon { display: inline-block; transition: transform 0.2s; }
 
-/* Active States with Glow and Pop */
 .rev-act-btn.active-like { color: #4ade80; } 
 .rev-act-btn.active-like .act-icon { 
     animation: popIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
@@ -1033,7 +1051,6 @@ body {
     filter: drop-shadow(0 0 5px rgba(248, 113, 113, 0.6));
 }
 
-/* Delete Button Styling */
 .delete-review-btn {
     background: transparent; border: none; color: rgba(255,255,255,0.15);
     cursor: pointer; font-size: 1.1rem; transition: all 0.3s ease; padding: 0;
@@ -1044,43 +1061,35 @@ body {
 .review-header-flex {
     display: flex; justify-content: space-between; align-items: flex-start;
 }
-/* 🔴 NAYA: REVIEW TEXT BOX SIZE FIX 🔴 */
+
 textarea.premium-input, #reviewText {
-    resize: none !important; /* Khench ke bada karne wala option lock kar dega */
-    height: 100px !important; /* Dabbe ki fixed height */
+    resize: none !important; 
+    height: 100px !important; 
     min-height: 100px !important;
     max-height: 100px !important;
-    overflow-y: auto; /* Agar lamba review hoga toh andar hi scroll aayega */
+    overflow-y: auto; 
     font-family: 'Lato', sans-serif;
 }
-/* ==========================================
-   🔴 PREMIUM WISHLIST BUTTON (CORNER) 🔴
-   ========================================== */
+
 .absolute-wishlist {
     position: absolute;
     top: 15px;
     left: 15px; 
     z-index: 10;
-    
-    /* Premium Glass Effect */
     background: rgba(10, 8, 5, 0.3); 
     backdrop-filter: blur(8px); 
     -webkit-backdrop-filter: blur(8px);
-    
-    /* Perfect Gol (Circle) aur Patla Border */
     border: 1px solid rgba(212, 163, 115, 0.3); 
     width: 42px;
     height: 42px;
-    border-radius: 50%; /* Isse box ekdum gol ho jayega */
-    
-    /* Center aligning icon */
+    border-radius: 50%; 
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     color: #d4a373;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Halka sa shadow */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
 }
 
 .absolute-wishlist svg {
@@ -1092,17 +1101,16 @@ textarea.premium-input, #reviewText {
 .absolute-wishlist:hover {
     background: rgba(212, 163, 115, 0.2);
     border-color: rgba(212, 163, 115, 0.8);
-    transform: scale(1.08); /* Hover karne pe button thoda bada hoga (pop effect) */
+    transform: scale(1.08); 
     box-shadow: 0 6px 20px rgba(212, 163, 115, 0.2);
 }
 
-/* Jab save ho jaye toh solid Gold */
 .absolute-wishlist.saved {
     background: #d4a373;
     border-color: #d4a373;
 }
 
 .absolute-wishlist.saved svg {
-    stroke: #030201; /* Icon outline black */
-    fill: #030201;   /* Icon andar se black */
+    stroke: #030201; 
+    fill: #030201;  
 }

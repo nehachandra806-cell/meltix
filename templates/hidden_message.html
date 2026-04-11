@@ -156,54 +156,58 @@
                             <h4>How It's Crafted (Process)</h4>
                             <p id="modalProcess">Process text.</p>
                         </div>
-                               <div class="custom-order-section" style="margin: 25px 0; padding-top: 20px; border-top: 1px solid rgba(220, 220, 240, 0.1);">
-                        <div style="margin-bottom: 20px;">
-                            <label for="secretMessageInput" style="display: block; font-family: 'Playfair Display', serif; color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 10px; font-style: italic;">
-                                Write Your Hidden Message
-                            </label>
-                            <textarea id="secretMessageInput" rows="2" maxlength="20" placeholder="e.g., Will you marry me? / Happy Anniversary!" style="width: 100%; padding: 15px; background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(220, 220, 240, 0.2); border-radius: 8px; color: #fff; font-family: 'Lato', sans-serif; font-size: 1rem; resize: none; transition: border 0.3s ease; box-sizing: border-box;" onfocus="this.style.borderColor='var(--accent-gold)'" onblur="this.style.borderColor='rgba(220, 220, 240, 0.2)'"></textarea>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                                <span style="font-size: 0.8rem; color: #a89f91; font-family: 'Lato', sans-serif;">*Max 20 characters (letters & numbers only).</span>
-                                <span id="charCounter" style="font-size: 0.85rem; color: var(--accent-gold); font-weight: bold; font-family: 'Lato', sans-serif;">0/20</span>
+                        <div class="custom-order-section" style="margin: 25px 0; padding-top: 20px; border-top: 1px solid rgba(220, 220, 240, 0.1);">
+                            <div style="margin-bottom: 20px;">
+                                <label for="secretMessageInput" style="display: block; font-family: 'Playfair Display', serif; color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 10px; font-style: italic;">
+                                    Write Your Hidden Message
+                                </label>
+                                <textarea id="secretMessageInput" rows="2" maxlength="20" placeholder="e.g., Will you marry me? / Happy Anniversary!" style="width: 100%; padding: 15px; background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(220, 220, 240, 0.2); border-radius: 8px; color: #fff; font-family: 'Lato', sans-serif; font-size: 1rem; resize: none; transition: border 0.3s ease; box-sizing: border-box;" onfocus="this.style.borderColor='var(--accent-gold)'" onblur="this.style.borderColor='rgba(220, 220, 240, 0.2)'"></textarea>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                                    <span style="font-size: 0.8rem; color: #a89f91; font-family: 'Lato', sans-serif;">*Max 20 characters (letters & numbers only).</span>
+                                    <span id="charCounter" style="font-size: 0.85rem; color: var(--accent-gold); font-weight: bold; font-family: 'Lato', sans-serif;">0/20</span>
+                                </div>
+                            </div>
+
+                            <div class="quantity-wrapper">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <label style="font-family: 'Lato', sans-serif; color: #eaddcf; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Quantity</label>
+                                    <div style="display: flex; align-items: center; background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(220, 220, 240, 0.2); border-radius: 6px; overflow: hidden;">
+                                        <button type="button" id="qtyMinus" style="background: none; border: none; color: #fff; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">-</button>
+                                        <input type="number" id="qtyInput" value="1" min="1" readonly style="background: none; border: none; color: var(--accent-gold); text-align: center; width: 40px; font-weight: bold; font-size: 1.1rem; pointer-events: none;">
+                                        <button type="button" id="qtyPlus" style="background: none; border: none; color: #fff; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">+</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <label style="font-family: 'Lato', sans-serif; color: #eaddcf; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Quantity</label>
-                            <div style="display: flex; align-items: center; background: rgba(20, 20, 25, 0.6); border: 1px solid rgba(220, 220, 240, 0.2); border-radius: 6px; overflow: hidden;">
-                                <button type="button" id="qtyMinus" style="background: none; border: none; color: #fff; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">-</button>
-                                <input type="number" id="qtyInput" value="1" min="1" readonly style="background: none; border: none; color: var(--accent-gold); text-align: center; width: 40px; font-weight: bold; font-size: 1.1rem; pointer-events: none;">
-                                <button type="button" id="qtyPlus" style="background: none; border: none; color: #fff; padding: 10px 15px; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">+</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="purchase-section">
                         <div class="price-block">
                             <p class="price-label">Price</p>
-                            <p class="product-price-premium">₹ 500</p>
+                            <p class="product-price-premium">&#8377; 500</p>
                         </div>
-                        <button class="magic-cart-btn">
-                            ADD TO CART
-                            <div class="star-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
-                            </div>
-                            <div class="star-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
-                            </div>
-                            <div class="star-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
-                            </div>
-                            <div class="star-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
-                            </div>
-                            <div class="star-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
-                            </div>
-                            <div class="star-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
-                            </div>
-                        </button>
+
+                        <div class="purchase-section">
+                            <button class="magic-cart-btn" type="submit" id="mainAddToCartBtn" disabled>
+                                ADD TO CART
+                                <div class="star-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
+                                </div>
+                                <div class="star-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
+                                </div>
+                                <div class="star-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
+                                </div>
+                                <div class="star-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
+                                </div>
+                                <div class="star-5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
+                                </div>
+                                <div class="star-6">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
+                                </div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1008,8 +1012,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('secretMessageInput');
-    // Select the main Add to Cart button (adjusted to the actual class used on this page)
-    const addToCartBtn = document.querySelector('.magic-cart-btn'); 
+    // Select the main Add to Cart button using its consistent ID
+    const addToCartBtn = document.getElementById('mainAddToCartBtn'); 
     
     const qtyMinus = document.getElementById('qtyMinus');
     const qtyPlus = document.getElementById('qtyPlus');
@@ -1017,33 +1021,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!addToCartBtn || !messageInput) return; // safeguard
 
-    // Store original button text/styles
-    const originalBtnText = addToCartBtn.innerHTML;
-
-    // Initial Locked State
     function lockButton() {
-        addToCartBtn.disabled = true;
-        addToCartBtn.style.opacity = '0.5';
-        addToCartBtn.style.cursor = 'not-allowed';
-        addToCartBtn.style.background = '#333';
-        addToCartBtn.style.border = '1px solid #555';
-        addToCartBtn.innerHTML = 'Enter Message to Unlock 🔒';
+        const btn = document.getElementById('mainAddToCartBtn'); 
+        if(!btn) return;
+        btn.disabled = true;
     }
 
-    // Unlocked State
     function unlockButton() {
-        addToCartBtn.disabled = false;
-        addToCartBtn.style.opacity = '1';
-        addToCartBtn.style.cursor = 'pointer';
-        addToCartBtn.style.background = ''; // Revert to CSS
-        addToCartBtn.style.border = ''; // Revert to CSS
-        addToCartBtn.innerHTML = originalBtnText; // Restore original 'Add to Cart' and stars
+        const btn = document.getElementById('mainAddToCartBtn');
+        if(!btn) return;
+        btn.disabled = false;
     }
 
-    // Apply initial state
+    // 2. Apply Initial State
     lockButton();
     
-    // Listen for typing
+    // 3. Smart Input Logic (Counter + Activation)
     const charCounter = document.getElementById('charCounter');
     const MAX_CHARS = 20;
 
@@ -1051,24 +1044,23 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentText = messageInput.value;
         let textLength = currentText.length;
         
-        // Update Counter Text
+        // Update Counter UI
         charCounter.innerText = textLength + '/' + MAX_CHARS;
 
-        // Change color if approaching limit
+        // Change color if limit reached
         if (textLength >= MAX_CHARS) {
-            charCounter.style.color = '#ff4d4d'; // Red when full
+            charCounter.style.color = '#ff4d4d'; // Red
         } else {
-            charCounter.style.color = 'var(--accent-gold)'; // Normal gold
+            charCounter.style.color = 'var(--accent-gold)'; // Gold
         }
 
-        // Lock/Unlock Logic (must have at least 1 valid char)
+        // Lock/Unlock Logic
         if (currentText.trim().length > 0 && textLength <= MAX_CHARS) {
             unlockButton();
         } else {
             lockButton();
         }
     });
-
     // Quantity Counter Logic
     if (qtyPlus && qtyMinus && qtyInput) {
         qtyPlus.addEventListener('click', () => {
