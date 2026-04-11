@@ -575,7 +575,7 @@ body {
     transform: rotate(90deg) scale(1.1);
 }
 
-/* Layout */
+/* Layout — same as hidden_message */
 .modal-content {
     display: flex;
     gap: 40px;
@@ -741,15 +741,16 @@ body {
     box-shadow: 0 5px 15px rgba(212,163,115,0.3);
 }
 
-/* --- Right Side --- */
+/* --- Right Side — same rhythm as hidden_message --- */
 .modal-right {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     padding-left: 10px;
     padding-right: 10px;
+    padding-bottom: 35px;
 }
 .modal-right::-webkit-scrollbar { width: 4px; }
 .modal-right::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
@@ -791,48 +792,91 @@ body {
     font-weight: 600;
 }
 
-.details-accordion { flex: 1; display: flex; flex-direction: column; gap: 25px; }
+.details-accordion { flex: 1; display: flex; flex-direction: column; gap: 16px; }
 .detail-item h4 { font-family: 'Playfair Display', serif; color: #eaddcf; font-size: 1.3rem; margin: 0 0 8px 0; font-weight: 400;}
 .detail-item p { font-family: 'Lato', sans-serif; color: rgba(255,255,255,0.6); font-size: 1.05rem; margin: 0; line-height: 1.6; font-weight: 300;}
 
-/* Add to Cart Section Fixed at Bottom */
-.purchase-section {
-    margin-top: 30px;
-    background: rgba(20, 15, 10, 0.8);
-    padding: 25px;
-    border-radius: 16px;
-    border: 1px solid rgba(212, 163, 115, 0.2);
+/* Story checkout — same spacing as hidden_message (no message box) */
+.modal-right .custom-order-section .quantity-wrapper {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.modal-right .price-block {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    margin-top: 0;
+    padding: 12px 0;
+    border-top: 1px dashed rgba(212, 163, 115, 0.2);
+    border-bottom: 1px dashed rgba(212, 163, 115, 0.2);
 }
-.price-block { display: flex; flex-direction: column; }
-.price-label { margin: 0 0 2px 0; color: rgba(212,163,115,0.6); font-family: 'Lato', sans-serif; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;}
-.product-price-premium { font-family: 'Lato', sans-serif; font-size: 2.2rem; color: #fff; margin: 0; font-weight: 700; }
+
+.modal-right .price-block .price-label {
+    margin: 0;
+    color: rgba(212, 163, 115, 0.6);
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.modal-right .price-block .product-price-premium {
+    font-family: 'Lato', sans-serif;
+    font-size: 2.2rem;
+    color: #fff;
+    margin: 0;
+    font-weight: 700;
+}
+
+.modal-right .purchase-section {
+    width: 100%;
+    margin-top: 12px;
+    padding: 18px 0 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible !important;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
 
 /* ==========================================
-   10. MAGICAL UIVERSE ADD TO CART BUTTON 🔴
+   10. ADD TO CART — same as hidden_message (.magic-cart-btn)
    ========================================== */
-.magic-cart-btn {
+.modal-right .magic-cart-btn {
     position: relative;
     padding: 14px 35px;
-    background: #d4a373; /* Meltix Gold */
+    background: #d4a373;
     font-family: 'Lato', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #030201; /* Dark Text */
+    color: #030201;
     border: 2px solid #d4a373;
-    border-radius: 30px; /* Pill shape to match design */
+    border-radius: 30px;
     box-shadow: 0 0 0 rgba(212, 163, 115, 0.5);
     transition: all 0.3s ease-in-out;
     cursor: pointer;
     overflow: visible;
 }
 
-.magic-cart-btn .star-1 {
+.modal-right .magic-cart-btn:disabled {
+    background: #111;
+    color: #555;
+    border: 1px solid #333;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.modal-right .magic-cart-btn:disabled .fil0 {
+    fill: #555;
+}
+
+.modal-right .magic-cart-btn .star-1 {
     position: absolute;
     top: 20%;
     left: 20%;
@@ -843,7 +887,7 @@ body {
     transition: all 1s cubic-bezier(0.05, 0.83, 0.43, 0.96);
 }
 
-.magic-cart-btn .star-2 {
+.modal-right .magic-cart-btn .star-2 {
     position: absolute;
     top: 45%;
     left: 45%;
@@ -854,7 +898,7 @@ body {
     transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
-.magic-cart-btn .star-3 {
+.modal-right .magic-cart-btn .star-3 {
     position: absolute;
     top: 40%;
     left: 40%;
@@ -865,7 +909,7 @@ body {
     transition: all 1s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
-.magic-cart-btn .star-4 {
+.modal-right .magic-cart-btn .star-4 {
     position: absolute;
     top: 20%;
     left: 40%;
@@ -876,7 +920,7 @@ body {
     transition: all 0.8s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
-.magic-cart-btn .star-5 {
+.modal-right .magic-cart-btn .star-5 {
     position: absolute;
     top: 25%;
     left: 45%;
@@ -887,7 +931,7 @@ body {
     transition: all 0.6s cubic-bezier(0, 0.4, 0, 1.01);
 }
 
-.magic-cart-btn .star-6 {
+.modal-right .magic-cart-btn .star-6 {
     position: absolute;
     top: 5%;
     left: 50%;
@@ -898,76 +942,62 @@ body {
     transition: all 0.8s ease;
 }
 
-/* 🔴 Hover State (Jadoo Yahan Hai) 🔴 */
-.magic-cart-btn:hover {
-    background: rgba(10, 8, 5, 0.8); /* Transparent blackish */
-    color: #d4a373; /* Text Gold ho jayega */
+.modal-right .magic-cart-btn:not(:disabled):hover {
+    background: rgba(10, 8, 5, 0.8);
+    color: #d4a373;
     box-shadow: 0 0 25px rgba(212, 163, 115, 0.5);
 }
 
-.magic-cart-btn:hover .star-1 {
-    position: absolute;
+.modal-right .magic-cart-btn:not(:disabled):hover .star-1 {
     top: -80%;
     left: -30%;
     width: 25px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-2 {
-    position: absolute;
+.modal-right .magic-cart-btn:not(:disabled):hover .star-2 {
     top: -25%;
     left: 10%;
     width: 15px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-3 {
-    position: absolute;
+.modal-right .magic-cart-btn:not(:disabled):hover .star-3 {
     top: 55%;
     left: 25%;
     width: 5px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-4 {
-    position: absolute;
+.modal-right .magic-cart-btn:not(:disabled):hover .star-4 {
     top: 30%;
     left: 80%;
     width: 8px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-5 {
-    position: absolute;
+.modal-right .magic-cart-btn:not(:disabled):hover .star-5 {
     top: 25%;
     left: 115%;
     width: 15px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-.magic-cart-btn:hover .star-6 {
-    position: absolute;
+.modal-right .magic-cart-btn:not(:disabled):hover .star-6 {
     top: 5%;
     left: 60%;
     width: 5px;
-    height: auto;
     filter: drop-shadow(0 0 10px #d4a373);
     z-index: 2;
 }
 
-/* SVG Fill Color */
-.magic-cart-btn .fil0 {
-    fill: #d4a373; /* Gold colored stars */
+.modal-right .magic-cart-btn .fil0 {
+    fill: #d4a373;
 }
 
 .auth-prompt-container {
