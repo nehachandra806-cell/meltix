@@ -750,7 +750,7 @@ body {
     overflow-x: visible;
     padding-left: 10px;
     padding-right: 10px;
-    padding-bottom: 35px;
+    padding-bottom: 48px;
 }
 .modal-right::-webkit-scrollbar { width: 4px; }
 .modal-right::-webkit-scrollbar-thumb { background: rgba(212, 163, 115, 0.3); border-radius: 10px; }
@@ -998,6 +998,401 @@ body {
 
 .modal-right .magic-cart-btn .fil0 {
     fill: #d4a373;
+}
+
+/* --- Visual Reveal Atelier (IDs 26–29) --- */
+.modal-right #visualRevealAtelier {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 14px;
+    margin-bottom: 16px;
+}
+
+.modal-right .visual-reveal-atelier-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 22px 20px 28px;
+    border-radius: 16px;
+    border: 1px solid rgba(212, 163, 115, 0.28);
+    background: rgba(12, 10, 8, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.modal-right .reveal-type-badge {
+    display: inline-block;
+    align-self: flex-start;
+    margin-bottom: 25px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #030201;
+    background: linear-gradient(135deg, #d4a373, #c4956a);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(212, 163, 115, 0.25);
+}
+
+.modal-right .bespoke-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-right #craftingPointers.bespoke-list {
+    padding: 14px 16px 14px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 163, 115, 0.18);
+    background: rgba(6, 5, 4, 0.45);
+    font-family: 'Lato', sans-serif;
+}
+
+.modal-right .bespoke-list li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+}
+
+.modal-right .bespoke-list li:last-child {
+    margin-bottom: 0;
+}
+
+.modal-right .bespoke-list li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    color: #d4a373;
+}
+
+.modal-right .cta-hint {
+    margin: 0 0 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: rgba(234, 221, 207, 0.75);
+}
+
+/* Continue Application — full folder/pencil animation, Meltix theme (gold / charcoal) */
+.modal-right .continue-application {
+    --color: #f5ebe0;
+    --background: #1a1410;
+    --background-hover: #2a2218;
+    --background-left: #d4a373;
+    --folder: #f3e9cb;
+    --folder-inner: #a68b6b;
+    --paper: #ffffff;
+    --paper-lines: #c4a882;
+    --paper-behind: #ede4d8;
+    --pencil-cap: #fff;
+    --pencil-top: #d4a373;
+    --pencil-middle: #f8f0e6;
+    --pencil-bottom: #5c3d1e;
+    --shadow: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(212, 163, 115, 0.28);
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Lato', sans-serif;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    padding: 17px 29px 17px 69px;
+    transition: background 0.3s;
+    color: var(--color);
+    background: var(--bg, var(--background));
+    width: 100%;
+    max-width: 100%;
+}
+
+.modal-right .continue-application > div {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 53px;
+    position: absolute;
+    overflow: hidden;
+    border-radius: 7px 0 0 7px;
+    background: var(--background-left);
+}
+
+.modal-right .continue-application > div .folder {
+    width: 23px;
+    height: 27px;
+    position: absolute;
+    left: 15px;
+    top: 13px;
+}
+
+.modal-right .continue-application > div .folder .top {
+    left: 0;
+    top: 0;
+    z-index: 2;
+    position: absolute;
+    transform: translateX(var(--fx, 0));
+    transition: transform 0.4s ease var(--fd, 0.3s);
+}
+
+.modal-right .continue-application > div .folder .top svg {
+    width: 24px;
+    height: 27px;
+    display: block;
+    fill: var(--folder);
+    transform-origin: 0 50%;
+    transition: transform 0.3s ease var(--fds, 0.45s);
+    transform: perspective(120px) rotateY(var(--fr, 0deg));
+}
+
+.modal-right .continue-application > div .folder:before,
+.modal-right .continue-application > div .folder:after,
+.modal-right .continue-application > div .folder .paper {
+    content: "";
+    position: absolute;
+    left: var(--l, 0);
+    top: var(--t, 0);
+    width: var(--w, 100%);
+    height: var(--h, 100%);
+    border-radius: 1px;
+    background: var(--b, var(--folder-inner));
+}
+
+.modal-right .continue-application > div .folder:before {
+    box-shadow: 0 1.5px 3px var(--shadow), 0 2.5px 5px var(--shadow), 0 3.5px 7px var(--shadow);
+    transform: translateX(var(--fx, 0));
+    transition: transform 0.4s ease var(--fd, 0.3s);
+}
+
+.modal-right .continue-application > div .folder:after,
+.modal-right .continue-application > div .folder .paper {
+    --l: 1px;
+    --t: 1px;
+    --w: 21px;
+    --h: 25px;
+    --b: var(--paper-behind);
+}
+
+.modal-right .continue-application > div .folder:after {
+    transform: translate(var(--pbx, 0), var(--pby, 0));
+    transition: transform 0.4s ease var(--pbd, 0s);
+}
+
+.modal-right .continue-application > div .folder .paper {
+    z-index: 1;
+    --b: var(--paper);
+}
+
+.modal-right .continue-application > div .folder .paper:before,
+.modal-right .continue-application > div .folder .paper:after {
+    content: "";
+    width: var(--wp, 14px);
+    height: 2px;
+    border-radius: 1px;
+    transform: scaleY(0.5);
+    left: 3px;
+    top: var(--tp, 3px);
+    position: absolute;
+    background: var(--paper-lines);
+    box-shadow: 0 12px 0 0 var(--paper-lines), 0 24px 0 0 var(--paper-lines);
+}
+
+.modal-right .continue-application > div .folder .paper:after {
+    --tp: 6px;
+    --wp: 10px;
+}
+
+.modal-right .continue-application > div .pencil {
+    height: 2px;
+    width: 3px;
+    border-radius: 1px 1px 0 0;
+    top: 8px;
+    left: 105%;
+    position: absolute;
+    z-index: 3;
+    transform-origin: 50% 19px;
+    background: var(--pencil-cap);
+    transform: translateX(var(--pex, 0)) rotate(35deg);
+    transition: transform 0.4s ease var(--pbd, 0s);
+}
+
+.modal-right .continue-application > div .pencil:before,
+.modal-right .continue-application > div .pencil:after {
+    content: "";
+    position: absolute;
+    display: block;
+    background: var(--b, linear-gradient(var(--pencil-top) 55%, var(--pencil-middle) 55.1%, var(--pencil-middle) 60%, var(--pencil-bottom) 60.1%));
+    width: var(--w, 5px);
+    height: var(--h, 20px);
+    border-radius: var(--br, 2px 2px 0 0);
+    top: var(--t, 2px);
+    left: var(--l, -1px);
+}
+
+.modal-right .continue-application > div .pencil:before {
+    -webkit-clip-path: polygon(0 5%, 5px 5%, 5px 17px, 50% 20px, 0 17px);
+    clip-path: polygon(0 5%, 5px 5%, 5px 17px, 50% 20px, 0 17px);
+}
+
+.modal-right .continue-application > div .pencil:after {
+    --b: none;
+    --w: 3px;
+    --h: 6px;
+    --br: 0 2px 1px 0;
+    --t: 3px;
+    --l: 3px;
+    border-top: 1px solid var(--pencil-top);
+    border-right: 1px solid var(--pencil-top);
+}
+
+.modal-right .continue-application:before,
+.modal-right .continue-application:after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color);
+    transform-origin: 9px 1px;
+    transform: translateX(var(--cx, 0)) scale(0.5) rotate(var(--r, -45deg));
+    top: 26px;
+    right: 16px;
+    transition: transform 0.3s;
+}
+
+.modal-right .continue-application:after {
+    --r: 45deg;
+}
+
+.modal-right .continue-application:hover {
+    --cx: 2px;
+    --bg: var(--background-hover);
+    --fx: -40px;
+    --fr: -60deg;
+    --fd: .15s;
+    --fds: 0s;
+    --pbx: 3px;
+    --pby: -3px;
+    --pbd: .15s;
+    --pex: -24px;
+    border-color: rgba(212, 163, 115, 0.55);
+}
+
+.modal-right .pay-security-btn {
+    width: 100%;
+    padding: 18px;
+    margin-top: 12px;
+    background: #d4a373;
+    color: #030201;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.modal-right .pay-security-btn:hover {
+    background: #f1e0cf;
+    transform: translateY(-2px);
+}
+
+.modal-right #artisanBespokeForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 4px;
+}
+
+.modal-right #artisanBespokeForm .input-group-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.modal-right #artisanBespokeForm .input-group-premium .artisan-label {
+    margin-top: 10px;
+}
+
+.modal-right #artisanBespokeForm .optional-mark {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: rgba(212, 163, 115, 0.55);
+    font-size: 0.85em;
+}
+
+.modal-right #artisanBespokeForm .artisan-label {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: rgba(234, 221, 207, 0.85);
+}
+
+.modal-right #artisanBespokeForm .artisan-input,
+.modal-right #artisanBespokeForm .artisan-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 163, 115, 0.22);
+    background: rgba(6, 5, 4, 0.55);
+    color: #eaddcf;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.modal-right #artisanBespokeForm .artisan-textarea {
+    resize: none;
+    min-height: 128px;
+    max-height: 128px;
+    height: 128px;
+    line-height: 1.55;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.modal-right #artisanBespokeForm .artisan-input::placeholder,
+.modal-right #artisanBespokeForm .artisan-textarea::placeholder {
+    color: rgba(212, 163, 115, 0.35);
+}
+
+.modal-right #artisanBespokeForm .artisan-input:focus,
+.modal-right #artisanBespokeForm .artisan-textarea:focus {
+    border-color: rgba(212, 163, 115, 0.55);
+    box-shadow: 0 0 0 1px rgba(212, 163, 115, 0.2), 0 0 22px rgba(212, 163, 115, 0.12);
+}
+
+.modal-right #artisanBespokeForm .artisan-commitment-notice {
+    margin: 0.35rem 0 0;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 163, 115, 0.15);
+    background: rgba(8, 7, 5, 0.4);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: rgba(234, 221, 207, 0.92);
+    text-shadow:
+        0 0 12px rgba(212, 163, 115, 0.35),
+        0 0 24px rgba(212, 163, 115, 0.12);
 }
 
 .auth-prompt-container {

@@ -141,6 +141,12 @@
                             <h4>How It's Crafted (Process)</h4>
                             <p id="modalProcess">Process text.</p>
                         </div>
+
+                        <div id="stressBusterInsight" class="stress-buster-insight" style="display:none;">
+                            <p>Shatter the Stress: This isn&apos;t just a candle. It&apos;s a moment of pure catharsis. When life gets overwhelming, take the Meltix hammer and smash the outer concrete shell. Find peace in the scent hidden inside.</p>
+                        </div>
+
+                        <div id="standardCheckoutUI">
                         <div class="custom-order-section" style="margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(220, 220, 240, 0.1);">
                             <div class="quantity-wrapper">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -182,6 +188,43 @@
                             </div>
                         </button>
                         </div>
+                        </div>
+
+                        <div id="bespokeArtisanUI" style="display:none;">
+                            <div class="bespoke-artisan-inner">
+                                <div class="reveal-type-badge">Edition: Bespoke Treasure Hunt</div>
+                                <ul id="bespokePointers" class="bespoke-list"></ul>
+                                <div id="initiateArtisanRequest">
+                                    <p class="cta-hint">Place your bespoke order by filling this form:</p>
+                                    <button type="button" class="continue-application" onclick="showArtisanForm()">
+                                        <div>
+                                            <div class="pencil"></div>
+                                            <div class="folder">
+                                                <div class="top">
+                                                    <svg viewBox="0 0 24 27">
+                                                        <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="paper"></div>
+                                            </div>
+                                        </div>
+                                        Continue Application
+                                    </button>
+                                </div>
+                                <div id="artisanBespokeForm" style="display:none;">
+                                    <div class="input-group-premium">
+                                        <label class="artisan-label" for="breakArtisanWhatsApp">WhatsApp Number</label>
+                                        <input type="tel" id="breakArtisanWhatsApp" class="artisan-input" placeholder="+91 98765 43210" autocomplete="tel" inputmode="tel">
+                                    </div>
+                                    <div class="input-group-premium">
+                                        <label class="artisan-label" for="breakArtisanStory">Tell us your Story / Special Instructions <span class="optional-mark">(optional)</span></label>
+                                        <textarea id="breakArtisanStory" class="artisan-textarea" placeholder="Share your vision, occasion, or any details for our artisans…"></textarea>
+                                    </div>
+                                    <p class="artisan-commitment-notice">Note: A non-refundable Commitment Fee of ₹ 250 is required for this handcrafted piece. Our artisans will contact you to finalize details.</p>
+                                    <button type="button" class="pay-security-btn" id="breakArtisanCommitBtn">Confirm &amp; Pay Commitment Fee (₹ 250)</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,13 +253,14 @@
                 {id: 58, src: "{{ url_for('static', filename='images/treasure_hunt_1.jpg') }}"},
                 {id: 59, src: "{{ url_for('static', filename='images/treasure_hunt_2.jpg') }}"},
                 {id: 60, src: "{{ url_for('static', filename='images/treasure_hunt_3.jpg') }}"},
-                {id: 61, src: "{{ url_for('static', filename='images/treasure_hunt_4.jpg') }}"}
+                {id: 61, src: "{{ url_for('static', filename='images/treasure_hunt_4.jpg') }}"},
+                {id: 62, src: "{{ url_for('static', filename='images/treasure_hunt_4.jpg') }}"}
             ],
             'The Stress Buster': [
-                {id: 62, src: "{{ url_for('static', filename='images/stress_buster_1.jpg') }}"},
-                {id: 63, src: "{{ url_for('static', filename='images/stress_buster_2.jpg') }}"},
-                {id: 64, src: "{{ url_for('static', filename='images/stress_buster_3.jpg') }}"},
-                {id: 65, src: "{{ url_for('static', filename='images/stress_buster_4.jpg') }}"}
+                {id: 63, src: "{{ url_for('static', filename='images/stress_buster_1.jpg') }}"},
+                {id: 64, src: "{{ url_for('static', filename='images/stress_buster_2.jpg') }}"},
+                {id: 65, src: "{{ url_for('static', filename='images/stress_buster_3.jpg') }}"},
+                {id: 66, src: "{{ url_for('static', filename='images/stress_buster_4.jpg') }}"}
             ]
         };
 
@@ -226,10 +270,11 @@
             59: { title: "Oceanic Echo: The Seashell Reveal", specialty: "This candle is a tribute to the beauty of discovery, making it a \"precious find\" for a partner, best friend, or anyone who finds peace by the sea. The speciality of this piece is its incredible hand-sculpted conch shell design, which functions as high-end home decor long before the fire even touches it. Hidden within the \"mouth\" of the shell is a delicate, diamond-studded shell pendant in rose gold. It symbolizes that the most beautiful treasures are often found in quiet, unexpected places. It’s a deeply thoughtful way to show someone they are your \"one in a million\" find.", usage: "Place the seashell on a flat, heat-resistant surface. Light the wick at the crown and allow the fragrance to drift. As the inner wax liquefies, the treasure pouch will begin to emerge. Once the pouch is clear of the melt pool, blow out the candle, use tweezers to carefully remove the foil, and let it cool before unveiling the rose-gold pendant inside.", process: "Hand-sculpted using a high-density, matte-finish ivory wax to mimic the realistic texture and weight of a natural conch shell. The inner core is poured with a specialized low-heat soy wax blend to ensure the jewelry pouch is revealed safely without damage. The pendant is crafted with high-quality rose-gold plating and premium accents, double-wrapped in medical-grade protective foil for a pristine reveal." },
             60: { title: "The Sun-Kissed Surprise: Celestial Reveal", specialty: "This candle is designed to \"light up\" the life of someone truly special—be it your partner, a parent, or that one friend who is your personal sunshine. The speciality of this piece is its smooth, minimalist organic design that hides a brilliant, gold-finish Sunburst necklace encrusted with shimmering crystals. It’s a powerful metaphor: no matter how much life \"melts\" you down, your inner light and beauty will always shine through. It’s the perfect way to tell someone, \"You are the center of my universe,\" making it an unforgettable gift for anniversaries or birthdays.", usage: "Place the candle on a stable, heat-resistant tray. Light the wick at the top and enjoy the warm, ambient glow. After a few hours of burning, the golden treasure pouch will become visible within the wax pool. Carefully extinguish the flame, use tweezers to lift the pouch out, and let it cool. Once opened, the celestial sunburst pendant is ready to be worn and cherished.", process: "Hand-poured using a premium, high-luster wax that gives the candle its signature marble-smooth finish. We use a specialty soy-blend wax for the core to ensure a clean, even melt and an easy reveal. The sunburst pendant is crafted with a high-quality golden finish and precision-cut crystals, double-wrapped in medical-grade protective foil to ensure it stays pristine and sparkling until the very moment it is found." },
             61: { title: "The Geometric Garden: Leaf of Life Reveal", specialty: "This candle is a celebration of growth and new beginnings, making it the perfect gift for a partner starting a new chapter or a close friend who is \"blooming\" in their own way. The speciality of this piece is its striking, polyhedral geometric design—a modern architectural masterpiece for any room. Hidden within the core is a minimalist, 24k gold-finish leaf pendant on a delicate chain. It signifies that even in the most structured and complex lives, there is always room for natural growth and organic beauty. It’s a quiet, elegant way to say, \"I’m proud of who you are becoming.\"", usage: "Place the geometric vessel on a heat-safe coaster. Light the central wick and let the crisp fragrance fill the air. As the polyhedral \"walls\" begin to soften inward, the jewelry pouch will surface in the melt pool. Carefully extinguish the flame, use tweezers to retrieve the foil, and let it cool. Unwrap it to reveal the gold-leaf necklace, a lasting token of your shared journey.", process: "Hand-poured using a high-density, matte-finish soy wax that holds the sharp, modern angles of the polyhedral mold perfectly. The inner core is made with a clean-burning vegetable wax blend designed for a slow, hypnotic reveal. The leaf pendant is crafted with premium gold plating and precision engraving, double-wrapped in medical-grade protective foil to ensure it stays flawless until the moment of discovery." },
-            62: { title: "The Zen Unboxing: Concrete Calm", specialty: "This is the ultimate \"Stress Buster\" for those days when just breathing isn't enough. It’s designed for a partner or a friend who is feeling completely overwhelmed and needs a moment of physical catharsis. The speciality here is the interactive smash experience. Before you get to the soothing candle, you have to break through the \"hard exterior\" of stress. It’s a powerful metaphor: you are physically breaking your tension to find the serenity waiting underneath. It turns a simple gift into a therapeutic event that starts with a release and ends with a calm, glowing atmosphere.", usage: "Place the concrete block on a sturdy, protected surface. Use the included premium brass-headed hammer to gently but firmly strike the \"cracked\" sections of the shell. Once the outer concrete layer is broken away, you'll reveal the \"Serenity Core.\" Clear away the debris, light the wick, and let the scent of Chamomile take over as the stress of the day disappears.", process: "The outer shell is crafted from a proprietary \"Eco-Shatter\" concrete blend that is designed to crack safely without creating sharp dust. The inner candle is hand-poured with an ultra-calming Chamomile & Serenity soy wax blend. It comes as a complete kit, including the custom-branded Meltix wooden and brass hammer, all housed in our signature charcoal-grey luxury gift box." },
-            63: { title: "Serenity Stone: The Cylindrical Smash", specialty: "This is for the friend or partner who feels like they’re carrying the weight of the world on their shoulders. The speciality is the sensory transition—moving from the hard, cold, grey concrete to the soft, warm, white wax hidden inside. It represents the idea that even when life feels rigid and unbreakable, there is a gentle light inside you waiting to be set free. It’s a physical manifestation of \"breaking through\" your limits, making it an incredibly empowering gift for someone who needs a reminder of their own inner warmth.", usage: "Place the cylinder on a solid, protected surface. Take a deep breath and use the brass-tipped hammer to strike the pre-fractured concrete. Once you’ve \"unboxed\" your peace, clear away the fragments and light the wick. As the candle burns, it creates a sanctuary of light and scent, effectively washing away the remnants of a hard day.", process: "We’ve used a specialized \"stress-fracture\" concrete mold that allows for a clean break without the mess of traditional stone. The candle inside is a high-grade soy blend, infused with Lavender & Serenity essential oils for maximum relaxation. The set is completed with a hand-turned wooden hammer and a luxury charcoal gift box." },
-            64: { title: "The Orb of Serenity: Spherical Smash", specialty: "This piece is designed for the person who needs a complete \"reset.\" The speciality of this design is its perfect spherical shape—a symbol of wholeness and cycles. Breaking into this orb feels like cracking open a new day. It’s a powerful gift for a partner or a close friend who is struggling to find a \"center\" amidst a chaotic week. By physically shattering the concrete shell, they are performing a ritual of letting go, uncovering a soft, glowing light that smells like a field of wildflowers. The addition of real dried chamomile botanicals inside the wax adds a beautiful, organic touch that only becomes visible once the \"armor\" is removed.", usage: "Place the \"Orb of Serenity\" on the provided marble or heat-safe base. Using the brass-weighted hammer, strike the pre-etched cracks on the surface. Once the concrete \"peels\" away, you are left with a smooth, egg-shaped candle core. Light the wick and let the calming botanical aroma fill the room. It’s not just a candle; it’s a 10-minute therapy session followed by hours of peace.", process: "The outer sphere is cast in a specialized \"light-impact\" concrete that mimics the look of natural stone but shatters cleanly. The inner core is hand-poured with a premium, slow-burning soy wax infused with Soothing Chamomile & Serenity essential oils. Each candle features hand-placed dried chamomile flowers for a \"botanical surprise\" as it burns. The set comes with our most premium ornate wooden and brass hammer." },
-            65: { title: "The Golden Sanctuary: Sandalwood Smash", specialty: "This is the ultimate \"Stress Buster\" for those who appreciate the finer things in life even during their most chaotic moments. It’s a perfect gift for a partner or a best friend who needs a physical release and a mental reset. The speciality of this piece is the Gold-Leaf infusion—as you break through the rugged, industrial concrete shell, you aren’t just finding a candle; you’re uncovering a luxury sanctuary. The combination of the physical \"smash\" and the grounding, earthy aroma of Sandalwood represents the transformation of raw tension into refined peace. It’s a physical reminder that even when things feel heavy, there is a golden light inside you waiting to be revealed.", usage: "Place the concrete sphere on the included brass tray or a sturdy, protected surface. Use the weighted copper-headed hammer to strike the \"fault lines\" of the concrete. Once the shell gives way, clear the fragments to reveal the gold-flecked wax core. Light the wick and let the warm, woody scent of Sandalwood ground your energy and melt away the remaining stress of the day.", process: "The outer \"Armor\" is cast in a high-texture, matte-grey concrete blend designed for a clean, satisfying fracture. The inner core is hand-poured with a premium soy wax infused with Genuine Sandalwood essential oils and topped with hand-placed 24k-style gold leaf flakes for a touch of opulence. The set is completed with a professional-grade rose-gold and walnut wood hammer, all housed in our signature bronze-foiled luxury gift box." }
+            62: { title: "The Vaulted Reveal: Bespoke Treasure Hunt", specialty: "Our bespoke Treasure Hunt edition—crafted around your own heirloom. You order to begin the ritual, ship your jewelry to our secure vault, and our artisans embed it inside a breakable outer shell for a theatrical, hand-delivered mystery to smash and unveil.", usage: "After you confirm your bespoke order, our concierge will share vault shipping instructions. When your candle arrives, follow the ritual card to break the shell safely and retrieve your embedded treasure.", process: "Each shell is poured to order using the same layered wax and safety protocols as our signature Treasure Hunt line, with your approved piece secured in a heat-safe pouch before the outer shell is cast." },
+            63: { title: "The Zen Unboxing: Concrete Calm", specialty: "This is the ultimate \"Stress Buster\" for those days when just breathing isn't enough. It’s designed for a partner or a friend who is feeling completely overwhelmed and needs a moment of physical catharsis. The speciality here is the interactive smash experience. Before you get to the soothing candle, you have to break through the \"hard exterior\" of stress. It’s a powerful metaphor: you are physically breaking your tension to find the serenity waiting underneath. It turns a simple gift into a therapeutic event that starts with a release and ends with a calm, glowing atmosphere.", usage: "Place the concrete block on a sturdy, protected surface. Use the included premium brass-headed hammer to gently but firmly strike the \"cracked\" sections of the shell. Once the outer concrete layer is broken away, you'll reveal the \"Serenity Core.\" Clear away the debris, light the wick, and let the scent of Chamomile take over as the stress of the day disappears.", process: "The outer shell is crafted from a proprietary \"Eco-Shatter\" concrete blend that is designed to crack safely without creating sharp dust. The inner candle is hand-poured with an ultra-calming Chamomile & Serenity soy wax blend. It comes as a complete kit, including the custom-branded Meltix wooden and brass hammer, all housed in our signature charcoal-grey luxury gift box." },
+            64: { title: "Serenity Stone: The Cylindrical Smash", specialty: "This is for the friend or partner who feels like they’re carrying the weight of the world on their shoulders. The speciality is the sensory transition—moving from the hard, cold, grey concrete to the soft, warm, white wax hidden inside. It represents the idea that even when life feels rigid and unbreakable, there is a gentle light inside you waiting to be set free. It’s a physical manifestation of \"breaking through\" your limits, making it an incredibly empowering gift for someone who needs a reminder of their own inner warmth.", usage: "Place the cylinder on a solid, protected surface. Take a deep breath and use the brass-tipped hammer to strike the pre-fractured concrete. Once you’ve \"unboxed\" your peace, clear away the fragments and light the wick. As the candle burns, it creates a sanctuary of light and scent, effectively washing away the remnants of a hard day.", process: "We’ve used a specialized \"stress-fracture\" concrete mold that allows for a clean break without the mess of traditional stone. The candle inside is a high-grade soy blend, infused with Lavender & Serenity essential oils for maximum relaxation. The set is completed with a hand-turned wooden hammer and a luxury charcoal gift box." },
+            65: { title: "The Orb of Serenity: Spherical Smash", specialty: "This piece is designed for the person who needs a complete \"reset.\" The speciality of this design is its perfect spherical shape—a symbol of wholeness and cycles. Breaking into this orb feels like cracking open a new day. It’s a powerful gift for a partner or a close friend who is struggling to find a \"center\" amidst a chaotic week. By physically shattering the concrete shell, they are performing a ritual of letting go, uncovering a soft, glowing light that smells like a field of wildflowers. The addition of real dried chamomile botanicals inside the wax adds a beautiful, organic touch that only becomes visible once the \"armor\" is removed.", usage: "Place the \"Orb of Serenity\" on the provided marble or heat-safe base. Using the brass-weighted hammer, strike the pre-etched cracks on the surface. Once the concrete \"peels\" away, you are left with a smooth, egg-shaped candle core. Light the wick and let the calming botanical aroma fill the room. It’s not just a candle; it’s a 10-minute therapy session followed by hours of peace.", process: "The outer sphere is cast in a specialized \"light-impact\" concrete that mimics the look of natural stone but shatters cleanly. The inner core is hand-poured with a premium, slow-burning soy wax infused with Soothing Chamomile & Serenity essential oils. Each candle features hand-placed dried chamomile flowers for a \"botanical surprise\" as it burns. The set comes with our most premium ornate wooden and brass hammer." },
+            66: { title: "The Golden Sanctuary: Sandalwood Smash", specialty: "This is the ultimate \"Stress Buster\" for those who appreciate the finer things in life even during their most chaotic moments. It’s a perfect gift for a partner or a best friend who needs a physical release and a mental reset. The speciality of this piece is the Gold-Leaf infusion—as you break through the rugged, industrial concrete shell, you aren’t just finding a candle; you’re uncovering a luxury sanctuary. The combination of the physical \"smash\" and the grounding, earthy aroma of Sandalwood represents the transformation of raw tension into refined peace. It’s a physical reminder that even when things feel heavy, there is a golden light inside you waiting to be revealed.", usage: "Place the concrete sphere on the included brass tray or a sturdy, protected surface. Use the weighted copper-headed hammer to strike the \"fault lines\" of the concrete. Once the shell gives way, clear the fragments to reveal the gold-flecked wax core. Light the wick and let the warm, woody scent of Sandalwood ground your energy and melt away the remaining stress of the day.", process: "The outer \"Armor\" is cast in a high-texture, matte-grey concrete blend designed for a clean, satisfying fracture. The inner core is hand-poured with a premium soy wax infused with Genuine Sandalwood essential oils and topped with hand-placed 24k-style gold leaf flakes for a touch of opulence. The set is completed with a professional-grade rose-gold and walnut wood hammer, all housed in our signature bronze-foiled luxury gift box." }
         };
 
         const dragArea = document.getElementById('drag-area');
@@ -814,6 +859,35 @@
 
         let activeProductId = null;
 
+        function setBespokePointers(texts) {
+            const ul = document.getElementById('bespokePointers');
+            if (!ul) return;
+            ul.innerHTML = '';
+            texts.forEach((t) => {
+                const li = document.createElement('li');
+                li.textContent = t;
+                ul.appendChild(li);
+            });
+        }
+
+        function resetBespokeArtisanForm() {
+            const initiate = document.getElementById('initiateArtisanRequest');
+            const form = document.getElementById('artisanBespokeForm');
+            if (initiate) initiate.style.display = 'block';
+            if (form) form.style.display = 'none';
+            const wa = document.getElementById('breakArtisanWhatsApp');
+            const st = document.getElementById('breakArtisanStory');
+            if (wa) wa.value = '';
+            if (st) st.value = '';
+        }
+
+        function showArtisanForm() {
+            const initiate = document.getElementById('initiateArtisanRequest');
+            const form = document.getElementById('artisanBespokeForm');
+            if (initiate) initiate.style.display = 'none';
+            if (form) form.style.display = 'block';
+        }
+
         async function openModal(productId) {
             activeProductId = productId;
             let targetProduct = null;
@@ -861,6 +935,35 @@
 
             const breakQtyInput = document.getElementById('breakQtyInput');
             if (breakQtyInput) breakQtyInput.value = '1';
+
+            const standardCheckoutUI = document.getElementById('standardCheckoutUI');
+            const bespokeArtisanUI = document.getElementById('bespokeArtisanUI');
+            const stressBusterInsight = document.getElementById('stressBusterInsight');
+            const pid = Number(productId);
+            const isTreasureBespoke = pid >= 58 && pid <= 62;
+            const isStressStandard = pid >= 63 && pid <= 66;
+            if (standardCheckoutUI && bespokeArtisanUI && stressBusterInsight) {
+                if (isTreasureBespoke) {
+                    standardCheckoutUI.style.display = 'none';
+                    stressBusterInsight.style.display = 'none';
+                    bespokeArtisanUI.style.display = 'flex';
+                    setBespokePointers([
+                        'Order to start the surprise',
+                        'Ship your jewelry to our vault',
+                        'We embed it in the breakable shell',
+                        'Hand-delivered mystery to smash'
+                    ]);
+                    resetBespokeArtisanForm();
+                } else if (isStressStandard) {
+                    standardCheckoutUI.style.display = 'block';
+                    stressBusterInsight.style.display = 'block';
+                    bespokeArtisanUI.style.display = 'none';
+                } else {
+                    standardCheckoutUI.style.display = 'block';
+                    stressBusterInsight.style.display = 'none';
+                    bespokeArtisanUI.style.display = 'none';
+                }
+            }
 
             modal.classList.add('show');
             document.body.style.overflow = 'hidden'; 
@@ -996,6 +1099,53 @@
                 const n = parseInt(input.value, 10);
                 const cur = Number.isFinite(n) ? n : 1;
                 if (cur > 1) input.value = String(cur - 1);
+            });
+        })();
+
+        const MELTIX_WHATSAPP_BUSINESS = '919876543210';
+
+        function normalizeIndiaWhatsAppDigits(input) {
+            const d = String(input).replace(/\D/g, '');
+            if (d.length === 12 && d.startsWith('91')) {
+                const rest = d.slice(2);
+                if (/^[6-9]\d{9}$/.test(rest)) return d;
+            }
+            if (d.length === 10 && /^[6-9]\d{9}$/.test(d)) return '91' + d;
+            if (d.length === 11 && d.startsWith('0') && /^[6-9]\d{9}$/.test(d.slice(1))) return '91' + d.slice(1);
+            return null;
+        }
+
+        (function initBreakArtisanCommitFlow() {
+            const btn = document.getElementById('breakArtisanCommitBtn');
+            if (!btn) return;
+            btn.addEventListener('click', () => {
+                const waEl = document.getElementById('breakArtisanWhatsApp');
+                const storyEl = document.getElementById('breakArtisanStory');
+                const waRaw = waEl ? waEl.value.trim() : '';
+                const storyText = storyEl ? storyEl.value.trim() : '';
+                const digits = normalizeIndiaWhatsAppDigits(waRaw);
+                if (!digits) {
+                    alert('Please enter a valid Indian WhatsApp number (10 digits, or with country code +91).');
+                    return;
+                }
+                const productId = activeProductId;
+                const titleEl = document.getElementById('modalTitle');
+                const title = titleEl ? titleEl.innerText.trim() : 'Break to Reveal';
+                const body = [
+                    'Meltix — Break to Reveal (Bespoke Treasure Hunt)',
+                    '',
+                    'Product ID: ' + productId,
+                    'Piece: ' + title,
+                    '',
+                    'Customer WhatsApp (digits): ' + digits,
+                    '',
+                    'Story / special instructions:',
+                    storyText || '(none)',
+                    '',
+                    'Commitment fee: ₹250 (non-refundable). Please confirm payment with Meltix.'
+                ].join('\n');
+                const url = 'https://wa.me/' + MELTIX_WHATSAPP_BUSINESS + '?text=' + encodeURIComponent(body);
+                window.open(url, '_blank', 'noopener,noreferrer');
             });
         })();
     </script>

@@ -156,6 +156,7 @@
                             <h4>How It's Crafted (Process)</h4>
                             <p id="modalProcess">Process text.</p>
                         </div>
+                        <div id="standardCheckoutUI">
                         <div class="custom-order-section" style="margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(220, 220, 240, 0.1);">
                             <div class="quantity-wrapper">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -196,6 +197,43 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
                             </div>
                         </button>
+                        </div>
+                        </div>
+
+                        <div id="visualRevealAtelier" style="display:none;">
+                            <div class="visual-reveal-atelier-inner">
+                                <span id="revealTypeLabel" class="reveal-type-badge"></span>
+                                <ul id="craftingPointers" class="bespoke-list"></ul>
+                                <div id="initiateArtisanRequest">
+                                    <p class="cta-hint">Place your bespoke order by filling this form:</p>
+                                    <button type="button" class="continue-application" onclick="showArtisanForm()">
+                                        <div>
+                                            <div class="pencil"></div>
+                                            <div class="folder">
+                                                <div class="top">
+                                                    <svg viewBox="0 0 24 27">
+                                                        <path d="M1,0 L23,0 C23.5522847,-1.01453063e-16 24,0.44771525 24,1 L24,8.17157288 C24,8.70200585 23.7892863,9.21071368 23.4142136,9.58578644 L20.5857864,12.4142136 C20.2107137,12.7892863 20,13.2979941 20,13.8284271 L20,26 C20,26.5522847 19.5522847,27 19,27 L1,27 C0.44771525,27 6.76353751e-17,26.5522847 0,26 L0,1 C-6.76353751e-17,0.44771525 0.44771525,1.01453063e-16 1,0 Z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="paper"></div>
+                                            </div>
+                                        </div>
+                                        Continue Application
+                                    </button>
+                                </div>
+                                <div id="artisanBespokeForm" style="display:none;">
+                                    <div class="input-group-premium">
+                                        <label class="artisan-label" for="artisanWhatsApp">WhatsApp Number</label>
+                                        <input type="tel" id="artisanWhatsApp" class="artisan-input" placeholder="+91 98765 43210" autocomplete="tel" inputmode="tel">
+                                    </div>
+                                    <div class="input-group-premium">
+                                        <label class="artisan-label" for="artisanStory">Tell us your Story / Special Instructions <span class="optional-mark">(optional)</span></label>
+                                        <textarea id="artisanStory" class="artisan-textarea" placeholder="Share your vision, occasion, or any details for our artisans…"></textarea>
+                                    </div>
+                                    <p class="artisan-commitment-notice">Note: A non-refundable Commitment Fee of ₹ 250 is required for this handcrafted piece. Our artisans will contact you to finalize details.</p>
+                                    <button type="button" class="pay-security-btn" id="storyArtisanCommitBtn">CONFIRM &amp; PAY COMMITMENT FEE (₹ 250)</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -839,6 +877,35 @@
 
         let activeProductId = null;
 
+        function setCraftingPointers(texts) {
+            const ul = document.getElementById('craftingPointers');
+            if (!ul) return;
+            ul.innerHTML = '';
+            texts.forEach((t) => {
+                const li = document.createElement('li');
+                li.textContent = t;
+                ul.appendChild(li);
+            });
+        }
+
+        function resetVisualRevealAtelierForm() {
+            const initiate = document.getElementById('initiateArtisanRequest');
+            const form = document.getElementById('artisanBespokeForm');
+            if (initiate) initiate.style.display = 'block';
+            if (form) form.style.display = 'none';
+            const wa = document.getElementById('artisanWhatsApp');
+            const st = document.getElementById('artisanStory');
+            if (wa) wa.value = '';
+            if (st) st.value = '';
+        }
+
+        function showArtisanForm() {
+            const initiate = document.getElementById('initiateArtisanRequest');
+            const form = document.getElementById('artisanBespokeForm');
+            if (initiate) initiate.style.display = 'none';
+            if (form) form.style.display = 'block';
+        }
+
         async function openModal(productId) {
             activeProductId = productId;
             let targetProduct = null;
@@ -877,6 +944,39 @@
 
             const storyQtyInput = document.getElementById('storyQtyInput');
             if (storyQtyInput) storyQtyInput.value = '1';
+
+            const standardCheckoutUI = document.getElementById('standardCheckoutUI');
+            const visualRevealAtelier = document.getElementById('visualRevealAtelier');
+            const pid = Number(productId);
+            const isVisualRevealArtisan = pid >= 26 && pid <= 29;
+            if (standardCheckoutUI && visualRevealAtelier) {
+                if (isVisualRevealArtisan) {
+                    standardCheckoutUI.style.display = 'none';
+                    visualRevealAtelier.style.display = 'flex';
+                    const labelEl = document.getElementById('revealTypeLabel');
+                    if (pid === 28) {
+                        if (labelEl) labelEl.textContent = 'Digital Portal & Symbols';
+                        setCraftingPointers([
+                            'Place your order',
+                            'Share your digital secret link',
+                            'We craft a heat-safe QR tile',
+                            'Everything floats to the surface as it melts'
+                        ]);
+                    } else {
+                        if (labelEl) labelEl.textContent = 'The Key & Heirloom Diary';
+                        setCraftingPointers([
+                            'Place your order',
+                            'Receive our handcrafted diary',
+                            'Write your secret & lock it',
+                            'We embed the key in your candle wax'
+                        ]);
+                    }
+                    resetVisualRevealAtelierForm();
+                } else {
+                    standardCheckoutUI.style.display = 'block';
+                    visualRevealAtelier.style.display = 'none';
+                }
+            }
 
             modal.classList.add('show');
             document.body.style.overflow = 'hidden'; 
@@ -1012,6 +1112,53 @@
                 const n = parseInt(input.value, 10);
                 const cur = Number.isFinite(n) ? n : 1;
                 if (cur > 1) input.value = String(cur - 1);
+            });
+        })();
+
+        const MELTIX_WHATSAPP_BUSINESS = '919876543210';
+
+        function normalizeIndiaWhatsAppDigits(input) {
+            const d = String(input).replace(/\D/g, '');
+            if (d.length === 12 && d.startsWith('91')) {
+                const rest = d.slice(2);
+                if (/^[6-9]\d{9}$/.test(rest)) return d;
+            }
+            if (d.length === 10 && /^[6-9]\d{9}$/.test(d)) return '91' + d;
+            if (d.length === 11 && d.startsWith('0') && /^[6-9]\d{9}$/.test(d.slice(1))) return '91' + d.slice(1);
+            return null;
+        }
+
+        (function initArtisanCommitFlow() {
+            const btn = document.getElementById('storyArtisanCommitBtn');
+            if (!btn) return;
+            btn.addEventListener('click', () => {
+                const waEl = document.getElementById('artisanWhatsApp');
+                const storyEl = document.getElementById('artisanStory');
+                const waRaw = waEl ? waEl.value.trim() : '';
+                const storyText = storyEl ? storyEl.value.trim() : '';
+                const digits = normalizeIndiaWhatsAppDigits(waRaw);
+                if (!digits) {
+                    alert('Please enter a valid Indian WhatsApp number (10 digits, or with country code +91).');
+                    return;
+                }
+                const productId = activeProductId;
+                const titleEl = document.getElementById('modalTitle');
+                const title = titleEl ? titleEl.innerText.trim() : 'Story Candle';
+                const body = [
+                    'Meltix — Visual Reveal (Bespoke Artisan)',
+                    '',
+                    'Product ID: ' + productId,
+                    'Piece: ' + title,
+                    '',
+                    'Customer WhatsApp (digits): ' + digits,
+                    '',
+                    'Story / special instructions:',
+                    storyText || '(none)',
+                    '',
+                    'Commitment fee: ₹250 (non-refundable). Please confirm payment with Meltix.'
+                ].join('\n');
+                const url = 'https://wa.me/' + MELTIX_WHATSAPP_BUSINESS + '?text=' + encodeURIComponent(body);
+                window.open(url, '_blank', 'noopener,noreferrer');
             });
         })();
     </script>
