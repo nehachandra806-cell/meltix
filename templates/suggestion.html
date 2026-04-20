@@ -6,6 +6,7 @@
     <title>Meltix | Customer Favorites</title>
     
     <link rel="stylesheet" href="{{ url_for('static', filename='suggestion.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
 </head>
 <body>
 
@@ -45,7 +46,7 @@
                 {% for product in top_products %}
                 <div class="suggest-card">
                     <div class="img-wrapper">
-                        <img src="{{ url_for('static', filename='images/' + product.image_file) }}" alt="{{ product.name }}" onerror="this.src='https://via.placeholder.com/250x250/15100c/d4a373?text=Meltix+Candle'">
+                        <img src="{{ url_for('static', filename='images/' + product.image_file) }}" alt="{{ product.name }}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.src='https://via.placeholder.com/250x250/15100c/d4a373?text=Meltix+Candle'">
                     </div>
                     
                     <div class="suggest-info">
@@ -63,6 +64,8 @@
         </div>
     </div>
 
+    {% include '_ghost_cart.html' %}
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
     <script>
         if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
         window.addEventListener('beforeunload', function() { window.scrollTo(0, 0); });
@@ -77,20 +80,120 @@
             currentPath + index.toString().padStart(3, '0') + '.jpg'
         );
 
-        const images = [];
+        const frameCache = new Map();
+        const loadingFrames = new Map();
+        const preloadAhead = 8;
+        const preloadBehind = 2;
+        const maxCachedFrames = 28;
+        let desiredFrame = 1;
+        let rafScheduled = false;
         canvas.width = 1920; canvas.height = 1080;
 
-        for (let i = 1; i <= frameCount; i++) {
-            const img = new Image();
-            img.src = currentFrame(i);
-            images.push(img);
-            if (i === 1) {
-                img.onload = () => {
-                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    canvas.style.filter = `blur(4px) brightness(0.6)`;
+        function trimFrameCache(centerFrame) {
+            const protectedFrames = new Set([1]);
+            for (let offset = -preloadBehind; offset <= preloadAhead; offset++) {
+                const frameNumber = centerFrame + offset;
+                if (frameNumber >= 1 && frameNumber <= frameCount) {
+                    protectedFrames.add(frameNumber);
+                }
+            }
+
+            if (frameCache.size <= maxCachedFrames) {
+                return;
+            }
+
+            for (const frameNumber of Array.from(frameCache.keys())) {
+                if (frameCache.size <= maxCachedFrames) {
+                    break;
+                }
+                if (!protectedFrames.has(frameNumber)) {
+                    frameCache.delete(frameNumber);
                 }
             }
         }
+
+        function loadFrame(frameNumber, onLoad) {
+            if (frameNumber < 1 || frameNumber > frameCount) {
+                return null;
+            }
+
+            const cachedFrame = frameCache.get(frameNumber);
+            if (cachedFrame) {
+                if (typeof onLoad === 'function') {
+                    if (cachedFrame.complete) {
+                        onLoad(cachedFrame);
+                    } else {
+                        cachedFrame.addEventListener('load', () => onLoad(cachedFrame), { once: true });
+                    }
+                }
+                return cachedFrame;
+            }
+
+            if (loadingFrames.has(frameNumber)) {
+                const loadingFrame = loadingFrames.get(frameNumber);
+                if (typeof onLoad === 'function') {
+                    loadingFrame.addEventListener('load', () => onLoad(loadingFrame), { once: true });
+                }
+                return loadingFrame;
+            }
+
+            const img = new Image();
+            img.decoding = 'async';
+            loadingFrames.set(frameNumber, img);
+            img.onload = () => {
+                loadingFrames.delete(frameNumber);
+                frameCache.set(frameNumber, img);
+                if (typeof onLoad === 'function') {
+                    onLoad(img);
+                }
+            };
+            img.onerror = () => {
+                loadingFrames.delete(frameNumber);
+            };
+            img.src = currentFrame(frameNumber);
+            return img;
+        }
+
+        function preloadFrameWindow(centerFrame) {
+            for (let offset = -preloadBehind; offset <= preloadAhead; offset++) {
+                loadFrame(centerFrame + offset);
+            }
+            trimFrameCache(centerFrame);
+        }
+
+        function drawFrame(frameNumber) {
+            const frame = frameCache.get(frameNumber);
+            if (frame && frame.complete) {
+                context.drawImage(frame, 0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            loadFrame(frameNumber, (loadedFrame) => {
+                if (frameNumber === desiredFrame) {
+                    context.drawImage(loadedFrame, 0, 0, canvas.width, canvas.height);
+                }
+            });
+        }
+
+        function scheduleFrameRender(frameNumber) {
+            desiredFrame = frameNumber;
+            if (rafScheduled) {
+                return;
+            }
+
+            rafScheduled = true;
+            requestAnimationFrame(() => {
+                rafScheduled = false;
+                drawFrame(desiredFrame);
+                preloadFrameWindow(desiredFrame);
+            });
+        }
+
+        loadFrame(1, (firstFrame) => {
+            context.drawImage(firstFrame, 0, 0, canvas.width, canvas.height);
+            canvas.style.filter = `blur(4px) brightness(0.6)`;
+        });
+        preloadFrameWindow(1);
 
         function splitHTMLText(elementId, htmlString) {
              const el = document.getElementById(elementId);
@@ -157,12 +260,8 @@
             let scrollFraction = (scrollTop - containerTop) / (containerHeight - windowHeight);
             scrollFraction = Math.max(0, Math.min(1, scrollFraction));
 
-            requestAnimationFrame(() => {
-                const frameIndex = Math.floor(scrollFraction * (frameCount - 1));
-                if (images[frameIndex] && images[frameIndex].complete) {
-                    context.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
-                }
-            });
+            const frameNumber = Math.floor(scrollFraction * (frameCount - 1)) + 1;
+            scheduleFrameRender(frameNumber);
 
             // BG Glow Flicker Fade-in
             bgGlowWrapper.style.opacity = mapRange(scrollFraction, 0.08, 0.20);
@@ -195,7 +294,7 @@
             allWordSpans.forEach((span, index) => {
                 span.style.opacity = index < wordsToShow ? '1' : '0';
             });
-        });
+        }, { passive: true });
     </script>
 </body>
 </html>

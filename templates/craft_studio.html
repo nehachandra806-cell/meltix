@@ -328,10 +328,6 @@
         const contactInput = document.getElementById('contact-info');
         const otpInput = document.getElementById('otp-input');
         
-        // 🔑 API CREDENTIALS
-        const CUSTOMER_ID = "C-A8BCF05A7F0E418"; 
-        const AUTH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLUE4QkNGMDVBN0YwRTQxOCIsImlhdCI6MTc3NDcxMzM4OSwiZXhwIjoxOTMyMzkzMzg5fQ.45_vDdo_LnwTpWluUN-DHQCHURctg5R2x-LZNNU8NaKPw7m6xUWuQSyqV69QXFDeEAWrUCKflNI1AgvmXtwExA"; 
-
         let storedVerificationId = "";
         let currentMobileNumber = "";
 
@@ -379,20 +375,16 @@
 
                 console.log("OTP Jaa raha hai yahan: " + currentMobileNumber);
 
-                // API URL for Sending OTP
-                const sendUrl = `https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&customerId=${CUSTOMER_ID}&flowType=SMS&mobileNumber=${currentMobileNumber}`;
-
-                fetch(sendUrl, {
+                fetch('/api/studio/send-otp', {
                     method: 'POST',
-                    headers: {
-                        'authToken': AUTH_TOKEN
-                    }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobile_number: currentMobileNumber })
                 })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Send API Response:", data);
-                    if (data.responseCode === 200) {
-                        storedVerificationId = data.data.verificationId;
+                    if (data.success) {
+                        storedVerificationId = data.mobile_number || currentMobileNumber;
                         console.log("✅ SMS Bhej diya gaya hai!");
                         
                         step1.classList.add('hidden');
@@ -419,24 +411,20 @@
         // 🚀 2. VERIFY OTP FUNCTION
         function verifyOTP() {
             const otpVal = otpInput.value.trim();
-            if(otpVal.length > 3) {
+            if (otpVal.length === 6) {
                 const btn = document.querySelector('#checkout-step-otp .modal-btn');
                 btn.innerText = "Verifying...";
                 btn.disabled = true;
 
-                // API URL for Validating OTP
-                const validateUrl = `https://cpaas.messagecentral.com/verification/v3/validateOtp?countryCode=91&mobileNumber=${currentMobileNumber}&verificationId=${storedVerificationId}&customerId=${CUSTOMER_ID}&code=${otpVal}`;
-
-                fetch(validateUrl, {
-                    method: 'GET',
-                    headers: {
-                        'authToken': AUTH_TOKEN
-                    }
+                fetch('/api/studio/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ otp: otpVal })
                 })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Verify API Response:", data);
-                    if (data.responseCode === 200 && data.data.verificationStatus === "VERIFICATION_COMPLETED") {
+                    if (data.success) {
                         
                         // 🌟 SUCCESS! Ab hum OTP dabba chupayenge aur naya animation dabba dikhayenge
                         document.getElementById('checkout-step-otp').classList.add('hidden');

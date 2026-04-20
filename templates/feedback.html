@@ -166,25 +166,55 @@
             }, 500);
         }
 
-        function handleFormSubmit(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
+            const email = document.getElementById('userEmail').value.trim();
+            const message = document.getElementById('userMessage').value.trim();
+            const ratingValue = Number(document.getElementById('feedbackRating').value || 0);
+
+            if (!ratingValue || ratingValue < 1 || ratingValue > 5) {
+                alert("Please select a star rating first.");
+                return;
+            }
+
             btn.classList.add('loading');
-            setTimeout(() => {
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        message: message,
+                        rating: ratingValue,
+                        source_page: 'feedback'
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Feedback submit failed');
+                }
+
                 btn.classList.remove('loading');
                 btn.classList.add('success');
                 btn.innerText = "SENT ✓";
-                
+
                 setTimeout(() => {
                     document.getElementById('form-header').style.display = 'none';
                     document.getElementById('reportForm').style.display = 'none';
-                    
+
                     const thankYouMsg = document.getElementById('thank-you-msg');
                     thankYouMsg.style.display = 'block';
                     thankYouMsg.style.animation = 'pureFadeIn 0.8s ease forwards';
                 }, 800);
-
-            }, 1500); 
+            } catch (error) {
+                console.error(error);
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.innerText = "Error. Try Again.";
+            }
         }
 
         // 🔴 FIXED: Ye seedha Shop page par redirect karega

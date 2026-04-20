@@ -1,0 +1,1629 @@
+[
+  {
+    "id": 1,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Alphabet Beads",
+    "name": "The Golden Vow",
+    "image_path": "images/alphabet_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Golden Vow",
+      "specialty": "Distinctly designed, this Meltix original replaces printed paper with elegant, tangible alphabet beads. Hand-set within creamy wax, the gold-rimmed letters are sequentially revealed as it melts, offering a luxurious and tactical surprise that transforms standard candle burning into a physical unboxing of hidden emotions.",
+      "process": "Each 'Golden Vow' is precisely hand-poured with our clean soy wax blend, ensuring the safe encapsulation of each alphabet bead without compromising the candle’s flawless surface. The strategic hand-placement guarantees that your customized hidden message emerges perfectly sequential once the wax reaches its optimal melting point."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 2,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Alphabet Beads",
+    "name": "Amber Keepsake",
+    "image_path": "images/alphabet_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "Amber Keepsake",
+      "specialty": "This edition merges rustic warmth with luxurious clarity. The warm amber glass diffuses candlelight into an intimate aura, setting the perfect stage for the premium golden alphabet beads concealed within. It is not merely a candle; it is an interactive keepsake, as the tactile letters physically emerge into the wax pool, offering a unique, personal unearthing experience.",
+      "process": "Housed in a sustainable, high-quality amber glass jar with a natural cork lid, this candle is poured with a premium, slow-burning wax blend. The intricate golden alphabet beads are individually set by hand during the wax solidification phase, ensuring a perfect gradual reveal that is both safe and visually impactful."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 3,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Alphabet Beads",
+    "name": "The Concrete Polygon",
+    "image_path": "images/alphabet_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Concrete Polygon",
+      "specialty": "A striking piece of brutalist-inspired minimalism, this candle defies standard design constraints. It presents a bold industrial statement on the exterior, facet-cut and rugged. Yet, the true complexity lies inside: the deliberate contrast of the raw, solid polygonal concrete vessel against the delicate, tactile golden alphabet beads revealed in the melting creamy wax creates a uniquely sophisticated aesthetic.",
+      "process": "Poured into a custom-molded, high-density concrete polygon vessel that is individually facet-ground, this candle utilizes a premium, clean-burning soy wax blend. The tactile alphabet beads are meticulously hand-arranged just beneath the surface during the final wax setting process, ensuring a sequential and perfect emergence with every burn."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 4,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Alphabet Beads",
+    "name": "The Royal Filigree",
+    "image_path": "images/alphabet_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Royal Filigree",
+      "specialty": "This candle is a high-luxury interactive experience housed in a classic artisan ceramic vessel. The ornate damask pattern in blue and rose gold exuded a sophisticated, old-world elegance. While the exterior looks traditional, the core innovation is the physical revelation of hidden emotions through standard alphabet beads that slowly float to the surface, transforming a luxury candle into a poetic story unfoldment.",
+      "process": "Crafted in a limited custom-designed ceramic pot featuring a high-fire blue and rose gold damask pattern. We use a premium soy and coconut wax blend for a clean, slow burn and a lead-free wick. The alphabet beads are hand-arranged in sequential order during the wax pour, ensuring they remain hidden until revealed in the perfect melt pool."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 5,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Alphabet Beads",
+    "name": "The Tri-Flame Clarity",
+    "image_path": "images/alphabet_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Tri-Flame Clarity",
+      "specialty": "Designed for grand visual impact, this grand three-wick candle utilizes its expansive surface to synchronize an extensive hidden message reveal. The triple flames create a perfect, consistent melt pool across the wide crystal-clear glass vessel, allowing the entire custom alphabet bead arrangement to emerge simultaneously, transforming standard candle usage into a synchronized visual spectacle.",
+      "process": "Poured into a heavy-weight clear glass jar adorned with our signature rose gold logo. It utilizes three lead-free cotton wicks, ensuring a consistent, edge-to-edge melt pool. Our premium wax blend is specifically calibrated to securely encapsulate multiple gold-rimmed alphabet beads across the entire surface for a synchronized and flawlessly timed reveal."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 6,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Magic Paper",
+    "name": "The Marble Whisper",
+    "image_path": "images/magic_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Marble Whisper",
+      "specialty": "A seamless synthesis of ancient permanence and mystical reveal, this candle is hand-carved from a single block of natural marble. Using our signature 'Magic Paper' technique, the hidden note floats mystical to the surface once the translucent wax melts. The vintage scorched edges of the paper give the revelation an antique feel, creating a truly enchanting and personal experience that contrasts sharply with the solid stone exterior.",
+      "process": "Housed in a square marble block featuring natural veining and a deeply engraved Meltix logo, ensuring no two pieces are identical. Poured with a clean soy wax blend and a lead-free wick. The hidden message is printed on especializado, heat-resistant parchment-style paper with scorched edges, designed to float safely to the surface of the liquid wax pool."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 7,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Magic Paper",
+    "name": "The Ethereal Ombré",
+    "image_path": "images/magic_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Ethereal Ombré",
+      "specialty": "This unique design utilizes custom-molded, fluted wax featuring deeply embossed Meltix branding and a serene three-tone pastel gradient. Utilizing our 'Magic Paper' technique, the hidden note emerges gently like an ancient, hidden scroll from within the calming lavender and cream hues, transforming a serene burn into a truly otherworldly visual and mystical experience.",
+      "process": "Carefully crafted using a multi-pour process to achieve the distinct three-tone pastel gradient through lavender, cream, and blush pink hues. We use custom molds to achieve the beautiful ribbed texture. The hidden message is printed on specialised, heat-safe magic paper with a parchment-style finish, designed to float safely and clearly in the luminous wax pool."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 8,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Magic Paper",
+    "name": "The Frosted Mirage",
+    "image_path": "images/magic_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Frosted Mirage",
+      "specialty": "Pairing modern minimalism with vintage charm, this candle utilizes semi-frosted glass to softly diffuse a warm, intimate aura. While the external aesthetics are clean, the true secret is the use of our specialized parchment-style 'Magic Paper'. The deliberate visual contrast between the clean modern glass and the floating antique scroll creates a visually striking and poetic reveal that turns a simple light into a magical discovery.",
+      "process": "Housed in a heavy-based, frosted glass tumbler featuring a prominent metallic logo. Hand-poured with a top-tier, slow-burning wax blend and a clean-burning wick. The hidden message is printed on specialised heat-resistant paper with a scorched finish, designed to float safely to the surface as the wax pool reaches optimal temperature."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 9,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Magic Paper",
+    "name": "The Gilded Terrarium",
+    "image_path": "images/magic_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Gilded Terrarium",
+      "specialty": "A architectural statement piece designed for multi-dimensional viewing, this terrarium features a multi-faceted clear glass exterior framed with bright, reinforced gold metal edges. The true innovation is the layered reveal: instead of the paper floating to the top surface, our translucent wax gradually melts to expose the specialised parchment-style 'Magic Paper' gracefully resting at the bottom, offering a dramatic visual experience unlike any other.",
+      "process": "Custom-poured into a handcrafted clear glass terrarium with reinforced gold metallic framing and the signature rose gold logo. We utilize a premium, highly translucent wax blend to ensure maximum clarity. The hidden message, printed on our signature scorched-edge magic paper, is carefully positioned at the bottom base, protected and perfectly revealed once the wax pool turns transparent."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 10,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Magic Paper",
+    "name": "The Iridescent Aura",
+    "image_path": "images/magic_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Iridescent Aura",
+      "specialty": "The mystical experience of this candle begins before it is even lit. The stunning iridescent glass vessel creates a captivating, color-shifting spectrum that refracts candlelight beautifully. As the translucent wax melts, our signature parchment-style 'Magic Paper' emerges mystical to the surface, transforming a modern color spectacle into a truly enchanting visual and personal story revelation.",
+      "process": "Housed in a custom, heavy-based iridescent glass jar featuring the elegant rose gold logo. We use a premium, clean soy wax blend with lead-free wicks. The hidden message is printed on specialised, heat-resistant magic paper with a scorched finish, designed to float safely to the surface as the translucent wax pool forms."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 11,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Heat Activated",
+    "name": "The Thermal Canvas",
+    "image_path": "images/heat_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Thermal Canvas",
+      "specialty": "This minimalist design offers a modern visual surprise. Instead of concealing the message within the wax, the hidden art is on the vessel itself. Housed in a sleek square glass base, the elegant front label reacts mystical to heat. As the candle burns and warms the glass, the blank space activates, perfectly transitioning to reveal your custom hidden message through specialized heat-activated technology.",
+      "process": "Hand-poured into a contemporary, heavy-bottomed square glass vessel for a highly premium look. The innovation lies in the custom-engineered thermochromic label adorned with the beautiful rose gold logo. We use a high-grade wax blend and precise wick centering to ensure the glass reaches the exact optimal temperature needed for a flawless and synchronized message reveal."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 12,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Heat Activated",
+    "name": "The Fluted Secret",
+    "image_path": "images/heat_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Fluted Secret",
+      "specialty": "pair classical Art Deco elegance with interactive modern surprise, this design features beautifully textured fluted glass that refracts candlelight elegantly. The hidden logic is in the wrap-around label: as the candle warms the glass, the white band reacted mystical to the heat, fading away to gracefully reveal your customized hidden message in a truly sophisticated and surprising unfoldment.",
+      "process": "Hand-poured into a custom-designed ribbed glass vessel. We use a premium wax blend and clean-burning lead-free wick calibrated to provide the perfect radiant heat. The secret is the specialised high-quality thermochromic label adorned with the elegant rose gold logo, ensuring a smooth and surprising reveal every time."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 13,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Heat Activated",
+    "name": "The Obsidian Shift",
+    "image_path": "images/heat_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Obsidian Shift",
+      "specialty": "Designed for high contrast and modern visual drama, this candle utilizes heavy, deeply ribbed square glass to create a bold foundation. The focal point is the sleek black wrap-around label adorned with a stunning metallic rose gold logo. The magic is the heat-activated transition: as the glass warms, the solid black fades away, perfectly revealing your custom hidden message against the dark obsidian base.",
+      "process": "Housed in a substantial, deeply ribbed square glass vessel that commands attention. The core feature is the specialised heat-reactive black label with the Meltix logo. Inside, we use a premium, slow-burning wax blend and calibrated wick designed to gently heat the glass to the precise temperature needed to activate the dramatic color-shifting label."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 14,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Heat Activated",
+    "name": "The Rose Gold Prism",
+    "image_path": "images/heat_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Rose Gold Prism",
+      "specialty": "Pairing multi-dimensional visual brilliance with interactive surprise, this design is expertly facet-cut for a crystal-like appearance. The standout feature is the luxurious brushed rose gold wrap-around label. What appears to be a solid metallic accent is a heat-reactive canvas: as the glass warms, a dedicated panel mystical transitions to perfectly reveal your personalized hidden message with a high-luxury and unexpected unfoldment.",
+      "process": "Expertly facet-cut glass vessel designed for a premium, heavy-weight look. Poured with a top-tier soy and coconut wax blend and lead-free wick. The centerpiece is the custom-engineered thermochromic label with a brushed metallic finish and the elegant Meltix logo, calibrated to activate safely at precise glass temperatures."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 15,
+    "collection_slug": "hidden-message",
+    "collection_label": "Hidden Message",
+    "group_name": "Heat Activated",
+    "name": "The Gunmetal Secret",
+    "image_path": "images/heat_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Gunmetal Secret",
+      "specialty": "Bringing interactive surprise to a sleek travel-ready design, this durable tin features an edgy brushed gunmetal finish. The true magic is on the external label: as the tin gently warming from the flame, the solid matte black panel mystical reacts, fading away to perfectly reveal your personalized custom message through our specialized heat-activated technology.",
+      "process": "Hand-poured into a durable, travel-friendly brushed metal tin with a secure lid. It features a specialized heat-reactive matte black label adorned with the metallic rose gold Meltix logo. Filled with a premium soy wax blend and clean-burning wick specifically calibrated to safely warm the tin external and activate the dramatic message reveal."
+    },
+    "ui_flags": {
+      "message_counter": true
+    }
+  },
+  {
+    "id": 16,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Layered Scent",
+    "name": "The Citrus Sunrise Story",
+    "image_path": "images/layered_scent_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Citrus Sunrise Story",
+      "specialty": "This candle takes you on a beautiful sensory journey through five distinct, carefully curated fragrance layers. As the flame melts through the pastel gradient, an aromatic story unfolds—starting with the crisp, refreshing scent of Lemon Zest, blooming into Orange Blossom, and seamlessly shifting through Grapefruit, Jasmine, and Neroli. Each time you reach a new color layer, a completely new chapter of fragrance is introduced to your space.",
+      "process": "Housed in an elegant, frosted glass jar that perfectly diffuses the light and showcases the vibrant five-layer wax gradient. Crafting this is a highly meticulous, time-intensive process; each layer of our premium wax blend must completely cool and set before the next one is poured. This ensures the unique fragrance oils do not mix prematurely, giving you a pure, sequential scent experience from the top to the bottom."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 17,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Layered Scent",
+    "name": "The Oceanic Bliss Story",
+    "image_path": "images/layered_scent_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Oceanic Bliss Story",
+      "specialty": "This candle captures the essence of a serene coastal escape, unfolding layer by layer. As the flame travels down the beautiful earthy and aquatic tones, it releases a sequential story of fragrances. It begins with the crisp, refreshing notes of Sea Salt and Marine Breeze, deepens into warm Driftwood, and finishes with a rejuvenating touch of Eucalyptus and Mint. It is like taking a sensory walk along a tranquil shore, where every layer offers a new, relaxing atmosphere.",
+      "process": "Crafted in a premium frosted glass jar that beautifully highlights the soft, multi-colored wax tiers. Creating this complex profile requires ultimate precision; each layer is individually hand-poured and allowed to cure completely before the next is added. This labor-intensive technique ensures that the distinct marine and botanical fragrance oils remain perfectly separated until the flame reaches them to release their unique scent."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 18,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Layered Scent",
+    "name": "The Woodland Spice Journey",
+    "image_path": "images/layered_scent_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Woodland Spice Journey",
+      "specialty": "This candle delivers a rich, comforting, and deeply aromatic experience that evolves beautifully as it burns. The layered fragrance tells a cozy, woody story—beginning with the smooth richness of Sandalwood and earthy Cedar, transitioning into the warm, spicy heart of Clove and Cinnamon, and finally settling into the deep, grounding notes of Patchouli. Each layer shifts the mood, creating the perfect ambiance for a relaxed, intimate evening.",
+      "process": "Poured into a premium frosted glass vessel that casts a warm, inviting amber glow through its beautifully earthy gradient. Achieving this distinct five-layer scent profile requires a meticulous, slow-pouring process. Each layer of our clean-burning wax is infused with specific spicy and woody fragrance oils and left to cure completely before the next is added, ensuring a pure, uninterrupted aromatic journey from start to finish."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 19,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Layered Scent",
+    "name": "The Herbal Forest Retreat",
+    "image_path": "images/layered_scent_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Herbal Forest Retreat",
+      "specialty": "This candle invites you on an immersive walk through a lush, verdant woodland. As the flame journeys through the five distinct earthy and green layers, it reveals a calming botanical story. It opens with the crisp, invigorating scent of fresh Pine and crushed leaves, transitions smoothly into aromatic wild Rosemary and Sage, and finally settles into the deep, grounding aromas of damp Moss and rich Vetiver. Every layer gradually transforms your room into a tranquil, natural sanctuary.",
+      "process": "Housed in our signature frosted glass that elegantly mutes the deep, forest-inspired wax gradient. To achieve this distinct five-layer 'Herbal Forest Collection' profile, each tier of our clean-burning wax blend is meticulously hand-poured and allowed to fully cure before the next is added. This ensures the pure, botanical fragrance oils remain perfectly isolated until the flame reaches them to release their specific chapter of the scent story."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 20,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Layered Scent",
+    "name": "The Decadent Dessert Collection",
+    "image_path": "images/layered_scent_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Decadent Dessert Collection",
+      "specialty": "This candle is an absolute treat for the senses, offering a rich, gourmand journey through five mouth-watering layers. As it burns, it tells a sweet story of indulgence—starting with the creamy comfort of Vanilla Bean, melting into buttery Caramel and deep Cocoa, flowing into warm Honey, and culminating in a deliciously textured Praline finish. Every layer transforms your space into a cozy, high-end patisserie.",
+      "process": "Expertly hand-poured into a sleek frosted glass vessel using our premium, clean-burning soy wax blend. Creating this masterpiece requires immense patience; each distinct dessert-inspired layer is poured and fully cured before the next is added to ensure the fragrance notes remain pure and distinct. The final praline layer even features a unique physical texture at the base, making it a feast for both the eyes and the nose."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 21,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Countdown",
+    "name": "The 7-Day Evening Ritual",
+    "image_path": "images/countdown_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The 7-Day Evening Ritual",
+      "specialty": "This candle is designed to help you build a consistent habit of self-care. The subtle markings from Day 1 to Day 7 act as a visual timer for your daily 'me time.' Light it up while reading a chapter, sipping tea, or simply winding down, and blow it out once the wax reaches the next line. It is the perfect way to pace your relaxation and create a peaceful, week-long bedtime routine.",
+      "process": "Housed in an elegant frosted glass vessel featuring a beautiful 'Evening Ritual' engraving near the rim and precisely measured daily countdown lines down the side. It is poured using a premium, ultra-slow-burning wax blend and a carefully calibrated cotton wick, ensuring that the burn time between each marker perfectly aligns with a fulfilling daily relaxation session."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 22,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Countdown",
+    "name": "The Weekly Me-Time Marker",
+    "image_path": "images/countdown_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Weekly Me-Time Marker",
+      "specialty": "This candle is a dedicated tool for carving out time for yourself. Featuring a clean, centered 1-to-7 countdown, it serves as a minimalist timer for your daily 'me-time.' Whether it is a long bath, a skincare routine, or just sitting in quiet reflection, you light the candle and let it burn down one number at a time. It visually tracks your commitment to self-care throughout the week.",
+      "process": "Set in a heavy, premium frosted glass tumbler with elegant metallic typography. The numbers and the Meltix logo are precisely placed to align with the burn rate. We use a high-quality, slow-burning wax blend and a lead-free wick specifically chosen and tested to ensure the wax melts evenly and predictably from one number to the next."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 23,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Countdown",
+    "name": "The Guided Zen Timer",
+    "image_path": "images/countdown_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Guided Zen Timer",
+      "specialty": "This candle is designed to be your serene companion for mindfulness. Featuring a subtle, descending 7-to-1 scale, it acts as a calming focal point and a gentle, non-digital timer for your meditation or yoga practice. Instead of an alarming buzz, you simply align your practice with the soft glow as the wax slowly lowers from one number to the next, fostering deep focus and a tranquil end to your session.",
+      "process": "Set in a calming, soft-white frosted glass vessel with 'Meditation Ritual' delicately etched along the rim. The minimal measurement lines and numbers are subtly integrated. Poured using our premium, slow-burning wax blend, the wick size is specifically chosen to create an even, consistent burn rate that perfectly times out your daily mindful moments."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 24,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Countdown",
+    "name": "The Sun-Kissed Start",
+    "image_path": "images/countdown_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Sun-Kissed Start",
+      "specialty": "This candle is designed to bring focus and intention to your mornings. Featuring a crisp 'Day 1 to Day 7' scale with the phrase 'Guiding Daily Burn,' it serves as a serene visual timer for a structured morning routine. Whether you use it while journaling, enjoying your morning coffee, or setting your daily goals, watching the wax melt down a single level is the perfect way to establish a positive and paced start to your day.",
+      "process": "Housed in a beautiful frosted glass jar accented with a stunning brushed rose-gold rim featuring the 'Morning Ritual' engraving. The daily burn lines are perfectly calibrated along the side. It is poured using an uplifting, clean-burning wax blend and a lead-free wick chosen to ensure the burn time accurately aligns with a fulfilling morning session."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 25,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Countdown",
+    "name": "The Birthday Anticipation",
+    "image_path": "images/countdown_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Birthday Anticipation",
+      "specialty": "This candle turns counting down to a special occasion into a beautiful, week-long celebration. Featuring a delicate Day 1 to Day 7 scale, it builds excitement leading up to the big day. Lighting the candle each day and watching the wax melt closer to the final day becomes a joyful daily ritual, making the entire week leading up to the birthday feel festive and special, rather than just celebrating a single day.",
+      "process": "Hand-poured into a pristine, frosted glass tumbler that softly diffuses a warm, celebratory glow. The elegant Meltix logo and the precise countdown lines are beautifully detailed on the side. We utilize a premium, slow-burning wax blend and a carefully tested cotton wick to ensure a consistent, predictable melt rate that aligns perfectly with a daily countdown ritual."
+    },
+    "ui_flags": {
+      "artisan_bespoke": false
+    }
+  },
+  {
+    "id": 26,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Visual Reveal",
+    "name": "The Guardian's Secret",
+    "image_path": "images/visual_reveal_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Guardian's Secret",
+      "specialty": "This candle is part of an interactive, multi-step storytelling experience. It presents a sophisticated, dark aesthetic with a deep, rich wax pool. As the candle burns down, a beautifully crafted hidden key slowly emerges from the liquid wax. This physical key is the vital piece needed to unlock the accompanying vintage-style, leather-bound diary, where your deeply personal or secret message is safely kept, waiting to be read.",
+      "process": "Hand-poured into a premium, matte black ceramic jar featuring an elegant, textured cream label with gold-foil Meltix branding. The candle is crafted using a highly pigmented, slow-burning wax blend and a sturdy cotton wick. During the pouring process, a small, intricate metallic key is carefully suspended within the wax, ensuring it is safely and clearly revealed as the melt pool deepens."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 27,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Visual Reveal",
+    "name": "The Crimson Vault",
+    "image_path": "images/visual_reveal_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Crimson Vault",
+      "specialty": "This candle is all about romantic mystery and anticipation. As the flame illuminates the warm amber glass, a hidden brass key slowly emerges from the melting wax. This key is your only way to unlock the stunning, burgundy fabric-bound diary that comes paired with the candle. Once opened, the diary reveals the deeply personal message, secret, or story written inside, making it an unforgettable gifting experience.",
+      "process": "Housed in a modern, frosted square amber glass vessel with a textured, elegant label featuring the Meltix logo. We use a premium, slow-burning wax blend to ensure the embedded brass key is safely and beautifully revealed as the melt pool expands. The accompanying diary is wrapped in luxurious crimson fabric and secured with a vintage-style brass padlock, completing this premium, interactive set."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 28,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Visual Reveal",
+    "name": "The Celestial QR Unboxing",
+    "image_path": "images/visual_reveal_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Celestial QR Unboxing",
+      "specialty": "This candle takes the interactive visual reveal to a whole new level. As the pristine white wax melts, it doesn't just reveal a single key; an entire collection of mystical charms emerges, including a moon, a star, a heart, and the vital brass key. This key is used to physically unlock the accompanying secret diary, while a unique, heat-safe QR code tile also floats to the surface. Scanning this code can reveal a digital message, video, or a curated playlist that perfectly complements the handwritten story inside the diary.",
+      "process": "Housed in a beautifully clean, frosted glass vessel that allows a soft, warm glow to shine through. The signature copper Meltix logo perfectly matches the embedded metal charms. We use an ultra-premium, slow-burning wax blend with a sturdy wick to ensure the intricately placed key, celestial charms, and QR code tile are safely and elegantly revealed in the melt pool without sinking or getting damaged."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 29,
+    "collection_slug": "story-candle",
+    "collection_label": "Story Candle",
+    "group_name": "Visual Reveal",
+    "name": "The Midnight Heirloom Set",
+    "image_path": "images/visual_reveal_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Midnight Heirloom Set",
+      "specialty": "This isn't just a candle; it is the ultimate premium gifting experience and the crown jewel of the Visual Reveal collection. The sleek, mysterious grey wax holds the final secret. As the wooden wick softly crackles and the melt pool deepens, a vintage brass key is revealed. This key is the only way to unlock the beautifully aged, distressed leather diary included in the box. It elevates the visual reveal into a complete, luxurious ritual of discovering a hidden story, proposal, or deeply personal message.",
+      "process": "Beautifully packaged in a custom, velvet-lined matte black keepsake box tied with an elegant ribbon and stamped with the rose-gold Meltix logo. The clear glass candle features a premium, slow-burning grey wax blend and a natural wooden wick for a sensory, crackling burn. The set is completed with custom Meltix matches and a handcrafted, vintage-style leather journal secured with a heavy antique brass padlock, making it a true collector's piece."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 30,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Steadfast Taurus",
+    "image_path": "images/classic_zodiac_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Steadfast Taurus",
+      "specialty": "This candle captures the grounded and luxurious essence of the Taurus sign. Representing the Earth element, it radiates an energy of deep stability and calm. The custom bull illustration reflects the steadfast and determined nature of a Taurus.",
+      "process": "Poured with rich olive-green wax into a sleek frosted glass tumbler. It features an elegant cream label with a detailed Taurus emblem. A slow-burning wax blend and lead-free cotton wick ensure a steady, reliable burn.",
+      "significance": "Known as 'The Anchor,' Taurus signifies stability, patience, and physical comfort. This candle is designed for those seeking consistency and a sense of peace in their lives."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 31,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Fiery Aries",
+    "image_path": "images/classic_zodiac_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Fiery Aries",
+      "specialty": "This candle embodies the bold and energetic spirit of the Aries sign. As a Fire element, it creates a dynamic and powerful aura. The striking deep red color and majestic ram illustration celebrate Aries' fearless leadership and vibrant energy.",
+      "process": "Hand-poured into a premium deep red frosted glass vessel. It features a metallic-gold ram emblem on a matching crimson label. The flame is robust and brilliant, mirroring the fiery Aries personality.",
+      "significance": "Aries is 'The Pioneer.' It signifies the courage to start new journeys, intense passion, and an unstoppable drive. This candle is perfect for a motivation boost."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 32,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Expressive Gemini",
+    "image_path": "images/classic_zodiac_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Expressive Gemini",
+      "specialty": "Represents the dual, intellectual, and communicative spirit of Gemini. As an Air element, it brings a fresh, breezy, and stimulating energy to any space. The sky-blue tone and twin-face symbol reflect their adaptable and curious nature.",
+      "process": "Housed in a soft-touch frosted glass jar with light-blue wax. The design includes a gold metallic twin emblem and a stamped Meltix logo. The burn is consistent, matching Gemini’s ever-moving energy.",
+      "significance": "Gemini is 'The Communicator.' It signifies curiosity, versatility, and intellectual growth. This candle is designed to spark creative ideas and lively conversation."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 33,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Radiant Leo",
+    "image_path": "images/classic_zodiac_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Radiant Leo",
+      "specialty": "Mirrors the charismatic and natural leadership energy of a Leo. Representing the Fire element, it provides a luxurious golden glow. The lion illustration and amber color celebrate Leo’s bold, big-hearted, and dramatic presence.",
+      "process": "Poured into an elegant, sun-kissed amber frosted glass vessel. The premium label features a vintage lion illustration with golden sunburst accents. It offers a theatrical yet reliable burn.",
+      "significance": "Leo is 'The King/Queen.' It signifies confidence, creativity, and vibrant self-expression. This candle is crafted to enhance positivity and warmth in any room."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 34,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Serene Virgo",
+    "image_path": "images/classic_zodiac_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Serene Virgo",
+      "specialty": "Reflects the pure, practical, and detail-oriented nature of Virgo. Rooted in the Earth element, it brings grounding and refreshing energy. The sage-green wax and botanical maiden illustration capture Virgo’s connection to nature and their nurturing spirit.",
+      "process": "Set in a minimalist frosted glass jar with soft green wax. The crisp white label features elegant line-art of the Virgo maiden. It ensures a flawless, meticulously clean burn—exactly how a Virgo prefers it.",
+      "significance": "Virgo is 'The Healer.' It signifies precision, logic, and dedicated service. This candle is the perfect companion for mental clarity and organization."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 35,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Nurturing Cancer",
+    "image_path": "images/classic_zodiac_6.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Nurturing Cancer",
+      "specialty": "Captures the intuitive, emotional, and protective essence of the Cancer sign. Flowing with the Water element, it creates a comforting sanctuary at home. The blue-grey tone and celestial crab illustration reflect Cancer’s deep connection to the moon.",
+      "process": "Housed in a soothing frosted glass jar with moody blue-grey wax. It features a stunning metallic-style print of the Cancer emblem. The burn feels like a warm, protective hug.",
+      "significance": "Cancer is 'The Guardian.' It signifies emotional security, intuition, and a love for the home. This candle is best used for an emotional recharge."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 36,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Harmonious Libra",
+    "image_path": "images/classic_zodiac_7.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Harmonious Libra",
+      "specialty": "Captures the balanced, aesthetic, and charming energy of Libra. As an Air element, it brings peace and refined beauty to your space. The blush pink wax and scale illustration reflect Libra’s love for romance, symmetry, and luxury.",
+      "process": "Housed in a chic frosted glass jar that casts a soft, romantic glow. The textured label features rose-gold metallic detailing of the scales. The burn is perfectly symmetrical and even.",
+      "significance": "Libra is 'The Diplomat.' It signifies balance, justice, and harmony in relationships. This candle is meant to create a serene and beautiful atmosphere."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 37,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Adventurous Sagittarius",
+    "image_path": "images/classic_zodiac_8.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Adventurous Sagittarius",
+      "specialty": "Captures the bold, optimistic, and philosophical spirit of Sagittarius. Ignited by the Fire element, it brings expansive, wandering energy. The plum color and centaur archer reflect their quest for knowledge and adventure.",
+      "process": "Set in a deep purple frosted glass jar with a gold foil label featuring the centaur archer. It produces a robust, unbound flame that fuels big dreams and wanderlust.",
+      "significance": "Sagittarius is 'The Seeker.' It signifies adventure, freedom, and truth-seeking. This candle is perfect for fueling inspiration and new ideas."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 38,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Ambitious Capricorn",
+    "image_path": "images/classic_zodiac_9.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Ambitious Capricorn",
+      "specialty": "Embodies the disciplined, practical, and highly driven spirit of Capricorn. Grounded in the Earth element, it brings resilient and structured energy. The slate-grey wax and sea-goat illustration reflect their ability to navigate complex challenges.",
+      "process": "Housed in a minimalist frosted glass jar with slate-grey wax. The label features a vintage-style line drawing of the sea-goat. It ensures a steady, enduring burn, mirroring Capricorn’s stamina.",
+      "significance": "Capricorn is 'The Achiever.' It signifies discipline, resilience, and ambition. This candle is the ultimate tool for focus and goal-setting."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 39,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Mysterious Scorpio",
+    "image_path": "images/classic_zodiac_10.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Mysterious Scorpio",
+      "specialty": "Channels the magnetic, intense, and fiercely passionate energy of Scorpio. Plunging into the Water element, it brings mystery and emotional depth. The dark plum wax and detailed scorpion reflect their transformative nature.",
+      "process": "Housed in an elegant frosted glass vessel that shrouds the dark wax, creating a moody glow. The metallic bronze label features a detailed scorpion. The burn is captivating and resilient.",
+      "significance": "Scorpio is 'The Alchemist.' It signifies transformation, intensity, and passion. This candle is designed for soulful reflection and deep focus."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 40,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Dreamy Pisces",
+    "image_path": "images/classic_zodiac_11.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Dreamy Pisces",
+      "specialty": "Captures the imaginative, empathetic, and intuitive spirit of Pisces. Flowing with the Water element, it brings tranquility and creative energy. The aqua-blue wax and twin-fish illustration reflect their connection to the mystical.",
+      "process": "Housed in a serene frosted glass vessel with aqua-blue wax and a gold-foil stamp of the twin fishes. It offers a gentle, ethereal burn that feels spiritually peaceful.",
+      "significance": "Pisces is 'The Dreamer.' It signifies empathy, imagination, and spiritual peace. This candle is ideal for meditation and letting your mind wander."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 41,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Classic Sun Sign",
+    "name": "The Visionary Aquarius",
+    "image_path": "images/classic_zodiac_12.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Visionary Aquarius",
+      "specialty": "Celebrates the intellectual, original, and forward-thinking spirit of Aquarius. As an Air element, it brings refreshing and stimulating energy. The deep teal tone and Water Bearer reflect their desire for progress and new ideas.",
+      "process": "Poured into a deep teal frosted glass jar that creates a modern glow. The label features rose-gold metallic line art of the Water Bearer. It provides a steady, crisp burn that honors the unique Aquarius spirit.",
+      "significance": "Aquarius is 'The Reformer.' It signifies innovation, community, and vision. This candle is perfect for brainstorming and creative work."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 42,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Four Elements",
+    "name": "The Eternal Flame: Fire Element",
+    "image_path": "images/elements_zodiac_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Eternal Flame: Fire Element",
+      "specialty": "This candle is the physical manifestation of passion, creativity, and raw energy. Designed for the fire signs—Aries, Leo, and Sagittarius—it radiates a warmth that transforms any space into a powerhouse of motivation. The flickering glow through the contoured amber glass mimics the movement of a real bonfire, igniting your inner drive and fueling your most ambitious dreams.",
+      "process": "Housed in a unique, wave-contoured amber glass jar that creates a beautiful play of light. The wax is a rich, fiery crimson blend, topped with a high-performance wick for a steady, intense burn. The label features a stunning copper-bronze finish with intricate flame illustrations and the bold Meltix FIRE branding.",
+      "significance": "Fire represents Transformation and Vitality. It is the spark of life and the engine of change. This candle is dedicated to those who lead with their hearts and possess the courage to burn bright, providing the energetic atmosphere needed to turn visions into reality."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 43,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Four Elements",
+    "name": "The Fluid Spirit: Water Element",
+    "image_path": "images/elements_zodiac_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Fluid Spirit: Water Element",
+      "specialty": "This candle captures the soothing, intuitive, and deeply emotional nature of the Water signs—Cancer, Scorpio, and Pisces. The unique wave-contoured glass mimics the gentle rippling of a tranquil lake, bringing a sense of flow and healing to your environment. It is designed to cleanse the aura and encourage a state of deep emotional reflection and inner peace.",
+      "process": "Poured into a beautiful, seafoam-blue frosted glass vessel with a signature 'ripple' texture that feels organic in the hand. The wax is a serene aqua-blue blend. The label is crafted from high-quality textured paper with rose-gold foil accents, featuring the Water drop icon and elegant wave patterns.",
+      "significance": "Water represents Intuition, Healing, and Flow. It is the element of deep feelings and the subconscious. This candle is for those who lead with empathy and wisdom, providing the fluid, calming atmosphere needed to recharge the soul and trust the tide of life."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 44,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Four Elements",
+    "name": "The Celestial Breeze: Air Element",
+    "image_path": "images/elements_zodiac_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Celestial Breeze: Air Element",
+      "specialty": "This candle embodies the clarity, intellect, and limitless freedom of the Air signs—Gemini, Libra, and Aquarius. Housed in a sleek, tapered vessel, it represents the invisible yet powerful force of the wind. Lighting this candle clears the mental fog, sparking inspiration and promoting a sense of lightness and objectivity in your thoughts and space.",
+      "process": "Features a modern, tapered frosted glass jar with a premium brushed silver metallic lid. The label is finished in a sophisticated silver-on-white aesthetic, showcasing the Air alchemy triangle and flowing wind motifs. The wax is a light, ethereal grey-blue, designed for a crisp and clean burn.",
+      "significance": "Air represents Intellect, Communication, and Freedom. It is the element of ideas and the breath of life. This candle is dedicated to the visionaries and thinkers, providing the fresh, clear atmosphere needed for brainstorming, social connection, and mental expansion."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 45,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Four Elements",
+    "name": "The Rooted Earth: Earth Element",
+    "image_path": "images/elements_zodiac_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Rooted Earth: Earth Element",
+      "specialty": "This candle is a steadfast anchor, designed for the Earth signs—Taurus, Virgo, and Capricorn. It captures the essence of unshakable stability and practical wisdom. The heavy, wide-based design symbolizes solid foundations and deep roots. Lighting this candle feels like grounding your spirit, providing a sense of deep security and a strong connection to the ancient, enduring strength of the natural world.",
+      "process": "Housed in a substantial, tapered frosted glass jar with a mossy, earth-toned finish. The label is made of premium forest-green textured paper featuring genuine rose-gold foil accents. It showcases an intricate illustration of a mountain with deep-reaching roots. Crafted with an ultra-premium, slow-burning wax blend and a perfectly centered cotton wick for a reliable and long-lasting burn.",
+      "significance": "Earth represents Grounding, Stability, and Endurance. It is the element of manifestation and tangible results. This candle is dedicated to those who build, nourish, and persevere, providing the steady, foundational atmosphere needed to make dreams real and enduring."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 46,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Taurus: The Emerald Revelation",
+    "image_path": "images/crystal_zodiac_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "Taurus: The Emerald Revelation",
+      "specialty": "This interactive candle offers a physical discovery. As the honey-toned wax melts away, it slowly reveals a raw, genuine Green Crystal (associated with Emerald or Jade) hidden deep within. Once the candle is spent, you are left with a lasting gemstone that has been 'charged' by your intentions, serving as a powerful talisman for your workspace or altar.",
+      "process": "Poured into a premium frosted glass jar with a vintage-style Taurus bull illustration and copper-gold foil accents. We use a high-quality, slow-burning wax blend to ensure the crystal is revealed safely and beautifully. The cotton wick provides a steady flame that perfectly illuminates the gemstone as it emerges from the golden pool.",
+      "significance": "This candle signifies Prosperity and Emotional Grounding. Ruled by Venus, Taurus seeks beauty and security. The hidden green crystal represents growth and the abundance of the Earth."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 47,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Scorpio: The Obsidian Shadow",
+    "image_path": "images/crystal_zodiac_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "Scorpio: The Obsidian Shadow",
+      "specialty": "This interactive candle mirrors the mysterious and transformative depths of a Scorpio. As the intense, dark plum wax creates a deep melt pool, a sharp, genuine Black Obsidian crystal slowly emerges from the shadows. Once the burn is complete, you are left with a powerful protection stone that has been infused with the candle's energy, perfect for your personal sanctuary or meditation space.",
+      "process": "Housed in an elegant frosted glass vessel with a stunning rose-gold metallic label featuring the Scorpio scorpion and astrological symbol. We use a slow-burning, high-pigment wax blend and a sturdy cotton wick to ensure the flame stays bright as it reveals the dark gemstone hidden within the liquid wax.",
+      "significance": "This candle signifies Protection and Inner Strength. Ruled by Pluto, Scorpio represents the power of transformation. The hidden black obsidian acts as a psychic shield, helping the user ground their intense emotions and release negative energy, perfectly complementing Scorpio’s journey through the deep waters of the soul."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 48,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Sagittarius: The Amethyst Journey",
+    "image_path": "images/crystal_zodiac_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "Sagittarius: The Amethyst Journey",
+      "specialty": "This interactive candle embodies the expansive and spiritual quest of the Sagittarius archer. As the warm, honey-toned wax creates a glowing pool, a genuine Amethyst crystal is slowly revealed. Once the candle has burned through, you are left with a beautiful gemstone that has been 'charged' with the candle's energy, serving as a reminder of your inner truth and higher wisdom.",
+      "process": "Hand-poured into a sleek frosted glass vessel, featuring a premium textured label with elegant gold-foil detailing of the Sagittarius centaur. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a consistent, steady flame that perfectly illuminates the purple crystal as it surfaces.",
+      "significance": "This candle signifies Spiritual Growth and Expansion. Ruled by Jupiter, Sagittarius is the seeker of knowledge. The hidden amethyst crystal supports this journey by enhancing intuition, providing protection during travels (both physical and spiritual), and connecting the user to their higher purpose."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 49,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Libra: The Opalescent Balance",
+    "image_path": "images/crystal_zodiac_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "Libra: The Opalescent Balance",
+      "specialty": "This interactive candle reflects the refined beauty and harmonious nature of a Libra. As the pristine white wax slowly transforms into a clear, glowing pool, a genuine, iridescent Opal crystal is revealed. Once the candle has fulfilled its journey, you are left with a shimmering gemstone that has been 'charged' by the flame, serving as a physical anchor for peace and emotional equilibrium in your space.",
+      "process": "Housed in an elegant frosted glass tumbler that emits a soft, ethereal glow. The premium cream label features the Libra scales and the Meltix logo in sophisticated rose-gold foil. We use a high-quality, clean-burning wax blend and a lead-free cotton wick to ensure a steady burn that beautifully highlights the opalescent gemstone as it surfaces from the wax.",
+      "significance": "This candle signifies Harmony and Emotional Clarity. Ruled by Venus, Libra seeks symmetry and grace in all things. The hidden opal crystal supports this by enhancing creativity, stabilizing emotions, and encouraging the user to find a perfect balance between their heart and mind."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 50,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Cancer: The Moonstone Sanctuary",
+    "image_path": "images/crystal_zodiac_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "Cancer: The Moonstone Sanctuary",
+      "specialty": "This interactive candle captures the nurturing, moon-ruled essence of the Cancer sign. As the creamy white wax melts into a shimmering pool, a genuine Moonstone crystal slowly surfaces. Once the candle has completed its burn, you are left with a beautiful gemstone that has been 'charged' by the flame, serving as a lasting talisman for emotional comfort and inner peace.",
+      "process": "Poured into a soft-touch frosted glass vessel that emits a gentle, ethereal glow when lit. The premium white label features an intricate metallic-gold crab illustration and the Cancer symbol. Crafted with a high-quality, slow-burning wax blend and a lead-free cotton wick, it ensures a calm and steady burn that perfectly highlights the iridescent moonstone as it is revealed.",
+      "significance": "This candle signifies Intuition and Emotional Healing. Ruled by the Moon, Cancer is the sign of the heart and home. The hidden moonstone crystal supports this by enhancing intuition, stabilizing emotions, and providing a sense of safety and calm, reflecting Cancer's deep connection to their feelings and their sanctuary."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 51,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Capricorn: The Smoky Quartz Foundation",
+    "image_path": "images/crystal_zodiac_6.jpg",
+    "price": 500,
+    "details": {
+      "title": "Capricorn: The Smoky Quartz Foundation",
+      "specialty": "This interactive candle mirrors the resilient and ambitious nature of Capricorn. As the warm, earth-toned wax melts away, it slowly reveals a genuine Smoky Quartz crystal hidden within. Once the candle's journey is complete, you are left with a grounded gemstone 'charged' by the flame, perfect for keeping at your workspace as a reminder of your long-term goals and persistence.",
+      "process": "Hand-poured into a minimalist frosted glass vessel featuring a premium textured label with a vintage-style illustration of the Capricorn sea-goat. The copper-gold foil detailing adds a touch of professional luxury. We use a high-quality, slow-burning wax blend and a sturdy cotton wick to ensure a clean burn that beautifully highlights the crystal as it emerges from the golden melt pool.",
+      "significance": "This candle signifies Grounding and Manifestation. Ruled by Saturn, Capricorn is the architect of the zodiac. The hidden smoky quartz crystal supports this by absorbing negative energy, providing mental clarity, and helping the user stay focused on turning their ambitious visions into tangible reality."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 52,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Gemini: The Citrine Spark",
+    "image_path": "images/crystal_zodiac_7.jpg",
+    "price": 500,
+    "details": {
+      "title": "Gemini: The Citrine Spark",
+      "specialty": "This interactive candle perfectly mirrors the bright, curious, and intellectual energy of Gemini. As the light, cream-colored wax melts away, it reveals a genuine, golden Citrine crystal. Once the flame has done its work, you are left with a vibrant gemstone 'charged' by the candle, perfect for keeping on your desk to spark new ideas and social connections.",
+      "process": "Housed in a premium frosted glass jar featuring an elegant, rose-gold metallic illustration of the Gemini twins. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a clean, bright burn that beautifully illuminates the Citrine as it surfaces from the warm wax.",
+      "significance": "This candle signifies Creativity and Communication. Ruled by Mercury, Gemini is the messenger of the zodiac. The hidden Citrine crystal supports this by clearing mental fog, enhancing self-expression, and attracting success and abundance to the user’s creative and intellectual pursuits."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 53,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Pisces: The Amethyst Dream",
+    "image_path": "images/crystal_zodiac_8.jpg",
+    "price": 500,
+    "details": {
+      "title": "Pisces: The Amethyst Dream",
+      "specialty": "This interactive candle embodies the mystical and dreamy depths of a Pisces. As the creamy white wax melts into a soft, glowing pool, a genuine Amethyst cluster is slowly revealed. Once the candle is spent, the gemstone remains as a lasting symbol of peace and spiritual connection that has been 'charged' by the flame's energy, perfect for your meditation space.",
+      "process": "Poured into a serene frosted glass vessel, featuring a premium label with detailed blue and purple line art of the iconic Pisces twin fish. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a tranquil burn that beautifully showcases the purple crystal as it surfaces.",
+      "significance": "This candle signifies Intuition and Inner Peace. Ruled by Neptune, Pisces is the most spiritual sign of the zodiac. The hidden amethyst cluster enhances this connection by calming the mind, protecting the spirit, and encouraging the user to trust their vivid imagination and deep intuition."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 54,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Leo: The Radiant Sunstone",
+    "image_path": "images/crystal_zodiac_9.jpg",
+    "price": 500,
+    "details": {
+      "title": "Leo: The Radiant Sunstone",
+      "specialty": "This interactive candle perfectly mirrors the charismatic and warm-hearted energy of Leo. As the rich, golden wax creates a sun-like glow, a genuine Sunstone crystal slowly reveals itself. Once the candle has burned through, you are left with a vibrant gemstone 'charged' by the flame, serving as a physical reminder of your inner strength and natural brilliance.",
+      "process": "Housed in an elegant frosted glass vessel featuring a vintage-inspired parchment label. The design showcases a powerful, hand-drawn lion illustration and the Leo symbol in a sophisticated gold finish. We use a premium, slow-burning wax blend and a lead-free cotton wick to ensure a steady, bright flame that highlights the shimmering sunstone as it emerges.",
+      "significance": "This candle signifies Confidence and Vitality. Ruled by the Sun, Leo is the heart of the zodiac. The hidden sunstone crystal supports this by boosting self-worth, instilling a sense of joy, and helping the user shine in their creative and leadership pursuits."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 55,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Virgo: The Peridot Harvest",
+    "image_path": "images/crystal_zodiac_10.jpg",
+    "price": 500,
+    "details": {
+      "title": "Virgo: The Peridot Harvest",
+      "specialty": "This interactive candle beautifully captures the meticulous and nurturing essence of the Virgo sign. As the creamy white wax melts into a warm, golden pool, genuine Peridot crystals are revealed, surfacing like a bountiful harvest. Once the candle is spent, these vibrant green gems remain, serving as a lasting talisman for mental clarity and health, 'charged' by your focused intentions.",
+      "process": "Poured into a signature frosted glass jar with a premium textured label. The design features an elegant line-art maiden holding stalks of wheat, finished with a sophisticated metallic-gold touch. Our clean-burning wax blend and lead-free wick ensure a flawless, steady burn that perfectly showcases the crystals as they are unearthed from the wax.",
+      "significance": "This candle signifies Growth and Mental Precision. Ruled by Mercury, Virgo is the analyst and healer of the zodiac. The hidden Peridot crystals support this by reducing stress, encouraging emotional balance, and helping the user manifest their goals through practical steps and pure intentions."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 56,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Aquarius: The Aquamarine Vision",
+    "image_path": "images/crystal_zodiac_11.jpg",
+    "price": 500,
+    "details": {
+      "title": "Aquarius: The Aquamarine Vision",
+      "specialty": "This interactive candle embodies the visionary and humanitarian spirit of Aquarius. As the pristine white wax creates a clear, luminous pool, a genuine Aquamarine crystal is slowly revealed, surfacing like a new idea from the depths of the mind. Once the candle is spent, you are left with a cool, calming gemstone 'charged' by the flame, perfect for your creative space or a spot where you do your best thinking.",
+      "process": "Housed in an elegant frosted glass vessel with a beautiful watercolor-inspired label. The design features a flowing water-bearer jug and the Aquarius waves, finished with a sophisticated gold-foil Meltix logo. We use a high-quality, clean-burning wax blend and a lead-free cotton wick to ensure a crisp, steady burn that highlights the blue crystal as it emerges.",
+      "significance": "This candle signifies Innovation and Mental Clarity. Ruled by Uranus, Aquarius is the futuristic thinker of the zodiac. The hidden Aquamarine crystal supports this by enhancing clear communication, soothing the mind, and encouraging the user to embrace their unique individuality and visionary goals."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 57,
+    "collection_slug": "zodiac-candle",
+    "collection_label": "Zodiac Candle",
+    "group_name": "Hidden Crystal",
+    "name": "Aries: The Red Jasper Fire",
+    "image_path": "images/crystal_zodiac_12.jpg",
+    "price": 500,
+    "details": {
+      "title": "Aries: The Red Jasper Fire",
+      "specialty": "This interactive candle perfectly captures the bold and fearless energy of Aries. As the pristine white wax transforms into a warm, glowing pool, a genuine Red Jasper crystal is slowly revealed. Once the candle's journey is complete, you are left with a powerful gemstone 'charged' by the flame, serving as a lasting talisman for courage and physical vitality that you can carry with you or keep on your altar.",
+      "process": "Housed in a premium frosted glass jar that creates a soft, ambient glow when lit. The elegant cream label features a stunning metallic-gold ram illustration with intricate filigree details and the Aries symbol. We use a high-quality, slow-burning wax blend and a lead-free cotton wick to ensure a robust, steady flame that highlights the red gemstone as it surfaces.",
+      "significance": "This candle signifies Courage and Vitality. Ruled by Mars, Aries is the bold leader of the zodiac. The hidden red jasper crystal supports this by providing grounding energy, boosting stamina, and helping the user channel their fiery passion into productive and fearless action."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 58,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Treasure Hunt",
+    "name": "The Gilded Path: Crystal Quest",
+    "image_path": "images/treasure_hunt_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Gilded Path: Crystal Quest",
+      "specialty": "This is the ultimate \"Milestone\" gift. Whether it’s an anniversary, a birthday, or a surprise proposal, this candle is designed for your partner or a very close friend. The speciality lies in its dual-purpose design—it starts as a stunning hand-sculpted crystal cluster decor piece and transforms into a life-changing moment as the wax melts to reveal a Diamond-style ring. It represents the idea that the most beautiful things in life are often hidden, waiting for the right moment and the right light to be found.",
+      "usage": "Place the candle on a heat-safe surface and light the central wick. As the \"inner core\" of the crystal melts, the ring (safely tucked in a heat-resistant pouch) will begin to surface. Once the pouch is visible, extinguish the flame, use a pair of tweezers to carefully retrieve it, and let it cool before unwrapping the treasure.",
+      "process": "The exterior is hand-poured into a custom-made crystal cluster mold using a high-melting-point hard wax to maintain its shape, while the center features a softer, premium soy-blend \"melt pool\" wax. The surprise is double-wrapped in medical-grade foil and positioned at a precise depth to ensure a safe and magical reveal."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 59,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Treasure Hunt",
+    "name": "Oceanic Echo: The Seashell Reveal",
+    "image_path": "images/treasure_hunt_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "Oceanic Echo: The Seashell Reveal",
+      "specialty": "This candle is a tribute to the beauty of discovery, making it a \"precious find\" for a partner, best friend, or anyone who finds peace by the sea. The speciality of this piece is its incredible hand-sculpted conch shell design, which functions as high-end home decor long before the fire even touches it. Hidden within the \"mouth\" of the shell is a delicate, diamond-studded shell pendant in rose gold. It symbolizes that the most beautiful treasures are often found in quiet, unexpected places. It’s a deeply thoughtful way to show someone they are your \"one in a million\" find.",
+      "usage": "Place the seashell on a flat, heat-resistant surface. Light the wick at the crown and allow the fragrance to drift. As the inner wax liquefies, the treasure pouch will begin to emerge. Once the pouch is clear of the melt pool, blow out the candle, use tweezers to carefully remove the foil, and let it cool before unveiling the rose-gold pendant inside.",
+      "process": "Hand-sculpted using a high-density, matte-finish ivory wax to mimic the realistic texture and weight of a natural conch shell. The inner core is poured with a specialized low-heat soy wax blend to ensure the jewelry pouch is revealed safely without damage. The pendant is crafted with high-quality rose-gold plating and premium accents, double-wrapped in medical-grade protective foil for a pristine reveal."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 60,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Treasure Hunt",
+    "name": "The Sun-Kissed Surprise: Celestial Reveal",
+    "image_path": "images/treasure_hunt_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Sun-Kissed Surprise: Celestial Reveal",
+      "specialty": "This candle is designed to \"light up\" the life of someone truly special—be it your partner, a parent, or that one friend who is your personal sunshine. The speciality of this piece is its smooth, minimalist organic design that hides a brilliant, gold-finish Sunburst necklace encrusted with shimmering crystals. It’s a powerful metaphor: no matter how much life \"melts\" you down, your inner light and beauty will always shine through. It’s the perfect way to tell someone, \"You are the center of my universe,\" making it an unforgettable gift for anniversaries or birthdays.",
+      "usage": "Place the candle on a stable, heat-resistant tray. Light the wick at the top and enjoy the warm, ambient glow. After a few hours of burning, the golden treasure pouch will become visible within the wax pool. Carefully extinguish the flame, use tweezers to lift the pouch out, and let it cool. Once opened, the celestial sunburst pendant is ready to be worn and cherished.",
+      "process": "Hand-poured using a premium, high-luster wax that gives the candle its signature marble-smooth finish. We use a specialty soy-blend wax for the core to ensure a clean, even melt and an easy reveal. The sunburst pendant is crafted with a high-quality golden finish and precision-cut crystals, double-wrapped in medical-grade protective foil to ensure it stays pristine and sparkling until the very moment it is found."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 61,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Treasure Hunt",
+    "name": "The Geometric Garden: Leaf of Life Reveal",
+    "image_path": "images/treasure_hunt_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Geometric Garden: Leaf of Life Reveal",
+      "specialty": "This candle is a celebration of growth and new beginnings, making it the perfect gift for a partner starting a new chapter or a close friend who is \"blooming\" in their own way. The speciality of this piece is its striking, polyhedral geometric design—a modern architectural masterpiece for any room. Hidden within the core is a minimalist, 24k gold-finish leaf pendant on a delicate chain. It signifies that even in the most structured and complex lives, there is always room for natural growth and organic beauty. It’s a quiet, elegant way to say, \"I’m proud of who you are becoming.\"",
+      "usage": "Place the geometric vessel on a heat-safe coaster. Light the central wick and let the crisp fragrance fill the air. As the polyhedral \"walls\" begin to soften inward, the jewelry pouch will surface in the melt pool. Carefully extinguish the flame, use tweezers to retrieve the foil, and let it cool. Unwrap it to reveal the gold-leaf necklace, a lasting token of your shared journey.",
+      "process": "Hand-poured using a high-density, matte-finish soy wax that holds the sharp, modern angles of the polyhedral mold perfectly. The inner core is made with a clean-burning vegetable wax blend designed for a slow, hypnotic reveal. The leaf pendant is crafted with premium gold plating and precision engraving, double-wrapped in medical-grade protective foil to ensure it stays flawless until the moment of discovery."
+    },
+    "ui_flags": {
+      "artisan_bespoke": true
+    }
+  },
+  {
+    "id": 62,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Stress Buster",
+    "name": "The Zen Unboxing: Concrete Calm",
+    "image_path": "images/stress_buster_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Zen Unboxing: Concrete Calm",
+      "specialty": "This is the ultimate \"Stress Buster\" for those days when just breathing isn't enough. It’s designed for a partner or a friend who is feeling completely overwhelmed and needs a moment of physical catharsis. The speciality here is the interactive smash experience. Before you get to the soothing candle, you have to break through the \"hard exterior\" of stress. It’s a powerful metaphor: you are physically breaking your tension to find the serenity waiting underneath. It turns a simple gift into a therapeutic event that starts with a release and ends with a calm, glowing atmosphere.",
+      "usage": "Place the concrete block on a sturdy, protected surface. Use the included premium brass-headed hammer to gently but firmly strike the \"cracked\" sections of the shell. Once the outer concrete layer is broken away, you'll reveal the \"Serenity Core.\" Clear away the debris, light the wick, and let the scent of Chamomile take over as the stress of the day disappears.",
+      "process": "The outer shell is crafted from a proprietary \"Eco-Shatter\" concrete blend that is designed to crack safely without creating sharp dust. The inner candle is hand-poured with an ultra-calming Chamomile & Serenity soy wax blend. It comes as a complete kit, including the custom-branded Meltix wooden and brass hammer, all housed in our signature charcoal-grey luxury gift box."
+    },
+    "ui_flags": {
+      "stress_insight": true
+    }
+  },
+  {
+    "id": 63,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Stress Buster",
+    "name": "Serenity Stone: The Cylindrical Smash",
+    "image_path": "images/stress_buster_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "Serenity Stone: The Cylindrical Smash",
+      "specialty": "This is for the friend or partner who feels like they’re carrying the weight of the world on their shoulders. The speciality is the sensory transition—moving from the hard, cold, grey concrete to the soft, warm, white wax hidden inside. It represents the idea that even when life feels rigid and unbreakable, there is a gentle light inside you waiting to be set free. It’s a physical manifestation of \"breaking through\" your limits, making it an incredibly empowering gift for someone who needs a reminder of their own inner warmth.",
+      "usage": "Place the cylinder on a solid, protected surface. Take a deep breath and use the brass-tipped hammer to strike the pre-fractured concrete. Once you’ve \"unboxed\" your peace, clear away the fragments and light the wick. As the candle burns, it creates a sanctuary of light and scent, effectively washing away the remnants of a hard day.",
+      "process": "We’ve used a specialized \"stress-fracture\" concrete mold that allows for a clean break without the mess of traditional stone. The candle inside is a high-grade soy blend, infused with Lavender & Serenity essential oils for maximum relaxation. The set is completed with a hand-turned wooden hammer and a luxury charcoal gift box."
+    },
+    "ui_flags": {
+      "stress_insight": true
+    }
+  },
+  {
+    "id": 64,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Stress Buster",
+    "name": "The Orb of Serenity: Spherical Smash",
+    "image_path": "images/stress_buster_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Orb of Serenity: Spherical Smash",
+      "specialty": "This piece is designed for the person who needs a complete \"reset.\" The speciality of this design is its perfect spherical shape—a symbol of wholeness and cycles. Breaking into this orb feels like cracking open a new day. It’s a powerful gift for a partner or a close friend who is struggling to find a \"center\" amidst a chaotic week. By physically shattering the concrete shell, they are performing a ritual of letting go, uncovering a soft, glowing light that smells like a field of wildflowers. The addition of real dried chamomile botanicals inside the wax adds a beautiful, organic touch that only becomes visible once the \"armor\" is removed.",
+      "usage": "Place the \"Orb of Serenity\" on the provided marble or heat-safe base. Using the brass-weighted hammer, strike the pre-etched cracks on the surface. Once the concrete \"peels\" away, you are left with a smooth, egg-shaped candle core. Light the wick and let the calming botanical aroma fill the room. It’s not just a candle; it’s a 10-minute therapy session followed by hours of peace.",
+      "process": "The outer sphere is cast in a specialized \"light-impact\" concrete that mimics the look of natural stone but shatters cleanly. The inner core is hand-poured with a premium, slow-burning soy wax infused with Soothing Chamomile & Serenity essential oils. Each candle features hand-placed dried chamomile flowers for a \"botanical surprise\" as it burns. The set comes with our most premium ornate wooden and brass hammer."
+    },
+    "ui_flags": {
+      "stress_insight": true
+    }
+  },
+  {
+    "id": 65,
+    "collection_slug": "break-to-reveal",
+    "collection_label": "Break to Reveal",
+    "group_name": "The Stress Buster",
+    "name": "The Golden Sanctuary: Sandalwood Smash",
+    "image_path": "images/stress_buster_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Golden Sanctuary: Sandalwood Smash",
+      "specialty": "This is the ultimate \"Stress Buster\" for those who appreciate the finer things in life even during their most chaotic moments. It’s a perfect gift for a partner or a best friend who needs a physical release and a mental reset. The speciality of this piece is the Gold-Leaf infusion—as you break through the rugged, industrial concrete shell, you aren’t just finding a candle; you’re uncovering a luxury sanctuary. The combination of the physical \"smash\" and the grounding, earthy aroma of Sandalwood represents the transformation of raw tension into refined peace. It’s a physical reminder that even when things feel heavy, there is a golden light inside you waiting to be revealed.",
+      "usage": "Place the concrete sphere on the included brass tray or a sturdy, protected surface. Use the weighted copper-headed hammer to strike the \"fault lines\" of the concrete. Once the shell gives way, clear the fragments to reveal the gold-flecked wax core. Light the wick and let the warm, woody scent of Sandalwood ground your energy and melt away the remaining stress of the day.",
+      "process": "The outer \"Armor\" is cast in a high-texture, matte-grey concrete blend designed for a clean, satisfying fracture. The inner core is hand-poured with a premium soy wax infused with Genuine Sandalwood essential oils and topped with hand-placed 24k-style gold leaf flakes for a touch of opulence. The set is completed with a professional-grade rose-gold and walnut wood hammer, all housed in our signature bronze-foiled luxury gift box."
+    },
+    "ui_flags": {
+      "stress_insight": true
+    }
+  },
+  {
+    "id": 66,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Ice Breaker",
+    "name": "Coffee & Cocoa: The Ice Breaker Kit",
+    "image_path": "images/ice_breaker_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "Coffee & Cocoa: The Ice Breaker Kit",
+      "specialty": "Yeh kit ek normal date ko ek deep interactive journey mein badal deta hai. Iski sabse badi speciality iske sath milne wala Conversation Starter Cards (Icebreaker Edition) ka deck hai. \"Coffee & Cocoa\" ki fragrance ek cozy, high-end cafe wali vibe create karti hai, jo date pe hone wali nervousness ya anxiety ko kam karne mein madad karti hai. Card draw karke—jaise ki \"What's the most interesting place you've ever explored?\"—couples boring small talk ko skip karke seedha meaningful baaton pe aa sakte hain. Yeh connection building ko effortless aur fun banata hai.",
+      "usage": "Candle jala ke room mein ek warm atmosphere create karein. Phir cards ko nikaalein aur ek-ek karke random question utha ke ek dusre se puchein. It’s like a guided tour of your partner’s mind while enjoying a premium scent.",
+      "process": "Yeh candle ek rustic, antique-copper finished tin mein hand-poured hai jo vintage vibe deti hai. Cards premium 350gsm matte-finish cardstock pe printed hain. Wax ek specialized soy-blend hai jisme roasted Arabica coffee aur dark cocoa butter ke essential oils use kiye gaye hain taaki aroma bilkul authentic lage."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 67,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Ice Breaker",
+    "name": "Cherry Blossom & Peony: The Blossom Ice Breaker",
+    "image_path": "images/ice_breaker_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "Cherry Blossom & Peony: The Blossom Ice Breaker",
+      "specialty": "This kit is designed for those moments when you want to explore the \"softer\" side of a relationship. The speciality is the Dreamer’s Edition Conversation Deck, which features lighthearted yet revealing questions like \"What is your ideal perfect day?\" The fragrance of Cherry Blossom and Peony is intentionally delicate and floral, creating a safe, non-intimidating space for vulnerability and shared laughter. It’s the perfect gift for a partner to show that you value their thoughts just as much as their company, turning a routine evening into a blooming connection.",
+      "usage": "Open the premium \"Sakura Pink\" gift box and place the ribbed glass candle on a stable surface. Light the wick and let the floral scent fill the room. Once the atmosphere is set, take turns drawing cards from the deck. It’s best used during a relaxed afternoon or a low-pressure weekend date.",
+      "process": "The candle is poured into a high-end, vertically ribbed clear glass vessel that catches the flame’s light beautifully. The wax is a clean-burning soy blend infused with natural peony extracts and cherry blossom fragrance oils. The kit comes in a luxury textured box with signature rose-gold Meltix foiling, and the cards are finished with a soft-touch coating for a premium feel."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 68,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Ice Breaker",
+    "name": "Lavender & Vanilla: The Deep Connect Ice Breaker",
+    "image_path": "images/ice_breaker_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "Lavender & Vanilla: The Deep Connect Ice Breaker",
+      "specialty": "This kit is designed for those who want to move beyond the surface and truly understand their partner's inner world. The speciality is the \"Connect Deeply\" Date Night Conversation Deck, which features profound questions designed to spark intimacy and emotional discovery. The fragrance of Lavender and Vanilla is scientifically chosen for its ability to lower cortisol levels, creating a safe, stress-free zone for deep honesty and vulnerable sharing. It’s the ultimate \"re-connection\" tool for long-term couples or a powerful way for new partners to build a solid foundation.",
+      "usage": "Open the luxury plum-purple gift box and set the candle on a heat-safe surface. Light the wooden wick and allow the crackling sound and soothing aroma to ground your energy. Once you both feel relaxed, begin drawing from the conversation deck. It’s best used as a \"digital detox\" ritual—phones away, just the two of you and the flame.",
+      "process": "Poured into a premium clear glass vessel with a sophisticated lavender-matte label and gold-foil Meltix branding. The wax is a high-quality soy-paraffin blend that ensures a 50+ hour clean burn. Features a sustainable crackling wooden wick that provides a fireplace-like ambiance. The entire kit is housed in a boutique-quality textured box with a satin-lined interior and an elegant purple silk ribbon."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 69,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Ice Breaker",
+    "name": "Citrus Bergamot: The Mindful Ice Breaker",
+    "image_path": "images/ice_breaker_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "Citrus Bergamot: The Mindful Ice Breaker",
+      "specialty": "This kit is designed for couples who value intellectual stimulation and personal growth. The speciality is the \"Wisdom & Perspective\" Deck, which includes thought-provoking prompts like \"What’s the best piece of advice you’ve ever received?\" The fragrance of Citrus and Bergamot is bright, uplifting, and sharp—specifically chosen to keep the mind engaged and curious during deep discussions. It turns a casual hangout into a high-value exchange of ideas, making it perfect for a \"Sunday Morning\" date or a creative brainstorming session with your partner.",
+      "usage": "Light the candle on a clean, minimalist surface. Let the zesty aroma sharpen your focus and lift the mood. Once the vibe is set, draw a card and dive into the story behind the answer. It’s an interactive way to learn about the people, lessons, and experiences that shaped your partner’s outlook on life.",
+      "process": "The vessel is a heavy, matte-beige ceramic jar with a luxury rose-gold foil \"Meltix\" stamp. The candle features a clean-burning cotton wick and a premium soy-wax blend that ensures a soot-free experience. The card box is finished in a deep forest-green textured paper with rose-gold foil accents, and the cards are printed on high-durability, eco-friendly cardstock for a premium feel."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 70,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Ice Breaker",
+    "name": "Tonka & Cardamom: The Explorer's Ice Breaker",
+    "image_path": "images/ice_breaker_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "Tonka & Cardamom: The Explorer's Ice Breaker",
+      "specialty": "This kit is designed for the couple who loves to dream big and plan their next great escape. The speciality is the \"Adventure & Ambition\" Deck, featuring inspiring questions like \"What’s the one adventure you’ve always dreamed of taking?\" The fragrance is a sophisticated, earthy blend of Tonka Bean and Cardamom—aromas often associated with travel and exotic spice markets. It’s crafted to stir the imagination and create a \"global\" vibe right in your living room, making it the perfect companion for a late-night planning session or a date where you want to share your wildest aspirations.",
+      "usage": "Place the hand-carved wooden vessel on a stable surface and light the wick. As the warm, spicy aroma fills the air, let it act as your \"passport\" to deeper conversation. Pull a card from the premium slider box and take turns sharing your bucket-list dreams. It turns a simple evening into a shared mental journey, strengthening your bond through common goals and exciting future plans.",
+      "process": "The candle is poured into a unique, hand-finished Natural Walnut Wood bowl, featuring a custom-fitted gold Meltix medallion. We use a premium, slow-burning soy-wax blend that complements the natural wood grain. The conversation deck is housed in a luxury charcoal-grey slider box with gold-leaf foiling, and the cards are printed on thick, rounded-edge ivory cardstock for a high-end tactile experience."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 71,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Ice Breaker",
+    "name": "Rose & Oud: The Unified Dream Ice Breaker",
+    "image_path": "images/ice_breaker_6.jpg",
+    "price": 500,
+    "details": {
+      "title": "Rose & Oud: The Unified Dream Ice Breaker",
+      "specialty": "Yeh kit Ice Breaker series ka grand finale hai, jo specifically design kiya gaya hai \"Long-term Planning\" aur \"Shared Future\" ke liye. Iski sabse badi speciality iska \"Visionary Deck\" hai, jisme deep aur constructive sawal hain jaise ki \"What is a dream we can build together?\" Fragrance mein Rose aur Oud ka blend hai—Rose romance ko trigger karta hai aur Oud ek strong, grounding effect deta hai, jisse couples bina kisi hesitation ke apne bade sapno aur goals ke baare mein baat kar sakein. Yeh sirf ek date nahi, balki ek partnership building exercise hai.",
+      "usage": "Set the mood by lighting the candle in a quiet space where you both feel comfortable dreaming big. Draw a card and take turns answering. Let the deep, luxurious aroma guide your thoughts toward the future you want to build together.",
+      "process": "Candle ko ek luxury dark-amber glass vessel mein dala gaya hai jo candle ki flame ko ek deep golden glow deta hai. Wax mein premium Bulgarian Rose extracts aur smokey Oud oils ka use kiya gaya hai for a sophisticated aroma. Iska card box ek dual-tone metallic rose aur mauve finish mein aata hai, jisme rounded-corner cards hain jo rose-gold borders ke sath aate hain, taaki har card nikaalte waqt ek premium \"gift\" jaisa feel aaye."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 72,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Dine In",
+    "name": "Mild Rose: The Anniversary Dine-In Kit",
+    "image_path": "images/dine_in_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "Mild Rose: The Anniversary Dine-In Kit",
+      "specialty": "This kit is the crown jewel of the \"Dine In\" collection, specifically curated to transform a home-cooked anniversary dinner into a 5-star sensory experience. The speciality lies in the Aroma-Harmony technology—the \"Mild Rose\" fragrance is engineered to be exceptionally light and non-intrusive. Unlike standard candles, it complements the natural aroma of your food, enhancing the dining experience rather than competing with it. It’s designed for partners who want to bring the elegance of a luxury restaurant into their own dining room, creating a romantic, softly lit sanctuary for their special milestones.",
+      "usage": "Arrange the pillar candle as the central focus of your table and place the two taper candles on either side to create a classic \"Golden Triangle\" of light. Light the wicks 15 minutes before the meal is served to allow the subtle floral notes to settle and blend perfectly with the savory aromas of your dinner.",
+      "process": "The kit features a multi-candle arrangement: one large, textured pillar candle and two elegant, slim taper candles. All are hand-poured using a 100% premium soy wax blend to ensure a clean, soot-free, and long-lasting burn. The pillar candle is finished with a luxury parchment label and metallic gold branding. The entire set is housed in a bespoke, chocolate-brown \"Meltix\" signature box featuring intricate gold filigree embossing."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 73,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Dine In",
+    "name": "Emerald Evening: The Gourmet Dine-In Kit",
+    "image_path": "images/dine_in_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "Emerald Evening: The Gourmet Dine-In Kit",
+      "specialty": "This kit is designed for the couple that treats every home-cooked meal like a culinary event. The speciality of this set is its neutralizing scent profile—the wax is infused with very light, crisp notes of white tea and ginger, specifically chosen to cleanse the palate and clear the air of cooking smells like garlic or oils without clashing with your food. It provides the perfect \"Golden Hour\" lighting for your table, making the presentation of your dishes look as good as they taste. It's the ultimate gift for a partner who loves to host \"Dine In\" dates, turning your kitchen table into a sophisticated bistro.",
+      "usage": "Place the central pillar candle as your anchor piece and set the two taper candles in your favorite holders on either end of the table. Light all three just as you begin plating the food to signal the start of a focused, intentional meal where the conversation and the flavors are the stars of the show.",
+      "process": "This premium trio includes one wide pillar candle and two elegant taper candles, all hand-cast in a creamy, high-quality soy wax blend. The candles are wrapped in sophisticated textured parchment labels with rose-gold foiling. The entire kit is presented in a luxury forest-green gift box with a rose-gold metallic trim and a plush cream-colored insert that keeps the candles perfectly protected."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 74,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Dine In",
+    "name": "White Musk: The Dine-In Romance Kit",
+    "image_path": "images/dine_in_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "White Musk: The Dine-In Romance Kit",
+      "specialty": "This kit is for the partner who loves a \"sensory-rich\" dining experience that goes beyond just the food. The speciality here is the Botanical-Infusion pillar and the separate White Musk Essence vial. The fragrance is designed with a \"Clean Base\" profile—it doesn't fight against the aroma of your food. Instead, the soft white musk creates a luxurious atmosphere that feels like a private fine-dining room. It makes the date interactive by allowing you to control the scent intensity throughout the meal, ensuring the atmosphere is as curated as the menu.",
+      "usage": "Arrange the petal-embedded pillar as your main center-piece and light the two taper candles to add height and a warm, flattering glow to the table. For an extra sensory boost between courses, uncork the \"White Musk Essence\" vial to refresh the air and transition the mood from dining to deep conversation.",
+      "process": "The main pillar candle is hand-poured with premium soy wax and features real, hand-pressed dried peony petals embedded within the outer layers for an organic, artisanal look. The two cream-colored taper candles are designed to be dripless and smokeless to keep your table setting pristine. The entire kit is presented in a boutique-quality taupe gift box with embossed copper branding."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 75,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Dine In",
+    "name": "Sandalwood Infusion: The Earthy Dine-In Kit",
+    "image_path": "images/dine_in_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "Sandalwood Infusion: The Earthy Dine-In Kit",
+      "specialty": "This kit is designed for couples who enjoy bold, rich flavors and deep, grounding conversations. The speciality of the Sandalwood Infusion is its warm, woody aroma that acts as a perfect backdrop for a hearty meal. Unlike floral scents that can clash with savory dishes, sandalwood complements the \"umami\" notes of a dinner—making it ideal for nights involving red wine, grilled specialties, or rich pastas. It creates a sophisticated, \"fine-dining\" atmosphere that makes staying at home feel like a luxury getaway, helping partners focus entirely on the food and each other.",
+      "usage": "Arrange the large, textured pillar candle in the center of your table to act as the \"heart\" of the meal. Place the two slim taper candles in gold holders on either side to add elegant, flickering height. Light the set 10 minutes before sitting down; the resulting \"Golden Triangle\" of light is specifically designed to cast a flattering, romantic glow across the table while the scent subtly preps the senses for a gourmet experience.",
+      "process": "This premium trio features one hand-cast pillar candle with a unique \"stone-texture\" finish and two elegant, dripless taper candles. All are crafted from a 100% natural soy wax blend for a clean, non-toxic burn that won't interfere with the taste of your food. The pillar is finished with a minimalist gold \"Meltix\" band. The entire kit is housed in a boutique charcoal-brown gift box with embossed gold-foil branding and a custom-molded insert for maximum protection."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 76,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "Dine In",
+    "name": "Rose & Sandalwood: The Signature Dine-In Romance Kit",
+    "image_path": "images/dine_in_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "Rose & Sandalwood: The Signature Dine-In Romance Kit",
+      "specialty": "This is the flagship kit of the \"Dine In\" collection, designed for an unforgettable evening of high-end romance. The speciality is the Dual-Note Balance of delicate Rose and grounding Sandalwood. This specific combination is scientifically curated to stimulate both the heart and the mind—Rose triggers affection and romance, while Sandalwood provides a calm, steady energy. It’s the perfect companion for a multi-course dinner, ensuring the atmosphere transitions smoothly from the excitement of the meal to a deep, lingering connection long after the plates are cleared.",
+      "usage": "Place the embossed rose pillar candle in the center of your table as the centerpiece. Arrange the two taper candles in their signature twisted copper holders on either side to create a sophisticated, warm glow. Light the set 15 minutes before dining to allow the sophisticated floral-woody aroma to harmonize with your food's presentation.",
+      "process": "This kit features a premium hand-cast pillar candle with a custom-etched rose pattern and two drip-free taper candles. We use a high-grade soy wax blend for a clean, non-toxic burn. The set includes two exclusive twisted copper-finish candle holders. All elements are beautifully presented in a luxury burgundy gift box with rose-gold metallic detailing and a premium soft-touch finish."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 77,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "The Cozy",
+    "name": "Toasted Caramel & Hot Chocolate: The Cozy Movie Night Kit",
+    "image_path": "images/the_cozy_1.jpg",
+    "price": 500,
+    "details": {
+      "title": "Toasted Caramel & Hot Chocolate: The Cozy Movie Night Kit",
+      "specialty": "This kit is designed for the ultimate \"stay-at-home\" date. The speciality of this set is the Gourmet Cinema Fragrance—a rich, indulgent blend of toasted caramel and velvety hot chocolate that instantly transforms your living room into a warm, cozy sanctuary. It moves beyond being a simple product by offering a complete ritual: from lighting the wicks with dedicated long-stem matches to extinguishing them with a premium snuffer. It’s the perfect gift for partners who value comfort and quality time, making even a casual movie marathon feel like a luxury private screening.",
+      "usage": "Place both amber glass candles on a stable, heat-resistant surface within your movie-watching nook. Use the included Meltix matches to light the wicks just as the opening credits begin. When the evening is over, use the copper snuffer to extinguish the flames; this prevents unwanted smoke from interfering with the sweet lingering aroma and keeps the wax surface pristine for your next viewing.",
+      "process": "This premium kit includes two 150g hand-poured candles in deep amber glass vessels that cast a soft, ambient glow. We use a high-quality, slow-burning soy-wax blend infused with premium, dessert-inspired fragrance oils for a long-lasting \"hot throw.\" The set is completed with a heavy-duty copper-finish snuffer and a custom matchbox, all nestled within a luxury chocolate-brown velvet-lined gift box featuring embossed rose-gold branding."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 78,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "The Cozy",
+    "name": "The Cinema Lobby Duo",
+    "image_path": "images/the_cozy_2.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Cinema Lobby Duo",
+      "specialty": "Yeh kit specifically \"Netflix & Chill\" nights ke liye banaya gaya hai. Iski speciality iski Dual-Scent Layering hai. Jab aap \"Vanilla & Caramel Popcorn\" ki mithaas aur \"Dark Chocolate & Spice\" ki depth ko ek saath jalate hain, toh ghar ka mahol bilkul ek high-end cinema lobby jaisa ho jata hai. Yeh un couples ke liye perfect hai jo bahar jaane ke bajaye ghar pe movie dekhna pasand karte hain, kyunki yeh unki movie night ko ek immersive sensory experience mein badal deta hai.",
+      "usage": "Movie start hone se 15 minute pehle badi wali \"Vanilla & Caramel Popcorn\" candle jalayein taaki theatre wali base khushbu set ho jaye. Movie start hote hi choti \"Dark Chocolate & Spice\" candle jalayein jo mahol mein warmth aur depth add karegi. Movie khatam hone pe included copper snuffer ka use karein taaki smoke na ho aur popcorn ki mithi khushbu kamre mein bani rahe.",
+      "process": "Is premium kit mein do alag hand-poured candles hain: ek 250g amber jar mein popcorn scent aur ek 150g frosted vessel mein chocolate scent. Dono mein high-quality soy-wax aur lead-free wicks use ki gayi hain. Kit ke saath ek luxury wooden matchbox aur ek precision copper snuffer aata hai, jo ek navy-blue Meltix gold-foil box mein beautifully pack hota hai."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 79,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "The Cozy",
+    "name": "The Sweet Marathon Trio",
+    "image_path": "images/the_cozy_3.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Sweet Marathon Trio",
+      "specialty": "This kit is for the ultimate binge-watching session where one scent just isn’t enough. The speciality of this trio is the \"Scent Transition\" experience. It features three iconic dessert aromas—Toasted Caramel, Hot Chocolate, and Cinnamon Roll—designed to be layered throughout a movie marathon. It turns your living room into a gourmet bakery, making it the perfect gift for couples who love to \"hibernation mode\" together. It’s not just a candle; it’s a full sensory menu for your night in.",
+      "usage": "Start your first movie by lighting the \"Cinnamon Roll\" candle to set a warm, bakery-fresh base. As the night progresses, light the \"Toasted Caramel\" for a deeper sweetness. Save the \"Hot Chocolate\" for the final film or late-night cuddles to bring a rich, velvety finish to the atmosphere. Use the included copper snuffer to \"edit\" your room's aroma without the smell of smoke interrupting the movie.",
+      "process": "This set features three premium 150g hand-poured glass jars with sleek silver-chrome lids. We use a high-performance soy-wax blend that provides a consistent \"hot throw\" even in large rooms. The kit includes a custom Meltix matchbox and a precision-crafted rose-gold snuffer, all designed to sit beautifully on a coffee table or bedside."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 80,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "The Cozy",
+    "name": "The Netflix Sanctuary",
+    "image_path": "images/the_cozy_4.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Netflix Sanctuary",
+      "specialty": "This kit is for the couple whose favorite date night is a \"Netflix Home\" marathon. The speciality is the Decadent Scent Fusion—the buttery, golden mithaas of \"Toasted Caramel\" meets the deep, warm, and slightly kicky \"Hot Chocolate & Spice.\" It’s designed to make your bedroom or living room feel like a high-end private suite. The spice notes are scientifically chosen to create a sense of physical warmth and comfort, making it the perfect \"Stress-Buster\" for a long week.",
+      "usage": "Set the wooden tray on your bed or coffee table. Light the \"Toasted Caramel\" candle 10 minutes before starting your show to build a sweet base layer. As soon as you hit \"Play,\" light the \"Hot Chocolate & Spice\" to add that rich, cozy depth. When the binge-watching is done, use the included bronze snuffer to extinguish the flames—it ensures the sweet aroma stays in the air without any smoky after-smell.",
+      "process": "This premium set features two large 250g hand-poured glass jars: one in a warm amber finish and the other in a deep cocoa-tinted glass. We use a high-quality, slow-burning soy wax for a clean 55-hour burn. The kit comes complete with a custom-branded walnut wooden tray, a signature Meltix gold-foil matchbox, and a professional-grade long-handle bronze snuffer."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 81,
+    "collection_slug": "candle-date-kit",
+    "collection_label": "Candle Date Kit",
+    "group_name": "The Cozy",
+    "name": "The Home Cinema Masterpiece",
+    "image_path": "images/the_cozy_5.jpg",
+    "price": 500,
+    "details": {
+      "title": "The Home Cinema Masterpiece",
+      "specialty": "This is the grand finale of the \"Cozy\" collection. The speciality of this duo is the Streaming Sanctuary Ambiance—it is specifically designed to harmonize with the visual and audio energy of long-form movie marathons. The blend of Madagascar Vanilla, decadent Salted Caramel, and earthy Tonka Bean creates a \"Premium Lounge\" atmosphere that mimics the comfort of a 5-star private cinema. The Salted Caramel provides a savory-sweet hit that perfectly complements a bowl of popcorn, while the Tonka adds a sophisticated, woody depth that keeps the room feeling grounded and cozy for hours.",
+      "usage": "Place both oversized jars on the coffee table to create a central glow. Light them 15 minutes before the opening credits to establish a rich, welcoming base layer of fragrance. The amber glass is designed to diffuse light softly, ensuring there is no glare on the TV screen during dark scenes. When the marathon is over, use the included copper snuffer to extinguish the flames; this preserves the sweet, lingering aroma in the room without the interruption of smoke.",
+      "process": "This flagship kit features two 400g large-format amber apothecary jars with minimalist cream labels. The wax is a proprietary, slow-burning soy blend that ensures a clean, non-toxic burn for up to 70 hours per jar. We’ve utilized a double-concentration of fragrance oils to ensure the \"hot throw\" fills even large, open living rooms. The set is completed with a heavy-duty wooden matchbox and a precision rose-gold snuffer."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 82,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Birthday Set",
+    "name": "Meltix Birthday Grandeur",
+    "image_path": "models/bday_1.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>Everything you need for a VIP celebration in one box:<br>• Lotus Cake Centerpiece: A hand-sculpted cake candle featuring a blooming lotus.<br>• Rose Gold Tapers: Metallic twisted candles for a high-end glow.<br>• Signature Tapers: Sage and Blush textured candles to set the aesthetic.<br>• Celebration Poppers: Rose gold party poppers for the big reveal.<br>• Decor Kit: Mini metallic balloons and a surprise gift box.<br>• The Meltix Trunk: A premium, satin-lined sage green display box.<br><br><strong>How to Use</strong><br>The Reveal: Open the Meltix trunk to instantly transform any table into a party zone.<br>Ambiance: Light the surrounding taper candles first to build the mood.<br>The Big Moment: Light the lotus centerpiece and use the poppers the second the birthday song starts!<br><br><strong>Specialty</strong><br>Specially designed for Milestone Birthdays. This isn't just a candle set; it’s our signature \"Story Candle\" experience. It’s curated for those who want their celebration to look like a high-end editorial shoot while creating a memory that lasts long after the wax melts.<br><br><strong>How We Made It</strong><br>Each lotus centerpiece is hand-poured using a premium soy-blend wax for a clean, slow burn. We custom-dyed the sage and blush tapers to match current decor trends and finished the metallic elements with a food-safe rose gold coating. Every kit is hand-assembled to ensure the unboxing feels like a luxury event.<br><br><strong>Wrap Up</strong><br>Stop gifting basic candles. Give them a celebration they’ll actually remember. Meltix Birthday Grandeur—because they deserve the spotlight."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 83,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Birthday Set",
+    "name": "Meltix Golden Gala",
+    "image_path": "models/bday_2.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>The ultimate \"after-dark\" celebration kit for those who love high-end glitz:<br>• Faceted Gold Pillar: A heavy, geometric centerpiece candle with a brilliant metallic finish.<br>• Shimmering Mini Tins: Six metallic candle tins (Gold & Rose Gold) for a scattered, ambient glow.<br>• Taper Match Boutique: A custom box of extra-long matches for a sophisticated light-up.<br>• Celebration Crackers: Two rose gold crackers to add a playful \"pop\" to the night.<br>• Elite Wick Snuffer: A sleek metallic snuffer with a silk tassel—because luxury candles aren't blown out.<br>• The Midnight Trunk: A deep matte-black display box that screams premium.<br><br><strong>How to Use</strong><br>The Setup: Open the black trunk to reveal the gold-on-black contrast.<br>The Glow: Place the mini tins around the geometric pillar and light them up using the taper matches for a 360-degree golden aura.<br>The Finale: Once the party is over, use the tasseled snuffer to extinguish the flames elegantly, keeping the wax clean for your next milestone.<br><br><strong>Specialty</strong><br>Specially designed for Glamorous Birthday Parties. This is the crown jewel of our \"Story Candle\" collection. While other sets are cute, the Golden Gala is for the person who wants a birthday that feels like a VIP red-carpet event. It’s about celebrating a big year with even bigger style.<br><br><strong>How We Made It</strong><br>We used high-definition geometric molds for the centerpiece to ensure every angle catches the light. The candles are poured with a clean-burning soy blend, and the metallic finishes are hand-applied. Every accessory, from the bee motifs to the silk tassel, is hand-selected to ensure your kit is nothing short of a masterpiece.<br><br><strong>Wrap Up</strong><br>Level up your celebration. The Meltix Golden Gala is for those who don’t just have birthdays—they have milestones."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 84,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Birthday Set",
+    "name": "Meltix Pastel Party",
+    "image_path": "models/bday_3.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>The ultimate aesthetic kit for those who love soft colors and vintage vibes:<br>• Vintage Piped Cake: A centerpiece candle featuring hand-piped 'frosting' in pink and lilac wax.<br>• Twisted Taper Set: Mint and lavender candles tied with a cream satin ribbon.<br>• Ribbed Taper Set: Sage and peach textured candles tied with a forest green ribbon.<br>• Ombre Taper Set: Dreamy pink-to-blue gradient candles tied with a blush ribbon.<br>• Smooth Taper Set: Classic pastel blue and yellow candles tied with a lilac ribbon.<br>• The Signature Trunk: A crisp white Meltix box filled with pastel confetti and silk tissue.<br><br><strong>How to Use</strong><br>The Reveal: Open the white trunk for an instant burst of pastel magic—perfect for a birthday morning surprise.<br>The Aesthetic: Place the vintage cake candle in the center. It’s so realistic, it doubles as a decor piece!<br>The Vibe: Untie the satin ribbons and place the various tapers around your space to create a soft, \"Pinterest-perfect\" birthday glow.<br><br><strong>Specialty</strong><br>Specially designed for Aesthetic Birthdays. This is the \"sweetest\" chapter of our \"Story Candle\" collection. Designed for the dreamers, it captures the 'Coquette' and 'Vintage' trends perfectly. It’s the ideal gift for a best friend or sister who wants their birthday to feel like a fairytale.<br><br><strong>How We Made It</strong><br>Each cake candle is a work of art, with the wax frosting hand-piped by our artisans using traditional cake-decorating techniques. We custom-blend our wax dyes to achieve these specific pastel tones and hand-tie every satin ribbon to ensure your kit arrives looking like a curated masterpiece.<br><br><strong>Wrap Up</strong><br>Make their birthday as sweet as they are. The Meltix Pastel Party kit turns a simple celebration into an unforgettable aesthetic memory."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 85,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Birthday Set",
+    "name": "Meltix Pastel Palette",
+    "image_path": "models/bday_4.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A sophisticated collection of tapers for the ultimate color-coordinated celebration:<br>• 10 Signature Tapers: A curated mix of matte pastels (blush, mint, lilac, sky blue) and two shimmering glitter-gold candles.<br>• Meltix Matchbox: A custom-branded box of premium safety matches.<br>• Classic Bell Snuffer: A silver-finished wick snuffer to extinguish your candles with grace.<br>• The Minimalist Trunk: A sleek cream display box with rose-gold foil branding.<br><br><strong>How to Use</strong><br>Curate: Select the colors that match your theme and place them in your favorite candle holders.<br>Ignite: Use the Meltix matches to light your \"wish candles\" one by one.<br>Preserve: When the celebration ends, use the bell snuffer to safely douse the flame without any smoke, keeping the wax pristine.<br><br><strong>Specialty</strong><br>Specially designed for Intimate Birthday Dinners. This is the \"versatile\" chapter of our \"Story Candle\" collection. It’s perfect for the person who loves variety and wants to create a unique color story across their dining table or mantle. Each candle features our embossed logo, adding a subtle touch of luxury to every \"Happy Birthday\" wish.<br><br><strong>How We Made It</strong><br>Each taper is hand-dipped and finished with a precision-embossed Meltix logo. We used a high-density wax blend to ensure these candles stand tall and burn slowly without dripping. The glitter tapers are hand-dipped in fine metallic dust to provide a sparkling contrast to the soft matte pastels.<br><br><strong>Wrap Up</strong><br>A spectrum of colors for a spectrum of wishes. The Meltix Pastel Palette is the ultimate gift for a birthday that’s minimalist in design but big on style."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 86,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Birthday Set",
+    "name": "Meltix Carousel Wish",
+    "image_path": "models/bday_5.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A magical, kinetic centerpiece that brings movement to your celebration:<br>• Rose Gold Kinetic Carousel: A precision-engineered metal turbine that spins using heat.<br>• Hanging Charms: A mix of rose gold horses and elegant swans that \"dance\" as the carousel rotates.<br>• Crystal Prisms: Teardrop crystals that catch the candlelight and scatter tiny rainbows.<br>• Meltix Signature Pillar: A central candle designed to provide the perfect heat for rotation.<br>• Integrated Branding: A custom-molded Meltix rose gold base.<br><br><strong>How to Use</strong><br>Assembly: Secure the carousel onto your birthday cake or a flat heat-safe surface.<br>The Ignition: Light the central Meltix pillar candle.<br>The Magic: As the air warms up, the turbine will automatically begin to spin, making the horses and swans gallop in a circle while the crystals shimmer.<br><br><strong>Specialty</strong><br>Specially designed for Fairytale Birthdays. This is the most \"enchanting\" chapter of our \"Story Candle\" collection. It’s not just a candle; it’s a mechanical work of art. While standard candles just sit there, the Carousel Wish tells a story of wonder and movement, making the absolute highlight of any birthday cake.<br><br><strong>How We Made It</strong><br>This kit combines physics with luxury. We used a lightweight rose gold alloy for the turbine to ensure it spins with even a small flame. Each charm is hand-balanced to maintain the rotation speed, and the crystals are precision-cut for maximum light refraction. It’s a delicate balance of engineering and aesthetic design.<br><br><strong>Wrap Up</strong><br>Why have a static cake when you can have a moving masterpiece? The Meltix Carousel Wish turns the simple act of lighting a candle into a mesmerizing show. Make a wish and watch the magic spin."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 87,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Birthday Set",
+    "name": "Meltix Champagne Celebration",
+    "image_path": "models/bday_6.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>The \"all-in-one\" toolkit for a sophisticated birthday bash. This cream and gold Meltix hamper features:<br>• Signature Cream Pillar: A large, smooth-finish candle embossed with our rose-gold logo.<br>• Metallic Votive Quad: Four textured gold candle tins for a warm, flickering glow.<br>• Taper Duo Tubes: Two sleek tubes containing premium long-stem taper candles.<br>• Golden Accent Kit: A pair of shimmering gold balloons and two matching celebration crackers.<br>• Tasseled Party Horn: A designer gold party blower to announce the birthday wish in style.<br>• The Royal Trunk: A champagne-toned box finished with a massive, hand-tied gold satin bow.<br><br><strong>How to Use</strong><br>The Grand Opening: Untie the gold bow to reveal the curated celebration layers resting on golden crinkle paper.<br>Light the Night: Start with the smaller votives to set the base lighting, then light the main pillar as the \"wish\" candle.<br>The Fanfare: Use the crackers for the surprise reveal and blow the tasseled horn to kick off the party!<br><br><strong>Specialty</strong><br>Specially designed for Elegant Birthdays. This kit is the \"Sophisticate\" chapter of our \"Story Candle\" collection. It’s built for the person who wants a birthday that feels expensive, curated, and timeless. Whether it's a 30th birthday or a golden jubilee, this set ensures the celebration is as classy as the person being celebrated.<br><br><strong>How We Made It</strong><br>We chose a \"Champagne & Gold\" palette to signify success and joy. The large pillar is hand-poured with our slowest-burning wax blend to ensure it lasts through the entire party. The votives are specially textured to maximize light reflection, and every box is hand-tied with a double-faced satin ribbon for that perfect \"pre-opened\" luxury look.<br><br><strong>Wrap Up</strong><br>Gift them the gold standard of birthdays. The Meltix Champagne Celebration kit is more than just candles—it’s a party in a box, designed for who celebrate with grace and a touch of glamour."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 88,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Anniversary Set",
+    "name": "Meltix Eternal Duo",
+    "image_path": "models/anni_1.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A perfectly paired set for the couple that glows together. This deep burgundy Meltix hamper features:<br>• The Amber Glow Jar: A rich, dark glass candle with a deep, sophisticated fragrance.<br>• The Frosted Silk Jar: A soft, frosted white candle for a light and romantic scent profile.<br>• Romantic Decor: Premium silk ribbons and a bed of fresh-look red and pink rose petals.<br>• Celebration Kit: A mini bouquet of heart-shaped balloons and three metallic party blowers (Gold & Silver).<br>• The Velvet Trunk: A luxurious maroon box with gold foil branding, lined with premium fabric.<br><br><strong>How to Use</strong><br>The Ambiance: Open the box to reveal the rose petals—the ultimate romantic gesture.<br>The Lighting: Place the Amber and Frosted jars on opposite sides of your dinner table or bedside. Light them together to symbolize the union of two souls.<br>The Moment: Use the heart balloons and blowers to add a playful touch to your anniversary toast.<br><br><strong>Specialty</strong><br>Specially designed for Anniversaries. This is the \"Unity\" chapter of our \"Story Candle\" collection. Unlike single candles, the Eternal Duo represents the balance between two people—one bold (Amber) and one soft (Frosted). It’s the ideal gift for a spouse or a favorite couple celebrating another year of love.<br><br><strong>How We Made It</strong><br>We paired these jars to create a visual and olfactory harmony. The glass jars are premium-grade and reusable, while the wax is hand-poured with high-concentration fragrance oils that fill a room without being overwhelming. Every box is hand-decorated with silk ribbons and petals to ensure it’s \"proposal-ready\" the moment it arrives.<br><br><strong>Wrap Up</strong><br>Two flames, one story. The Meltix Eternal Duo kit is the ultimate way to say \"I'd choose you all over again.\""
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 89,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Anniversary Set",
+    "name": "Meltix Anniversary Knot",
+    "image_path": "models/anni_2.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A beautifully symbolic kit representing the intertwined lives of a couple. This executive black Meltix trunk features:<br>• The Sculptural Duo: One cream wavy pillar and one metallic bronze pillar, designed with a unique \"knot\" texture.<br>• The Heart Core: A miniature rose-gold heart candle nestled perfectly between the two pillars.<br>• Anniversary Keepsake Card: A premium cream card with \"Happy Anniversary to Us\" scripted in elegant gold.<br>• Metallic Balloons: Miniature gold and bronze balloons to elevate the party vibe.<br>• Signature Accents: Burgundy and taupe silk ribbons with scattered copper heart confetti.<br>• The Executive Trunk: A high-end black display box with a soft, cream-lined interior.<br><br><strong>How to Use</strong><br>The Toast: Open the box during your anniversary toast to reveal the coordinated gold and bronze theme.<br>The Glow: Place the pillars side-by-side. Light them together to signify two unique paths glowing as one.<br>The Memory: Display the \"Happy Anniversary\" card in your home as a reminder of another beautiful year together.<br><br><strong>Specialty</strong><br>Specially designed for Wedding Anniversaries. This is the \"Connection\" chapter of our \"Story Candle\" collection. The \"Knot\" design of the candles is a visual metaphor for the strength and beauty of a long-term bond. It is the perfect gift for a partner who values deep meaning and sophisticated home decor.<br><br><strong>How We Made It</strong><br>We used specialized 3D molds to create the intricate, fluid texture of the white pillar. The metallic bronze pillar is hand-finished with a high-shine lacquer to provide a striking contrast. Each kit is hand-curated to ensure the card, heart, and ribbons are perfectly positioned for that immediate romantic \"wow\" moment upon opening.<br><br><strong>Wrap Up</strong><br>Celebrate the knot that holds you together. The Meltix Anniversary Knot kit turns your special milestone into a curated aesthetic memory."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 90,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Anniversary Set",
+    "name": "Meltix Eternal Embrace",
+    "image_path": "models/anni_3.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A sculptural masterpiece capturing the essence of togetherness. This premium Meltix shadow box includes:<br>• The Embrace Pillars: Two hand-poured candles—one cream and one dusty rose—sculpted in a timeless, intimate embrace.<br>• Velvet Ribbon Duo: Elegant burgundy and soft peach velvet ribbons for a touch of texture.<br>• Gilded Botanical: A gold-sprayed leaf accent to symbolize the growth of your love.<br>• Keepsake Tag: A delicate \"Happy Anniversary\" tag to commemorate the date.<br>• Copper Accents: Miniature copper-toned balloons and a wire balloon motif.<br>• The Signature Shadow Box: A high-end black display box with a glass front and gold foil logo.<br><br><strong>How to Use</strong><br>The Display: Keep the candles inside the glass shadow box as a stunning piece of anniversary decor for your bedroom or mantle.<br>The Ritual: On your special night, remove the \"Embrace Pillars\" and place them on a heat-safe tray. Light them together to symbolize two lives becoming one beautiful light.<br>The Style: Use the velvet ribbons and gilded leaf to accent your anniversary dinner table setting.<br><br><strong>Specialty</strong><br>Specially designed for Wedding Anniversaries. This is the \"Intimacy\" chapter of our \"Story Candle\" collection. It’s more than a gift; it’s a representation of the bond between a couple. The silhouette is designed to be a conversation starter and a constant reminder of the warmth of a hug.<br><br><strong>How We Made It</strong><br>Each \"Embrace Pillar\" is hand-cast in custom-designed sculptural molds using our signature soy-wax blend. We selected the dusty rose and cream palette to represent the perfect balance of passion and peace. The shadow box is hand-assembled, ensuring every element—from the velvet to the gold leaf—is perfectly positioned for a gallery-quality presentation.<br><br><strong>Wrap Up</strong><br>Celebrate the hug that changed everything. The Meltix Eternal Embrace kit is a tribute to love that looks just as beautiful unlit as it does glowing in the dark."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 91,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Anniversary Set",
+    "name": "Meltix Ever After",
+    "image_path": "models/anni_4.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A nostalgic masterpiece that takes you back to the magic of your wedding day. This velvet-lined Meltix trunk features:<br>• The Wedding Pillars: Two intricately sculpted candles—a tuxedo pillar in metallic bronze and a bridal gown pillar with stunning lace-embossed details.<br>• Mini Balloon Bouquet: A cluster of rose-gold balloons, including shimmering confetti-filled ones.<br>• The Sealed Scroll: A miniature vintage-style scroll with a wax seal for your personal anniversary message.<br>• Symbolic Accents: Tiny rose-gold rings and heart motifs scattered on a bed of plush grey velvet.<br>• Silk Satin Ribbons: Elegant cream and blush ribbons to tie the look together.<br>• The Royal Trunk: A heavy, premium velvet-finished box with rose-gold foil branding.<br><br><strong>How to Use</strong><br>The Nostalgia: Open the velvet trunk as a centerpiece for your anniversary dinner to instantly evoke memories of the \"I Do\" moment.<br>The Lighting: Place the 'Bride' and 'Groom' pillars together. Light them during your celebration to symbolize the enduring warmth of your marriage.<br>The Message: Unroll the sealed scroll to read a hidden message or write a new vow for the year ahead.<br><br><strong>Specialty</strong><br>Specially designed for Wedding Anniversaries. This is the \"Vows\" chapter of our \"Story Candle\" collection. It’s the ultimate gift for a spouse or a couple celebrating their first or fiftieth year. It captures the elegance of the wedding day in a way that feels timeless and luxurious.<br><br><strong>How We Made It</strong><br>This kit is a triumph of 3D wax sculpting. The bridal gown features high-definition lace patterns, while the tuxedo is hand-finished with a metallic bronze lacquer. We chose a \"Champagne & Rose Gold\" palette to represent a love that is both classic and modern. Every element is hand-placed on luxury velvet to ensure a flawless unboxing experience.<br><br><strong>Wrap Up</strong><br>Relive the magic. The Meltix Ever After kit isn’t just a gift; it’s a tribute to the day your story began. Perfect for the couple who believes in happily ever after."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 92,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Anniversary Set",
+    "name": "Meltix Infinite Bond",
+    "image_path": "models/anni_5.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A sophisticated tribute to long-term love, designed for those major milestones. This burgundy velvet-lined Meltix trunk features:<br>• Intertwined Sculptural Pillars: Two designer candles—one in textured aged bronze and one in sleek matte rose-gold—featuring a unique \"wrap\" design.<br>• The Milestone Envelope: A premium cream envelope with a gold wax seal, perfect for a personalized anniversary letter.<br>• Velvet Display Bed: A rich maroon velvet interior decorated with gold foil heart and star motifs.<br>• Designer Ribbons: Wide silk ribbons in champagne and mocha tones.<br>• Metallic Baubles: Matching rose-gold decorative accents to complete the luxury look.<br>• The Heritage Trunk: A sturdy, chocolate-brown display box with a rose-gold foil logo.<br><br><strong>How to Use</strong><br>The Reveal: Open the Heritage Trunk during your anniversary dinner to unveil the \"Celebrating Together\" message.<br>The Display: Place the intertwined pillars as a center decoration. Their unique shapes are designed to complement each other, just like a couple.<br>The Ritual: Light the wicks together to celebrate the years gone by and the many more to come.<br><br><strong>Specialty</strong><br>Specially designed for Milestone Anniversaries (like the 10th year). This is the \"Strength\" chapter of our \"Story Candle\" collection. The intertwined wrap on the candles symbolizes how two lives become inseparable over time. It’s the ultimate gift for a couple who has built a beautiful life together and wants to celebrate their \"Infinite Bond.\"<br><br><strong>How We Made It</strong><br>These pillars are a feat of modern candle design. We used high-precision molds to create the \"intertwined\" effect, symbolizing unity. The bronze pillar is hand-textured for a rustic feel, while the rose-gold pillar is finished with a smooth satin lacquer. Everything is hand-assembled on premium velvet to ensure the highest standard of luxury.<br><br><strong>Wrap Up</strong><br>A decade of love deserves a gift that tells a story. The Meltix Infinite Bond kit is a timeless celebration of everything you’ve built together."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 93,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Anniversary Set",
+    "name": "Meltix Noir Romance",
+    "image_path": "models/anni_6.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>The ultimate \"all-in-one\" romantic experience for a private, high-end celebration. This signature black Meltix trunk features:<br>• Multi-Height Pillar Set: 10 premium white pillar candles in varying sizes to create a stunning \"sea of light.\"<br>• Celebration Bottle: A curated sparkling bottle with a rose-gold foil neck (non-alcoholic/sparkling juice options available).<br>• Artisanal Truffles: A box of gourmet chocolates for a sweet anniversary treat.<br>• Gold-Foil Stationery: A premium bordered card for writing your heart out.<br>• Heart Balloon Kit: Metallic rose-gold heart balloons to set the atmospheric stage.<br>• The Noir Trunk: A sleek, matte-black display box with rose-gold foil branding.<br><br><strong>How to Use</strong><br>The Glow: Arrange the 10 pillar candles around your room or table and light them to create a warm, cinematic ambiance.<br>The Unboxing: Present the Noir Trunk in the center of the candlelight. Open it to reveal the chilled bottle and chocolates.<br>The Words: Read your gold-bordered note aloud to relive the memories of the past year.<br><br><strong>Specialty</strong><br>Specially designed for Private Anniversary Celebrations. This is the \"Grand Finale\" chapter of our \"Story Candle\" collection. It’s built for the partner who doesn't just want to give a gift, but wants to create a whole vibe. It combines light, taste, and emotion into one flawless, curated evening.<br><br><strong>How We Made It</strong><br>We sourced the deepest matte-black materials for the trunk to make the rose-gold branding pop. Our pillars are made from a high-density, drip-less wax blend to ensure your \"sea of light\" stays clean and lasts for hours. Every element, from the gold-bordered stationery to the hand-packed chocolates, is selected to ensure a 5-star hotel experience at home.<br><br><strong>Wrap Up</strong><br>The ultimate romantic night, delivered in a box. Meltix Noir Romance—because some stories are best told by candlelight."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 94,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Date Set",
+    "name": "Meltix Bloom & Bond",
+    "image_path": "models/date_1.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>The perfect starter kit for a night of connection and discovery. This soft blush Meltix hamper features:<br>• Cherry Blossom & Peony Candle: A premium scented candle in a sophisticated ribbed glass jar, designed to fill the room with a romantic, floral aroma.<br>• Icebreaker Conversation Deck: A curated set of \"Meltix Icebreaker\" cards featuring thoughtful questions to spark deep and fun conversations.<br>• The Blush Trunk: A luxury peach-pink display box finished with a signature rose-gold foil logo.<br><br><strong>How to Use</strong><br>Set the Mood: Light the Cherry Blossom & Peony candle to create a soft, inviting atmosphere with its floral glow and scent.<br>Start the Story: Place the Icebreaker deck between you. Take turns drawing cards and answering questions like \"What is your ideal perfect day?\"<br>Connect: Let the conversation flow naturally as the candle burns, turning a simple date into a meaningful memory.<br><br><strong>Specialty</strong><br>Specially designed for Date Nights and First Encounters. This is the \"Connection\" chapter of our \"Story Candle\" collection. Unlike ordinary candles, the Bloom & Bond kit is an interactive experience. It’s designed to remove the \"awkward silence\" and replace it with genuine laughter and discovery, making it the perfect gift for a new partner or a long-time spouse.<br><br><strong>How We Made It</strong><br>We chose the scents of Cherry Blossom and Peony because they symbolize new beginnings and romance. The candle is hand-poured into a custom-ribbed glass that beautifully diffuses light. The Icebreaker cards were professionally curated to balance lighthearted fun with emotional depth, ensuring every date night feels fresh and intentional.<br><br><strong>Wrap Up</strong><br>Don't just sit together—connect together. The Meltix Bloom & Bond kit is your secret ingredient for a date night that feels effortless, romantic, and truly unforgettable."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 95,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Date Set",
+    "name": "Meltix Amber Romance",
+    "image_path": "models/date_2.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A curated setting for a cinematic date night at home. This intimate Meltix kit features:<br>• Signature Amber Jar Candle: A warm, flickering centerpiece in a rich brown glass jar that casts a nostalgic, cozy glow.<br>• Velvet Rose Petals: A pack of deep red petals to scatter across your table for that classic romantic touch.<br>• Golden Balloon Set: A cluster of premium gold and champagne balloons to bring a celebration feel to your space.<br>• Luxury Coaster Duo: Two sleek, matching coasters to perfectly hold your wine or cocktail glasses.<br><br><strong>How to Use</strong><br>Set the Scene: Scatter the rose petals across your table and place the gold balloons in the background to frame your date area.<br>Ignite the Glow: Place the Amber Jar in the center and light it. The dark glass is designed to soften the light, making the atmosphere feel private and warm.<br>The Toast: Pour two glasses of your favorite wine, put on some soft music, and let the \"Amber Romance\" turn your room into a private bistro.<br><br><strong>Specialty</strong><br>Specially designed for Intimate Date Nights. This is the \"Ambiance\" chapter of our \"Story Candle\" collection. It’s perfect for the couple who wants to skip the crowded restaurant and create a high-end, private experience at home. Whether it's a first date or a \"just because\" night, this kit provides the perfect lighting and decor for a deep connection.<br><br><strong>How We Made It</strong><br>We chose the amber glass specifically for its ability to cast a \"golden hour\" sepia light that makes every setting look better. The candle is hand-poured with a soy-blend wax that features subtle, warm notes designed to complement—not overpower—the aroma of a good dinner or wine. Every element is hand-selected to ensure your date looks like a professional setup.<br><br><strong>Wrap Up</strong><br>Turn your dinner into a memory. The Meltix Amber Romance kit—because the best dates don't need a reservation, just the right light."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 96,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Date Set",
+    "name": "Meltix Twilight Toast",
+    "image_path": "models/date_3.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A high-end, multi-sensory experience designed for a truly cinematic evening. This velvet-lined \"Midnight Trunk\" features:<br>• Luxe Bronze Pillar Jar: A premium candle in a vacuum-plated rose-gold jar for a sophisticated metallic glow.<br>• Signature Coupe Pair: Two elegant crystal-clear glass coupes, perfect for your favorite cocktail or champagne.<br>• Gilded Petals: Hand-selected rose petals finished in gold for an ultra-premium table setting.<br>• Designer Matchbox: A custom wood-effect matchbox for a refined lighting ritual.<br>• Artisanal Treat: A mini chocolate box finished with a silk satin bow.<br>• The Experience Card: A \"Perfect Date Experience\" card to set the intention for the night.<br><br><strong>How to Use</strong><br>The Surprise: Present the heavy, dark-wood trunk as a centerpiece and open it to reveal the curated luxury inside.<br>Ignite the Mood: Light the bronze candle. The metallic surface is designed to reflect the flame, doubling the warmth in the room.<br>The Celebration: Pour your drinks into the coupes and scatter the gold petals for a high-end lounge vibe at home.<br><br><strong>Specialty</strong><br>Specially designed for Sophisticated Date Nights. This is the \"Luxury Lounge\" chapter of our \"Story Candle\" collection. It’s for the couple who appreciates the finer things—combining fine glassware, gourmet treats, and premium light into one \"ready-to-celebrate\" kit.<br><br><strong>How We Made It</strong><br>We focused on the \"Gold & Noir\" aesthetic to create a sense of exclusivity. The candle is hand-poured with a proprietary wax blend that burns clean and bright. The bronze jar is polished to a mirror finish, and every trunk is hand-assembled with premium black velvet lining to ensure your date night feels like a VIP event.<br><br><strong>Wrap Up</strong><br>Because a simple dinner isn't enough. The Meltix Twilight Toast kit is the ultimate way to bring five-star luxury to your private date night."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 97,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Date Set",
+    "name": "Meltix Dream & Discover",
+    "image_path": "models/date_4.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A deep-dive kit for couples who want to explore their future by candlelight. This intimate date set features:<br>• Signature Amber Glow Jar: A large-format candle in a smoky amber glass that radiates a warm, sunset-hued light.<br>• Icebreaker Date Deck: A custom mauve-and-gold card deck featuring \"Future-focused\" questions like, \"What is a dream we can build together?\"<br>• Aromatic Palo Santo: A natural wood stick to cleanse the energy of your space before you begin.<br>• Dried Rose Petals: Premium botanical accents to scatter for a touch of rustic romance.<br>• Precision Wick Trimmers: Professional stainless steel trimmers to ensure your candle burns perfectly throughout the night.<br><br><strong>How to Use</strong><br>Prep the Flame: Use the trimmers to clip the wick to 1/4 inch. Light the candle and let the aroma fill the room.<br>Clear the Space: Light the Palo Santo stick briefly to fill the air with its calming, woodsy scent, then blow it out.<br>Start the Story: Pull cards from the Dream & Discover deck. Use the prompts to move beyond small talk and into the heart of your partnership.<br><br><strong>Specialty</strong><br>Specially designed for \"Next Level\" Date Nights. This is the \"Vision\" chapter of our \"Story Candle\" collection. While other kits are for first dates, this one is for the couple ready to build a life together. It’s the perfect gift for an engagement, a moving-in-together celebration, or simply a night dedicated to dreaming big.<br><br><strong>How We Made It</strong><br>We focused on the \"earthy and grounded\" aesthetic for this kit. The candle is hand-poured with a blend of natural soy and high-grade fragrance oils. The amber glass is specifically chosen to create a sanctuary-like feel. Every card in the deck was written by relationship experts to ensure the questions lead to genuine connection, not just conversation.<br><br><strong>Wrap Up</strong><br>Build more than just an evening; build a dream. The Meltix Dream & Discover kit is for the couple that knows the best stories are the ones written together."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 98,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Date Set",
+    "name": "Meltix Velvet Rendezvous",
+    "image_path": "models/date_5.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A grand, all-in-one experience for an evening of pure luxury. This executive burgundy Meltix trunk features:<br>• The Gilded Stemless Duo: Two premium crystal-clear glasses finished with elegant, hand-painted gold rims.<br>• Rose Gold Metallic Jar: A frosted metallic candle designed to radiate a soft, copper-hued glow.<br>• Gourmet Treats & Botanicals: A curated section featuring gold-wrapped chocolates and a mix of deep red and ivory rose petals.<br>• Satin Ribbon Duo: Signature hand-tied ribbons in champagne and copper tones.<br>• The Poetry Keepsake: A gold-bordered card featuring a romantic verse to set a sentimental tone for the night.<br>• The Executive Trunk: A high-end, textured burgundy box with \"A Curated Date Night Experience\" embossed in rose-gold foil.<br><br><strong>How to Use</strong><br>The Unveiling: Present the heavy trunk as a centerpiece. Opening it reveals a perfectly organized romantic journey.<br>Pour & Glow: Pour your favorite vintage into the gold-rimmed glasses and light the metallic candle to illuminate the luxury setting.<br>The Ritual: Scatter the petals across the table, share the chocolates, and read the poetry card aloud to officially begin your rendezvous.<br><br><strong>Specialty</strong><br>Specially designed for \"Grand Gesture\" Date Nights. This is the \"Elegance\" chapter of our \"Story Candle\" collection. It’s built for the person who wants to transform a simple night into a high-end sensory experience. It captures the essence of a five-star hotel lounge, delivered directly to your door.<br><br><strong>How We Made It</strong><br>We chose the deep burgundy and rose-gold palette to signify passion and sophistication. The \"Executive Trunk\" is custom-molded with protective compartments to ensure the glassware and treats arrive in pristine condition. The candle is hand-poured using a slow-burning wax blend to ensure your evening lasts as long as the conversation.<br><br><strong>Wrap Up</strong><br>Because they deserve more than just a dinner. The Meltix Velvet Rendezvous kit is the ultimate way to tell your love story with absolute class."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 99,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Surprise Set",
+    "name": "Meltix Secret Story",
+    "image_path": "models/surp_1.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A mysterious and interactive kit designed to hold your most precious shared secrets. This kit features:<br>• The Mystery QR Candle: A large square frosted amber candle. It’s more than just a light—it features a scannable QR code that reveals a personalized digital surprise.<br>• The Locked Memory Journal: A premium burgundy, linen-bound book secured with a physical vintage-style lock and key.<br>• The Noir Vault: A sleek matte-black display box with rose-gold foil branding to house your treasures.<br><br><strong>How to Use</strong><br>The Reveal: Light the candle and let its warm, steady flame create a private sanctuary.<br>Scan the Secret: Use your phone to scan the QR code on the candle label to unlock a hidden digital message, a surprise video, or a curated \"Our Story\" playlist.<br>Lock the Memory: Use the journal to write down your favorite shared moments or future dreams, then lock it away to keep your story private between the two of you.<br><br><strong>Specialty</strong><br>Specially designed for \"Mystery\" Surprises. This is the most interactive chapter of our \"Story Candle\" collection. It’s perfect for marriage proposals, milestone birthdays, or any occasion where you want to reveal a secret. It turns a physical gift into a digital journey of discovery, making the surprise last much longer than a single moment.<br><br><strong>How We Made It</strong><br>We integrated technology with tradition for this kit. The candle is hand-poured into custom square frosted glass for a modern, architectural look. The journal is hand-stitched with premium paper and fitted with a functioning brass-tone lock. The QR technology is seamlessly embedded into the label, bridging the gap between a physical keepsake and a digital experience.<br><br><strong>Wrap Up</strong><br>Every love story has its secrets. The Meltix Secret Story kit gives you a beautiful, locked place to keep them. Unlock the mystery and light up your story."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 100,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Surprise Set",
+    "name": "Meltix Hidden Harmony",
+    "image_path": "models/surp_2.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A masterpiece of suspense and sentiment. This minimalist surprise candle features:<br>• Signature Amber Apothecary Jar: A classic, warm-toned glass jar that perfectly conceals the secret within.<br>• Golden Message Beads: Elegant metallic letter beads that spell out \"WITH YOU\" (customizable options available).<br>• Natural Cork Stopper: A premium eco-friendly lid to preserve the fragrance and the mystery.<br>• Pure Soy Blend: High-quality cream wax for a clean, slow, and even burn.<br><br><strong>How to Use</strong><br>The Anticipation: Present the candle with the cork lid on. It looks like a beautiful, standard luxury candle.<br>The Ignition: Light the wick and let the room fill with our signature calming scent.<br>The Reveal: After 20–30 minutes of burning, watch as the wax turns translucent and the golden letters slowly \"float\" to the surface, revealing your hidden message.<br><br><strong>Specialty</strong><br>Specially designed for Heartfelt Surprises. This is the \"Voice\" chapter of our \"Story Candle\" collection. It’s perfect for those moments when you want to say something important—like a proposal, a pregnancy reveal, or just a deep \"thank you\"—in a way they’ll never expect. The message stays hidden until the moment is exactly right.<br><br><strong>How We Made It</strong><br>We use a meticulous \"double-pour\" technique. First, we set the message beads at a specific depth, then we pour a second layer of opaque wax over the top to keep the surprise a total secret until it’s lit. Every bead is hand-placed to ensure it remains legible as the wax pool expands.<br><br><strong>Wrap Up</strong><br>Some messages are better told through light. The Meltix Hidden Harmony candle turns a quiet evening into a life-changing revelation. Let the wax melt, and the truth reveal itself."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 101,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Surprise Set",
+    "name": "Meltix Soul Revelation",
+    "image_path": "models/surp_3.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A stunning fusion of artisanal decor and deep-seated sentiment. This surprise kit features:<br>• Mediterranean Ceramic Jar: A handcrafted blue-and-white patterned vessel with a timeless, high-gloss finish.<br>• Hidden \"Soul Mates\" Beads: Delicate white and gold beads that reveal a life-changing message as the wax melts.<br>• Embossed Rose Gold Logo: A premium, heat-sealed Meltix brand mark for an executive look.<br>• Signature Soy Blend: Hand-poured wax infused with a sophisticated, romantic fragrance.<br><br><strong>How to Use</strong><br>The Ambiance: Place the ceramic jar in a prominent spot—it’s a piece of art even before it’s lit.<br>The Burn: Light the wick during a quiet, intimate evening. The opaque wax keeps the message a total secret at first.<br>The Revelation: Within 30 minutes, a clear pool of wax will form, and the words \"SOUL MATES\" will magically emerge from the depths for a heart-stopping surprise.<br><br><strong>Specialty</strong><br>Specially designed for \"Deep Connection\" Surprises. This is the \"Soul\" chapter of our \"Story Candle\" collection. It’s perfect for the partner who appreciates heritage-style decor and profound emotional gestures. Whether it’s an anniversary surprise or a spontaneous \"I love you,\" this candle says it all without you speaking a word.<br><br><strong>How We Made It</strong><br>Each ceramic jar is inspired by classic Mediterranean pottery, featuring hand-glazed intricate patterns designed to last a lifetime. We use a specialized \"Deep-Set\" layering technique where the message beads are perfectly leveled before the final opaque pour. This ensures the message stays hidden until the very moment the atmosphere is right.<br><br><strong>Wrap Up</strong><br>Art meets emotion. The Meltix Soul Revelation turns your home decor into a profound confession. It’s a beautiful jar, but the real treasure is the story it tells."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 102,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Surprise Set",
+    "name": "Meltix Crystal Vow",
+    "image_path": "models/surp_4.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A stunning, sculptural masterpiece designed for life’s biggest question. This elite surprise kit features:<br>• Scupltural Crystal Pillar: A hand-carved wax centerpiece designed to look like a cluster of raw, iridescent crystals.<br>• Hidden Jewelry Reveal: A high-clarity wax core that conceals a breathtaking diamond ring (for use with your own jewelry or a placeholder).<br>• Signature Gift Box: A premium matte-black Meltix box with rose-gold foil accents.<br><br><strong>How to Use</strong><br>The Set-Up: Place the crystal candle in a dim, romantic setting. The geometric edges catch the light beautifully even before it’s lit.<br>The Wait: Light the wick and let the center pool of wax melt. It is designed to become completely transparent as it heats up.<br>The Question: As the wax melts away, the ring will slowly \"rise\" from the light, creating a cinematic moment for you to take it out and ask the big question.<br><br><strong>Specialty</strong><br>Specially designed for Marriage Proposals. This is the \"Eternity\" chapter of our \"Story Candle\" collection. Why use a standard ring box when you can create a magical, glowing reveal? It’s for the person who wants their proposal to be a sensory experience—combining the warmth of candlelight with the sparkle of a lifetime promise.<br><br><strong>How We Made It</strong><br>Each Crystal Vow is cast in a custom-designed 3D mold to mimic natural quartz formations. We used a specialty \"Clear-Pool\" wax for the center to ensure that the jewelry is showcased in high definition once the wax turns liquid. The jewelry is protected in a heat-safe, invisible casing to ensure it stays pristine and wax-free during the reveal.<br><br><strong>Wrap Up</strong><br>Make the moment shine brighter. The Meltix Crystal Vow turns a proposal into a work of art. It’s not just a ring; it’s a story revealed by light."
+    },
+    "ui_flags": {}
+  },
+  {
+    "id": 103,
+    "collection_slug": "gift-sets",
+    "collection_label": "Gift Sets",
+    "group_name": "Surprise Set",
+    "name": "Meltix Solar Secret Reveal Kit",
+    "image_path": "models/surp_5.jpg",
+    "price": 500,
+    "details": {
+      "description_html": "<strong>What’s Inside</strong><br>A gift within a gift, designed for a breathtaking reveal. This luxury surprise kit features:<br>• The Sculpted Ivory Orb: A large, uniquely shaped ivory candle designed with a specialized \"viewing window\" core.<br>• Hidden Sunburst Pendant: Tucked inside the wax is a premium gold-plated sunburst necklace adorned with brilliant-cut crystals.<br>• The Midnight Vault: Our signature matte-black and gold-trimmed display box, complete with a branded \"M\" silk tag.<br><br><strong>How to Use</strong><br>The Anticipation: Place the ivory orb on a flat surface and light the wick. It begins as a beautiful piece of minimalist decor.<br>The Melt: As the candle burns, the specialized \"inner chamber\" begins to glow, slowly revealing the silhouette of the jewelry.<br>The Keepsake: Once the wax has pooled enough to reveal the pendant fully, extinguish the flame. Carefully retrieve the necklace using the heat-safe casing to wear your new \"Solar\" memory.<br><br><strong>Specialty</strong><br>Specially designed for Anniversary Surprises and Birthday Gifts. This is the \"Treasure\" chapter of our \"Story Candle\" collection. It is the perfect choice for the partner who loves jewelry but appreciates the theater of a surprise. It transforms a romantic evening into a permanent keepsake, ensuring the story of your gift is told for years to come.<br><br><strong>How We Made It</strong><br>This is one of our most complex designs. We used a proprietary, non-staining ivory soy blend that ensures the necklace remains sparkling and clean after being retrieved. The egg-shaped \"Orb\" is hand-cast to ensure the jewelry-safe compartment is centered perfectly, allowing the heat to reveal the pendant without damaging the delicate gold plating.<br><br><strong>Wrap Up</strong><br>Give them a light that turns into a legacy. The Meltix Solar Secret kit is the ultimate grand gesture for the person who deserves the sun, the moon, and the stars."
+    },
+    "ui_flags": {}
+  }
+]

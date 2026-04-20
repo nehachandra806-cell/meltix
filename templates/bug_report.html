@@ -76,52 +76,68 @@
     </div>
 
     <script>
-        function handleFormSubmit(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
+            const email = document.getElementById('userEmail').value.trim();
+            const message = document.getElementById('userMessage').value.trim();
+
             btn.classList.add('loading');
-            
-            setTimeout(() => {
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/bug-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        message: message,
+                        source_page: 'bug-report'
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Bug report failed');
+                }
+
                 btn.classList.remove('loading');
                 btn.classList.add('success');
-                btn.innerText = "SENT ✓";
-                
-                // 🔴 NO LAYOUT SHIFT LOGIC 🔴
+                btn.innerText = "SENT ?";
+
                 setTimeout(() => {
                     const formContainer = document.getElementById('form-container');
                     const thanks = document.getElementById('thank-you-msg');
                     const glassRight = document.querySelector('.glass-right');
 
-                    // 1. Box ki height lock kar do taaki size chota-bada na ho
                     glassRight.style.minHeight = glassRight.offsetHeight + 'px';
-                    glassRight.style.position = 'relative'; // Container ko anchor banao
+                    glassRight.style.position = 'relative';
 
-                    // 2. Thank You msg ko tayyar karo (Form ke theek peeche chipka do)
                     thanks.style.position = 'absolute';
                     thanks.style.top = '50%';
                     thanks.style.left = '50%';
                     thanks.style.transform = 'translate(-50%, -50%)';
-                    thanks.style.width = '80%'; // Center alignment fix
+                    thanks.style.width = '80%';
                     thanks.style.display = 'block';
                     thanks.style.opacity = '0';
 
-                    // 3. Dono ko ek saath transition do
                     formContainer.style.transition = 'opacity 0.6s ease';
                     thanks.style.transition = 'opacity 0.8s ease';
 
-                    // 4. Magic Switch: Form jayega, Thank You aayega
                     formContainer.style.opacity = '0';
                     setTimeout(() => {
                         thanks.style.opacity = '1';
                     }, 100);
 
-                    // 5. Jab animation khatam ho jaye, layout saaf kar do
                     setTimeout(() => {
                         formContainer.style.display = 'none';
                     }, 600);
-
-                }, 800); 
-            }, 1500); 
+                }, 800);
+            } catch (error) {
+                console.error(error);
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.innerText = "Error. Try Again.";
+            }
         }
 
         function goToShop() {

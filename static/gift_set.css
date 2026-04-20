@@ -442,20 +442,23 @@ body {
 
 .close-modal-cat { 
     position: absolute; 
-    top: 15px; right: 15px; 
+    top: 18px;
+    right: 18px;
     z-index: 100; 
     background: rgba(255, 255, 255, 0.95); 
     border: 1px solid #d4a373; 
     color: #8b5e34; 
-    font-size: 26px; 
+    font-size: 22px; 
     border-radius: 50%; 
-    width: 40px; height: 40px; 
+    width: 34px;
+    height: 34px;
     cursor: pointer; 
     display: flex; 
     justify-content: center; 
     align-items: center; 
+    line-height: 1;
     transition: all 0.3s ease; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.22); 
 }
 
 .close-modal-cat:hover { 
@@ -536,6 +539,7 @@ body {
     text-align: center; 
     transition: all 0.4s ease; 
     cursor: pointer; 
+    touch-action: manipulation;
     position: relative; 
     overflow: hidden; 
     box-shadow: 0 5px 20px rgba(0,0,0,0.5); 

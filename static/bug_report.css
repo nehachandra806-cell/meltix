@@ -80,26 +80,6 @@ body {
 /* =========================================
    🔮 HORIZONTAL GLASSMORPHISM FORM
    ========================================= */
-.support-container-glass {
-    width: 85vw; 
-    max-width: 1000px; 
-    background: rgba(10, 8, 5, 0.3); 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(212, 163, 115, 0.25);
-    border-radius: 20px; 
-    padding: 50px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(212, 163, 115, 0.05);
-    position: relative;
-    overflow: hidden;
-    animation: floatFloat 6s ease-in-out infinite;
-}
-
-@keyframes floatFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
-
 .glow-line {
     position: absolute;
     top: 0; left: 0;

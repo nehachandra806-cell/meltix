@@ -542,3 +542,35 @@
     border-radius: 50% !important;
     object-fit: cover !important;
 }
+
+/* Performance guard: review-list micro avatars stay premium but static */
+.avatar-micro-wrapper .avatar-stage::before,
+.avatar-micro-wrapper .avatar-stage::after,
+.avatar-micro-wrapper .avatar-aura,
+.avatar-micro-wrapper .avatar-trigger,
+.avatar-micro-wrapper .avatar-trigger::after,
+.avatar-micro-wrapper .avatar-ring,
+.avatar-micro-wrapper .avatar-ring::before,
+.avatar-micro-wrapper .avatar-ring::after,
+.avatar-micro-wrapper .diamond-mark::before,
+.avatar-micro-wrapper .diamond-mark::after {
+    animation: none !important;
+}
+
+.avatar-micro-wrapper .avatar-stage::before,
+.avatar-micro-wrapper .avatar-stage::after,
+.avatar-micro-wrapper .avatar-aura,
+.avatar-micro-wrapper .avatar-trigger::after {
+    filter: blur(18px) !important;
+    opacity: 0.45 !important;
+}
+
+@media (prefers-reduced-motion: reduce), (max-width: 720px) {
+    .avatar-micro-wrapper .avatar-stage::before,
+    .avatar-micro-wrapper .avatar-stage::after,
+    .avatar-micro-wrapper .avatar-aura,
+    .avatar-micro-wrapper .avatar-trigger::after {
+        filter: blur(12px) !important;
+        opacity: 0.28 !important;
+    }
+}

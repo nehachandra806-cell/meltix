@@ -1,0 +1,38 @@
+<div id="meltixGhostCart" class="meltix-cart-root" aria-live="polite">
+    <button type="button" id="meltixCartGhostBtn" class="meltix-cart-ghost" aria-label="Open shopping bag">
+        <svg class="meltix-cart-ghost-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+            <path d="M6 8h12l-1 11a2 2 0 0 1-2 1H9a2 2 0 0 1-2-1L6 8Z"></path>
+            <path d="M9 9V7a3 3 0 1 1 6 0v2"></path>
+        </svg>
+        <span id="meltixCartBadge" class="meltix-cart-badge">0</span>
+    </button>
+
+    <div id="meltixCartOverlay" class="meltix-cart-overlay"></div>
+
+    <aside id="meltixCartDrawer" class="meltix-cart-drawer" aria-hidden="true">
+        <div class="meltix-cart-header">
+            <h2>Your Atelier Bag</h2>
+            <button type="button" id="meltixCartClose" class="meltix-cart-close" aria-label="Close bag">&times;</button>
+        </div>
+
+        <div id="meltixCartItems" class="meltix-cart-body"></div>
+
+        <div class="meltix-cart-footer">
+            <div class="meltix-cart-promo-row">
+                <input type="text" id="meltixCartPromoInput" placeholder="Promo Code" autocomplete="off">
+                <button type="button" id="meltixCartPromoBtn">Apply</button>
+            </div>
+
+            <p id="meltixCartPromoNote" class="meltix-cart-promo-note"></p>
+
+            <div class="meltix-cart-subtotal">
+                <span>Subtotal</span>
+                <strong id="meltixCartSubtotal">₹ 0</strong>
+            </div>
+
+            <button type="button" id="meltixCartCheckoutBtn" class="meltix-cart-checkout">
+                PROCEED TO SECURE CHECKOUT
+            </button>
+        </div>
+    </aside>
+</div>

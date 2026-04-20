@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meltix Gift Sets | The Vault</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='gift_set.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -196,7 +197,7 @@
                         </div>
 
                         <div class="purchase-section">
-                            <button type="button" class="magic-cart-btn" id="giftSetAddToCartBtn" onclick="alert('Added to cart!')">
+                            <button type="button" class="magic-cart-btn" id="giftSetAddToCartBtn">
                                 ADD TO CART
                             <div class="star-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 784.11 815.53" xmlns:xlink="http://www.w3.org/1999/xlink"><g id="Layer_x0020_1"><path class="fil0" d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z"></path></g></svg>
@@ -224,12 +225,15 @@
         </div>
     </div>
 
+    {% include '_ghost_cart.html' %}
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/meltix-core.js') }}?v=ghost-cart-1"></script>
     <script>
         const currentUserEmail = "{{ session.get('profile_email', '') }}";
         const currentUserName = "{{ session.get('profile_name', '') }}";
         const profileBootstrapUrl = "{{ url_for('profile_bootstrap') }}";
         const productStatesUrl = "{{ url_for('product_states') }}";
-        const uiPrefsKey = 'meltix_ui_prefs';
+        const uiPrefsKey = "meltix_ui_prefs";
 
         function readUiPrefs() {
             try {
@@ -254,32 +258,32 @@
             const hasWatchedIntro = Boolean(readUiPrefs().meltix_gift_intro_watched);
 
             startOverlay.addEventListener('click', function() {
-                startOverlay.classList.add('hidden'); 
-                bgMusic.play().catch(e => console.log("Audio play prevented:", e)); 
-                
-                let videoPromise = bgVideo.play();
+                startOverlay.classList.add('hidden');
+                bgMusic.play().catch(e => console.log('Audio play prevented:', e));
+
+                const videoPromise = bgVideo.play();
                 if (videoPromise !== undefined) {
                     videoPromise.catch(e => {
-                        console.log("Video autoplay prevented or missing. Forcing button display.", e);
-                        btnContainer.style.opacity = '1'; 
-                        btnContainer.style.pointerEvents = 'auto'; 
+                        console.log('Video autoplay prevented or missing. Forcing button display.', e);
+                        btnContainer.style.opacity = '1';
+                        btnContainer.style.pointerEvents = 'auto';
                         dustParticles.style.opacity = '1';
                     });
                 }
 
-                if (hasWatchedIntro) { 
-                    btnContainer.style.opacity = '1'; 
-                    btnContainer.style.pointerEvents = 'auto'; 
-                    dustParticles.style.opacity = '1'; 
+                if (hasWatchedIntro) {
+                    btnContainer.style.opacity = '1';
+                    btnContainer.style.pointerEvents = 'auto';
+                    dustParticles.style.opacity = '1';
                 }
             });
 
-            bgVideo.addEventListener('ended', function() { 
-                bgVideo.classList.add('alive-video'); 
+            bgVideo.addEventListener('ended', function() {
+                bgVideo.classList.add('alive-video');
                 if (!hasWatchedIntro) {
-                    btnContainer.style.opacity = '1'; 
-                    btnContainer.style.pointerEvents = 'auto'; 
-                    dustParticles.style.opacity = '1'; 
+                    btnContainer.style.opacity = '1';
+                    btnContainer.style.pointerEvents = 'auto';
+                    dustParticles.style.opacity = '1';
                     writeUiPrefs({ meltix_gift_intro_watched: true });
                 }
             });
@@ -291,638 +295,61 @@
             const bgVideo = document.getElementById('bg-video');
             const bgMusic = document.getElementById('bg-music');
 
-            let fadeAudio = setInterval(function () {
-                if (bgMusic.volume > 0.1) bgMusic.volume -= 0.1; 
+            const fadeAudio = setInterval(function () {
+                if (bgMusic.volume > 0.1) bgMusic.volume -= 0.1;
                 else { clearInterval(fadeAudio); bgMusic.pause(); }
-            }, 100); 
+            }, 100);
 
-            introSection.style.opacity = '0'; 
+            introSection.style.opacity = '0';
             introSection.style.pointerEvents = 'none';
             mainContent.classList.add('show-main');
-            setTimeout(() => { introSection.style.display = 'none'; bgVideo.pause(); }, 1500); 
+            setTimeout(() => { introSection.style.display = 'none'; bgVideo.pause(); }, 1500);
         }
 
         const dustContainer = document.getElementById('dust-particles');
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 30; i++) {
             let particle = document.createElement('div'); particle.className = 'dust';
             particle.style.left = Math.random() * 100 + 'vw';
-            particle.style.animationDuration = (Math.random() * 15 + 10) + 's'; 
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
             particle.style.animationDelay = (Math.random() * 10) + 's';
             let size = Math.random() * 3 + 1; particle.style.width = size + 'px'; particle.style.height = size + 'px';
             dustContainer.appendChild(particle);
         }
+        dustContainer.dataset.coreDustReady = 'true';
 
-        const categoryData = {
-            'birthday': {
-                title: 'Birthday Set', desc: 'Celebrate Their Special Day',
-                video: '/static/videos/birthday_combined.mp4', 
-                products: [
-                    { id: 82, name: 'Meltix Birthday Grandeur', price: '₹2499', img: '/static/models/bday_1.jpg', desc: `<strong>What’s Inside</strong><br>Everything you need for a VIP celebration in one box:<br>• Lotus Cake Centerpiece: A hand-sculpted cake candle featuring a blooming lotus.<br>• Rose Gold Tapers: Metallic twisted candles for a high-end glow.<br>• Signature Tapers: Sage and Blush textured candles to set the aesthetic.<br>• Celebration Poppers: Rose gold party poppers for the big reveal.<br>• Decor Kit: Mini metallic balloons and a surprise gift box.<br>• The Meltix Trunk: A premium, satin-lined sage green display box.<br><br><strong>How to Use</strong><br>The Reveal: Open the Meltix trunk to instantly transform any table into a party zone.<br>Ambiance: Light the surrounding taper candles first to build the mood.<br>The Big Moment: Light the lotus centerpiece and use the poppers the second the birthday song starts!<br><br><strong>Specialty</strong><br>Specially designed for Milestone Birthdays. This isn't just a candle set; it’s our signature "Story Candle" experience. It’s curated for those who want their celebration to look like a high-end editorial shoot while creating a memory that lasts long after the wax melts.<br><br><strong>How We Made It</strong><br>Each lotus centerpiece is hand-poured using a premium soy-blend wax for a clean, slow burn. We custom-dyed the sage and blush tapers to match current decor trends and finished the metallic elements with a food-safe rose gold coating. Every kit is hand-assembled to ensure the unboxing feels like a luxury event.<br><br><strong>Wrap Up</strong><br>Stop gifting basic candles. Give them a celebration they’ll actually remember. Meltix Birthday Grandeur—because they deserve the spotlight.` },
-                    { id: 83, name: 'Meltix Golden Gala', price: '₹2999', img: '/static/models/bday_2.jpg', desc: `<strong>What’s Inside</strong><br>The ultimate "after-dark" celebration kit for those who love high-end glitz:<br>• Faceted Gold Pillar: A heavy, geometric centerpiece candle with a brilliant metallic finish.<br>• Shimmering Mini Tins: Six metallic candle tins (Gold & Rose Gold) for a scattered, ambient glow.<br>• Taper Match Boutique: A custom box of extra-long matches for a sophisticated light-up.<br>• Celebration Crackers: Two rose gold crackers to add a playful "pop" to the night.<br>• Elite Wick Snuffer: A sleek metallic snuffer with a silk tassel—because luxury candles aren't blown out.<br>• The Midnight Trunk: A deep matte-black display box that screams premium.<br><br><strong>How to Use</strong><br>The Setup: Open the black trunk to reveal the gold-on-black contrast.<br>The Glow: Place the mini tins around the geometric pillar and light them up using the taper matches for a 360-degree golden aura.<br>The Finale: Once the party is over, use the tasseled snuffer to extinguish the flames elegantly, keeping the wax clean for your next milestone.<br><br><strong>Specialty</strong><br>Specially designed for Glamorous Birthday Parties. This is the crown jewel of our "Story Candle" collection. While other sets are cute, the Golden Gala is for the person who wants a birthday that feels like a VIP red-carpet event. It’s about celebrating a big year with even bigger style.<br><br><strong>How We Made It</strong><br>We used high-definition geometric molds for the centerpiece to ensure every angle catches the light. The candles are poured with a clean-burning soy blend, and the metallic finishes are hand-applied. Every accessory, from the bee motifs to the silk tassel, is hand-selected to ensure your kit is nothing short of a masterpiece.<br><br><strong>Wrap Up</strong><br>Level up your celebration. The Meltix Golden Gala is for those who don’t just have birthdays—they have milestones.` },
-                    { id: 84, name: 'Meltix Pastel Party', price: '₹2199', img: '/static/models/bday_3.jpg', desc: `<strong>What’s Inside</strong><br>The ultimate aesthetic kit for those who love soft colors and vintage vibes:<br>• Vintage Piped Cake: A centerpiece candle featuring hand-piped 'frosting' in pink and lilac wax.<br>• Twisted Taper Set: Mint and lavender candles tied with a cream satin ribbon.<br>• Ribbed Taper Set: Sage and peach textured candles tied with a forest green ribbon.<br>• Ombre Taper Set: Dreamy pink-to-blue gradient candles tied with a blush ribbon.<br>• Smooth Taper Set: Classic pastel blue and yellow candles tied with a lilac ribbon.<br>• The Signature Trunk: A crisp white Meltix box filled with pastel confetti and silk tissue.<br><br><strong>How to Use</strong><br>The Reveal: Open the white trunk for an instant burst of pastel magic—perfect for a birthday morning surprise.<br>The Aesthetic: Place the vintage cake candle in the center. It’s so realistic, it doubles as a decor piece!<br>The Vibe: Untie the satin ribbons and place the various tapers around your space to create a soft, "Pinterest-perfect" birthday glow.<br><br><strong>Specialty</strong><br>Specially designed for Aesthetic Birthdays. This is the "sweetest" chapter of our "Story Candle" collection. Designed for the dreamers, it captures the 'Coquette' and 'Vintage' trends perfectly. It’s the ideal gift for a best friend or sister who wants their birthday to feel like a fairytale.<br><br><strong>How We Made It</strong><br>Each cake candle is a work of art, with the wax frosting hand-piped by our artisans using traditional cake-decorating techniques. We custom-blend our wax dyes to achieve these specific pastel tones and hand-tie every satin ribbon to ensure your kit arrives looking like a curated masterpiece.<br><br><strong>Wrap Up</strong><br>Make their birthday as sweet as they are. The Meltix Pastel Party kit turns a simple celebration into an unforgettable aesthetic memory.` },
-                    { id: 85, name: 'Meltix Pastel Palette', price: '₹1899', img: '/static/models/bday_4.jpg', desc: `<strong>What’s Inside</strong><br>A sophisticated collection of tapers for the ultimate color-coordinated celebration:<br>• 10 Signature Tapers: A curated mix of matte pastels (blush, mint, lilac, sky blue) and two shimmering glitter-gold candles.<br>• Meltix Matchbox: A custom-branded box of premium safety matches.<br>• Classic Bell Snuffer: A silver-finished wick snuffer to extinguish your candles with grace.<br>• The Minimalist Trunk: A sleek cream display box with rose-gold foil branding.<br><br><strong>How to Use</strong><br>Curate: Select the colors that match your theme and place them in your favorite candle holders.<br>Ignite: Use the Meltix matches to light your "wish candles" one by one.<br>Preserve: When the celebration ends, use the bell snuffer to safely douse the flame without any smoke, keeping the wax pristine.<br><br><strong>Specialty</strong><br>Specially designed for Intimate Birthday Dinners. This is the "versatile" chapter of our "Story Candle" collection. It’s perfect for the person who loves variety and wants to create a unique color story across their dining table or mantle. Each candle features our embossed logo, adding a subtle touch of luxury to every "Happy Birthday" wish.<br><br><strong>How We Made It</strong><br>Each taper is hand-dipped and finished with a precision-embossed Meltix logo. We used a high-density wax blend to ensure these candles stand tall and burn slowly without dripping. The glitter tapers are hand-dipped in fine metallic dust to provide a sparkling contrast to the soft matte pastels.<br><br><strong>Wrap Up</strong><br>A spectrum of colors for a spectrum of wishes. The Meltix Pastel Palette is the ultimate gift for a birthday that’s minimalist in design but big on style.` },
-                    { id: 86, name: 'Meltix Carousel Wish', price: '₹3499', img: '/static/models/bday_5.jpg', desc: `<strong>What’s Inside</strong><br>A magical, kinetic centerpiece that brings movement to your celebration:<br>• Rose Gold Kinetic Carousel: A precision-engineered metal turbine that spins using heat.<br>• Hanging Charms: A mix of rose gold horses and elegant swans that "dance" as the carousel rotates.<br>• Crystal Prisms: Teardrop crystals that catch the candlelight and scatter tiny rainbows.<br>• Meltix Signature Pillar: A central candle designed to provide the perfect heat for rotation.<br>• Integrated Branding: A custom-molded Meltix rose gold base.<br><br><strong>How to Use</strong><br>Assembly: Secure the carousel onto your birthday cake or a flat heat-safe surface.<br>The Ignition: Light the central Meltix pillar candle.<br>The Magic: As the air warms up, the turbine will automatically begin to spin, making the horses and swans gallop in a circle while the crystals shimmer.<br><br><strong>Specialty</strong><br>Specially designed for Fairytale Birthdays. This is the most "enchanting" chapter of our "Story Candle" collection. It’s not just a candle; it’s a mechanical work of art. While standard candles just sit there, the Carousel Wish tells a story of wonder and movement, making the absolute highlight of any birthday cake.<br><br><strong>How We Made It</strong><br>This kit combines physics with luxury. We used a lightweight rose gold alloy for the turbine to ensure it spins with even a small flame. Each charm is hand-balanced to maintain the rotation speed, and the crystals are precision-cut for maximum light refraction. It’s a delicate balance of engineering and aesthetic design.<br><br><strong>Wrap Up</strong><br>Why have a static cake when you can have a moving masterpiece? The Meltix Carousel Wish turns the simple act of lighting a candle into a mesmerizing show. Make a wish and watch the magic spin.` },
-                    { id: 87, name: 'Meltix Champagne Celebration', price: '₹2799', img: '/static/models/bday_6.jpg', desc: `<strong>What’s Inside</strong><br>The "all-in-one" toolkit for a sophisticated birthday bash. This cream and gold Meltix hamper features:<br>• Signature Cream Pillar: A large, smooth-finish candle embossed with our rose-gold logo.<br>• Metallic Votive Quad: Four textured gold candle tins for a warm, flickering glow.<br>• Taper Duo Tubes: Two sleek tubes containing premium long-stem taper candles.<br>• Golden Accent Kit: A pair of shimmering gold balloons and two matching celebration crackers.<br>• Tasseled Party Horn: A designer gold party blower to announce the birthday wish in style.<br>• The Royal Trunk: A champagne-toned box finished with a massive, hand-tied gold satin bow.<br><br><strong>How to Use</strong><br>The Grand Opening: Untie the gold bow to reveal the curated celebration layers resting on golden crinkle paper.<br>Light the Night: Start with the smaller votives to set the base lighting, then light the main pillar as the "wish" candle.<br>The Fanfare: Use the crackers for the surprise reveal and blow the tasseled horn to kick off the party!<br><br><strong>Specialty</strong><br>Specially designed for Elegant Birthdays. This kit is the "Sophisticate" chapter of our "Story Candle" collection. It’s built for the person who wants a birthday that feels expensive, curated, and timeless. Whether it's a 30th birthday or a golden jubilee, this set ensures the celebration is as classy as the person being celebrated.<br><br><strong>How We Made It</strong><br>We chose a "Champagne & Gold" palette to signify success and joy. The large pillar is hand-poured with our slowest-burning wax blend to ensure it lasts through the entire party. The votives are specially textured to maximize light reflection, and every box is hand-tied with a double-faced satin ribbon for that perfect "pre-opened" luxury look.<br><br><strong>Wrap Up</strong><br>Gift them the gold standard of birthdays. The Meltix Champagne Celebration kit is more than just candles—it’s a party in a box, designed for who celebrate with grace and a touch of glamour.` }
-                ]
-            },
-            'anniversary': {
-                title: 'Anniversary Set', desc: 'Milestones & Shared Memories',
-                video: '/static/videos/anniversary_combined.mp4', 
-                products: [
-                    { id: 88, name: 'Meltix Eternal Duo', price: '₹2299', img: '/static/models/anni_1.jpg', desc: `<strong>What’s Inside</strong><br>A perfectly paired set for the couple that glows together. This deep burgundy Meltix hamper features:<br>• The Amber Glow Jar: A rich, dark glass candle with a deep, sophisticated fragrance.<br>• The Frosted Silk Jar: A soft, frosted white candle for a light and romantic scent profile.<br>• Romantic Decor: Premium silk ribbons and a bed of fresh-look red and pink rose petals.<br>• Celebration Kit: A mini bouquet of heart-shaped balloons and three metallic party blowers (Gold & Silver).<br>• The Velvet Trunk: A luxurious maroon box with gold foil branding, lined with premium fabric.<br><br><strong>How to Use</strong><br>The Ambiance: Open the box to reveal the rose petals—the ultimate romantic gesture.<br>The Lighting: Place the Amber and Frosted jars on opposite sides of your dinner table or bedside. Light them together to symbolize the union of two souls.<br>The Moment: Use the heart balloons and blowers to add a playful touch to your anniversary toast.<br><br><strong>Specialty</strong><br>Specially designed for Anniversaries. This is the "Unity" chapter of our "Story Candle" collection. Unlike single candles, the Eternal Duo represents the balance between two people—one bold (Amber) and one soft (Frosted). It’s the ideal gift for a spouse or a favorite couple celebrating another year of love.<br><br><strong>How We Made It</strong><br>We paired these jars to create a visual and olfactory harmony. The glass jars are premium-grade and reusable, while the wax is hand-poured with high-concentration fragrance oils that fill a room without being overwhelming. Every box is hand-decorated with silk ribbons and petals to ensure it’s "proposal-ready" the moment it arrives.<br><br><strong>Wrap Up</strong><br>Two flames, one story. The Meltix Eternal Duo kit is the ultimate way to say "I'd choose you all over again."` },
-                    { id: 89, name: 'Meltix Anniversary Knot', price: '₹2599', img: '/static/models/anni_2.jpg', desc: `<strong>What’s Inside</strong><br>A beautifully symbolic kit representing the intertwined lives of a couple. This executive black Meltix trunk features:<br>• The Sculptural Duo: One cream wavy pillar and one metallic bronze pillar, designed with a unique "knot" texture.<br>• The Heart Core: A miniature rose-gold heart candle nestled perfectly between the two pillars.<br>• Anniversary Keepsake Card: A premium cream card with "Happy Anniversary to Us" scripted in elegant gold.<br>• Metallic Balloons: Miniature gold and bronze balloons to elevate the party vibe.<br>• Signature Accents: Burgundy and taupe silk ribbons with scattered copper heart confetti.<br>• The Executive Trunk: A high-end black display box with a soft, cream-lined interior.<br><br><strong>How to Use</strong><br>The Toast: Open the box during your anniversary toast to reveal the coordinated gold and bronze theme.<br>The Glow: Place the pillars side-by-side. Light them together to signify two unique paths glowing as one.<br>The Memory: Display the "Happy Anniversary" card in your home as a reminder of another beautiful year together.<br><br><strong>Specialty</strong><br>Specially designed for Wedding Anniversaries. This is the "Connection" chapter of our "Story Candle" collection. The "Knot" design of the candles is a visual metaphor for the strength and beauty of a long-term bond. It is the perfect gift for a partner who values deep meaning and sophisticated home decor.<br><br><strong>How We Made It</strong><br>We used specialized 3D molds to create the intricate, fluid texture of the white pillar. The metallic bronze pillar is hand-finished with a high-shine lacquer to provide a striking contrast. Each kit is hand-curated to ensure the card, heart, and ribbons are perfectly positioned for that immediate romantic "wow" moment upon opening.<br><br><strong>Wrap Up</strong><br>Celebrate the knot that holds you together. The Meltix Anniversary Knot kit turns your special milestone into a curated aesthetic memory.` },
-                    { id: 90, name: 'Meltix Eternal Embrace', price: '₹2899', img: '/static/models/anni_3.jpg', desc: `<strong>What’s Inside</strong><br>A sculptural masterpiece capturing the essence of togetherness. This premium Meltix shadow box includes:<br>• The Embrace Pillars: Two hand-poured candles—one cream and one dusty rose—sculpted in a timeless, intimate embrace.<br>• Velvet Ribbon Duo: Elegant burgundy and soft peach velvet ribbons for a touch of texture.<br>• Gilded Botanical: A gold-sprayed leaf accent to symbolize the growth of your love.<br>• Keepsake Tag: A delicate "Happy Anniversary" tag to commemorate the date.<br>• Copper Accents: Miniature copper-toned balloons and a wire balloon motif.<br>• The Signature Shadow Box: A high-end black display box with a glass front and gold foil logo.<br><br><strong>How to Use</strong><br>The Display: Keep the candles inside the glass shadow box as a stunning piece of anniversary decor for your bedroom or mantle.<br>The Ritual: On your special night, remove the "Embrace Pillars" and place them on a heat-safe tray. Light them together to symbolize two lives becoming one beautiful light.<br>The Style: Use the velvet ribbons and gilded leaf to accent your anniversary dinner table setting.<br><br><strong>Specialty</strong><br>Specially designed for Wedding Anniversaries. This is the "Intimacy" chapter of our "Story Candle" collection. It’s more than a gift; it’s a representation of the bond between a couple. The silhouette is designed to be a conversation starter and a constant reminder of the warmth of a hug.<br><br><strong>How We Made It</strong><br>Each "Embrace Pillar" is hand-cast in custom-designed sculptural molds using our signature soy-wax blend. We selected the dusty rose and cream palette to represent the perfect balance of passion and peace. The shadow box is hand-assembled, ensuring every element—from the velvet to the gold leaf—is perfectly positioned for a gallery-quality presentation.<br><br><strong>Wrap Up</strong><br>Celebrate the hug that changed everything. The Meltix Eternal Embrace kit is a tribute to love that looks just as beautiful unlit as it does glowing in the dark.` },
-                    { id: 91, name: 'Meltix Ever After', price: '₹3199', img: '/static/models/anni_4.jpg', desc: `<strong>What’s Inside</strong><br>A nostalgic masterpiece that takes you back to the magic of your wedding day. This velvet-lined Meltix trunk features:<br>• The Wedding Pillars: Two intricately sculpted candles—a tuxedo pillar in metallic bronze and a bridal gown pillar with stunning lace-embossed details.<br>• Mini Balloon Bouquet: A cluster of rose-gold balloons, including shimmering confetti-filled ones.<br>• The Sealed Scroll: A miniature vintage-style scroll with a wax seal for your personal anniversary message.<br>• Symbolic Accents: Tiny rose-gold rings and heart motifs scattered on a bed of plush grey velvet.<br>• Silk Satin Ribbons: Elegant cream and blush ribbons to tie the look together.<br>• The Royal Trunk: A heavy, premium velvet-finished box with rose-gold foil branding.<br><br><strong>How to Use</strong><br>The Nostalgia: Open the velvet trunk as a centerpiece for your anniversary dinner to instantly evoke memories of the "I Do" moment.<br>The Lighting: Place the 'Bride' and 'Groom' pillars together. Light them during your celebration to symbolize the enduring warmth of your marriage.<br>The Message: Unroll the sealed scroll to read a hidden message or write a new vow for the year ahead.<br><br><strong>Specialty</strong><br>Specially designed for Wedding Anniversaries. This is the "Vows" chapter of our "Story Candle" collection. It’s the ultimate gift for a spouse or a couple celebrating their first or fiftieth year. It captures the elegance of the wedding day in a way that feels timeless and luxurious.<br><br><strong>How We Made It</strong><br>This kit is a triumph of 3D wax sculpting. The bridal gown features high-definition lace patterns, while the tuxedo is hand-finished with a metallic bronze lacquer. We chose a "Champagne & Rose Gold" palette to represent a love that is both classic and modern. Every element is hand-placed on luxury velvet to ensure a flawless unboxing experience.<br><br><strong>Wrap Up</strong><br>Relive the magic. The Meltix Ever After kit isn’t just a gift; it’s a tribute to the day your story began. Perfect for the couple who believes in happily ever after.` },
-                    { id: 92, name: 'Meltix Infinite Bond', price: '₹3499', img: '/static/models/anni_5.jpg', desc: `<strong>What’s Inside</strong><br>A sophisticated tribute to long-term love, designed for those major milestones. This burgundy velvet-lined Meltix trunk features:<br>• Intertwined Sculptural Pillars: Two designer candles—one in textured aged bronze and one in sleek matte rose-gold—featuring a unique "wrap" design.<br>• The Milestone Envelope: A premium cream envelope with a gold wax seal, perfect for a personalized anniversary letter.<br>• Velvet Display Bed: A rich maroon velvet interior decorated with gold foil heart and star motifs.<br>• Designer Ribbons: Wide silk ribbons in champagne and mocha tones.<br>• Metallic Baubles: Matching rose-gold decorative accents to complete the luxury look.<br>• The Heritage Trunk: A sturdy, chocolate-brown display box with a rose-gold foil logo.<br><br><strong>How to Use</strong><br>The Reveal: Open the Heritage Trunk during your anniversary dinner to unveil the "Celebrating Together" message.<br>The Display: Place the intertwined pillars as a center decoration. Their unique shapes are designed to complement each other, just like a couple.<br>The Ritual: Light the wicks together to celebrate the years gone by and the many more to come.<br><br><strong>Specialty</strong><br>Specially designed for Milestone Anniversaries (like the 10th year). This is the "Strength" chapter of our "Story Candle" collection. The intertwined wrap on the candles symbolizes how two lives become inseparable over time. It’s the ultimate gift for a couple who has built a beautiful life together and wants to celebrate their "Infinite Bond."<br><br><strong>How We Made It</strong><br>These pillars are a feat of modern candle design. We used high-precision molds to create the "intertwined" effect, symbolizing unity. The bronze pillar is hand-textured for a rustic feel, while the rose-gold pillar is finished with a smooth satin lacquer. Everything is hand-assembled on premium velvet to ensure the highest standard of luxury.<br><br><strong>Wrap Up</strong><br>A decade of love deserves a gift that tells a story. The Meltix Infinite Bond kit is a timeless celebration of everything you’ve built together.` },
-                    { id: 93, name: 'Meltix Noir Romance', price: '₹3999', img: '/static/models/anni_6.jpg', desc: `<strong>What’s Inside</strong><br>The ultimate "all-in-one" romantic experience for a private, high-end celebration. This signature black Meltix trunk features:<br>• Multi-Height Pillar Set: 10 premium white pillar candles in varying sizes to create a stunning "sea of light."<br>• Celebration Bottle: A curated sparkling bottle with a rose-gold foil neck (non-alcoholic/sparkling juice options available).<br>• Artisanal Truffles: A box of gourmet chocolates for a sweet anniversary treat.<br>• Gold-Foil Stationery: A premium bordered card for writing your heart out.<br>• Heart Balloon Kit: Metallic rose-gold heart balloons to set the atmospheric stage.<br>• The Noir Trunk: A sleek, matte-black display box with rose-gold foil branding.<br><br><strong>How to Use</strong><br>The Glow: Arrange the 10 pillar candles around your room or table and light them to create a warm, cinematic ambiance.<br>The Unboxing: Present the Noir Trunk in the center of the candlelight. Open it to reveal the chilled bottle and chocolates.<br>The Words: Read your gold-bordered note aloud to relive the memories of the past year.<br><br><strong>Specialty</strong><br>Specially designed for Private Anniversary Celebrations. This is the "Grand Finale" chapter of our "Story Candle" collection. It’s built for the partner who doesn't just want to give a gift, but wants to create a whole vibe. It combines light, taste, and emotion into one flawless, curated evening.<br><br><strong>How We Made It</strong><br>We sourced the deepest matte-black materials for the trunk to make the rose-gold branding pop. Our pillars are made from a high-density, drip-less wax blend to ensure your "sea of light" stays clean and lasts for hours. Every element, from the gold-bordered stationery to the hand-packed chocolates, is selected to ensure a 5-star hotel experience at home.<br><br><strong>Wrap Up</strong><br>The ultimate romantic night, delivered in a box. Meltix Noir Romance—because some stories are best told by candlelight.` }
-                ]
-            },
-            'date': {
-                title: 'Date Set', desc: 'Intimate & Romantic Vibes',
-                video: '/static/videos/date_combined.mp4', 
-                products: [
-                    { id: 94, name: 'Meltix Bloom & Bond', price: '₹1799', img: '/static/models/date_1.jpg', desc: `<strong>What’s Inside</strong><br>The perfect starter kit for a night of connection and discovery. This soft blush Meltix hamper features:<br>• Cherry Blossom & Peony Candle: A premium scented candle in a sophisticated ribbed glass jar, designed to fill the room with a romantic, floral aroma.<br>• Icebreaker Conversation Deck: A curated set of "Meltix Icebreaker" cards featuring thoughtful questions to spark deep and fun conversations.<br>• The Blush Trunk: A luxury peach-pink display box finished with a signature rose-gold foil logo.<br><br><strong>How to Use</strong><br>Set the Mood: Light the Cherry Blossom & Peony candle to create a soft, inviting atmosphere with its floral glow and scent.<br>Start the Story: Place the Icebreaker deck between you. Take turns drawing cards and answering questions like "What is your ideal perfect day?"<br>Connect: Let the conversation flow naturally as the candle burns, turning a simple date into a meaningful memory.<br><br><strong>Specialty</strong><br>Specially designed for Date Nights and First Encounters. This is the "Connection" chapter of our "Story Candle" collection. Unlike ordinary candles, the Bloom & Bond kit is an interactive experience. It’s designed to remove the "awkward silence" and replace it with genuine laughter and discovery, making it the perfect gift for a new partner or a long-time spouse.<br><br><strong>How We Made It</strong><br>We chose the scents of Cherry Blossom and Peony because they symbolize new beginnings and romance. The candle is hand-poured into a custom-ribbed glass that beautifully diffuses light. The Icebreaker cards were professionally curated to balance lighthearted fun with emotional depth, ensuring every date night feels fresh and intentional.<br><br><strong>Wrap Up</strong><br>Don't just sit together—connect together. The Meltix Bloom & Bond kit is your secret ingredient for a date night that feels effortless, romantic, and truly unforgettable.` },
-                    { id: 95, name: 'Meltix Amber Romance', price: '₹1999', img: '/static/models/date_2.jpg', desc: `<strong>What’s Inside</strong><br>A curated setting for a cinematic date night at home. This intimate Meltix kit features:<br>• Signature Amber Jar Candle: A warm, flickering centerpiece in a rich brown glass jar that casts a nostalgic, cozy glow.<br>• Velvet Rose Petals: A pack of deep red petals to scatter across your table for that classic romantic touch.<br>• Golden Balloon Set: A cluster of premium gold and champagne balloons to bring a celebration feel to your space.<br>• Luxury Coaster Duo: Two sleek, matching coasters to perfectly hold your wine or cocktail glasses.<br><br><strong>How to Use</strong><br>Set the Scene: Scatter the rose petals across your table and place the gold balloons in the background to frame your date area.<br>Ignite the Glow: Place the Amber Jar in the center and light it. The dark glass is designed to soften the light, making the atmosphere feel private and warm.<br>The Toast: Pour two glasses of your favorite wine, put on some soft music, and let the "Amber Romance" turn your room into a private bistro.<br><br><strong>Specialty</strong><br>Specially designed for Intimate Date Nights. This is the "Ambiance" chapter of our "Story Candle" collection. It’s perfect for the couple who wants to skip the crowded restaurant and create a high-end, private experience at home. Whether it's a first date or a "just because" night, this kit provides the perfect lighting and decor for a deep connection.<br><br><strong>How We Made It</strong><br>We chose the amber glass specifically for its ability to cast a "golden hour" sepia light that makes every setting look better. The candle is hand-poured with a soy-blend wax that features subtle, warm notes designed to complement—not overpower—the aroma of a good dinner or wine. Every element is hand-selected to ensure your date looks like a professional setup.<br><br><strong>Wrap Up</strong><br>Turn your dinner into a memory. The Meltix Amber Romance kit—because the best dates don't need a reservation, just the right light.` },
-                    { id: 96, name: 'Meltix Twilight Toast', price: '₹2499', img: '/static/models/date_3.jpg', desc: `<strong>What’s Inside</strong><br>A high-end, multi-sensory experience designed for a truly cinematic evening. This velvet-lined "Midnight Trunk" features:<br>• Luxe Bronze Pillar Jar: A premium candle in a vacuum-plated rose-gold jar for a sophisticated metallic glow.<br>• Signature Coupe Pair: Two elegant crystal-clear glass coupes, perfect for your favorite cocktail or champagne.<br>• Gilded Petals: Hand-selected rose petals finished in gold for an ultra-premium table setting.<br>• Designer Matchbox: A custom wood-effect matchbox for a refined lighting ritual.<br>• Artisanal Treat: A mini chocolate box finished with a silk satin bow.<br>• The Experience Card: A "Perfect Date Experience" card to set the intention for the night.<br><br><strong>How to Use</strong><br>The Surprise: Present the heavy, dark-wood trunk as a centerpiece and open it to reveal the curated luxury inside.<br>Ignite the Mood: Light the bronze candle. The metallic surface is designed to reflect the flame, doubling the warmth in the room.<br>The Celebration: Pour your drinks into the coupes and scatter the gold petals for a high-end lounge vibe at home.<br><br><strong>Specialty</strong><br>Specially designed for Sophisticated Date Nights. This is the "Luxury Lounge" chapter of our "Story Candle" collection. It’s for the couple who appreciates the finer things—combining fine glassware, gourmet treats, and premium light into one "ready-to-celebrate" kit.<br><br><strong>How We Made It</strong><br>We focused on the "Gold & Noir" aesthetic to create a sense of exclusivity. The candle is hand-poured with a proprietary wax blend that burns clean and bright. The bronze jar is polished to a mirror finish, and every trunk is hand-assembled with premium black velvet lining to ensure your date night feels like a VIP event.<br><br><strong>Wrap Up</strong><br>Because a simple dinner isn't enough. The Meltix Twilight Toast kit is the ultimate way to bring five-star luxury to your private date night.` },
-                    { id: 97, name: 'Meltix Dream & Discover', price: '₹2199', img: '/static/models/date_4.jpg', desc: `<strong>What’s Inside</strong><br>A deep-dive kit for couples who want to explore their future by candlelight. This intimate date set features:<br>• Signature Amber Glow Jar: A large-format candle in a smoky amber glass that radiates a warm, sunset-hued light.<br>• Icebreaker Date Deck: A custom mauve-and-gold card deck featuring "Future-focused" questions like, "What is a dream we can build together?"<br>• Aromatic Palo Santo: A natural wood stick to cleanse the energy of your space before you begin.<br>• Dried Rose Petals: Premium botanical accents to scatter for a touch of rustic romance.<br>• Precision Wick Trimmers: Professional stainless steel trimmers to ensure your candle burns perfectly throughout the night.<br><br><strong>How to Use</strong><br>Prep the Flame: Use the trimmers to clip the wick to 1/4 inch. Light the candle and let the aroma fill the room.<br>Clear the Space: Light the Palo Santo stick briefly to fill the air with its calming, woodsy scent, then blow it out.<br>Start the Story: Pull cards from the Dream & Discover deck. Use the prompts to move beyond small talk and into the heart of your partnership.<br><br><strong>Specialty</strong><br>Specially designed for "Next Level" Date Nights. This is the "Vision" chapter of our "Story Candle" collection. While other kits are for first dates, this one is for the couple ready to build a life together. It’s the perfect gift for an engagement, a moving-in-together celebration, or simply a night dedicated to dreaming big.<br><br><strong>How We Made It</strong><br>We focused on the "earthy and grounded" aesthetic for this kit. The candle is hand-poured with a blend of natural soy and high-grade fragrance oils. The amber glass is specifically chosen to create a sanctuary-like feel. Every card in the deck was written by relationship experts to ensure the questions lead to genuine connection, not just conversation.<br><br><strong>Wrap Up</strong><br>Build more than just an evening; build a dream. The Meltix Dream & Discover kit is for the couple that knows the best stories are the ones written together.` },
-                    { id: 98, name: 'Meltix Velvet Rendezvous', price: '₹2899', img: '/static/models/date_5.jpg', desc: `<strong>What’s Inside</strong><br>A grand, all-in-one experience for an evening of pure luxury. This executive burgundy Meltix trunk features:<br>• The Gilded Stemless Duo: Two premium crystal-clear glasses finished with elegant, hand-painted gold rims.<br>• Rose Gold Metallic Jar: A frosted metallic candle designed to radiate a soft, copper-hued glow.<br>• Gourmet Treats & Botanicals: A curated section featuring gold-wrapped chocolates and a mix of deep red and ivory rose petals.<br>• Satin Ribbon Duo: Signature hand-tied ribbons in champagne and copper tones.<br>• The Poetry Keepsake: A gold-bordered card featuring a romantic verse to set a sentimental tone for the night.<br>• The Executive Trunk: A high-end, textured burgundy box with "A Curated Date Night Experience" embossed in rose-gold foil.<br><br><strong>How to Use</strong><br>The Unveiling: Present the heavy trunk as a centerpiece. Opening it reveals a perfectly organized romantic journey.<br>Pour & Glow: Pour your favorite vintage into the gold-rimmed glasses and light the metallic candle to illuminate the luxury setting.<br>The Ritual: Scatter the petals across the table, share the chocolates, and read the poetry card aloud to officially begin your rendezvous.<br><br><strong>Specialty</strong><br>Specially designed for "Grand Gesture" Date Nights. This is the "Elegance" chapter of our "Story Candle" collection. It’s built for the person who wants to transform a simple night into a high-end sensory experience. It captures the essence of a five-star hotel lounge, delivered directly to your door.<br><br><strong>How We Made It</strong><br>We chose the deep burgundy and rose-gold palette to signify passion and sophistication. The "Executive Trunk" is custom-molded with protective compartments to ensure the glassware and treats arrive in pristine condition. The candle is hand-poured using a slow-burning wax blend to ensure your evening lasts as long as the conversation.<br><br><strong>Wrap Up</strong><br>Because they deserve more than just a dinner. The Meltix Velvet Rendezvous kit is the ultimate way to tell your love story with absolute class.` }
-                ]
-            },
-            'surprise': {
-                title: 'Surprise Set', desc: 'Unexpected Magical Moments',
-                video: '/static/videos/surprise_combined.mp4', 
-                products: [
-                    { id: 99, name: 'Meltix Secret Story', price: '₹2499', img: '/static/models/surp_1.jpg', desc: `<strong>What’s Inside</strong><br>A mysterious and interactive kit designed to hold your most precious shared secrets. This kit features:<br>• The Mystery QR Candle: A large square frosted amber candle. It’s more than just a light—it features a scannable QR code that reveals a personalized digital surprise.<br>• The Locked Memory Journal: A premium burgundy, linen-bound book secured with a physical vintage-style lock and key.<br>• The Noir Vault: A sleek matte-black display box with rose-gold foil branding to house your treasures.<br><br><strong>How to Use</strong><br>The Reveal: Light the candle and let its warm, steady flame create a private sanctuary.<br>Scan the Secret: Use your phone to scan the QR code on the candle label to unlock a hidden digital message, a surprise video, or a curated "Our Story" playlist.<br>Lock the Memory: Use the journal to write down your favorite shared moments or future dreams, then lock it away to keep your story private between the two of you.<br><br><strong>Specialty</strong><br>Specially designed for "Mystery" Surprises. This is the most interactive chapter of our "Story Candle" collection. It’s perfect for marriage proposals, milestone birthdays, or any occasion where you want to reveal a secret. It turns a physical gift into a digital journey of discovery, making the surprise last much longer than a single moment.<br><br><strong>How We Made It</strong><br>We integrated technology with tradition for this kit. The candle is hand-poured into custom square frosted glass for a modern, architectural look. The journal is hand-stitched with premium paper and fitted with a functioning brass-tone lock. The QR technology is seamlessly embedded into the label, bridging the gap between a physical keepsake and a digital experience.<br><br><strong>Wrap Up</strong><br>Every love story has its secrets. The Meltix Secret Story kit gives you a beautiful, locked place to keep them. Unlock the mystery and light up your story.` },
-                    { id: 100, name: 'Meltix Hidden Harmony', price: '₹1999', img: '/static/models/surp_2.jpg', desc: `<strong>What’s Inside</strong><br>A masterpiece of suspense and sentiment. This minimalist surprise candle features:<br>• Signature Amber Apothecary Jar: A classic, warm-toned glass jar that perfectly conceals the secret within.<br>• Golden Message Beads: Elegant metallic letter beads that spell out "WITH YOU" (customizable options available).<br>• Natural Cork Stopper: A premium eco-friendly lid to preserve the fragrance and the mystery.<br>• Pure Soy Blend: High-quality cream wax for a clean, slow, and even burn.<br><br><strong>How to Use</strong><br>The Anticipation: Present the candle with the cork lid on. It looks like a beautiful, standard luxury candle.<br>The Ignition: Light the wick and let the room fill with our signature calming scent.<br>The Reveal: After 20–30 minutes of burning, watch as the wax turns translucent and the golden letters slowly "float" to the surface, revealing your hidden message.<br><br><strong>Specialty</strong><br>Specially designed for Heartfelt Surprises. This is the "Voice" chapter of our "Story Candle" collection. It’s perfect for those moments when you want to say something important—like a proposal, a pregnancy reveal, or just a deep "thank you"—in a way they’ll never expect. The message stays hidden until the moment is exactly right.<br><br><strong>How We Made It</strong><br>We use a meticulous "double-pour" technique. First, we set the message beads at a specific depth, then we pour a second layer of opaque wax over the top to keep the surprise a total secret until it’s lit. Every bead is hand-placed to ensure it remains legible as the wax pool expands.<br><br><strong>Wrap Up</strong><br>Some messages are better told through light. The Meltix Hidden Harmony candle turns a quiet evening into a life-changing revelation. Let the wax melt, and the truth reveal itself.` },
-                    { id: 101, name: 'Meltix Soul Revelation', price: '₹2199', img: '/static/models/surp_3.jpg', desc: `<strong>What’s Inside</strong><br>A stunning fusion of artisanal decor and deep-seated sentiment. This surprise kit features:<br>• Mediterranean Ceramic Jar: A handcrafted blue-and-white patterned vessel with a timeless, high-gloss finish.<br>• Hidden "Soul Mates" Beads: Delicate white and gold beads that reveal a life-changing message as the wax melts.<br>• Embossed Rose Gold Logo: A premium, heat-sealed Meltix brand mark for an executive look.<br>• Signature Soy Blend: Hand-poured wax infused with a sophisticated, romantic fragrance.<br><br><strong>How to Use</strong><br>The Ambiance: Place the ceramic jar in a prominent spot—it’s a piece of art even before it’s lit.<br>The Burn: Light the wick during a quiet, intimate evening. The opaque wax keeps the message a total secret at first.<br>The Revelation: Within 30 minutes, a clear pool of wax will form, and the words "SOUL MATES" will magically emerge from the depths for a heart-stopping surprise.<br><br><strong>Specialty</strong><br>Specially designed for "Deep Connection" Surprises. This is the "Soul" chapter of our "Story Candle" collection. It’s perfect for the partner who appreciates heritage-style decor and profound emotional gestures. Whether it’s an anniversary surprise or a spontaneous "I love you," this candle says it all without you speaking a word.<br><br><strong>How We Made It</strong><br>Each ceramic jar is inspired by classic Mediterranean pottery, featuring hand-glazed intricate patterns designed to last a lifetime. We use a specialized "Deep-Set" layering technique where the message beads are perfectly leveled before the final opaque pour. This ensures the message stays hidden until the very moment the atmosphere is right.<br><br><strong>Wrap Up</strong><br>Art meets emotion. The Meltix Soul Revelation turns your home decor into a profound confession. It’s a beautiful jar, but the real treasure is the story it tells.` },
-                    { id: 102, name: 'Meltix Crystal Vow', price: '₹3499', img: '/static/models/surp_4.jpg', desc: `<strong>What’s Inside</strong><br>A stunning, sculptural masterpiece designed for life’s biggest question. This elite surprise kit features:<br>• Scupltural Crystal Pillar: A hand-carved wax centerpiece designed to look like a cluster of raw, iridescent crystals.<br>• Hidden Jewelry Reveal: A high-clarity wax core that conceals a breathtaking diamond ring (for use with your own jewelry or a placeholder).<br>• Signature Gift Box: A premium matte-black Meltix box with rose-gold foil accents.<br><br><strong>How to Use</strong><br>The Set-Up: Place the crystal candle in a dim, romantic setting. The geometric edges catch the light beautifully even before it’s lit.<br>The Wait: Light the wick and let the center pool of wax melt. It is designed to become completely transparent as it heats up.<br>The Question: As the wax melts away, the ring will slowly "rise" from the light, creating a cinematic moment for you to take it out and ask the big question.<br><br><strong>Specialty</strong><br>Specially designed for Marriage Proposals. This is the "Eternity" chapter of our "Story Candle" collection. Why use a standard ring box when you can create a magical, glowing reveal? It’s for the person who wants their proposal to be a sensory experience—combining the warmth of candlelight with the sparkle of a lifetime promise.<br><br><strong>How We Made It</strong><br>Each Crystal Vow is cast in a custom-designed 3D mold to mimic natural quartz formations. We used a specialty "Clear-Pool" wax for the center to ensure that the jewelry is showcased in high definition once the wax turns liquid. The jewelry is protected in a heat-safe, invisible casing to ensure it stays pristine and wax-free during the reveal.<br><br><strong>Wrap Up</strong><br>Make the moment shine brighter. The Meltix Crystal Vow turns a proposal into a work of art. It’s not just a ring; it’s a story revealed by light.` },
-                    { id: 103, name: 'Meltix Solar Secret Reveal Kit', price: '₹3299', img: '/static/models/surp_5.jpg', desc: `<strong>What’s Inside</strong><br>A gift within a gift, designed for a breathtaking reveal. This luxury surprise kit features:<br>• The Sculpted Ivory Orb: A large, uniquely shaped ivory candle designed with a specialized "viewing window" core.<br>• Hidden Sunburst Pendant: Tucked inside the wax is a premium gold-plated sunburst necklace adorned with brilliant-cut crystals.<br>• The Midnight Vault: Our signature matte-black and gold-trimmed display box, complete with a branded "M" silk tag.<br><br><strong>How to Use</strong><br>The Anticipation: Place the ivory orb on a flat surface and light the wick. It begins as a beautiful piece of minimalist decor.<br>The Melt: As the candle burns, the specialized "inner chamber" begins to glow, slowly revealing the silhouette of the jewelry.<br>The Keepsake: Once the wax has pooled enough to reveal the pendant fully, extinguish the flame. Carefully retrieve the necklace using the heat-safe casing to wear your new "Solar" memory.<br><br><strong>Specialty</strong><br>Specially designed for Anniversary Surprises and Birthday Gifts. This is the "Treasure" chapter of our "Story Candle" collection. It is the perfect choice for the partner who loves jewelry but appreciates the theater of a surprise. It transforms a romantic evening into a permanent keepsake, ensuring the story of your gift is told for years to come.<br><br><strong>How We Made It</strong><br>This is one of our most complex designs. We used a proprietary, non-staining ivory soy blend that ensures the necklace remains sparkling and clean after being retrieved. The egg-shaped "Orb" is hand-cast to ensure the jewelry-safe compartment is centered perfectly, allowing the heat to reveal the pendant without damaging the delicate gold plating.<br><br><strong>Wrap Up</strong><br>Give them a light that turns into a legacy. The Meltix Solar Secret kit is the ultimate grand gesture for the person who deserves the sun, the moon, and the stars.` }
-                ]
-            }
+        const categoryMeta = {
+            birthday: { title: 'Birthday Set', desc: 'Celebrate Their Special Day', video: '/static/videos/birthday_combined.mp4', groupName: 'Birthday Set' },
+            anniversary: { title: 'Anniversary Set', desc: 'Milestones & Shared Memories', video: '/static/videos/anniversary_combined.mp4', groupName: 'Anniversary Set' },
+            date: { title: 'Date Set', desc: 'Intimate & Romantic Vibes', video: '/static/videos/date_combined.mp4', groupName: 'Date Set' },
+            surprise: { title: 'Surprise Set', desc: 'Unexpected Magical Moments', video: '/static/videos/surprise_combined.mp4', groupName: 'Surprise Set' }
         };
 
-        // 🔴 FIX: 100% Solid Video Buffer Failsafe Logic 🔴
-        let vid = null;
-        const LOOP_DURATION = 5.0; 
-        let actionQueued = false; 
-        let replayQueued = false; 
-        let isActionPlaying = false;
-
-        function attachVideoListeners(videoElement) {
-            videoElement.addEventListener('timeupdate', function() {
-                if (!isActionPlaying && videoElement.currentTime >= LOOP_DURATION) {
-                    videoElement.currentTime = 0.1; 
-                    videoElement.play().catch(e => console.log(e));
-                }
-            });
-
-            videoElement.addEventListener('ended', function() {
-                if (replayQueued) {
-                    videoElement.currentTime = LOOP_DURATION; 
-                    videoElement.play().catch(e => console.log(e)); 
-                    replayQueued = false;
-                } else {
-                    actionQueued = false; isActionPlaying = false; 
-                    videoElement.currentTime = 0.1; 
-                    videoElement.play().catch(e => console.log(e));
-                }
-            });
-        }
-
-        function openCategory(catId) {
-            const data = categoryData[catId];
-            if(!data) return;
-
-            document.getElementById('category-title').innerText = data.title;
-            document.getElementById('category-desc').innerText = data.desc;
-            
-            actionQueued = false; replayQueued = false; isActionPlaying = false;
-
-            const loader = document.getElementById('catVidLoader');
-            const videoContainer = document.getElementById('video-container-box');
-            
-            loader.style.display = 'block';    
-            
-            // Destroy the old video completely to clear buffer
-            videoContainer.innerHTML = ''; 
-            
-            // Create a brand new video element for the new source
-            vid = document.createElement('video');
-            vid.id = 'category-video';
-            vid.className = 'fade-vid';
-            vid.muted = true;
-            vid.setAttribute('playsinline', '');
-            vid.setAttribute('preload', 'auto');
-            vid.src = data.video;
-            
-            attachVideoListeners(vid);
-            
-            videoContainer.appendChild(vid);
-
-            // Once the new video's frame is loaded, fade it in
-            vid.onloadeddata = function() {
-                loader.style.display = 'none';   
-                vid.classList.add('vid-ready');  
-                let playPromise = vid.play();
-                if(playPromise !== undefined) {
-                    playPromise.catch(e => console.log("Rapid tap handled safely"));
-                }
-            };
-
-            vid.load(); 
-
-            // Failsafe for instant cache loads
-            setTimeout(() => {
-                if(vid.readyState >= 2) {
-                    loader.style.display = 'none';
-                    vid.classList.add('vid-ready');
-                    vid.play().catch(e => {});
-                }
-            }, 300);
-
-            const grid = document.getElementById('category-products');
-            grid.innerHTML = '';
-            
-            data.products.forEach((p, index) => {
-                grid.innerHTML += `
-                    <div class="product-card" onclick="openProductModal('${catId}', ${index})">
-                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x180/ffffff/b0845a?text=Meltix'">
-                        <h4>${p.name}</h4>
-                        <div class="price">${p.price}</div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('category-modal').classList.add('show-modal');
-        }
-
-        function closeCategory() {
-            document.getElementById('category-modal').classList.remove('show-modal');
-            if (vid) {
-                vid.pause();
-                vid.removeAttribute('src'); // Free memory
-                vid.load();
-            }
-        }
-
-        function playActionPart() {
-            if (vid && vid.currentTime < LOOP_DURATION) { 
-                actionQueued = true; 
-                isActionPlaying = true; 
-                vid.play().catch(e => console.log(e)); 
-            } 
-            else { replayQueued = true; }
-        }
-
-        // ==========================================
-        // 🔴 DB-CONNECTED PRODUCT DETAIL LOGIC
-        // ==========================================
-
-        let activeProductId = null; 
-        let currentReviews = [];
-        let wishlistProductIds = new Set();
-
-        async function refreshProductStates(productIds) {
-            const uniqueIds = [...new Set((productIds || []).map((productId) => Number(productId)).filter((productId) => Number.isInteger(productId) && productId > 0))];
-
-            uniqueIds.forEach((productId) => {
-                wishlistProductIds.delete(String(productId));
-            });
-
-            if (!uniqueIds.length || currentUserEmail === "") {
-                return;
-            }
-
-            try {
-                const response = await fetch(productStatesUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_ids: uniqueIds })
-                });
-                const data = await response.json();
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || 'Product state sync failed');
-                }
-
-                (data.wishlist_product_ids || []).forEach((productId) => {
-                    wishlistProductIds.add(String(productId));
-                });
-            } catch (error) {
-                console.error('Product state error:', error);
-            }
-        }
-
-        function setSaveButtonState(productId) {
-            const saveBtn = document.querySelector('.absolute-wishlist');
-            if (!saveBtn) return;
-            saveBtn.classList.toggle('saved', wishlistProductIds.has(String(productId)));
-        }
-
-        async function openProductModal(catId, index) {
-            const product = categoryData[catId].products[index];
-            activeProductId = product.id; 
-
-            document.getElementById('modalTitle').innerText = product.name;
-            document.getElementById('modalPrice').innerText = product.price;
-            document.getElementById('modalSpecialty').innerHTML = product.desc;
-            document.getElementById('modalCategory').innerText = categoryData[catId].title;
-            
-            document.getElementById('modalMainImage').src = product.img;
-            const thumbs = document.querySelectorAll('.thumb-img');
-            thumbs.forEach(t => { t.src = product.img; t.classList.remove('active-thumb'); });
-            thumbs[0].classList.add('active-thumb');
-
-            await refreshProductStates([product.id]);
-            setSaveButtonState(product.id);
-
-            const giftSetQtyInput = document.getElementById('giftSetQtyInput');
-            if (giftSetQtyInput) giftSetQtyInput.value = '1';
-
-            document.getElementById('category-modal').classList.remove('show-modal');
-            document.getElementById('product-modal').classList.add('show-modal');
-            
-            fetchAndRenderReviews(activeProductId); 
-        }
-
-        function backToCategory() {
-            document.getElementById('product-modal').classList.remove('show-modal');
-            document.getElementById('category-modal').classList.add('show-modal');
-        }
-
-        function closeProductModal() {
-            document.getElementById('product-modal').classList.remove('show-modal');
-            if (vid) vid.pause(); 
-        }
-
-        function changeModalImage(element, src) {
-            document.getElementById('modalMainImage').src = src;
-            document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active-thumb'));
-            element.classList.add('active-thumb');
-        }
-
-        const stars = document.querySelectorAll('.form-star');
-        const ratingInput = document.getElementById('reviewRating');
-
-        stars.forEach(star => {
-            star.addEventListener('mouseover', function() {
-                const val = this.getAttribute('data-val');
-                stars.forEach(s => s.classList.toggle('active', s.getAttribute('data-val') <= val));
-            });
-            star.parentElement.addEventListener('mouseleave', function() {
-                const currentVal = ratingInput.value;
-                stars.forEach(s => s.classList.toggle('active', s.getAttribute('data-val') <= currentVal));
-            });
-            star.addEventListener('click', function() {
-                ratingInput.value = this.getAttribute('data-val');
-            });
+        window.meltixGiftVault = MeltixCore.initGiftVaultCollection({
+            catalogEndpoint: "{{ url_for('catalog_api', category='gift-sets') }}",
+            profileBootstrapUrl: profileBootstrapUrl,
+            productStatesUrl: productStatesUrl,
+            googleClientId: "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com",
+            currentUserEmail: currentUserEmail,
+            currentUserName: currentUserName,
+            categoryMeta: categoryMeta,
+            categoryOpenClass: 'show-modal',
+            productOpenClass: 'show-modal',
+            addButtonId: 'giftSetAddToCartBtn',
+            quantityInputId: 'giftSetQtyInput',
+            quantityMinusId: 'giftSetQtyMinus',
+            quantityPlusId: 'giftSetQtyPlus'
         });
 
-        function toggleAuthFormState() {
-            const reviewForm = document.getElementById('reviewForm');
-            const loginPrompt = document.getElementById('loginToReviewPrompt');
-            const reviewedMessage = document.getElementById('alreadyReviewedMessage');
-            
-            if (currentUserEmail === "") {
-                reviewForm.style.display = 'none';
-                loginPrompt.style.display = 'block';
-                reviewedMessage.style.display = 'none';
-                
-                if (typeof google !== 'undefined' && google.accounts) {
-                    google.accounts.id.initialize({
-                        client_id: "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com",
-                        callback: handleGoogleLogin
-                    });
-                    google.accounts.id.renderButton(
-                        document.getElementById("google-login-button"),
-                        { theme: "filled_black", size: "large", shape: "rectangular" }
-                    );
-                }
-            } else if (currentReviews.some((review) => review.author_email === currentUserEmail)) {
-                reviewForm.style.display = 'none';
-                loginPrompt.style.display = 'none';
-                reviewedMessage.style.display = 'block';
-            } else {
-                reviewForm.style.display = 'flex';
-                reviewForm.classList.remove('locked'); 
-                loginPrompt.style.display = 'none';
-                reviewedMessage.style.display = 'none';
-                if (currentUserName) {
-                    document.getElementById('reviewName').value = currentUserName;
-                }
-            }
-        }
-
-        async function handleGoogleLogin(response) {
-            try {
-                const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                const bootstrapResponse = await fetch(profileBootstrapUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: payload.email || '',
-                        name: payload.name || 'Meltix Collector',
-                        picture: payload.picture || ''
-                    })
-                });
-                const data = await bootstrapResponse.json();
-                if (!bootstrapResponse.ok || !data.success) {
-                    throw new Error(data.message || 'Profile sync failed');
-                }
-                window.location.reload();
-            } catch(e) { console.error("Google Login Error", e); }
-        }
-
-        async function toggleWishlist(btnElement) {
-            if (currentUserEmail === "") { alert("Please Sign In with Google first!"); return; }
-            try {
-                const response = await fetch('/toggle_wishlist', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_id: activeProductId })
-                });
-                const data = await response.json();
-                if (data.status === "success") {
-                    if (data.saved_in_wishlist) {
-                        wishlistProductIds.add(String(activeProductId));
-                    } else {
-                        wishlistProductIds.delete(String(activeProductId));
-                    }
-                    setSaveButtonState(activeProductId);
-                }
-            } catch(e) { console.error("Wishlist error:", e); }
-        }
-
-        async function fetchAndRenderReviews(productId) {
-            try {
-                const response = await fetch(`/get_reviews/${productId}`);
-                const data = await response.json();
-                currentReviews = data.reviews_data.map((r, index) => ({
-                    ...r,
-                    id: r.id || index,
-                    likes: r.likes !== undefined ? r.likes : 0,
-                    dislikes: r.dislikes !== undefined ? r.dislikes : 0,
-                    current_user_action: r.current_user_action || null
-                }));
-                toggleAuthFormState();
-                renderReviewsUI(); 
-            } catch(e) {
-                console.error("Error loading reviews", e);
-                document.getElementById('displayStars').innerHTML = `<span class="rating-text">Reviews offline</span>`;
-            }
-        }
-
-        function renderReviewsUI() {
-            const displayStars = document.getElementById('displayStars');
-            const reviewsList = document.getElementById('reviewsList');
-
-            currentReviews.sort((a, b) => b.likes - a.likes);
-            let totalRating = 0;
-            currentReviews.forEach(r => totalRating += Number(r.rating));
-            let avgRating = currentReviews.length > 0 ? (totalRating / currentReviews.length) : 0;
-            avgRating = Math.round(avgRating * 2) / 2;
-
-            let starsHtml = '';
-            for(let i=1; i<=5; i++) {
-                if(avgRating >= i) starsHtml += `<span class="star gold">★</span>`; 
-                else if(avgRating >= i - 0.5) starsHtml += `<span class="star half-gold">★</span>`; 
-                else starsHtml += `<span class="star grey">★</span>`; 
-            }
-
-            if (currentReviews.length === 0) {
-                starsHtml += `<span class="rating-text">No reviews yet</span>`;
-                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
-                displayStars.innerHTML = starsHtml;
-                return;
-            }
-
-            starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
-            reviewsList.innerHTML = currentReviews.map((r) => {
-                let likeActive = r.current_user_action === 'like' ? 'active-like' : '';
-                let dislikeActive = r.current_user_action === 'dislike' ? 'active-dislike' : '';
-                let deleteButtonMarkup = '';
-
-                if (currentUserEmail !== "" && r.author_email === currentUserEmail) {
-                    deleteButtonMarkup = `<button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>`;
-                }
-
-                let userLevel = r.author_level || r.level || 1;
-                let vipClass = '';
-                if (userLevel === 4) vipClass = 'vip-review-lvl4';
-                if (userLevel === 5) vipClass = 'vip-review-lvl5';
-
-                let avatarContent = '';
-                if (r.author_avatar_filename || r.avatar_filename) {
-                    let filename = r.author_avatar_filename || r.avatar_filename;
-                    let avatarUrl = "/static/images/avatar/" + filename;
-                    avatarContent = `<img src="${avatarUrl}" alt="Avatar">`;
-                } else if (r.author_avatar_url || r.avatar_url) {
-                    let url = r.author_avatar_url || r.avatar_url;
-                    avatarContent = `<img src="${url}" alt="Avatar">`;
-                } else {
-                    let initial = (r.display_name || r.user_name || 'U').charAt(0).toUpperCase();
-                    avatarContent = `<div class="avatar-empty-state"><span class="avatar-empty-title" style="color:var(--accent-gold); font-family:'Playfair Display', serif; font-style:italic;">${initial}</span></div>`;
-                }
-
-                let displayName = r.display_name || r.user_name || 'Guest';
-
-                return `
-<div class="review-item ${vipClass}">
-    <div class="review-header-flex">
-        <div class="review-user-info">
-            <div class="avatar-micro-wrapper">
-                <div class="avatar-stage avatar-ring-lvl-${userLevel}">
-                    <div class="diamond-mark"></div>
-                    <div class="avatar-ring"></div>
-                    <div class="avatar-trigger" style="animation:none; box-shadow:none;">
-                        ${avatarContent}
-                    </div>
-                </div>
-            </div>
-            <div class="review-user-text">
-                <p class="review-user">${displayName} <span style="color:#d4a373; font-size:0.8rem; margin-left:5px;">${'★'.repeat(r.rating)}</span></p>
-                <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Level ${userLevel}</span>
-            </div>
-        </div>
-        ${deleteButtonMarkup}
-    </div>
-    <p class="review-text" style="margin-top: 12px;">"${r.review_text}"</p>
-    
-    <div class="review-actions-bar">
-        <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
-            <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
-        </button>
-        <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
-            <span class="act-icon">👎</span> <span class="cnt">${r.dislikes}</span>
-        </button>
-    </div>
-</div>
-`;
-            }).join('');
-            displayStars.innerHTML = starsHtml;
-            return;
-
-            if(currentReviews.length === 0) {
-                starsHtml += `<span class="rating-text">No reviews yet</span>`;
-                reviewsList.innerHTML = `<p class="review-text" style="text-align:center; padding: 20px 0;">Be the first to share your experience!</p>`;
-            } else {
-                starsHtml += `<span class="rating-text">${avgRating.toFixed(1)} (${currentReviews.length} Reviews)</span>`;
-                reviewsList.innerHTML = currentReviews.map((r) => {
-                    let likeActive = r.userAction === 'like' ? 'active-like' : '';
-                    let dislikeActive = r.userAction === 'dislike' ? 'active-dislike' : '';
-                    let canDelete = currentUserEmail !== "" && r.author_email === currentUserEmail;
-                    return `
-                    <div class="review-item" data-can-delete="${canDelete ? 'true' : 'false'}">
-                        <div class="review-header-flex">
-                            <p class="review-user">${r.user_name} <span style="color:#d4a373; font-size:0.8rem; margin-left:10px;">${'★'.repeat(r.rating)}</span></p>
-                            <button class="delete-review-btn" onclick="deleteReview(${r.id})" title="Delete Review">🗑️</button>
-                        </div>
-                        <p class="review-text">"${r.review_text}"</p>
-                        <div class="review-actions-bar">
-                            <button class="rev-act-btn ${likeActive}" onclick="handleReviewAction(${r.id}, 'like')">
-                                <span class="act-icon">👍</span> <span class="cnt">${r.likes}</span>
-                            </button>
-                            <button class="rev-act-btn ${dislikeActive}" onclick="handleReviewAction(${r.id}, 'dislike')">
-                                <span class="act-icon">👎</span>
-                            </button>
-                        </div>
-                    </div>
-                `}).join('');
-
-                reviewsList.querySelectorAll('.review-item').forEach((item, index) => {
-                    const review = currentReviews[index];
-                    const deleteButton = item.querySelector('.delete-review-btn');
-                    if (deleteButton && item.dataset.canDelete !== 'true') {
-                        deleteButton.remove();
-                    }
-
-                    const reviewButtons = item.querySelectorAll('.rev-act-btn');
-                    const dislikeButton = reviewButtons.length > 1 ? reviewButtons[1] : null;
-                    if (dislikeButton && review) {
-                        let dislikeCount = dislikeButton.querySelector('.cnt');
-                        if (!dislikeCount) {
-                            dislikeCount = document.createElement('span');
-                            dislikeCount.className = 'cnt';
-                            dislikeButton.appendChild(document.createTextNode(' '));
-                            dislikeButton.appendChild(dislikeCount);
-                        }
-                        dislikeCount.textContent = review.dislikes;
-                    }
-                });
-            }
-            displayStars.innerHTML = starsHtml;
-        }
-
-        async function submitReview(e) {
-            e.preventDefault();
-            const text = document.getElementById('reviewText').value;
-            const rating = ratingInput.value;
-
-            if(rating === "0") { alert("Please select a star rating!"); return; }
-
-            const btn = document.getElementById('submitReviewBtn');
-            btn.innerText = "Posting...";
-
-            try {
-                const response = await fetch('/submit_review', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        product_id: activeProductId,
-                        review_text: text,
-                        rating: rating
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || 'Review post failed');
-                }
-
-                toggleAuthFormState();
-                document.getElementById('reviewForm').reset();
-                ratingInput.value = "0";
-                stars.forEach(s => s.classList.remove('active'));
-
-                await fetchAndRenderReviews(activeProductId);
-                btn.innerText = "Post Review";
-            } catch (err) {
-                console.error(err);
-                btn.innerText = "Error. Try Again.";
-                btn.style.borderColor = "#ff4b4b";
-            }
-        }
-
-        async function handleReviewAction(reviewId, actionType) {
-            if (currentUserEmail === "") {
-                alert("Please login to vote.");
-                return;
-            }
-
-            try {
-                const response = await fetch('/toggle_review_like', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        review_id: reviewId,
-                        action: actionType
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok || data.status !== 'success') {
-                    throw new Error(data.message || 'Could not update review reaction');
-                }
-                await fetchAndRenderReviews(activeProductId);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        async function deleteReview(reviewId) {
-            if(confirm("Are you sure you want to delete this review?")) {
-                try {
-                    const response = await fetch(`/delete_review/${reviewId}`, {
-                        method: 'POST'
-                    });
-                    const data = await response.json();
-                    if (!response.ok || data.status !== 'success') {
-                        throw new Error(data.message || 'Could not delete review');
-                    }
-                    await fetchAndRenderReviews(activeProductId);
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-        }
-
-        function openLightbox(imageSrc) {
-            if (!imageSrc || imageSrc.includes(window.location.href)) return; 
-            let lightbox = document.createElement('div');
-            lightbox.id = 'meltix-lightbox';
-            lightbox.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999999; display: flex; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(10px);';
-            let img = document.createElement('img'); img.src = imageSrc;
-            img.style.cssText = 'max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 12px; box-shadow: 0 0 40px rgba(212,163,115,0.6); transform: scale(0.8); transition: transform 0.3s ease;';
-            lightbox.appendChild(img); document.body.appendChild(lightbox); 
-            setTimeout(() => { lightbox.style.opacity = '1'; img.style.transform = 'scale(1)'; }, 10);
-            lightbox.onclick = function() {
-                lightbox.style.opacity = '0'; img.style.transform = 'scale(0.8)';
-                setTimeout(() => lightbox.remove(), 300);
-            };
-        }
-
-        (function initGiftSetQtyControls() {
-            const plus = document.getElementById('giftSetQtyPlus');
-            const minus = document.getElementById('giftSetQtyMinus');
-            const input = document.getElementById('giftSetQtyInput');
-            if (!plus || !minus || !input) return;
-            plus.addEventListener('click', () => {
-                const n = parseInt(input.value, 10);
-                input.value = String((Number.isFinite(n) ? n : 1) + 1);
-            });
-            minus.addEventListener('click', () => {
-                const n = parseInt(input.value, 10);
-                const cur = Number.isFinite(n) ? n : 1;
-                if (cur > 1) input.value = String(cur - 1);
-            });
-        })();
+        // Compatibility shims for stale inline handlers in cached/local builds.
+        window.openCategory = (...args) => window.meltixGiftVault?.openCategory(...args);
+        window.closeCategory = (...args) => window.meltixGiftVault?.closeCategory(...args);
+        window.openProductModal = (...args) => window.meltixGiftVault?.openProductModal(...args);
+        window.closeProductModal = (...args) => window.meltixGiftVault?.closeProductModal(...args);
+        window.backToCategory = (...args) => window.meltixGiftVault?.backToCategory(...args);
+        window.playActionPart = (...args) => window.meltixGiftVault?.playActionPart(...args);
+        window.openLightbox = (...args) => window.meltixGiftVault?.openLightbox(...args);
+        window.changeModalImage = (...args) => window.meltixGiftVault?.changeModalImage(...args);
+        window.toggleWishlist = (...args) => window.meltixGiftVault?.toggleWishlist(...args);
     </script>
 </body>
 </html>

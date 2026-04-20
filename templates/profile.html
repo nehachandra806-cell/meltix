@@ -689,9 +689,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        email: userData.email || '',
-                        name: userData.name || 'Meltix Collector',
-                        picture: userData.picture || ''
+                        credential: response.credential
                     })
                 });
                 

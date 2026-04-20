@@ -2,24 +2,87 @@ from flask import Flask, render_template, request, jsonify, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event, inspect, text
 from sqlalchemy.exc import IntegrityError
+from collections import defaultdict, deque
 from datetime import datetime
+from pathlib import Path
+from threading import Lock
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 import hashlib
 import json
 import re
 import os
+import time
+
+try:
+    from dotenv import load_dotenv
+except ModuleNotFoundError:
+    def load_dotenv(dotenv_path):
+        env_path = Path(dotenv_path)
+        if not env_path.exists():
+            return False
+        for raw_line in env_path.read_text(encoding='utf-8').splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            key, value = line.split('=', 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        return True
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / '.env')
+
+
+def env_flag(name, default=False):
+    raw_value = os.environ.get(name)
+    if raw_value is None:
+        return default
+    return str(raw_value).strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+CATALOG_PRICE = 500
+DEFAULT_WHATSAPP_BUSINESS = '919876543210'
+GENERIC_ERROR_MESSAGE = 'Something went wrong. Please try again.'
+FORM_RATE_LIMIT_WINDOW_SECONDS = max(60, int(os.environ.get('FORM_RATE_LIMIT_WINDOW_SECONDS', '600') or 600))
+FORM_RATE_LIMIT_MAX_ATTEMPTS = max(1, int(os.environ.get('FORM_RATE_LIMIT_MAX_ATTEMPTS', '5') or 5))
+FORM_RATE_LIMIT_BUCKETS = defaultdict(deque)
+FORM_RATE_LIMIT_LOCK = Lock()
+TRUST_PROXY_HEADERS = env_flag('TRUST_PROXY_HEADERS', default=False)
+AUTO_SEED_INVENTORY = env_flag('AUTO_SEED_INVENTORY', default=False)
+CATALOG_CATEGORY_ALIASES = {
+    'hidden-message': 'hidden-message',
+    'hidden_message': 'hidden-message',
+    'hidden': 'hidden-message',
+    'story-candle': 'story-candle',
+    'story_candle': 'story-candle',
+    'story': 'story-candle',
+    'zodiac-candle': 'zodiac-candle',
+    'zodiac_candle': 'zodiac-candle',
+    'zodiac': 'zodiac-candle',
+    'break-to-reveal': 'break-to-reveal',
+    'break_to_reveal': 'break-to-reveal',
+    'break': 'break-to-reveal',
+    'candle-date-kit': 'candle-date-kit',
+    'candle_date_kit': 'candle-date-kit',
+    'date-kit': 'candle-date-kit',
+    'date': 'candle-date-kit',
+    'gift-sets': 'gift-sets',
+    'gift_set': 'gift-sets',
+    'gift_sets': 'gift-sets',
+    'gifts': 'gift-sets',
+}
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'meltix-profile-secret'
-
-# 🔥 NAYA CONNECTION: PostgreSQL 🔥
-# Format: postgresql://username:password@localhost:5432/database_name
-# 🔥 PERMANENT DATABASE LOGIC 🔥
-# Agar code live server (Render) pe hai toh wahan ka database lega, 
-# warna tere computer (localhost) par local database chalayega.
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 
-    'postgresql://postgres:meltix.candle.neha@localhost:5432/meltix_db'
-)
+secret_key = os.environ.get('SECRET_KEY')
+if not secret_key:
+    raise RuntimeError("SECRET_KEY environment variable is required. Set it in your environment or .env file.")
+app.config['SECRET_KEY'] = secret_key
+database_url = os.environ.get('DATABASE_URL')
+if not database_url:
+    raise RuntimeError("DATABASE_URL environment variable is required. Set it in your environment or .env file.")
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -153,6 +216,11 @@ SCENT_KEYWORDS = {
     "Cocoa": ["cocoa", "chocolate"],
 }
 
+CATALOG_SEED_PATHS = [
+    BASE_DIR / 'data' / 'catalog_seed.json',
+    BASE_DIR / 'scratch' / 'catalog_seed.json',
+]
+
 
 def avatar_required_level(avatar_index):
     if avatar_index <= 5:
@@ -264,13 +332,20 @@ def public_profile_identity(profile_record, fallback_name='Meltix Collector'):
 # Tera Product Table Model
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    image_file = db.Column(db.String(100), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    likes = db.Column(db.Integer, default=0) 
+    name = db.Column(db.String(180), nullable=False)
+    image_file = db.Column(db.String(255), nullable=False)
+    image_path = db.Column(db.String(255), nullable=False, default='')
+    collection_slug = db.Column(db.String(80), nullable=False, default='', index=True)
+    collection_label = db.Column(db.String(120), nullable=False, default='')
+    group_name = db.Column(db.String(120), nullable=False, default='', index=True)
+    details_json = db.Column(db.Text, nullable=False, default='{}')
+    ui_flags_json = db.Column(db.Text, nullable=False, default='{}')
+    price = db.Column(db.Integer, nullable=False, default=CATALOG_PRICE)
+    stock_quantity = db.Column(db.Integer, nullable=False, default=5)
+    likes = db.Column(db.Integer, default=0)
 
     def __repr__(self):
-        return f"Product('{self.name}', Likes: {self.likes})"
+        return f"Product('{self.name}', Collection: {self.collection_slug}, Likes: {self.likes})"
 
 
 class ProductLike(db.Model):
@@ -283,7 +358,7 @@ class ProductLike(db.Model):
 # Tera Review Table Model
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, nullable=False) # Ye batayega kis candle ka review hai
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False) # Ye batayega kis candle ka review hai
     user_id = db.Column(db.Integer, db.ForeignKey('user_account.id'), nullable=False)
     user_name = db.Column(db.String(100), nullable=False)
     review_text = db.Column(db.Text, nullable=False)
@@ -403,6 +478,174 @@ class Wishlist(db.Model):
     
     # STRICT RULE: Ek user ek product ko ek hi baar wishlist me daal sake
     __table_args__ = (db.UniqueConstraint('user_email', 'product_id', name='unique_user_wishlist'),)
+
+
+class FeedbackSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(120), nullable=False, index=True)
+    rating = db.Column(db.Integer, nullable=False, default=0)
+    message = db.Column(db.Text, nullable=False, default='')
+    source_page = db.Column(db.String(120), nullable=False, default='feedback')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+
+class BugReportSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(120), nullable=False, index=True)
+    message = db.Column(db.Text, nullable=False)
+    source_page = db.Column(db.String(120), nullable=False, default='bug-report')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+
+def normalize_catalog_category(category_value):
+    clean_value = (category_value or '').strip().lower()
+    return CATALOG_CATEGORY_ALIASES.get(clean_value)
+
+
+def load_catalog_seed():
+    seed_path = next((path for path in CATALOG_SEED_PATHS if path.exists()), None)
+    if not seed_path:
+        raise FileNotFoundError("Catalog seed file not found.")
+
+    with seed_path.open('r', encoding='utf-8') as seed_file:
+        payload = json.load(seed_file)
+
+    if not isinstance(payload, list):
+        raise ValueError("Catalog seed file must contain a list of products.")
+
+    return payload
+
+
+def ensure_product_schema():
+    inspector = inspect(db.engine)
+    if not inspector.has_table('product'):
+        return
+
+    product_columns = {column['name'] for column in inspector.get_columns('product')}
+    column_definitions = {
+        'image_path': "ALTER TABLE product ADD COLUMN image_path VARCHAR(255) NOT NULL DEFAULT ''",
+        'collection_slug': "ALTER TABLE product ADD COLUMN collection_slug VARCHAR(80) NOT NULL DEFAULT ''",
+        'collection_label': "ALTER TABLE product ADD COLUMN collection_label VARCHAR(120) NOT NULL DEFAULT ''",
+        'group_name': "ALTER TABLE product ADD COLUMN group_name VARCHAR(120) NOT NULL DEFAULT ''",
+        'details_json': "ALTER TABLE product ADD COLUMN details_json TEXT NOT NULL DEFAULT '{}'",
+        'ui_flags_json': "ALTER TABLE product ADD COLUMN ui_flags_json TEXT NOT NULL DEFAULT '{}'",
+        'stock_quantity': "ALTER TABLE product ADD COLUMN stock_quantity INTEGER NOT NULL DEFAULT 5",
+    }
+
+    for column_name, statement in column_definitions.items():
+        if column_name not in product_columns:
+            with db.engine.begin() as connection:
+                connection.execute(text(statement))
+
+    with db.engine.begin() as connection:
+        connection.execute(text("CREATE INDEX IF NOT EXISTS ix_product_collection_slug ON product (collection_slug)"))
+        connection.execute(text("CREATE INDEX IF NOT EXISTS ix_product_group_name ON product (group_name)"))
+
+
+def ensure_review_schema():
+    inspector = inspect(db.engine)
+    if not inspector.has_table('review') or not inspector.has_table('product'):
+        return
+
+    review_foreign_keys = inspector.get_foreign_keys('review')
+    for foreign_key in review_foreign_keys:
+        if (
+            foreign_key.get('referred_table') == 'product'
+            and foreign_key.get('constrained_columns') == ['product_id']
+        ):
+            return
+
+    invalid_review_count = int(
+        db.session.execute(
+            text("""
+                SELECT COUNT(*)
+                FROM review AS r
+                LEFT JOIN product AS p ON p.id = r.product_id
+                WHERE p.id IS NULL
+            """)
+        ).scalar() or 0
+    )
+    if invalid_review_count:
+        app.logger.warning(
+            'Review.product_id foreign key skipped because %s review rows reference missing products.',
+            invalid_review_count,
+        )
+        return
+
+    with db.engine.begin() as connection:
+        connection.execute(
+            text("""
+                ALTER TABLE review
+                ADD CONSTRAINT fk_review_product_id
+                FOREIGN KEY (product_id) REFERENCES product(id)
+            """)
+        )
+
+
+def seed_inventory():
+    seed_rows = load_catalog_seed()
+    changed = False
+
+    for raw_row in seed_rows:
+        product_id = int(raw_row['id'])
+        collection_slug = normalize_catalog_category(raw_row.get('collection_slug'))
+        if not collection_slug:
+            raise ValueError(f"Unsupported catalog category for product {product_id}: {raw_row.get('collection_slug')}")
+
+        image_path = str(raw_row.get('image_path') or '').strip().replace('\\', '/')
+        if not image_path:
+            raise ValueError(f"Missing image path for product {product_id}")
+
+        image_path = image_path.lstrip('/')
+        absolute_image_path = BASE_DIR / 'static' / image_path
+        if not absolute_image_path.exists():
+            raise FileNotFoundError(f"Catalog image missing for product {product_id}: {absolute_image_path}")
+
+        product = db.session.get(Product, product_id)
+        if not product:
+            product = Product(id=product_id)
+            db.session.add(product)
+            changed = True
+
+        expected_values = {
+            'name': str(raw_row.get('name') or '').strip(),
+            'image_file': Path(image_path).name,
+            'image_path': image_path,
+            'collection_slug': collection_slug,
+            'collection_label': str(raw_row.get('collection_label') or '').strip(),
+            'group_name': str(raw_row.get('group_name') or '').strip(),
+            'details_json': json.dumps(raw_row.get('details') or {}, ensure_ascii=False),
+            'ui_flags_json': json.dumps(raw_row.get('ui_flags') or {}, ensure_ascii=False),
+            'price': CATALOG_PRICE,
+        }
+
+        for field_name, field_value in expected_values.items():
+            if getattr(product, field_name) != field_value:
+                setattr(product, field_name, field_value)
+                changed = True
+
+        if product.likes is None:
+            product.likes = 0
+            changed = True
+
+        if product.stock_quantity is None or int(product.stock_quantity) < 0:
+            product.stock_quantity = 5
+            changed = True
+
+    if changed:
+        db.session.commit()
+
+
+@app.cli.command("seed-meltix")
+def seed_meltix_command():
+    seed_inventory()
+    print("Meltix catalog seeded.")
+
+
+@app.cli.command("backfill-lifetime-spend")
+def backfill_lifetime_spend_command():
+    backfill_all_lifetime_spend()
+    print("User lifetime spend backfill completed.")
 
 
 def calculate_lifetime_spend_total(user_email, executor=None):
@@ -538,11 +781,15 @@ def ensure_coupon_catalog():
 
 
 # Ye line chalte hi PostgreSQL mein saari tables aur rules ban jayenge
+# Heavy backfills ko startup se hata diya gaya hai; woh CLI se one-time chalenge.
 with app.app_context():
     db.create_all()
+    ensure_product_schema()
+    ensure_review_schema()
     ensure_profile_schema()
-    backfill_all_lifetime_spend()
     ensure_coupon_catalog()
+    if AUTO_SEED_INVENTORY:
+        seed_inventory()
 
 
 def safe_json_loads(raw_value, fallback):
@@ -570,6 +817,57 @@ def normalize_unlocked_coupons(raw_value):
         if clean_code and clean_code in ALLOWED_REWARD_COUPON_CODES and clean_code not in normalized:
             normalized.append(clean_code)
     return normalized
+
+
+def product_static_path(product_record):
+    if not product_record:
+        return ''
+
+    image_path = (product_record.image_path or '').strip().replace('\\', '/')
+    if image_path:
+        return image_path.lstrip('/')
+
+    image_file = (product_record.image_file or '').strip()
+    if image_file:
+        if '/' in image_file:
+            return image_file.lstrip('/')
+        return f"images/{image_file}"
+
+    return ''
+
+
+def product_image_url(product_record):
+    image_path = product_static_path(product_record)
+    if not image_path:
+        return ''
+    return url_for('static', filename=image_path)
+
+
+def serialize_product(product_record):
+    details = safe_json_loads(product_record.details_json, {})
+    ui_flags = safe_json_loads(product_record.ui_flags_json, {})
+    image_url = product_image_url(product_record)
+    stock_quantity = max(0, int(product_record.stock_quantity or 0))
+
+    return {
+        'id': product_record.id,
+        'name': product_record.name,
+        'title': details.get('title') or product_record.name,
+        'collection_slug': product_record.collection_slug,
+        'collection_label': product_record.collection_label,
+        'group_name': product_record.group_name,
+        'price': CATALOG_PRICE,
+        'price_display': format_money(CATALOG_PRICE),
+        'likes': int(product_record.likes or 0),
+        'stock': stock_quantity,
+        'stock_quantity': stock_quantity,
+        'image_file': product_record.image_file,
+        'image_path': product_static_path(product_record),
+        'image_url': image_url,
+        'gallery_images': [image_url] if image_url else [],
+        'details': details,
+        'ui_flags': ui_flags,
+    }
 
 
 def normalize_level(level_value):
@@ -942,6 +1240,32 @@ def serialize_order(order_record):
     }
 
 
+def user_has_candle_date_kit_order(user_email):
+    if not user_email:
+        return False
+
+    date_keywords = (
+        'candle date',
+        'date kit',
+        'date night',
+        'ice breaker',
+        'dine in',
+        'cozy',
+    )
+
+    orders = ProfileOrder.query.filter_by(user_email=user_email).all()
+    for order in orders:
+        for item in safe_json_loads(order.line_items_json, []):
+            searchable_text = " ".join(
+                str(item.get(field_name) or '')
+                for field_name in ('name', 'title', 'collection_slug', 'category', 'group_name')
+            ).strip().lower()
+            if searchable_text and any(keyword in searchable_text for keyword in date_keywords):
+                return True
+
+    return False
+
+
 def build_glow_ledger(profile_record, orders, reviews):
     entries = []
 
@@ -1025,6 +1349,20 @@ def build_glow_ledger(profile_record, orders, reviews):
     }
 
 
+def calculate_glow_points_total(profile_record):
+    order_count = ProfileOrder.query.filter_by(user_email=profile_record.email).count()
+    review_count = Review.query.filter_by(user_id=profile_record.id).count()
+    mission_count = len(normalize_completed_missions(profile_record.completed_missions_json))
+    return (order_count * 100) + (review_count * 50) + (mission_count * MISSION_POINTS)
+
+
+def sync_glow_points_for_user(profile_record):
+    if not profile_record:
+        return 0
+    profile_record.glow_points = calculate_glow_points_total(profile_record)
+    return profile_record.glow_points
+
+
 def derive_scent_persona(profile_record, orders, explicit_persona=None):
     if explicit_persona and explicit_persona.get("notes"):
         return explicit_persona
@@ -1070,6 +1408,7 @@ def get_or_create_profile(email, display_name=None):
             profile_record.display_name = readable_name
 
     sync_unlocked_coupons_for_level(profile_record)
+    sync_glow_points_for_user(profile_record)
 
     return profile_record
 
@@ -1118,6 +1457,9 @@ def sync_profile_orders(user_email, orders_payload):
         order_record.created_at = parse_datetime_value(raw_order.get("date") or raw_order.get("created_at"))
 
     sync_lifetime_spend_for_user(user_email)
+    profile_record = UserAccount.query.filter_by(email=user_email).first()
+    if profile_record:
+        sync_glow_points_for_user(profile_record)
 
 
 def serialize_profile(profile_record, google_picture_url=None, use_google_picture=False):
@@ -1135,12 +1477,9 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         wishlist_items.append({
             'product_id': row.product_id,
             'name': product.name if product else f"Meltix Candle #{row.product_id}",
-            'price': product.price if product else 999,
+            'price': product.price if product else CATALOG_PRICE,
             'likes': product.likes if product else 0,
-            'image_url': (
-                url_for('static', filename=f"images/{product.image_file}")
-                if product and product.image_file else None
-            )
+            'image_url': product_image_url(product) if product else None
         })
 
     all_reviews = Review.query.filter(Review.user_id == profile_record.id).order_by(Review.created_at.desc()).all()
@@ -1312,6 +1651,306 @@ def feedback():
 def bug_report():
     return render_template('bug_report.html')
 
+
+def normalize_india_mobile(value):
+    digits = re.sub(r'\D', '', str(value or ''))
+    if len(digits) == 12 and digits.startswith('91') and re.fullmatch(r'[6-9]\d{9}', digits[2:]):
+        return digits[2:]
+    if len(digits) == 11 and digits.startswith('0') and re.fullmatch(r'[6-9]\d{9}', digits[1:]):
+        return digits[1:]
+    if len(digits) == 10 and re.fullmatch(r'[6-9]\d{9}', digits):
+        return digits
+    return ''
+
+
+def get_messagecentral_credentials():
+    customer_id = (os.environ.get('MESSAGECENTRAL_CUSTOMER_ID') or '').strip()
+    auth_token = (os.environ.get('MESSAGECENTRAL_AUTH_TOKEN') or '').strip()
+    if not customer_id or not auth_token:
+        raise RuntimeError('MessageCentral credentials are not configured.')
+    return customer_id, auth_token
+
+
+def messagecentral_request(method, endpoint, query_params):
+    customer_id, auth_token = get_messagecentral_credentials()
+    params = dict(query_params or {})
+    params.setdefault('customerId', customer_id)
+    url = f"https://cpaas.messagecentral.com{endpoint}?{urlencode(params)}"
+    request_obj = Request(url, method=method.upper(), headers={'authToken': auth_token})
+
+    try:
+        with urlopen(request_obj, timeout=15) as response:
+            payload = response.read().decode('utf-8')
+            return json.loads(payload or '{}'), response.status
+    except HTTPError as exc:
+        raw_payload = exc.read().decode('utf-8', errors='replace')
+        try:
+            payload = json.loads(raw_payload or '{}')
+        except json.JSONDecodeError:
+            payload = {'message': raw_payload or 'MessageCentral request failed'}
+        return payload, exc.code
+    except URLError as exc:
+        raise RuntimeError(f'MessageCentral request failed: {exc.reason}') from exc
+
+
+def verify_google_credential(credential):
+    google_client_id = (os.environ.get('GOOGLE_CLIENT_ID') or '').strip()
+    if not google_client_id:
+        raise RuntimeError('GOOGLE_CLIENT_ID is not configured.')
+
+    token = str(credential or '').strip()
+    if not token:
+        raise ValueError('Google credential is required.')
+
+    request_url = f"https://oauth2.googleapis.com/tokeninfo?{urlencode({'id_token': token})}"
+    request_obj = Request(request_url, method='GET')
+
+    try:
+        with urlopen(request_obj, timeout=15) as response:
+            payload = json.loads(response.read().decode('utf-8') or '{}')
+    except HTTPError as exc:
+        raw_payload = exc.read().decode('utf-8', errors='replace')
+        app.logger.warning('Google token verification failed with HTTP %s: %s', exc.code, raw_payload)
+        raise ValueError('Google sign-in verification failed.') from exc
+    except URLError as exc:
+        raise RuntimeError(f'Google sign-in verification failed: {exc.reason}') from exc
+
+    issuer = str(payload.get('iss') or '').strip()
+    audience = str(payload.get('aud') or '').strip()
+    email = str(payload.get('email') or '').strip().lower()
+    email_verified = str(payload.get('email_verified') or '').strip().lower() == 'true'
+
+    try:
+        expires_at = int(payload.get('exp') or 0)
+    except (TypeError, ValueError):
+        expires_at = 0
+
+    if issuer not in {'accounts.google.com', 'https://accounts.google.com'}:
+        raise ValueError('Google sign-in verification failed.')
+    if audience != google_client_id or not email or not email_verified or expires_at <= int(time.time()):
+        raise ValueError('Google sign-in verification failed.')
+
+    return {
+        'email': email,
+        'name': str(payload.get('name') or '').strip(),
+        'picture': str(payload.get('picture') or '').strip(),
+    }
+
+
+def get_verified_session_email(request_email=None):
+    session_email = (session.get('profile_email') or '').strip().lower()
+    requested_email = (request_email or '').strip().lower()
+
+    if not session_email:
+        return None, (jsonify({"success": False, "message": "Sign in required"}), 401)
+    if requested_email and requested_email != session_email:
+        return None, (jsonify({"success": False, "message": "Unauthorized profile request"}), 403)
+
+    return session_email, None
+
+
+def get_client_ip():
+    if TRUST_PROXY_HEADERS:
+        forwarded_for = (request.headers.get('X-Forwarded-For') or '').split(',')[0].strip()
+        if forwarded_for:
+            return forwarded_for
+
+        real_ip = (request.headers.get('X-Real-IP') or '').strip()
+        if real_ip:
+            return real_ip
+
+    return (request.remote_addr or 'unknown').strip() or 'unknown'
+
+
+def check_form_rate_limit(bucket_name):
+    now = time.time()
+    bucket_key = f"{bucket_name}:{get_client_ip()}"
+
+    with FORM_RATE_LIMIT_LOCK:
+        attempt_times = FORM_RATE_LIMIT_BUCKETS[bucket_key]
+        cutoff = now - FORM_RATE_LIMIT_WINDOW_SECONDS
+
+        while attempt_times and attempt_times[0] <= cutoff:
+            attempt_times.popleft()
+
+        if len(attempt_times) >= FORM_RATE_LIMIT_MAX_ATTEMPTS:
+            retry_after = max(1, int(FORM_RATE_LIMIT_WINDOW_SECONDS - (now - attempt_times[0])))
+            return retry_after
+
+        attempt_times.append(now)
+        return 0
+
+
+def rate_limit_response(bucket_name, user_message='Too many submissions. Please wait a few minutes and try again.'):
+    retry_after = check_form_rate_limit(bucket_name)
+    if retry_after <= 0:
+        return None
+
+    response = jsonify({'success': False, 'message': user_message})
+    response.status_code = 429
+    response.headers['Retry-After'] = str(retry_after)
+    return response
+
+
+@app.route('/api/catalog/<category>', methods=['GET'])
+def catalog_api(category):
+    normalized_category = normalize_catalog_category(category)
+    if not normalized_category:
+        return jsonify({'success': False, 'message': 'Unknown catalog category'}), 404
+
+    products = (
+        Product.query
+        .filter_by(collection_slug=normalized_category)
+        .order_by(Product.id.asc())
+        .all()
+    )
+    return jsonify([serialize_product(product) for product in products]), 200
+
+
+@app.route('/api/feedback', methods=['POST'])
+def submit_feedback_form():
+    data = request.get_json() or {}
+    user_email = ((data.get('email') or session.get('profile_email') or '').strip().lower())
+    message = (data.get('message') or '').strip()
+    source_page = (data.get('source_page') or 'feedback').strip() or 'feedback'
+
+    try:
+        rating = int(data.get('rating') or 0)
+    except (TypeError, ValueError):
+        rating = 0
+
+    if not user_email:
+        return jsonify({'success': False, 'message': 'Email is required'}), 400
+    if rating < 1 or rating > 5:
+        return jsonify({'success': False, 'message': 'Rating must be between 1 and 5'}), 400
+
+    limited_response = rate_limit_response('feedback-form')
+    if limited_response:
+        app.logger.warning('Feedback rate limit hit for IP %s', get_client_ip())
+        return limited_response
+
+    try:
+        submission = FeedbackSubmission(
+            user_email=user_email,
+            rating=rating,
+            message=message,
+            source_page=source_page[:120],
+        )
+        db.session.add(submission)
+        db.session.commit()
+        return jsonify({'success': True, 'submission_id': submission.id}), 201
+    except Exception:
+        db.session.rollback()
+        app.logger.exception('Feedback submission failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
+
+
+@app.route('/api/bug-report', methods=['POST'])
+def submit_bug_report_form():
+    data = request.get_json() or {}
+    user_email = ((data.get('email') or session.get('profile_email') or '').strip().lower())
+    message = (data.get('message') or '').strip()
+    source_page = (data.get('source_page') or 'bug-report').strip() or 'bug-report'
+
+    if not user_email:
+        return jsonify({'success': False, 'message': 'Email is required'}), 400
+    if not message:
+        return jsonify({'success': False, 'message': 'Issue details are required'}), 400
+
+    limited_response = rate_limit_response('bug-report-form')
+    if limited_response:
+        app.logger.warning('Bug report rate limit hit for IP %s', get_client_ip())
+        return limited_response
+
+    try:
+        submission = BugReportSubmission(
+            user_email=user_email,
+            message=message,
+            source_page=source_page[:120],
+        )
+        db.session.add(submission)
+        db.session.commit()
+        return jsonify({'success': True, 'submission_id': submission.id}), 201
+    except Exception:
+        db.session.rollback()
+        app.logger.exception('Bug report submission failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
+
+
+@app.route('/api/studio/send-otp', methods=['POST'])
+def studio_send_otp():
+    data = request.get_json() or {}
+    normalized_mobile = normalize_india_mobile(data.get('mobile_number') or data.get('phone') or '')
+    if not normalized_mobile:
+        return jsonify({'success': False, 'message': 'Please enter a valid Indian mobile number'}), 400
+
+    try:
+        payload, status_code = messagecentral_request(
+            'POST',
+            '/verification/v3/send',
+            {
+                'countryCode': '91',
+                'flowType': 'SMS',
+                'mobileNumber': normalized_mobile,
+            },
+        )
+    except RuntimeError:
+        app.logger.exception('Studio OTP send failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 503
+
+    verification_id = (((payload or {}).get('data') or {}).get('verificationId') or '').strip()
+    response_code = int((payload or {}).get('responseCode') or 0)
+    if status_code >= 400 or response_code != 200 or not verification_id:
+        return jsonify({
+            'success': False,
+            'message': (payload or {}).get('message') or 'OTP could not be sent right now'
+        }), 502
+
+    session['studio_mobile_number'] = normalized_mobile
+    session['studio_verification_id'] = verification_id
+    session['studio_otp_verified'] = False
+    return jsonify({'success': True, 'mobile_number': normalized_mobile}), 200
+
+
+@app.route('/api/studio/verify-otp', methods=['POST'])
+def studio_verify_otp():
+    data = request.get_json() or {}
+    otp_code = re.sub(r'\D', '', str(data.get('otp') or ''))
+    verification_id = (session.get('studio_verification_id') or '').strip()
+    mobile_number = (session.get('studio_mobile_number') or '').strip()
+
+    if len(otp_code) < 4:
+        return jsonify({'success': False, 'message': 'Please enter a valid OTP'}), 400
+    if not verification_id or not mobile_number:
+        return jsonify({'success': False, 'message': 'OTP session expired. Please request a new code.'}), 400
+
+    try:
+        payload, status_code = messagecentral_request(
+            'GET',
+            '/verification/v3/validateOtp',
+            {
+                'countryCode': '91',
+                'mobileNumber': mobile_number,
+                'verificationId': verification_id,
+                'code': otp_code,
+            },
+        )
+    except RuntimeError:
+        app.logger.exception('Studio OTP verification failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 503
+
+    verification_status = (((payload or {}).get('data') or {}).get('verificationStatus') or '').strip().upper()
+    response_code = int((payload or {}).get('responseCode') or 0)
+    if status_code >= 400 or response_code != 200 or verification_status != 'VERIFICATION_COMPLETED':
+        return jsonify({
+            'success': False,
+            'message': (payload or {}).get('message') or 'OTP verification failed'
+        }), 400
+
+    session['studio_otp_verified'] = True
+    return jsonify({'success': True, 'verification_status': verification_status}), 200
+
+
 @app.route('/profile')
 def profile():
     session_email = (session.get('profile_email') or '').strip().lower()
@@ -1369,30 +2008,21 @@ def profile():
 @app.route('/like_product', methods=['POST'])
 def like_product():
     data = request.get_json() or {}
-    product_id = int(data.get('product_id'))
+    try:
+        product_id = int(data.get('product_id') or 0)
+    except (TypeError, ValueError):
+        product_id = 0
     action = data.get('action')
     user_account = get_session_user()
-    
-    real_name = data.get('name', f"Meltix Candle #{product_id}")
-    real_image = data.get('image_file', f"candle_{product_id}.jpg")
 
     if not user_account:
         return jsonify({'success': False, 'message': 'Login required'}), 401
+    if not product_id:
+        return jsonify({'success': False, 'message': 'Product ID required'}), 400
 
     product = db.session.get(Product, product_id)
-
     if not product:
-        product = Product(
-            id=product_id, 
-            name=real_name, 
-            image_file=real_image, 
-            price=999, 
-            likes=0
-        )
-        db.session.add(product)
-    else:
-        product.name = real_name
-        product.image_file = real_image
+        return jsonify({'success': False, 'message': 'Product not found'}), 404
 
     existing_like = ProductLike.query.filter_by(product_id=product_id, user_id=user_account.id).first()
 
@@ -1474,29 +2104,44 @@ def product_states():
 @app.route('/submit_review', methods=['POST'])
 def submit_review():
     data = request.get_json() or {}
+    review_text = str(data.get('review_text') or '').strip()[:1000]
+    try:
+        rating = int(data.get('rating') or 0)
+    except (TypeError, ValueError):
+        rating = 0
     try:
         user_account = get_session_user()
+        product_id = int(data.get('product_id') or 0)
 
         if not user_account:
             return jsonify({'success': False, 'message': 'Login required to post a review'}), 401
+        if not db.session.get(Product, product_id):
+            return jsonify({'success': False, 'message': 'Product not found'}), 404
+        if not review_text:
+            return jsonify({'success': False, 'message': 'Review text is required'}), 400
+        if rating < 1 or rating > 5:
+            return jsonify({'success': False, 'message': 'Rating must be between 1 and 5'}), 400
 
         new_review = Review(
-            product_id=int(data.get('product_id')),
+            product_id=product_id,
             user_id=user_account.id,
             user_name=data.get('user_name') or user_account.display_name,
-            review_text=data.get('review_text'),
-            rating=int(data.get('rating'))
+            review_text=review_text,
+            rating=rating
         )
         db.session.add(new_review)
+        db.session.flush()
+        sync_glow_points_for_user(user_account)
         db.session.commit()
         return jsonify({'success': True, 'message': 'Review posted successfully!'}), 200
     except IntegrityError:
         # Postgres rule block karega agar user pehle hi review de chuka hai
         db.session.rollback()
         return jsonify({'success': False, 'message': 'Aap already review de chuke hain!'}), 400
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({'success': False, 'message': str(e)}), 500
+        app.logger.exception('Review creation failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
 
 
 # 2. Review Fetch Route (Saath me Likes bhi layega)
@@ -1573,11 +2218,14 @@ def delete_review_route(review_id):
             return jsonify({"status": "error", "message": "Unauthorized"}), 403
             
         db.session.delete(review) # Cascade deletes likes
+        db.session.flush()
+        sync_glow_points_for_user(user_account)
         db.session.commit()
         return jsonify({"status": "success"}), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        app.logger.exception('Review deletion failed')
+        return jsonify({"status": "error", "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 # 4. NAYA: Toggle Like/Dislike Route
@@ -1616,9 +2264,10 @@ def toggle_review_like():
             "dislikes": dislikes_count,
             "current_user_action": active_action.action_type if active_action else None
         }), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        app.logger.exception('Review like toggle failed')
+        return jsonify({"status": "error", "message": GENERIC_ERROR_MESSAGE}), 500
     
 
 # ==========================================
@@ -1627,11 +2276,13 @@ def toggle_review_like():
 @app.route('/toggle_wishlist', methods=['POST'])
 def toggle_wishlist():
     data = request.get_json() or {}
-    product_id = data.get('product_id')
+    product_id = int(data.get('product_id') or 0)
     user_account = get_session_user()
 
     if not user_account:
         return jsonify({"status": "error", "message": "Login required"}), 401
+    if not db.session.get(Product, product_id):
+        return jsonify({"status": "error", "message": "Product not found"}), 404
 
     try:
         # Check karo agar pehle se saved hai
@@ -1651,17 +2302,26 @@ def toggle_wishlist():
             "action": action,
             "saved_in_wishlist": action == "added"
         }), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"status": "error", "message": str(e)}), 500
+        app.logger.exception('Wishlist toggle failed')
+        return jsonify({"status": "error", "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/profile/bootstrap', methods=['POST'])
 def profile_bootstrap():
     data = request.get_json() or {}
-    email = (data.get('email') or '').strip().lower()
-    display_name = (data.get('name') or '').strip()
-    google_picture_url = data.get('google_picture_url') or data.get('picture') or ''
+    try:
+        verified_google_user = verify_google_credential(data.get('credential'))
+    except ValueError:
+        return jsonify({"success": False, "message": "Google sign-in verification failed"}), 401
+    except RuntimeError:
+        app.logger.exception('Google sign-in verification failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 503
+
+    email = verified_google_user['email']
+    display_name = verified_google_user.get('name') or email.split('@')[0] or 'Meltix Collector'
+    google_picture_url = verified_google_user.get('picture') or ''
 
     if not email:
         return jsonify({"success": False, "message": "Email required"}), 400
@@ -1685,9 +2345,10 @@ def profile_bootstrap():
                 use_google_picture=prefer_google_picture
             )
         }), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"success": False, "message": str(e)}), 500
+        app.logger.exception('Profile bootstrap failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/profile/logout', methods=['POST'])
@@ -1701,15 +2362,14 @@ def profile_logout():
 @app.route('/api/profile/avatar', methods=['POST'])
 def update_profile_avatar():
     data = request.get_json() or {}
-    email = (data.get('email') or session.get('profile_email') or '').strip().lower()
+    email, error_response = get_verified_session_email(data.get('email'))
+    if error_response:
+        return error_response
     use_google_photo = bool(data.get('use_google_photo'))
     display_name = (data.get('name') or '').strip()
     google_picture_url = data.get('google_picture_url') or data.get('picture') or ''
 
     try:
-        if not email:
-            return jsonify({"success": False, "message": "Sign in required"}), 401
-
         profile_record = get_or_create_profile(email, display_name)
         player_level = normalize_level(profile_record.level)
         avatar_filename = '' if use_google_photo else sanitize_avatar_filename(data.get('avatar'), player_level=player_level)
@@ -1735,18 +2395,18 @@ def update_profile_avatar():
                 use_google_picture=bool(use_google_photo and google_picture_url)
             )
         }), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"success": False, "message": str(e)}), 500
+        app.logger.exception('Profile avatar update failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/profile/address', methods=['POST'])
 def save_profile_address():
     data = request.get_json() or {}
-    email = (data.get('email') or session.get('profile_email') or '').strip().lower()
-
-    if not email:
-        return jsonify({"success": False, "message": "Sign in required"}), 401
+    email, error_response = get_verified_session_email(data.get('email'))
+    if error_response:
+        return error_response
 
     try:
         address_record = UserAccount.query.filter_by(email=email).first()
@@ -1786,21 +2446,22 @@ def save_profile_address():
 
         db.session.commit()
         return jsonify({"success": True, "address_book": serialize_address(address_record)}), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"success": False, "message": str(e)}), 500
+        app.logger.exception('Profile address save failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/profile/scent-persona', methods=['POST'])
 def save_scent_persona():
     data = request.get_json() or {}
-    email = (data.get('email') or session.get('profile_email') or '').strip().lower()
+    email, error_response = get_verified_session_email(data.get('email'))
     title = (data.get('title') or '').strip()
     description = (data.get('description') or '').strip()
     notes = data.get('notes') or []
 
-    if not email:
-        return jsonify({"success": False, "message": "Sign in required"}), 401
+    if error_response:
+        return error_response
 
     if not isinstance(notes, list) or not notes:
         return jsonify({"success": False, "message": "At least one note is required"}), 400
@@ -1826,19 +2487,20 @@ def save_scent_persona():
                 "cta_label": "Refresh Persona"
             }
         }), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"success": False, "message": str(e)}), 500
+        app.logger.exception('Scent persona save failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/claim_mission', methods=['POST'])
 def claim_mission():
     data = request.get_json() or {}
-    user_email = (data.get('user_email') or session.get('profile_email') or '').strip().lower()
+    user_email, error_response = get_verified_session_email(data.get('user_email'))
     mission_key = (data.get('mission_key') or '').strip()
 
-    if not user_email:
-        return jsonify({"success": False, "message": "Sign in required"}), 401
+    if error_response:
+        return error_response
 
     mission_data = MISSION_LOOKUP.get(mission_key)
     if not mission_data:
@@ -1915,12 +2577,11 @@ def claim_mission():
                     }), 403
 
             elif mission_key == 'special_date':
-                # Candle Date Kit page visit — order ya real engagement check
-                order_count = ProfileOrder.query.filter_by(user_email=user_email).count()
-                if order_count < 1:
+                # Candle Date Kit ke related real order hone chahiye
+                if not user_has_candle_date_kit_order(user_email):
                     return jsonify({
                         "success": False,
-                        "message": "Explore the Candle Date Kit and place an order first."
+                        "message": "Place a Candle Date Kit order before claiming this mission."
                     }), 403
 
             elif mission_key == 'studio_visit':
@@ -1961,7 +2622,8 @@ def claim_mission():
             level_up = True
         else:
             profile_record.level = current_level
-            profile_record.unlocked_coupons = json.dumps(unlocked_coupons)
+
+        sync_glow_points_for_user(profile_record)
 
         db.session.commit()
 
@@ -1979,9 +2641,10 @@ def claim_mission():
                 use_google_picture=bool((session.get('profile_picture') or '').strip() and not profile_record.avatar_filename)
             )
         }), 200
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        return jsonify({"success": False, "message": str(e)}), 500
+        app.logger.exception('Mission claim failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/validate_coupon', methods=['POST'])
@@ -2044,4 +2707,4 @@ def leaderboard_api():
     return jsonify({"success": True, "items": leaderboard_items}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
