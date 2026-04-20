@@ -402,14 +402,23 @@
   }
 
   function handleCheckout() {
-    document.dispatchEvent(new CustomEvent("meltix:checkout", {
-      detail: {
-        items: cart.map((item) => ({ ...item })),
-        count: getItemCount(),
-        subtotal: getSubtotal(),
-        promoCode,
-      },
-    }));
+    try {
+      document.dispatchEvent(new CustomEvent("meltix:checkout", {
+        detail: {
+          items: cart.map((item) => ({ ...item })),
+          count: getItemCount(),
+          subtotal: getSubtotal(),
+          promoCode,
+        },
+      }));
+    } catch (error) {
+      console.error("Checkout event failed:", error);
+    }
+
+    closeCart();
+    window.setTimeout(() => {
+      window.location.assign("/checkout");
+    }, 0);
   }
 
   function bindEvents() {

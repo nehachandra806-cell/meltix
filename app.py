@@ -14,6 +14,7 @@ import json
 import re
 import os
 import time
+import razorpay
 
 try:
     from dotenv import load_dotenv
@@ -41,7 +42,14 @@ def env_flag(name, default=False):
     return str(raw_value).strip().lower() in {'1', 'true', 'yes', 'on'}
 
 
-CATALOG_PRICE = 500
+class CheckoutError(Exception):
+    def __init__(self, message, status_code=400, error_code='checkout_error'):
+        super().__init__(message)
+        self.message = message
+        self.status_code = status_code
+        self.error_code = error_code
+
+
 DEFAULT_WHATSAPP_BUSINESS = '919876543210'
 GENERIC_ERROR_MESSAGE = 'Something went wrong. Please try again.'
 FORM_RATE_LIMIT_WINDOW_SECONDS = max(60, int(os.environ.get('FORM_RATE_LIMIT_WINDOW_SECONDS', '600') or 600))
@@ -340,7 +348,7 @@ class Product(db.Model):
     group_name = db.Column(db.String(120), nullable=False, default='', index=True)
     details_json = db.Column(db.Text, nullable=False, default='{}')
     ui_flags_json = db.Column(db.Text, nullable=False, default='{}')
-    price = db.Column(db.Integer, nullable=False, default=CATALOG_PRICE)
+    price = db.Column(db.Integer, nullable=False, default=500)
     stock_quantity = db.Column(db.Integer, nullable=False, default=5)
     likes = db.Column(db.Integer, default=0)
 
@@ -607,6 +615,11 @@ def seed_inventory():
             db.session.add(product)
             changed = True
 
+        try:
+            normalized_price = max(0, int(raw_row.get('price') if raw_row.get('price') is not None else 500))
+        except (TypeError, ValueError):
+            normalized_price = 500
+
         expected_values = {
             'name': str(raw_row.get('name') or '').strip(),
             'image_file': Path(image_path).name,
@@ -616,7 +629,7 @@ def seed_inventory():
             'group_name': str(raw_row.get('group_name') or '').strip(),
             'details_json': json.dumps(raw_row.get('details') or {}, ensure_ascii=False),
             'ui_flags_json': json.dumps(raw_row.get('ui_flags') or {}, ensure_ascii=False),
-            'price': CATALOG_PRICE,
+            'price': normalized_price,
         }
 
         for field_name, field_value in expected_values.items():
@@ -848,6 +861,7 @@ def serialize_product(product_record):
     ui_flags = safe_json_loads(product_record.ui_flags_json, {})
     image_url = product_image_url(product_record)
     stock_quantity = max(0, int(product_record.stock_quantity or 0))
+    price_value = max(0, int(product_record.price or 0))
 
     return {
         'id': product_record.id,
@@ -856,8 +870,8 @@ def serialize_product(product_record):
         'collection_slug': product_record.collection_slug,
         'collection_label': product_record.collection_label,
         'group_name': product_record.group_name,
-        'price': CATALOG_PRICE,
-        'price_display': format_money(CATALOG_PRICE),
+        'price': price_value,
+        'price_display': format_money(price_value),
         'likes': int(product_record.likes or 0),
         'stock': stock_quantity,
         'stock_quantity': stock_quantity,
@@ -1140,6 +1154,369 @@ def normalize_order_items(raw_items):
         )
 
     return normalized
+
+
+def normalize_checkout_request_items(raw_items):
+    if not isinstance(raw_items, list):
+        return []
+
+    normalized = []
+    for item in raw_items:
+        if not isinstance(item, dict):
+            continue
+
+        try:
+            product_id = int(item.get('product_id') or item.get('id') or 0)
+        except (TypeError, ValueError):
+            product_id = 0
+
+        try:
+            quantity = int(item.get('quantity') or item.get('qty') or 0)
+        except (TypeError, ValueError):
+            quantity = 0
+
+        if product_id <= 0 or quantity <= 0:
+            continue
+
+        normalized.append(
+            {
+                'product_id': product_id,
+                'quantity': quantity,
+                'custom_text': str(item.get('customText') or item.get('custom_text') or '').strip()[:500],
+                'fragrance': str(item.get('fragrance') or item.get('scent') or '').strip()[:120],
+            }
+        )
+
+    return normalized
+
+
+def build_checkout_line_items(requested_items, product_map):
+    line_items = []
+    subtotal = 0
+
+    for requested_item in requested_items:
+        product = product_map[requested_item['product_id']]
+        details = safe_json_loads(product.details_json, {})
+        unit_price = max(0, int(product.price or 0))
+        quantity = requested_item['quantity']
+        line_total = unit_price * quantity
+
+        line_item = {
+            'id': product.id,
+            'product_id': product.id,
+            'name': product.name,
+            'title': details.get('title') or product.name,
+            'collection_slug': product.collection_slug,
+            'group_name': product.group_name,
+            'image_url': product_image_url(product),
+            'price': unit_price,
+            'quantity': quantity,
+            'line_total': line_total,
+        }
+
+        if requested_item['custom_text']:
+            line_item['custom_text'] = requested_item['custom_text']
+        if requested_item['fragrance']:
+            line_item['fragrance'] = requested_item['fragrance']
+
+        line_items.append(line_item)
+        subtotal += line_total
+
+    return line_items, subtotal
+
+
+def get_razorpay_key_id():
+    return (os.environ.get('RAZORPAY_KEY_ID') or '').strip()
+
+
+def get_razorpay_client():
+    key_id = get_razorpay_key_id()
+    key_secret = (os.environ.get('RAZORPAY_KEY_SECRET') or '').strip()
+    if not key_id or not key_secret:
+        raise RuntimeError('Razorpay credentials are not configured.')
+    return razorpay.Client(auth=(key_id, key_secret))
+
+
+def normalize_checkout_phone(raw_value):
+    digits = re.sub(r'\D', '', str(raw_value or ''))
+    if 10 <= len(digits) <= 15:
+        return digits
+    return ''
+
+
+def normalize_checkout_address(raw_address, fallback_name=''):
+    address = raw_address if isinstance(raw_address, dict) else {}
+    return {
+        'name': str(address.get('name') or fallback_name or '').strip()[:120],
+        'line1': str(address.get('line1') or address.get('address') or '').strip()[:160],
+        'line2': str(address.get('line2') or '').strip()[:160],
+        'city': str(address.get('city') or '').strip()[:80],
+        'state': str(address.get('state') or '').strip()[:80],
+        'postal_code': str(address.get('postal_code') or address.get('pin_code') or address.get('pincode') or '').strip()[:20],
+        'country': str(address.get('country') or 'India').strip()[:60] or 'India',
+    }
+
+
+def validate_checkout_address(address, label):
+    if not address['name']:
+        raise CheckoutError(f'{label} name is required.')
+    if not address['line1']:
+        raise CheckoutError(f'{label} address is required.')
+    if not address['city']:
+        raise CheckoutError(f'{label} city is required.')
+    if not address['state']:
+        raise CheckoutError(f'{label} state is required.')
+    if not address['postal_code'] or not re.fullmatch(r'\d{6}', address['postal_code']):
+        raise CheckoutError(f'{label} PIN Code must be a valid 6-digit number.')
+
+
+def build_checkout_draft(raw_payload):
+    payload = raw_payload if isinstance(raw_payload, dict) else {}
+    session_email = (session.get('profile_email') or '').strip().lower()
+    requested_email = str(payload.get('email') or '').strip().lower()
+
+    if session_email and requested_email and requested_email != session_email:
+        raise CheckoutError('Unauthorized checkout email', status_code=403, error_code='unauthorized_checkout')
+
+    user_email = session_email or requested_email
+    if not user_email:
+        raise CheckoutError('Email is required.')
+
+    requested_name = str(payload.get('name') or session.get('profile_name') or '').strip()
+    if not requested_name:
+        raise CheckoutError('Name is required.')
+
+    phone_number = normalize_checkout_phone(payload.get('phone') or payload.get('phone_number'))
+    if not phone_number:
+        raise CheckoutError('Phone number is required.')
+
+    shipping_address = normalize_checkout_address(payload.get('shipping'), fallback_name=requested_name)
+    validate_checkout_address(shipping_address, 'Shipping')
+
+    billing_same_as_shipping = bool(payload.get('billing_same_as_shipping', True))
+    if billing_same_as_shipping:
+        billing_address = dict(shipping_address)
+    else:
+        billing_address = normalize_checkout_address(payload.get('billing'), fallback_name=requested_name)
+        validate_checkout_address(billing_address, 'Billing')
+
+    requested_items = normalize_checkout_request_items(payload.get('items'))
+    if not requested_items:
+        raise CheckoutError('At least one valid cart item is required.')
+
+    product_ids = sorted({item['product_id'] for item in requested_items})
+    products = Product.query.filter(Product.id.in_(product_ids)).all()
+    product_map = {product.id: product for product in products}
+
+    missing_ids = [str(product_id) for product_id in product_ids if product_id not in product_map]
+    if missing_ids:
+        raise CheckoutError(f"Products not found: {', '.join(missing_ids)}", status_code=404, error_code='products_missing')
+
+    requested_quantities = defaultdict(int)
+    for item in requested_items:
+        requested_quantities[item['product_id']] += item['quantity']
+
+    for product_id, quantity in requested_quantities.items():
+        available_stock = max(0, int(product_map[product_id].stock_quantity or 0))
+        if quantity > available_stock:
+            raise CheckoutError(
+                f"Only {available_stock} left in stock for {product_map[product_id].name}.",
+                status_code=409,
+                error_code='insufficient_stock',
+            )
+
+    _, subtotal = build_checkout_line_items(requested_items, product_map)
+
+    coupon_code = str(payload.get('coupon_code') or '').strip().upper()
+    discount_amount = 0
+    if coupon_code:
+        coupon = Coupon.query.filter_by(code=coupon_code).first()
+        if not coupon:
+            raise CheckoutError('Coupon code not found', status_code=404, error_code='coupon_missing')
+        if not coupon_is_available(coupon):
+            raise CheckoutError('This coupon is not available right now', status_code=400, error_code='coupon_unavailable')
+        discount_amount = min(
+            subtotal,
+            int(round(subtotal * (max(0, int(coupon.discount_percentage or 0)) / 100.0)))
+        )
+
+    shipping_fee = 0
+    total_amount = max(subtotal + shipping_fee - discount_amount, 0)
+
+    return {
+        'email': user_email,
+        'name': requested_name[:120],
+        'phone': phone_number,
+        'shipping': shipping_address,
+        'billing_same_as_shipping': billing_same_as_shipping,
+        'billing': billing_address,
+        'coupon_code': coupon_code,
+        'items': requested_items,
+        'subtotal': subtotal,
+        'discount_amount': discount_amount,
+        'shipping_fee': shipping_fee,
+        'total_amount': total_amount,
+        'currency': 'INR',
+    }
+
+
+def apply_checkout_address_to_profile(profile_record, checkout_draft):
+    profile_record.display_name = checkout_draft['name'] or profile_record.display_name
+    profile_record.phone = checkout_draft['phone']
+
+    shipping = checkout_draft['shipping']
+    billing = checkout_draft['billing']
+
+    profile_record.shipping_name = shipping['name']
+    profile_record.shipping_line1 = shipping['line1']
+    profile_record.shipping_line2 = shipping['line2']
+    profile_record.shipping_city = shipping['city']
+    profile_record.shipping_state = shipping['state']
+    profile_record.shipping_postal_code = shipping['postal_code']
+    profile_record.shipping_country = shipping['country']
+
+    profile_record.billing_same_as_shipping = bool(checkout_draft['billing_same_as_shipping'])
+    profile_record.billing_name = billing['name']
+    profile_record.billing_line1 = billing['line1']
+    profile_record.billing_line2 = billing['line2']
+    profile_record.billing_city = billing['city']
+    profile_record.billing_state = billing['state']
+    profile_record.billing_postal_code = billing['postal_code']
+    profile_record.billing_country = billing['country']
+
+
+def finalize_checkout_order(checkout_draft, payment_context=None):
+    requested_quantities = defaultdict(int)
+    for item in checkout_draft['items']:
+        requested_quantities[item['product_id']] += item['quantity']
+
+    product_ids = sorted(requested_quantities.keys())
+    profile_record = UserAccount.query.filter_by(email=checkout_draft['email']).with_for_update().first()
+    if not profile_record:
+        profile_record = get_or_create_profile(checkout_draft['email'], checkout_draft['name'])
+        db.session.flush()
+
+    locked_products = (
+        Product.query
+        .filter(Product.id.in_(product_ids))
+        .order_by(Product.id.asc())
+        .with_for_update()
+        .all()
+    )
+    product_map = {product.id: product for product in locked_products}
+
+    missing_ids = [str(product_id) for product_id in product_ids if product_id not in product_map]
+    if missing_ids:
+        raise CheckoutError(f"Products not found: {', '.join(missing_ids)}", status_code=404, error_code='products_missing')
+
+    for product_id, quantity in requested_quantities.items():
+        product = product_map[product_id]
+        available_stock = max(0, int(product.stock_quantity or 0))
+        if quantity > available_stock:
+            raise CheckoutError(
+                f"Only {available_stock} left in stock for {product.name}.",
+                status_code=409,
+                error_code='insufficient_stock',
+            )
+
+    line_items, subtotal = build_checkout_line_items(checkout_draft['items'], product_map)
+
+    discount_amount = 0
+    applied_coupon_code = None
+    coupon_code = (checkout_draft.get('coupon_code') or '').strip().upper()
+    if coupon_code:
+        coupon = Coupon.query.filter_by(code=coupon_code).with_for_update().first()
+        if not coupon:
+            raise CheckoutError('Coupon code not found', status_code=404, error_code='coupon_missing')
+        if not coupon_is_available(coupon):
+            raise CheckoutError('This coupon is not available right now', status_code=409, error_code='coupon_unavailable')
+
+        discount_amount = min(
+            subtotal,
+            int(round(subtotal * (max(0, int(coupon.discount_percentage or 0)) / 100.0)))
+        )
+        coupon.current_uses = int(coupon.current_uses or 0) + 1
+        applied_coupon_code = coupon.code
+
+    shipping_fee = max(0, int(checkout_draft.get('shipping_fee') or 0))
+    total_amount = max(subtotal + shipping_fee - discount_amount, 0)
+    amount_paise = total_amount * 100
+
+    if payment_context and int(payment_context.get('amount_paise') or 0) != amount_paise:
+        raise CheckoutError('Payment amount mismatch. Please try checkout again.', status_code=409, error_code='amount_mismatch')
+
+    for product_id, quantity in requested_quantities.items():
+        product = product_map[product_id]
+        product.stock_quantity = max(0, int(product.stock_quantity or 0) - quantity)
+
+    apply_checkout_address_to_profile(profile_record, checkout_draft)
+
+    custom_note_blob = " ".join(
+        str(item.get('custom_text') or '').strip()
+        for item in line_items
+        if str(item.get('custom_text') or '').strip()
+    )
+    scent_notes = extract_scent_notes({'custom_note': custom_note_blob}, line_items)
+    stage = get_stage_config('placed')
+
+    reference = str((payment_context or {}).get('payment_id') or time.time_ns()).strip()
+    sanitized_reference = re.sub(r'[^A-Za-z0-9]', '', reference).upper()
+    order_code = f"MX-{sanitized_reference[:36] or str(time.time_ns())[:36]}"
+
+    order_record = ProfileOrder(
+        user_email=checkout_draft['email'],
+        order_code=order_code,
+        stage_key='placed',
+        status_label=stage['label'],
+        tracking_note=stage['description'],
+        subtotal=subtotal,
+        shipping_fee=shipping_fee,
+        total_amount=total_amount,
+        currency=checkout_draft.get('currency') or 'INR',
+        item_count=sum(item['quantity'] for item in line_items),
+        line_items_json=json.dumps(line_items, ensure_ascii=False),
+        scent_notes_json=json.dumps(scent_notes, ensure_ascii=False),
+    )
+    db.session.add(order_record)
+    db.session.flush()
+
+    sync_glow_points_for_user(profile_record)
+
+    return {
+        'order_record': order_record,
+        'subtotal': subtotal,
+        'shipping_fee': shipping_fee,
+        'discount_amount': discount_amount,
+        'discount_code': applied_coupon_code,
+        'total_amount': total_amount,
+        'remaining_stock': {
+            str(product_id): max(0, int(product_map[product_id].stock_quantity or 0))
+            for product_id in product_ids
+        },
+    }
+
+
+def issue_payment_refund(razorpay_client, payment_id, amount_paise, reason):
+    try:
+        refund_payload = {
+            'amount': int(amount_paise or 0),
+            'notes': {
+                'reason': str(reason or 'Checkout finalization failed')[:255],
+            },
+        }
+        refund = razorpay_client.payment.refund(payment_id, refund_payload)
+        return {
+            'success': True,
+            'refund_id': refund.get('id'),
+            'status': refund.get('status'),
+        }
+    except Exception:
+        app.logger.exception('Automatic refund request failed for payment %s', payment_id)
+        return {
+            'success': False,
+            'refund_id': None,
+            'status': 'failed',
+        }
 
 
 def extract_scent_notes(order_payload, items):
@@ -1477,7 +1854,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         wishlist_items.append({
             'product_id': row.product_id,
             'name': product.name if product else f"Meltix Candle #{row.product_id}",
-            'price': product.price if product else CATALOG_PRICE,
+            'price': max(0, int(product.price or 0)) if product else 0,
             'likes': product.likes if product else 0,
             'image_url': product_image_url(product) if product else None
         })
@@ -1595,6 +1972,29 @@ def home():
 @app.route('/shop')
 def shop():
     return render_template('shop.html')
+
+@app.route('/checkout')
+def checkout():
+    session_email = (session.get('profile_email') or '').strip().lower()
+    profile_record = UserAccount.query.filter_by(email=session_email).first() if session_email else None
+    address_book = serialize_address(profile_record)
+    prefill = {
+        'name': (profile_record.display_name if profile_record else (session.get('profile_name') or '')).strip(),
+        'email': session_email,
+        'phone': address_book.get('phone_number') or '',
+        'shipping': address_book.get('shipping') or {},
+        'billing_same_as_shipping': address_book.get('billing_same_as_shipping', True),
+        'billing': address_book.get('billing') or {},
+    }
+    return render_template(
+        'checkout.html',
+        razorpay_key_id=get_razorpay_key_id(),
+        checkout_prefill=prefill,
+    )
+
+@app.route('/refund-policy')
+def refund_policy():
+    return render_template('refund_policy.html')
 
 @app.route('/hidden-message')
 def hidden_message():
@@ -2595,8 +2995,17 @@ def claim_mission():
                 pass
 
             elif mission_key == 'feedback_share':
-                # No strict backend proof needed — honour system
-                pass
+                feedback_record = (
+                    FeedbackSubmission.query
+                    .filter_by(user_email=user_email)
+                    .order_by(FeedbackSubmission.created_at.desc())
+                    .first()
+                )
+                if not feedback_record:
+                    return jsonify({
+                        "success": False,
+                        "message": "Submit real feedback before claiming this mission."
+                    }), 403
 
             elif mission_key == 'bug_reporter':
                 # No strict backend proof needed — honour system
@@ -2680,6 +3089,176 @@ def validate_coupon():
         "expires_at": coupon.expires_at.isoformat() if coupon.expires_at else None,
         "message": "Coupon is valid"
     }), 200
+
+
+@app.route('/api/payment/create', methods=['POST'])
+def create_payment_order():
+    data = request.get_json() or {}
+
+    try:
+        checkout_draft = build_checkout_draft(data)
+    except CheckoutError as exc:
+        return jsonify({'success': False, 'message': exc.message, 'error_code': exc.error_code}), exc.status_code
+
+    try:
+        razorpay_client = get_razorpay_client()
+        receipt_seed = re.sub(r'[^A-Za-z0-9]', '', checkout_draft['email'].split('@')[0].upper())[:10] or 'MELTIX'
+        receipt = f"MX{receipt_seed}{str(time.time_ns())[-18:]}"[:40]
+        order_payload = {
+            'amount': checkout_draft['total_amount'] * 100,
+            'currency': checkout_draft.get('currency') or 'INR',
+            'receipt': receipt,
+            'notes': {
+                'email': checkout_draft['email'][:100],
+                'phone': checkout_draft['phone'][:30],
+            },
+        }
+        razorpay_order = razorpay_client.order.create(data=order_payload)
+    except RuntimeError:
+        app.logger.exception('Razorpay credentials are missing')
+        return jsonify({'success': False, 'message': 'Payment gateway is not configured right now.'}), 503
+    except Exception:
+        app.logger.exception('Razorpay order creation failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 502
+
+    session['pending_checkout'] = {
+        'razorpay_order_id': razorpay_order.get('id'),
+        'amount_paise': int(razorpay_order.get('amount') or 0),
+        'draft': checkout_draft,
+    }
+    session.modified = True
+
+    return jsonify({
+        'success': True,
+        'key_id': get_razorpay_key_id(),
+        'razorpay_order_id': razorpay_order.get('id'),
+        'amount_paise': int(razorpay_order.get('amount') or 0),
+        'currency': razorpay_order.get('currency') or checkout_draft.get('currency') or 'INR',
+        'summary': {
+            'subtotal': checkout_draft['subtotal'],
+            'shipping_fee': checkout_draft['shipping_fee'],
+            'discount_amount': checkout_draft['discount_amount'],
+            'total': checkout_draft['total_amount'],
+        },
+    }), 200
+
+
+@app.route('/api/payment/verify', methods=['POST'])
+def verify_payment():
+    data = request.get_json() or {}
+    razorpay_order_id = str(data.get('razorpay_order_id') or '').strip()
+    razorpay_payment_id = str(data.get('razorpay_payment_id') or '').strip()
+    razorpay_signature = str(data.get('razorpay_signature') or '').strip()
+
+    if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
+        return jsonify({'success': False, 'message': 'Payment verification payload is incomplete.'}), 400
+
+    pending_checkout = session.get('pending_checkout') or {}
+    if pending_checkout.get('razorpay_order_id') != razorpay_order_id:
+        return jsonify({'success': False, 'message': 'Checkout session expired. Please try again.'}), 400
+
+    try:
+        razorpay_client = get_razorpay_client()
+        razorpay_client.utility.verify_payment_signature({
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature,
+        })
+    except RuntimeError:
+        app.logger.exception('Razorpay credentials are missing during verification')
+        return jsonify({'success': False, 'message': 'Payment gateway is not configured right now.'}), 503
+    except Exception:
+        app.logger.exception('Razorpay signature verification failed')
+        return jsonify({'success': False, 'message': 'Payment verification failed.'}), 400
+
+    checkout_draft = pending_checkout.get('draft') or {}
+
+    try:
+        finalized_order = finalize_checkout_order(
+            checkout_draft,
+            payment_context={
+                'payment_id': razorpay_payment_id,
+                'order_id': razorpay_order_id,
+                'amount_paise': pending_checkout.get('amount_paise'),
+            },
+        )
+        db.session.commit()
+    except CheckoutError as exc:
+        db.session.rollback()
+        refund_result = issue_payment_refund(
+            razorpay_client,
+            razorpay_payment_id,
+            pending_checkout.get('amount_paise'),
+            exc.message,
+        )
+        session.pop('pending_checkout', None)
+        session.modified = True
+        return jsonify({
+            'success': False,
+            'message': exc.message,
+            'error_code': exc.error_code,
+            'refund_initiated': refund_result.get('success', False),
+            'refund_id': refund_result.get('refund_id'),
+            'refund_status': refund_result.get('status'),
+        }), exc.status_code
+    except Exception:
+        db.session.rollback()
+        app.logger.exception('Order finalization after payment failed')
+        refund_result = issue_payment_refund(
+            razorpay_client,
+            razorpay_payment_id,
+            pending_checkout.get('amount_paise'),
+            'Unexpected checkout finalization failure',
+        )
+        session.pop('pending_checkout', None)
+        session.modified = True
+        return jsonify({
+            'success': False,
+            'message': GENERIC_ERROR_MESSAGE,
+            'refund_initiated': refund_result.get('success', False),
+            'refund_id': refund_result.get('refund_id'),
+            'refund_status': refund_result.get('status'),
+        }), 500
+
+    session.pop('pending_checkout', None)
+    session.modified = True
+
+    return jsonify({
+        'success': True,
+        'message': 'Payment verified and order placed successfully.',
+        'order': serialize_order(finalized_order['order_record']),
+        'subtotal': finalized_order['subtotal'],
+        'shipping_fee': finalized_order['shipping_fee'],
+        'discount_amount': finalized_order['discount_amount'],
+        'discount_code': finalized_order['discount_code'],
+        'total': finalized_order['total_amount'],
+        'remaining_stock': finalized_order['remaining_stock'],
+    }), 200
+
+
+@app.route('/api/orders/place', methods=['POST'])
+def place_order():
+    try:
+        checkout_draft = build_checkout_draft(data)
+        finalized_order = finalize_checkout_order(checkout_draft)
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'order': serialize_order(finalized_order['order_record']),
+            'subtotal': finalized_order['subtotal'],
+            'shipping_fee': finalized_order['shipping_fee'],
+            'discount_amount': finalized_order['discount_amount'],
+            'discount_code': finalized_order['discount_code'],
+            'total': finalized_order['total_amount'],
+            'remaining_stock': finalized_order['remaining_stock'],
+        }), 201
+    except CheckoutError as exc:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': exc.message, 'error_code': exc.error_code}), exc.status_code
+    except Exception:
+        db.session.rollback()
+        app.logger.exception('Order placement failed')
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
 
 
 @app.route('/api/leaderboard', methods=['GET'])

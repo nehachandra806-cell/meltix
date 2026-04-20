@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meltix Checkout | Secure Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='checkout.css') }}">
+</head>
+<body>
+    <main class="checkout-shell">
+        <section class="checkout-hero">
+            <a href="/shop" class="checkout-back">Back to Collection</a>
+            <p class="checkout-kicker">Meltix Secure Checkout</p>
+            <h1>Complete your atelier order with confidence.</h1>
+            <p class="checkout-subcopy">Your cart is reviewed on the server, priced from the database, and charged through Razorpay's secure checkout.</p>
+        </section>
+
+        <section class="checkout-layout">
+            <div class="checkout-panel checkout-form-panel">
+                <div class="panel-header">
+                    <h2>Shipping Details</h2>
+                    <p>We use these details for delivery, order updates, and payment prefill.</p>
+                </div>
+
+                <form id="checkoutForm" novalidate>
+                    <div class="checkout-grid checkout-grid-3">
+                        <label class="field">
+                            <span>Name</span>
+                            <input type="text" id="checkoutName" name="name" autocomplete="name" required>
+                        </label>
+                        <label class="field">
+                            <span>Phone</span>
+                            <input type="tel" id="checkoutPhone" name="phone" autocomplete="tel" inputmode="numeric" required>
+                        </label>
+                        <label class="field">
+                            <span>Email</span>
+                            <input type="email" id="checkoutEmail" name="email" autocomplete="email" required>
+                        </label>
+                    </div>
+
+                    <div class="address-card">
+                        <div class="address-card-header">
+                            <h3>Shipping Address</h3>
+                        </div>
+                        <div class="checkout-grid">
+                            <label class="field field-full">
+                                <span>Address Line 1</span>
+                                <input type="text" id="shippingLine1" name="shipping_line1" autocomplete="address-line1" required>
+                            </label>
+                            <label class="field field-full">
+                                <span>Address Line 2 <small>(Optional)</small></span>
+                                <input type="text" id="shippingLine2" name="shipping_line2" autocomplete="address-line2">
+                            </label>
+                            <label class="field">
+                                <span>City</span>
+                                <input type="text" id="shippingCity" name="shipping_city" autocomplete="address-level2" required>
+                            </label>
+                            <label class="field">
+                                <span>State</span>
+                                <input type="text" id="shippingState" name="shipping_state" autocomplete="address-level1" required>
+                            </label>
+                            <label class="field">
+                                <span>PIN Code</span>
+                                <input type="text" id="shippingPostalCode" name="shipping_postal_code" inputmode="numeric" autocomplete="postal-code" required>
+                            </label>
+                            <label class="field">
+                                <span>Country</span>
+                                <input type="text" id="shippingCountry" name="shipping_country" value="India" autocomplete="country-name" required>
+                            </label>
+                        </div>
+                    </div>
+
+                    <label class="toggle-line">
+                        <input type="checkbox" id="billingSameAsShipping" checked>
+                        <span>Billing address is same as shipping address</span>
+                    </label>
+
+                    <div id="billingAddressCard" class="address-card is-hidden">
+                        <div class="address-card-header">
+                            <h3>Billing Address</h3>
+                        </div>
+                        <div class="checkout-grid">
+                            <label class="field field-full">
+                                <span>Address Line 1</span>
+                                <input type="text" id="billingLine1" name="billing_line1" autocomplete="billing address-line1">
+                            </label>
+                            <label class="field field-full">
+                                <span>Address Line 2 <small>(Optional)</small></span>
+                                <input type="text" id="billingLine2" name="billing_line2" autocomplete="billing address-line2">
+                            </label>
+                            <label class="field">
+                                <span>City</span>
+                                <input type="text" id="billingCity" name="billing_city" autocomplete="billing address-level2">
+                            </label>
+                            <label class="field">
+                                <span>State</span>
+                                <input type="text" id="billingState" name="billing_state" autocomplete="billing address-level1">
+                            </label>
+                            <label class="field">
+                                <span>PIN Code</span>
+                                <input type="text" id="billingPostalCode" name="billing_postal_code" inputmode="numeric" autocomplete="billing postal-code">
+                            </label>
+                            <label class="field">
+                                <span>Country</span>
+                                <input type="text" id="billingCountry" name="billing_country" value="India" autocomplete="billing country-name">
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="checkoutStatus" class="checkout-status" role="status" aria-live="polite"></div>
+            </div>
+
+            <aside class="checkout-panel checkout-summary-panel">
+                <div class="panel-header">
+                    <h2>Your Atelier Bag</h2>
+                    <p>Review every line item before you proceed.</p>
+                </div>
+
+                <div id="checkoutEmptyState" class="checkout-empty is-hidden">
+                    <h3>Your bag is empty</h3>
+                    <p>Add a Meltix piece from the collection before heading to checkout.</p>
+                    <a href="/shop" class="secondary-link">Return to Shop</a>
+                </div>
+
+                <div id="checkoutSummaryContent">
+                    <div id="checkoutItems" class="summary-items"></div>
+
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <strong id="summarySubtotal">₹ 0</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <strong id="summaryShipping">₹ 0</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Discount</span>
+                            <strong id="summaryDiscount">- ₹ 0</strong>
+                        </div>
+                        <div class="summary-row summary-total">
+                            <span>Total</span>
+                            <strong id="summaryTotal">₹ 0</strong>
+                        </div>
+                    </div>
+
+                    <div class="trust-box">
+                        <div class="trust-pill">100% Secure Payment</div>
+                        <p>Payments are processed through Razorpay over encrypted checkout.</p>
+                        <a href="/refund-policy" class="secondary-link">View Refund Policy</a>
+                    </div>
+
+                    <button type="button" id="payNowBtn" class="checkout-cta">Proceed to Pay ₹ 0</button>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        window.MeltixCheckoutConfig = {
+            razorpayKeyId: {{ (razorpay_key_id or '') | tojson }},
+            prefill: {{ checkout_prefill | tojson }},
+            createPaymentUrl: {{ url_for('create_payment_order') | tojson }},
+            verifyPaymentUrl: {{ url_for('verify_payment') | tojson }},
+            refundPolicyUrl: {{ url_for('refund_policy') | tojson }},
+            profileUrl: {{ url_for('profile') | tojson }},
+            shopUrl: {{ url_for('shop') | tojson }}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+</body>
+</html>
