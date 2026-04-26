@@ -2018,6 +2018,33 @@
     controller.config.onModalClose = hooks.onModalClose;
     controller
       .loadCatalog()
+      .then(() => {
+        const params = new URLSearchParams(window.location.search);
+        const requestedProductId = Number(params.get("product") || 0);
+        const requestedProductName = textOrEmpty(params.get("product_name")).trim().toLowerCase();
+        let requestedProduct = null;
+
+        if (Number.isInteger(requestedProductId) && requestedProductId > 0) {
+          requestedProduct = controller.getProduct(requestedProductId);
+        }
+
+        if (!requestedProduct && requestedProductName) {
+          requestedProduct = controller.products.find((product) => {
+            const title = textOrEmpty(product?.title).trim().toLowerCase();
+            const name = textOrEmpty(product?.name).trim().toLowerCase();
+            return title === requestedProductName || name === requestedProductName;
+          }) || null;
+        }
+
+        if (requestedProduct) {
+          return controller.handleSelection(requestedProduct.group_name).then(() => {
+            window.setTimeout(() => {
+              controller.openModal(requestedProduct.id).catch?.(() => {});
+            }, Number(controller.config.selectionRevealDelay || 800) + 80);
+          });
+        }
+        return null;
+      })
       .catch(() => {});
     return controller;
   }

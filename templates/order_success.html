@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed | Meltix Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: rgba(12, 11, 10, 0.92);
+      --ivory: #f7f2ea;
+      --ivory-soft: rgba(247, 242, 234, 0.72);
+      --gold: #dcae6f;
+      --gold-soft: rgba(220, 174, 111, 0.14);
+      --border: rgba(220, 174, 111, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(220, 174, 111, 0.12), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(220, 174, 111, 0.08), transparent 24%),
+        var(--bg);
+      color: var(--ivory);
+      font-family: "Inter", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .success-shell {
+      width: min(760px, 100%);
+      padding: 1px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(220, 174, 111, 0.4), rgba(220, 174, 111, 0.06));
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.44);
+    }
+
+    .success-card {
+      padding: 40px;
+      border-radius: 29px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--gold);
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(42px, 6vw, 64px);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+    }
+
+    .lead {
+      margin: 18px 0 0;
+      max-width: 620px;
+      color: var(--ivory-soft);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .divider {
+      width: 1px;
+      height: 70px;
+      margin: 32px 0;
+      background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .stat {
+      padding: 20px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: var(--gold-soft);
+      min-height: 132px;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 14px;
+      color: rgba(247, 242, 234, 0.52);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      display: block;
+      font-family: "Playfair Display", serif;
+      font-size: 28px;
+      line-height: 1.2;
+      color: var(--ivory);
+      word-break: break-word;
+    }
+
+    .stat-note {
+      margin-top: 10px;
+      color: var(--ivory-soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .action {
+      padding: 14px 20px;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+
+    .action.primary {
+      background: linear-gradient(180deg, rgba(220, 174, 111, 0.25), rgba(220, 174, 111, 0.08));
+      color: #0e0c09;
+      font-weight: 700;
+    }
+
+    .action:hover {
+      transform: translateY(-1px);
+      border-color: rgba(220, 174, 111, 0.46);
+      background: rgba(220, 174, 111, 0.08);
+    }
+
+    @media (max-width: 700px) {
+      .success-card {
+        padding: 28px 22px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="success-shell">
+    <section class="success-card">
+      <p class="eyebrow">Order Confirmed</p>
+      <h1>Thank You for joining the Atelier</h1>
+      <p class="lead">
+        {{ customer_name }}{% if customer_email %} | {{ customer_email }}{% endif %}<br>
+        Your payment is confirmed and the Meltix atelier has started preparing your order with care.
+      </p>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <div class="stats">
+        <article class="stat">
+          <span class="stat-label">Order ID</span>
+          <span class="stat-value">{{ order.order_id }}</span>
+          <p class="stat-note">Keep this reference for any support or tracking conversation.</p>
+        </article>
+
+        <article class="stat">
+          <span class="stat-label">Total Amount</span>
+          <span class="stat-value">{{ order.total_display }}</span>
+          <p class="stat-note">Your payment status is now marked as {{ order.payment_status }}.</p>
+        </article>
+
+        <article class="stat">
+          <span class="stat-label">Estimated Delivery</span>
+          <span class="stat-value">{{ estimated_delivery_date }}</span>
+          <p class="stat-note">A refined window calculated as today plus five days.</p>
+        </article>
+      </div>
+
+      <div class="actions">
+        <a class="action primary" href="{{ url_for('profile') }}">View My Orders</a>
+        <a class="action" href="{{ url_for('shop') }}">Return to Shop</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

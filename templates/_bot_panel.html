@@ -1,0 +1,138 @@
+<section
+  class="meltix-bot-root"
+  data-meltix-bot
+  data-bot-context="{{ bot_context | default('general') }}"
+  data-show-nav-options="{{ 'true' if show_nav_options else 'false' }}"
+  data-chat-url="{{ url_for('bot_chat_api') }}"
+  data-idle-src="{{ url_for('static', filename='images/bot_idle.webm') }}"
+  data-drag-src="{{ url_for('static', filename='images/bot_drag.webm') }}"
+  data-welcome-message="Welcome to Meltix. Looking for a gift, a candle, or a quick suggestion?"
+>
+  <button type="button" class="meltix-bot-overlay" data-bot-overlay aria-label="Close Meltix Bot panel"></button>
+
+  <aside class="meltix-bot-panel" data-bot-panel aria-hidden="true">
+    <div class="meltix-bot-panel-shell">
+      <header class="meltix-bot-head">
+        <div class="meltix-bot-head-copy">
+          <p class="meltix-bot-eyebrow">Atelier Concierge</p>
+          <h2 class="meltix-bot-title">Meltix Bot</h2>
+          <p class="meltix-bot-subtitle">Private guidance for gifts, pages, and the perfect next click.</p>
+        </div>
+        <button type="button" class="meltix-bot-close" data-bot-close aria-label="Close assistant panel">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </header>
+
+      <div class="meltix-bot-layout{% if show_nav_options %} meltix-bot-layout--with-rail{% endif %}">
+        <section class="meltix-bot-chat">
+          <div class="meltix-bot-history-wrap">
+            <div class="meltix-bot-history" data-bot-history aria-live="polite"></div>
+          </div>
+
+          <div class="meltix-bot-floor">
+            <div class="meltix-bot-seat" aria-hidden="true">
+              <div class="meltix-bot-desk-scene">
+                <div class="meltix-bot-seat-aura"></div>
+                <video
+                  class="meltix-bot-seat-avatar"
+                  data-bot-seat
+                  src="{{ url_for('static', filename='images/bot_idle.webm') }}"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                ></video>
+                <img
+                  class="meltix-bot-desk"
+                  src="{{ url_for('static', filename='images/desk.png') }}"
+                  alt=""
+                  loading="lazy"
+                />
+              </div>
+              <p class="meltix-bot-seat-label">At the desk</p>
+            </div>
+
+            <form class="meltix-bot-compose" data-bot-form>
+              <label class="meltix-bot-visually-hidden" for="meltixBotInput">Ask Meltix Bot</label>
+              <input
+                id="meltixBotInput"
+                class="meltix-bot-input"
+                data-bot-input
+                type="text"
+                maxlength="240"
+                autocomplete="off"
+                placeholder="Ask anything about gifts, pages, moods, or candles..."
+              />
+              <button type="submit" class="meltix-bot-send">Send</button>
+            </form>
+          </div>
+        </section>
+
+        {% if show_nav_options %}
+        <aside class="meltix-bot-rail">
+          <div class="meltix-bot-quicknav">
+            <p class="meltix-bot-quicknav-title">Private Doors</p>
+            <div class="meltix-bot-quicknav-grid">
+              <button type="button" class="meltix-bot-chip" data-bot-action="navigate" data-bot-label="Another Section" data-bot-href="{{ url_for('head_to') }}">
+                <span class="meltix-bot-chip-kicker">Move Through</span>
+                <span class="meltix-bot-chip-label">Another Section</span>
+              </button>
+              <button type="button" class="meltix-bot-chip" data-bot-action="navigate" data-bot-label="Suggestions" data-bot-href="{{ url_for('suggestions') }}">
+                <span class="meltix-bot-chip-kicker">Curated For You</span>
+                <span class="meltix-bot-chip-label">Suggestions</span>
+              </button>
+              <button type="button" class="meltix-bot-chip" data-bot-action="navigate" data-bot-label="Gift Sets" data-bot-href="{{ url_for('gift_sets') }}">
+                <span class="meltix-bot-chip-kicker">Gift Edit</span>
+                <span class="meltix-bot-chip-label">Gift Sets</span>
+              </button>
+              <button type="button" class="meltix-bot-chip" data-bot-action="navigate" data-bot-label="Meltix Studio" data-bot-href="{{ url_for('craft_studio') }}">
+                <span class="meltix-bot-chip-kicker">Craft & Story</span>
+                <span class="meltix-bot-chip-label">Meltix Studio</span>
+              </button>
+              <button type="button" class="meltix-bot-chip" data-bot-action="navigate" data-bot-label="Feedback" data-bot-href="{{ url_for('feedback') }}">
+                <span class="meltix-bot-chip-kicker">House Notes</span>
+                <span class="meltix-bot-chip-label">Feedback</span>
+              </button>
+              <button type="button" class="meltix-bot-chip" data-bot-action="navigate" data-bot-label="Bug Report" data-bot-href="{{ url_for('bug_report') }}">
+                <span class="meltix-bot-chip-kicker">Fix Desk</span>
+                <span class="meltix-bot-chip-label">Bug Report</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+        {% endif %}
+      </div>
+    </div>
+  </aside>
+
+  <div class="meltix-bot-dock" data-bot-dock>
+    <div class="meltix-bot-toast" data-bot-toast>
+      <button type="button" class="meltix-bot-toast-close" data-bot-dismiss aria-label="Dismiss bot hint">&times;</button>
+      <p class="meltix-bot-toast-title">Tap to shop</p>
+      <p class="meltix-bot-toast-copy">Tell me the gift, budget, or collection you want.</p>
+    </div>
+    <div class="meltix-bot-whisper" data-bot-whisper aria-live="polite"></div>
+    <button type="button" class="meltix-bot-launcher" data-bot-launcher aria-label="Open Meltix Bot">
+      <video
+        class="meltix-bot-avatar meltix-bot-avatar--idle"
+        data-bot-avatar
+        src="{{ url_for('static', filename='images/bot_idle.webm') }}"
+        autoplay
+        loop
+        muted
+        playsinline
+        draggable="false"
+      ></video>
+      <video
+        class="meltix-bot-avatar meltix-bot-avatar--drag"
+        data-bot-avatar-drag
+        src="{{ url_for('static', filename='images/bot_drag.webm') }}"
+        autoplay
+        loop
+        muted
+        playsinline
+        draggable="false"
+      ></video>
+    </button>
+  </div>
+</section>

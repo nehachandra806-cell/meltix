@@ -1,0 +1,849 @@
+.meltix-bot-root {
+  --bot-bg: #050505;
+  --bot-panel: rgba(12, 9, 7, 0.98);
+  --bot-chat: rgba(17, 13, 10, 0.96);
+  --bot-footer: rgba(12, 9, 7, 0.98);
+  --bot-rail: rgba(18, 14, 10, 0.96);
+  --bot-ivory: #f8f3ea;
+  --bot-ivory-soft: rgba(248, 243, 234, 0.68);
+  --bot-ivory-faint: rgba(248, 243, 234, 0.42);
+  --bot-gold: #dcae6f;
+  --bot-gold-soft: rgba(220, 174, 111, 0.12);
+  --bot-gold-border: rgba(220, 174, 111, 0.18);
+  --bot-shadow: 0 34px 90px rgba(0, 0, 0, 0.52);
+}
+
+.meltix-bot-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.meltix-bot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9996;
+  background: rgba(3, 2, 1, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+
+.meltix-bot-root.is-open .meltix-bot-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.meltix-bot-panel {
+  position: fixed;
+  inset: 28px 72px;
+  transform: translateY(14px) scale(0.985);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+  z-index: 9997;
+}
+
+.meltix-bot-root.is-open .meltix-bot-panel {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.meltix-bot-panel-shell {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 1px solid rgba(220, 174, 111, 0.22);
+  background: var(--bot-panel);
+  box-shadow: var(--bot-shadow);
+}
+
+.meltix-bot-panel-shell::before,
+.meltix-bot-panel-shell::after {
+  content: none;
+}
+
+.meltix-bot-head {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 4;
+}
+
+.meltix-bot-head-copy {
+  display: none;
+}
+
+.meltix-bot-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(220, 174, 111, 0.22);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--bot-gold);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+
+.meltix-bot-close:hover,
+.meltix-bot-close:focus-visible {
+  transform: rotate(90deg);
+  border-color: rgba(220, 174, 111, 0.4);
+  background: rgba(220, 174, 111, 0.08);
+  outline: none;
+}
+
+.meltix-bot-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  height: 100%;
+  padding: 18px;
+}
+
+.meltix-bot-layout--with-rail {
+  grid-template-columns: minmax(0, 1fr) 284px;
+}
+
+.meltix-bot-chat {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--bot-chat);
+}
+
+.meltix-bot-history-wrap {
+  min-height: 0;
+}
+
+.meltix-bot-history {
+  height: 100%;
+  overflow-y: auto;
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-behavior: smooth;
+}
+
+.meltix-bot-history::-webkit-scrollbar,
+.meltix-bot-quicknav-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.meltix-bot-history::-webkit-scrollbar-thumb,
+.meltix-bot-quicknav-grid::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(220, 174, 111, 0.18);
+}
+
+.meltix-bot-message {
+  position: relative;
+  flex-shrink: 0;
+  max-width: min(76%, 470px);
+  padding: 16px 18px;
+  border-radius: 22px;
+  font-size: 14px;
+  line-height: 1.7;
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.2);
+}
+
+.meltix-bot-message--assistant {
+  align-self: flex-start;
+  background: linear-gradient(180deg, rgba(45, 35, 24, 0.98), rgba(23, 18, 13, 0.98));
+  border: 1px solid rgba(220, 174, 111, 0.16);
+  color: var(--bot-ivory);
+}
+
+.meltix-bot-message--user {
+  align-self: flex-end;
+  background: linear-gradient(180deg, rgba(37, 29, 22, 0.98), rgba(18, 15, 11, 0.98));
+  border: 1px solid rgba(220, 174, 111, 0.14);
+  color: var(--bot-ivory);
+}
+
+.meltix-bot-message-label {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(248, 243, 234, 0.56);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.meltix-bot-message-copy {
+  color: inherit;
+  text-wrap: pretty;
+}
+
+.chat-product-card {
+  display: block;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  width: min(42%, 220px);
+  margin: 10px 0 10px 14px;
+  aspect-ratio: 4 / 5;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(220, 174, 111, 0.15);
+  background: rgba(18, 14, 10, 0.98);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.chat-product-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.28s ease;
+}
+
+.chat-product-card:hover,
+.chat-product-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(220, 174, 111, 0.46);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(220, 174, 111, 0.18);
+  outline: none;
+}
+
+.chat-product-card:hover img,
+.chat-product-card:focus-visible img {
+  transform: scale(1.03);
+}
+
+.chat-card-caption {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to top, rgba(5, 5, 5, 0.95), transparent);
+  text-align: center;
+}
+
+.chat-card-caption span {
+  display: block;
+  color: #dcae6f;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 19px;
+  letter-spacing: 0.04em;
+}
+
+.meltix-bot-message--assistant::after,
+.meltix-bot-message--user::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  transform: rotate(45deg);
+}
+
+.meltix-bot-message--assistant::after {
+  left: -6px;
+  border-left: inherit;
+  border-bottom: inherit;
+}
+
+.meltix-bot-message--user::after {
+  right: -6px;
+  border-right: inherit;
+  border-bottom: inherit;
+}
+
+.meltix-bot-floor {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 14px 18px 16px;
+  background: var(--bot-footer);
+}
+
+.meltix-bot-seat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.meltix-bot-desk-scene {
+  position: relative;
+  width: 156px;
+  height: 116px;
+}
+
+.meltix-bot-seat-aura {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 128px;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(220, 174, 111, 0.24), rgba(220, 174, 111, 0.03) 70%);
+  filter: blur(7px);
+}
+
+.meltix-bot-desk-scene::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  width: 184px;
+  height: 84px;
+  transform: translateX(-50%);
+  border-radius: 24px;
+  background: radial-gradient(circle at center, rgba(220, 174, 111, 0.06), transparent 68%);
+  pointer-events: none;
+}
+
+.meltix-bot-seat-avatar {
+  position: absolute;
+  left: 45%;
+  bottom: 40px;
+  width: 84px;
+  height: 84px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.28));
+  z-index: 1;
+}
+
+.meltix-bot-desk {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  width: 156px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.3));
+  z-index: 2;
+}
+
+.meltix-bot-seat-label {
+  display: none;
+}
+
+.meltix-bot-compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.meltix-bot-input {
+  min-width: 0;
+  height: 56px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(220, 174, 111, 0.18);
+  background: rgba(30, 23, 17, 0.94);
+  color: var(--bot-ivory);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.meltix-bot-input::placeholder {
+  color: rgba(248, 243, 234, 0.38);
+}
+
+.meltix-bot-input:focus {
+  border-color: rgba(220, 174, 111, 0.38);
+  box-shadow: 0 0 0 4px rgba(220, 174, 111, 0.08);
+}
+
+.meltix-bot-send {
+  min-width: 56px;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(220, 174, 111, 0.44);
+  background: linear-gradient(135deg, #dcae6f, #c8974e);
+  color: #0d0a06;
+  font-size: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+  box-shadow: 0 4px 16px rgba(220, 174, 111, 0.24);
+}
+
+.meltix-bot-send::after {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: #0d0a06;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.meltix-bot-send:hover,
+.meltix-bot-send:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(220, 174, 111, 0.38);
+  filter: brightness(1.06);
+  outline: none;
+}
+
+.meltix-bot-send:disabled,
+.meltix-bot-input:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.meltix-bot-rail {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0 0;
+  background: transparent;
+}
+
+.meltix-bot-quicknav {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+
+.meltix-bot-quicknav-title {
+  margin: 0;
+  color: var(--bot-gold);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding-left: 8px;
+}
+
+.meltix-bot-quicknav-grid {
+  display: grid;
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.meltix-bot-chip {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  min-height: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(220, 174, 111, 0.12);
+  background: rgba(18, 14, 10, 0.94);
+  color: var(--bot-ivory);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.meltix-bot-chip::before,
+.meltix-bot-chip::after {
+  content: none;
+}
+
+.meltix-bot-chip:hover,
+.meltix-bot-chip:focus-visible {
+  transform: translateX(2px);
+  border-color: rgba(220, 174, 111, 0.24);
+  background: rgba(24, 18, 13, 0.98);
+  outline: none;
+}
+
+.meltix-bot-chip-kicker {
+  color: rgba(220, 174, 111, 0.55);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+.meltix-bot-chip-label {
+  color: var(--bot-ivory);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 18px;
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+}
+
+.meltix-bot-dock {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9995;
+  transform: translate3d(calc(100vw - 176px), calc(100vh - 188px), 0);
+  touch-action: none;
+  overflow: visible;
+  will-change: transform;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.meltix-bot-root.is-dragging .meltix-bot-dock {
+  transition: none;
+}
+
+.meltix-bot-root.is-open .meltix-bot-dock {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(calc(100vw - 170px), calc(100vh - 180px), 0) scale(0.94);
+}
+
+.meltix-bot-launcher {
+  position: relative;
+  z-index: 4;
+  width: 116px;
+  height: 116px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: grab;
+}
+
+.meltix-bot-root.is-dragging .meltix-bot-launcher {
+  cursor: grabbing;
+}
+
+.meltix-bot-avatar {
+  position: relative;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 116px;
+  height: 116px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.38));
+  animation: meltixBotFloat 4s ease-in-out infinite;
+  pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, filter, opacity;
+  transition: opacity 0.18s ease;
+}
+
+.meltix-bot-avatar--drag {
+  opacity: 0;
+}
+
+.meltix-bot-root.is-dragging .meltix-bot-avatar--idle {
+  opacity: 0;
+}
+
+.meltix-bot-root.is-dragging .meltix-bot-avatar--drag {
+  opacity: 1;
+}
+
+.meltix-bot-root.is-dragging .meltix-bot-avatar {
+  animation: none;
+  transform: translateY(-3px) scale(1.03);
+  filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.46));
+}
+
+.meltix-bot-whisper {
+  position: absolute;
+  left: 50%;
+  bottom: 118px;
+  transform: translateX(-50%) translateY(10px);
+  width: clamp(224px, 22vw, 288px);
+  min-width: 224px;
+  padding: 15px 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(233, 198, 143, 0.98), rgba(220, 174, 111, 0.96));
+  border: 1px solid rgba(255, 245, 226, 0.28);
+  color: #0d0b08;
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  text-wrap: pretty;
+  box-shadow: 0 24px 42px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 1;
+}
+
+.meltix-bot-whisper::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 16px;
+  height: 16px;
+  transform: translateX(-50%) rotate(45deg);
+  background: rgba(220, 174, 111, 0.97);
+  border-right: 1px solid rgba(255, 245, 226, 0.2);
+  border-bottom: 1px solid rgba(255, 245, 226, 0.2);
+}
+
+.meltix-bot-whisper.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.meltix-bot-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 194px;
+  width: min(280px, calc(100vw - 40px));
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(220, 174, 111, 0.24);
+  background: rgba(8, 8, 8, 0.92);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+  color: var(--bot-ivory);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+  transition: opacity 0.24s ease, transform 0.24s ease;
+  z-index: 1;
+  overflow: visible;
+}
+
+.meltix-bot-toast.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.meltix-bot-toast::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 16px;
+  height: 16px;
+  transform: translateX(-50%) rotate(45deg);
+  background: rgba(8, 8, 8, 0.92);
+  border-right: 1px solid rgba(220, 174, 111, 0.24);
+  border-bottom: 1px solid rgba(220, 174, 111, 0.24);
+  box-shadow: 8px 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+.meltix-bot-toast-title {
+  margin: 0 0 4px;
+  color: var(--bot-gold);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 20px;
+}
+
+.meltix-bot-toast-copy {
+  margin: 0;
+  color: var(--bot-ivory-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.meltix-bot-toast-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--bot-gold);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+@media (max-width: 980px) {
+  .meltix-bot-panel {
+    inset: 12px;
+  }
+
+  .meltix-bot-layout--with-rail {
+    grid-template-columns: minmax(0, 1fr) 248px;
+  }
+
+  .meltix-bot-floor {
+    grid-template-columns: 154px minmax(0, 1fr);
+  }
+
+  .meltix-bot-desk-scene {
+    width: 138px;
+    height: 102px;
+  }
+
+  .meltix-bot-seat-avatar {
+    width: 74px;
+    height: 74px;
+    bottom: 36px;
+  }
+
+  .meltix-bot-desk {
+    width: 138px;
+  }
+}
+
+@media (max-width: 760px) {
+  .meltix-bot-panel {
+    inset: 8px;
+  }
+
+  .meltix-bot-layout {
+    padding: 12px;
+  }
+
+  .meltix-bot-layout--with-rail {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .meltix-bot-rail {
+    padding: 0;
+  }
+
+  .meltix-bot-quicknav-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    max-height: 220px;
+  }
+
+  .meltix-bot-floor {
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .meltix-bot-history {
+    padding: 18px 18px 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .meltix-bot-message {
+    max-width: 88%;
+    font-size: 13px;
+  }
+
+  .chat-product-card {
+    width: min(58%, 180px);
+    margin-left: 10px;
+  }
+
+  .meltix-bot-floor {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .meltix-bot-desk-scene {
+    width: 92px;
+    height: 72px;
+  }
+
+  .meltix-bot-seat-aura {
+    width: 76px;
+    height: 14px;
+  }
+
+  .meltix-bot-seat-avatar {
+    width: 48px;
+    height: 48px;
+    bottom: 24px;
+  }
+
+  .meltix-bot-desk {
+    width: 92px;
+  }
+
+  .meltix-bot-compose {
+    gap: 8px;
+  }
+
+  .meltix-bot-input {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 13px;
+  }
+
+  .meltix-bot-send {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+  }
+
+  .meltix-bot-send::after {
+    width: 18px;
+    height: 18px;
+  }
+
+  .meltix-bot-quicknav-grid {
+    grid-template-columns: 1fr;
+    max-height: 180px;
+  }
+
+  .meltix-bot-dock {
+    transform: translate3d(calc(100vw - 144px), calc(100vh - 168px), 0);
+  }
+
+  .meltix-bot-root.is-open .meltix-bot-dock {
+    transform: translate3d(calc(100vw - 140px), calc(100vh - 160px), 0) scale(0.94);
+  }
+
+  .meltix-bot-launcher {
+    width: 92px;
+    height: 92px;
+  }
+
+  .meltix-bot-avatar {
+    width: 92px;
+    height: 92px;
+  }
+
+  .meltix-bot-whisper {
+    left: 50%;
+    bottom: 106px;
+    width: min(220px, calc(100vw - 40px));
+    min-width: 0;
+    font-size: 12px;
+  }
+}
+
+@keyframes meltixBotFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

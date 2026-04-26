@@ -1,0 +1,137 @@
+:root {
+    --bg-main: #030201;
+    --gold: #d4a373;
+    --gold-light: #f2c98a;
+    --gold-border: rgba(212, 163, 115, 0.2);
+    --text-main: #eaddcf;
+    --text-muted: #a89f91;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top, rgba(212, 163, 115, 0.18), transparent 35%),
+        linear-gradient(180deg, #0a0705 0%, var(--bg-main) 100%);
+    color: var(--text-main);
+    font-family: "Lato", sans-serif;
+}
+
+.top-nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 50px;
+    background: linear-gradient(to bottom, rgba(3, 2, 1, 0.98), transparent);
+}
+
+.back-btn {
+    font-family: "Playfair Display", serif;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.back-btn span {
+    color: currentColor;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.back-btn:hover {
+    color: #fff;
+    text-shadow: 0 0 12px rgba(212, 163, 115, 0.70);
+}
+
+.back-btn:hover span {
+    transform: translateX(-3px);
+}
+
+.nav-brand {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.nav-brand-sub {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.nav-brand-name {
+    font-family: "Playfair Display", serif;
+    font-size: 1.1rem;
+    color: var(--gold-light);
+}
+
+.policy-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 20px 80px;
+}
+
+.policy-card {
+    border: 1px solid rgba(212, 163, 115, 0.18);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 32px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.35);
+}
+
+.policy-card h1,
+.policy-card h2 {
+    font-family: "Playfair Display", serif;
+    color: #fff3e2;
+}
+
+.policy-card h1 {
+    margin-top: 0;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+}
+
+.policy-card h2 {
+    margin-top: 28px;
+    font-size: 1.3rem;
+}
+
+.policy-card p,
+.policy-card li {
+    color: #d9ccb9;
+    line-height: 1.75;
+}
+
+@media (max-width: 680px) {
+    .top-nav {
+        padding: 18px 20px;
+    }
+
+    .nav-brand {
+        display: none;
+    }
+
+    .policy-wrap {
+        padding: 12px 16px 60px;
+    }
+
+    .policy-card {
+        padding: 22px 18px;
+        border-radius: 20px;
+    }
+}

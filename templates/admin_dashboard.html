@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Founder's Desk | Meltix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: rgba(12, 11, 10, 0.94);
+      --ivory: #f7f2ea;
+      --ivory-soft: rgba(247, 242, 234, 0.72);
+      --gold: #dcae6f;
+      --gold-soft: rgba(220, 174, 111, 0.12);
+      --border: rgba(220, 174, 111, 0.18);
+      --green: #9dd18f;
+      --red: #ff8a80;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(220, 174, 111, 0.11), transparent 25%),
+        radial-gradient(circle at bottom left, rgba(220, 174, 111, 0.07), transparent 22%),
+        var(--bg);
+      color: var(--ivory);
+      font-family: "Inter", sans-serif;
+      padding: 28px;
+    }
+
+    .shell {
+      max-width: 1380px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      padding: 1px;
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(220, 174, 111, 0.4), rgba(220, 174, 111, 0.05));
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+    }
+
+    .panel-inner {
+      border-radius: 29px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at top right, rgba(220, 174, 111, 0.1), transparent 20%),
+        linear-gradient(180deg, rgba(18, 17, 15, 0.98), rgba(6, 6, 6, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(42px, 5vw, 60px);
+      font-weight: 600;
+      line-height: 1.05;
+    }
+
+    .subcopy {
+      margin: 14px 0 0;
+      color: var(--ivory-soft);
+      line-height: 1.8;
+      max-width: 740px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .logout-link {
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--ivory);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .auth-card {
+      max-width: 520px;
+      margin: 8vh auto 0;
+      padding: 34px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+    }
+
+    .auth-card h2 {
+      margin: 0 0 14px;
+      font-family: "Playfair Display", serif;
+      font-size: 38px;
+      font-weight: 600;
+    }
+
+    .auth-card p {
+      margin: 0 0 22px;
+      color: var(--ivory-soft);
+      line-height: 1.7;
+    }
+
+    .field {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field span {
+      color: rgba(247, 242, 234, 0.6);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--ivory);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: rgba(220, 174, 111, 0.46);
+      box-shadow: 0 0 0 4px rgba(220, 174, 111, 0.08);
+    }
+
+    .auth-error {
+      margin: 0 0 18px;
+      color: var(--red);
+      font-size: 14px;
+    }
+
+    .submit-btn {
+      margin-top: 18px;
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(220, 174, 111, 0.34);
+      background: linear-gradient(180deg, rgba(220, 174, 111, 0.24), rgba(220, 174, 111, 0.08));
+      color: #0b0907;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1120px;
+    }
+
+    th,
+    td {
+      padding: 18px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(220, 174, 111, 0.08);
+      vertical-align: top;
+    }
+
+    th {
+      color: rgba(247, 242, 234, 0.58);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: rgba(220, 174, 111, 0.03);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:hover td {
+      background: rgba(220, 174, 111, 0.03);
+    }
+
+    .meta-primary {
+      display: block;
+      color: var(--ivory);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .meta-secondary {
+      display: block;
+      margin-top: 6px;
+      color: var(--ivory-soft);
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .status-pill.is-paid {
+      color: var(--green);
+      border-color: rgba(157, 209, 143, 0.35);
+      background: rgba(157, 209, 143, 0.08);
+    }
+
+    .status-pill.is-failed {
+      color: var(--red);
+      border-color: rgba(255, 138, 128, 0.32);
+      background: rgba(255, 138, 128, 0.08);
+    }
+
+    .status-pill.is-pending {
+      color: var(--gold);
+    }
+
+    .status-control {
+      display: grid;
+      gap: 10px;
+    }
+
+    .status-control select {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--ivory);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .save-state {
+      min-height: 18px;
+      color: var(--ivory-soft);
+      font-size: 12px;
+    }
+
+    .save-state.is-success {
+      color: var(--green);
+    }
+
+    .save-state.is-error {
+      color: var(--red);
+    }
+
+    .empty-state {
+      padding: 26px;
+      color: var(--ivory-soft);
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .panel-inner {
+        padding: 20px;
+      }
+
+      .auth-card {
+        padding: 24px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <div class="panel-inner">
+        {% if not is_authenticated %}
+          <div class="auth-card">
+            <p class="eyebrow">Private Access</p>
+            <h2>The Founder's Desk</h2>
+            <p>Enter the session password to unlock the private Meltix order ledger.</p>
+            {% if auth_error %}
+            <p class="auth-error">{{ auth_error }}</p>
+            {% endif %}
+            <form method="post">
+              <label class="field">
+                <span>Session Password</span>
+                <input type="password" name="password" autocomplete="current-password" required>
+              </label>
+              <button type="submit" class="submit-btn">Unlock Dashboard</button>
+            </form>
+          </div>
+        {% else %}
+          <div class="topbar">
+            <div>
+              <p class="eyebrow">Private Ledger</p>
+              <h1>The Founder's Desk</h1>
+              <p class="subcopy">All Meltix orders, newest first. Delivery changes save instantly and also sync the profile-facing order timeline.</p>
+            </div>
+            <a class="logout-link" href="{{ url_for('admin_secret_desk', logout=1) }}">Log Out</a>
+          </div>
+
+          <div class="table-wrap">
+            {% if orders %}
+            <table>
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer Name &amp; Address</th>
+                  <th>Phone</th>
+                  <th>Items Ordered</th>
+                  <th>Amount</th>
+                  <th>Payment Status</th>
+                  <th>Delivery Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                <tr>
+                  <td>
+                    <span class="meta-primary">{{ order.order_id }}</span>
+                    <span class="meta-secondary">{{ order.created_at_display }}</span>
+                  </td>
+                  <td>
+                    <span class="meta-primary">{{ order.customer_name }}</span>
+                    <span class="meta-secondary">{{ order.customer_email }}</span>
+                    <span class="meta-secondary">{{ order.customer_address }}</span>
+                  </td>
+                  <td>
+                    <span class="meta-primary">{{ order.customer_phone }}</span>
+                  </td>
+                  <td>
+                    <span class="meta-secondary">{{ order.items_summary }}</span>
+                  </td>
+                  <td>
+                    <span class="meta-primary">{{ order.amount_display }}</span>
+                  </td>
+                  <td>
+                    <span class="status-pill {% if order.payment_status == 'Paid' %}is-paid{% elif order.payment_status == 'Failed' %}is-failed{% else %}is-pending{% endif %}">
+                      {{ order.payment_status }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="status-control">
+                      <select data-order-status data-order-id="{{ order.order_id }}">
+                        {% for option in delivery_status_options %}
+                        <option value="{{ option }}" {% if order.delivery_status == option %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                      </select>
+                      <span class="save-state" data-save-state></span>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">No orders found yet.</div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+
+  {% if is_authenticated %}
+  <script>
+    document.querySelectorAll('[data-order-status]').forEach((select) => {
+      const saveState = select.parentElement.querySelector('[data-save-state]');
+      let currentValue = select.value;
+
+      select.addEventListener('change', async () => {
+        const nextValue = select.value;
+        saveState.textContent = 'Saving...';
+        saveState.className = 'save-state';
+
+        try {
+          const response = await fetch(`/update-order-status/${encodeURIComponent(select.dataset.orderId)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ delivery_status: nextValue })
+          });
+
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || !payload.success) {
+            throw new Error(payload.message || 'Unable to save status.');
+          }
+
+          saveState.textContent = 'Saved';
+          saveState.classList.add('is-success');
+          currentValue = nextValue;
+        } catch (error) {
+          select.value = currentValue;
+          saveState.textContent = error.message || 'Save failed';
+          saveState.classList.add('is-error');
+        }
+      });
+    });
+  </script>
+  {% endif %}
+</body>
+</html>

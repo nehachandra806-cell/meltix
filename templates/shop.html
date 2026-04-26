@@ -1,600 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meltix Shop | The Collection</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='shop.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
-
-    <style>
-        #bot-toast {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(12, 9, 7, 0.95); 
-            border: 1px solid rgba(212, 163, 115, 0.5);
-            color: #eaddcf;
-            padding: 30px 60px;
-            border-radius: 12px;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            text-align: center;
-            letter-spacing: 1.5px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(212, 163, 115, 0.15);
-            backdrop-filter: blur(20px);
-            z-index: 100000;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        #bot-toast.show {
-            opacity: 1;
-            pointer-events: auto; 
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .toast-keys {
-            font-family: 'Lato', sans-serif;
-            font-size: 1rem;
-            color: #a89f91;
-            letter-spacing: 0.5px;
-        }
-
-        .toast-keys b {
-            color: #000000 !important; 
-            background: #d4a373 !important;
-            padding: 4px 12px;
-            border-radius: 4px;
-            margin: 0 5px;
-            font-size: 1.3rem;
-            font-weight: 900; 
-            text-shadow: none !important; 
-            box-shadow: 0 0 10px rgba(212, 163, 115, 0.6);
-        }
-
-        .toast-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: transparent;
-            border: none;
-            color: #d4a373;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: 0.3s;
-            opacity: 0.7;
-        }
-
-        .toast-close:hover {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop - Meltix Atelier</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='shop.css', v='shop-20260423-11') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='cart.css', v='shop-20260422-1') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 <body id="shop-body">
 
-    <div class="top-nav-icons">
-    <a href="/profile" class="shop-nav-btn" title="My Profile">
-        <span class="nav-icon-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
-        </span>
-    </a>
+  <nav class="nav">
+    <div class="nav-left">
+      <a href="/profile" class="nav-profile" aria-label="Profile">
+        <svg viewBox="0 0 24 24" stroke-width="1.5">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+          />
+        </svg>
+      </a>
     </div>
-    
-    <script>
-        let fromIntro = false;
-        if (document.referrer) {
-            try {
-                const ref = new URL(document.referrer);
-                if (ref.pathname === '/' || ref.pathname === '/index.html' || ref.pathname === '') {
-                    fromIntro = true;
-                }
-            } catch(e) {}
-        }
+  </nav>
 
-        if (!fromIntro) {
-    const style = document.createElement('style');
-    style.innerHTML = `
-        /* Gate aur VIP Toast ko chupa do */
-        #shop-entry-overlay, #bot-toast { display: none !important; }
-        
-        /* CHOR PAKDA GAYA: Sirf specific containers pe transform lagao, 'body' pe nahi! */
-        #shop-wrapper, #shop-video-container, body.entered #shop-wrapper, body.entered #shop-video-container { 
-            animation: none !important; 
-            transition: none !important; 
-            transform: scale(1) !important; 
-            filter: blur(0px) !important; 
-            opacity: 1 !important; 
-        }
-    `;
-    document.head.appendChild(style);
-         }
-    </script>
+  <header class="shop-hero">
+    <span class="shop-hero-eyebrow">The Collections</span>
+    <h1 class="shop-hero-title">
+      Every Flame<br />Tells a <em>Story</em>
+    </h1>
+    <p class="shop-hero-sub">Not just candles, experiences sealed in wax.</p>
+    <div class="hero-divider"></div>
+  </header>
 
-    <div id="shop-entry-overlay">
-        <div class="glass-door door-left">
-            <div class="board-assembly">
-                <div class="nail"></div>
-                <div class="welcome-board">Welcome</div>
+  <main class="shop-grid-section">
+    <div class="shop-grid">
+      {% for collection in shop_collections %}
+      <article
+        class="category-card"
+        role="link"
+        tabindex="0"
+        data-href="{{ collection.href }}"
+        aria-label="Open Collection {{ collection.number }}"
+      >
+        <div class="hover-reveal-layer">
+          <div class="showcase-stack">
+            {% for preview in collection.preview_images %}
+            <img
+              class="showcase-frame{% if loop.first %} is-active{% endif %}"
+              src="{{ preview.url }}"
+              alt="{{ preview.alt or collection.caption }}"
+              data-product-name="{{ preview.alt or collection.caption }}"
+              loading="lazy"
+            />
+            {% endfor %}
+          </div>
+          <div class="reveal-caption">
+            <div class="reveal-caption-inner">
+              <span class="reveal-caption-kicker">Showcase Piece</span>
+              <div class="reveal-name-stack" aria-live="polite">
+                {% if collection.preview_images %}
+                  {% for preview in collection.preview_images %}
+                  <span class="reveal-name-frame{% if loop.first %} is-active{% endif %}" data-name-frame>{{ preview.alt or collection.caption }}</span>
+                  {% endfor %}
+                {% else %}
+                  <span class="reveal-name-frame is-active" data-name-frame>{{ collection.caption }}</span>
+                {% endif %}
+              </div>
             </div>
-            <div class="door-handle"></div>
-        </div>
-        <div class="glass-door door-right">
-            <div class="door-handle"></div>
-        </div>
-    </div>
-
-    <div id="shop-wrapper">
-        <div id="shop-video-container">
-            <video id="vid-shop-loop" src="{{ url_for('static', filename='videos/shop_main.mp4') }}" poster="{{ url_for('static', filename='images/Story Candle Edit 1.jpg') }}" autoplay loop muted playsinline preload="auto"></video>
-            
-            <video id="vid-hidden-open" class="hover-video" src="{{ url_for('static', filename='videos/hidden_open.mp4') }}" muted playsinline preload="auto"></video>
-            <video id="vid-hidden-close" class="hover-video" src="{{ url_for('static', filename='videos/hidden_close.mp4') }}" muted playsinline preload="auto"></video>
-
-            <video id="vid-story-open" class="hover-video" src="{{ url_for('static', filename='videos/story_open.mp4') }}" muted playsinline preload="auto"></video>
-            <video id="vid-story-close" class="hover-video" src="{{ url_for('static', filename='videos/story_close.mp4') }}" muted playsinline preload="auto"></video>
-
-            <video id="vid-zodiac-open" class="hover-video" src="{{ url_for('static', filename='videos/zodiac_open.mp4') }}" muted playsinline preload="auto"></video>
-            <video id="vid-zodiac-close" class="hover-video" src="{{ url_for('static', filename='videos/zodiac_close.mp4') }}" muted playsinline preload="auto"></video>
-
-            <video id="vid-break-open" class="hover-video" src="{{ url_for('static', filename='videos/break_open.mp4') }}" muted playsinline preload="auto"></video>
-            <video id="vid-break-close" class="hover-video" src="{{ url_for('static', filename='videos/break_close.mp4') }}" muted playsinline preload="auto"></video>
-
-            <video id="vid-date-open" class="hover-video" src="{{ url_for('static', filename='videos/date_open.mp4') }}" muted playsinline preload="auto"></video>
-            <video id="vid-date-close" class="hover-video" src="{{ url_for('static', filename='videos/date_close.mp4') }}" muted playsinline preload="auto"></video>
+          </div>
         </div>
 
-        <div id="trigger-hidden-msg" class="trigger-box"></div>
-        <div id="trigger-storage" class="trigger-box"></div> 
-        <div id="trigger-zodiac" class="trigger-box"></div>
-        <div id="trigger-break" class="trigger-box"></div>
-        <div id="trigger-date-kit" class="trigger-box"></div>
-        <div id="trigger-soon" class="trigger-box"></div> 
-    </div>
-
-    <footer id="shop-footer">
-        <a href="/about-us" class="footer-link">About Us</a>
-        <span class="footer-divider">✦</span>
-        <a href="/contact-us" class="footer-link">Contact Us</a>
-    </footer>
-
-    <div id="soon-popup-overlay">
-        <img src="{{ url_for('static', filename='images/surprise_card.png') }}" alt="Surprises Soon">
-    </div>
-
-    <div id="panel-overlay" onclick="closeSidePanel()"></div>
-
-    <div id="meltix-side-panel" class="side-panel">
-        <div class="panel-header">
-            <h2>✦ Meltix Assistant </h2>
-            <button class="close-btn" onclick="closeSidePanel()">&times;</button>
+        <div class="royal-text-cover">
+          <span class="collection-num">COLLECTION {{ collection.number }}</span>
+          <h2 class="card-title">
+            {% for line in collection.title_lines %}
+              {{ line }}{% if not loop.last %}<br />{% endif %}
+            {% endfor %}
+          </h2>
+          <div class="gold-divider"></div>
+          <p class="card-quote">"{{ collection.quote }}"</p>
+          <span class="explore-btn">{{ collection.cta_label }} &rarr;</span>
         </div>
-        
-        <div class="panel-content" id="panel-content">
-            <div class="standard-options">
-                <button class="panel-btn" onclick="window.location.href='/head_to'">Head to another section</button>
-                <button class="panel-btn" onclick="window.location.href='/suggestions'">Want suggestions?</button>
-                <button class="panel-btn" onclick="window.location.href='/gift_sets'">Want gift sets?</button>
-                <button class="panel-btn" onclick="window.location.href='/feedback'">Give feedback</button>
-                <button class="panel-btn" onclick="window.location.href='/bug-report'">Report bug / problem</button>
-            </div>
+      </article>
+      {% endfor %}
 
-            <div class="button-container">
-                <button class="brutalist-button craft-button" onclick="window.location.href='/craft-studio'">
-                    <div class="craft-logo">
-                        <svg class="craft-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#d4a373">
-                            <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"></path>
-                        </svg>
-                    </div>
-                    <div class="button-text">
-                        <span>Enter</span>
-                        <span>Meltix Studio</span>
-                    </div>
-                </button>
-            </div>
-            
+      <article
+        class="category-card card-secret"
+        id="secret-card"
+        role="button"
+        tabindex="0"
+        aria-label="Open surprise preview"
+      >
+        <span class="secret-badge">Secret Drop</span>
+        <div class="royal-text-cover royal-text-cover-secret">
+          <p class="secret-future-copy">More surprises<br />will come in future.</p>
         </div>
+      </article>
     </div>
+  </main>
 
-    <div id="bot-toast">
-        <button class="toast-close" onclick="closeToast()">×</button>
-        Summon the Assistant
-        <div class="toast-keys">Press <b>C</b> to call and <b>G</b> to dismiss</div>
-    </div>
+  <div
+    class="popup-overlay popup-overlay-image"
+    id="secret-popup"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Surprise preview"
+  >
+    <button class="popup-close-x popup-close-floating" id="popup-close-x" aria-label="Close surprise preview">&times;</button>
+    <img
+      class="popup-image"
+      src="{{ url_for('static', filename='images/surprise_card.png') }}"
+      alt="Surprise Card preview"
+      loading="lazy"
+    />
+  </div>
 
-    <div class="meltix-bot-container" id="draggable-bot">
-        
-        <div class="bot-chat-bubble" id="bot-chat-bubble"></div>
-        
-        <video id="bot-video" class="floating-bot" autoplay loop muted playsinline draggable="false">
-            <source src="{{ url_for('static', filename='images/bot_idle.webm') }}" type="video/webm">
-        </video>
-        
-        <div class="bot-shadow" id="bot-shadow"></div>
-    </div>
+  <footer class="footer">
+    <ul class="footer-links">
+      <li><a href="/about-us">About Us</a></li>
+      <li><a href="/contact-us">Contact Us</a></li>
+      <li><a href="/feedback">Feedback</a></li>
+      <li><a href="/craft-studio">Meltix Studio</a></li>
+    </ul>
+  </footer>
 
-    <script>
-        // =========================================
-        // Hover aur Entry Logic
-        // =========================================
-        const sections = [
-            { trigger: 'trigger-hidden-msg', vidOpen: 'vid-hidden-open', vidClose: 'vid-hidden-close', url: '/hidden-message' },
-            { trigger: 'trigger-storage',    vidOpen: 'vid-story-open',  vidClose: 'vid-story-close', url: '/story-candle' },
-            { trigger: 'trigger-zodiac',     vidOpen: 'vid-zodiac-open', vidClose: 'vid-zodiac-close', url: '/zodiac-candle' },
-            { trigger: 'trigger-break',      vidOpen: 'vid-break-open',  vidClose: 'vid-break-close', url: '/break-to-reveal' },
-            { trigger: 'trigger-date-kit',   vidOpen: 'vid-date-open',   vidClose: 'vid-date-close', url: '/candle-date-kit' }
-        ];
+  {% with show_nav_options=True, bot_context='shop' %}
+    {% include '_bot_panel.html' %}
+  {% endwith %}
+  {% include '_ghost_cart.html' %}
 
-        let activeTrigger = null; 
-        let hoverTimer = null;
-        let isSwitching = false; 
+  <script src="{{ url_for('static', filename='js/cart.js', v='shop-20260422-1') }}"></script>
+<script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
+  <script>
+    const setShowcaseState = (nodes, activeIndex, previousIndex = activeIndex) => {
+      nodes.forEach((node, index) => {
+        node.classList.remove('is-active', 'is-prev', 'is-next');
 
-        sections.forEach(sec => {
-            const triggerElement = document.getElementById(sec.trigger);
-            const openVideo = document.getElementById(sec.vidOpen);
-            const closeVideo = document.getElementById(sec.vidClose);
-
-            triggerElement.addEventListener('click', function() {
-                window.location.href = sec.url; 
-            });
-
-            triggerElement.addEventListener('mouseenter', function() {
-                if (activeTrigger === sec.trigger) return;
-                
-                clearTimeout(hoverTimer);
-                isSwitching = activeTrigger !== null;
-                
-                hoverTimer = setTimeout(function() {
-                    if (isSwitching) {
-                         document.querySelectorAll('.hover-video').forEach(v => {
-                            if (v !== openVideo && v.classList.contains('active')) {
-                                v.playbackRate = 2.0; 
-                            }
-                        });
-                    }
-
-                    activeTrigger = sec.trigger;
-                    
-                    document.querySelectorAll('.hover-video').forEach(v => {
-                        if (v !== openVideo && v.id.includes('-open')) {
-                            v.classList.remove('active');
-                            v.pause();
-                        }
-                    });
-
-                    let syncTime = 0;
-                    if (closeVideo.classList.contains('active') && !closeVideo.ended && !closeVideo.paused) {
-                        let dur = openVideo.duration || 2.0; 
-                        syncTime = dur - closeVideo.currentTime;
-                        if (syncTime < 0 || isNaN(syncTime)) syncTime = 0;
-                    }
-                    
-                    closeVideo.classList.remove('active');
-                    closeVideo.pause();
-
-                    openVideo.currentTime = syncTime; 
-                    openVideo.playbackRate = 1.0;
-                    openVideo.classList.add('active');
-                    openVideo.play().catch(e => console.log(e));
-                }, 400); 
-            });
-
-            triggerElement.addEventListener('mouseleave', function() {
-                clearTimeout(hoverTimer);
-                
-                if (activeTrigger === sec.trigger) {
-                    activeTrigger = null;
-                    isSwitching = false;
-                    
-                    let syncTime = 0;
-                    if (!openVideo.ended) { 
-                        let dur = closeVideo.duration || 2.0; 
-                        syncTime = dur - openVideo.currentTime; 
-                        if (syncTime < 0 || isNaN(syncTime)) syncTime = 0;
-                    }
-                    
-                    openVideo.classList.remove('active');
-                    openVideo.pause();
-                    
-                    closeVideo.currentTime = syncTime; 
-                    closeVideo.playbackRate = 1.0; 
-                    closeVideo.classList.add('active');
-                    closeVideo.play().catch(e => console.log(e));
-                    
-                    closeVideo.onended = function() {
-                        if (!closeVideo.classList.contains('active')) return;
-                        closeVideo.classList.remove('active');
-                        closeVideo.playbackRate = 1.0; 
-                    };
-                }
-            });
-        });
-
-        const triggerSoon = document.getElementById('trigger-soon');
-        const popupOverlay = document.getElementById('soon-popup-overlay');
-
-        triggerSoon.addEventListener('click', function() {
-            popupOverlay.classList.add('show');
-        });
-        popupOverlay.addEventListener('click', function() {
-            popupOverlay.classList.remove('show');
-        });
-
-        window.addEventListener('load', function() {
-            if (fromIntro) {
-                setTimeout(function() {
-                    document.getElementById('shop-entry-overlay').classList.add('open');
-                    document.body.classList.add('entered');
-                }, 2000); 
-            } else {
-                document.body.classList.add('entered');
-            }
-        });
-
-        // =========================================
-        // 🤖 MELTIX ASSISTANT BRAIN
-        // =========================================
-        const botContainer = document.getElementById('draggable-bot');
-        const botVideo = document.getElementById('bot-video');
-        const botToast = document.getElementById('bot-toast');
-        const botChatBubble = document.getElementById('bot-chat-bubble'); 
-
-        const videoIdle = "{{ url_for('static', filename='images/bot_idle.webm') }}";
-        const videoDrag = "{{ url_for('static', filename='images/bot_drag.webm') }}";
-        const uiPrefsKey = 'meltix_ui_prefs';
-
-        function readUiPrefs() {
-            try {
-                return JSON.parse(localStorage.getItem(uiPrefsKey)) || {};
-            } catch (error) {
-                return {};
-            }
+        if (index === activeIndex) {
+          node.classList.add('is-active');
+          return;
         }
 
-        function writeUiPrefs(updates) {
-            const nextPrefs = { ...readUiPrefs(), ...updates };
-            localStorage.setItem(uiPrefsKey, JSON.stringify(nextPrefs));
-            return nextPrefs;
+        if (index === previousIndex) {
+          node.classList.add('is-prev');
+          return;
         }
 
-        const initialUiPrefs = readUiPrefs();
-        let botActive = initialUiPrefs.meltixBotActive === true;
-        let xOffset = Number.isFinite(Number(initialUiPrefs.meltixBotX)) ? Number(initialUiPrefs.meltixBotX) : -500;
-        let yOffset = Number.isFinite(Number(initialUiPrefs.meltixBotY)) ? Number(initialUiPrefs.meltixBotY) : -500;
+        node.classList.add('is-next');
+      });
+    };
 
-        let isDraggingBot = false;
-        let currentX, currentY, initialX, initialY;
-        let isClick = true; 
+    document.querySelectorAll('.category-card').forEach((card) => {
+      const frames = Array.from(card.querySelectorAll('.showcase-frame'));
+      if (!frames.length) return;
+      const nameFrames = Array.from(card.querySelectorAll('[data-name-frame]'));
 
-        function openSidePanel() {
-            botChatBubble.classList.remove('show'); 
-            document.getElementById('meltix-side-panel').classList.add('active');
-            document.getElementById('panel-overlay').classList.add('active');
+      let frameIndex = 0;
+      let showcaseTimer = null;
+
+      const stopShowcase = () => {
+        if (showcaseTimer) {
+          window.clearInterval(showcaseTimer);
+          showcaseTimer = null;
+        }
+        card.classList.remove('is-showcase-active');
+        frameIndex = 0;
+        setShowcaseState(frames, frameIndex, frameIndex);
+        if (nameFrames.length) {
+          setShowcaseState(nameFrames, frameIndex, frameIndex);
+        }
+      };
+
+      const startShowcase = () => {
+        card.classList.add('is-showcase-active');
+        setShowcaseState(frames, frameIndex, frameIndex);
+        if (nameFrames.length) {
+          setShowcaseState(nameFrames, frameIndex, frameIndex);
         }
 
-        function closeSidePanel() {
-            document.getElementById('meltix-side-panel').classList.remove('active');
-            document.getElementById('panel-overlay').classList.remove('active');
+        if (frames.length < 2 || showcaseTimer) return;
+
+        showcaseTimer = window.setInterval(() => {
+          const previousIndex = frameIndex;
+          frameIndex = (frameIndex + 1) % frames.length;
+          setShowcaseState(frames, frameIndex, previousIndex);
+          if (nameFrames.length) {
+            setShowcaseState(nameFrames, frameIndex, previousIndex);
+          }
+        }, 1500);
+      };
+
+      setShowcaseState(frames, frameIndex, frameIndex);
+      if (nameFrames.length) {
+        setShowcaseState(nameFrames, frameIndex, frameIndex);
+      }
+
+      card.addEventListener('mouseenter', startShowcase);
+      card.addEventListener('mouseleave', stopShowcase);
+      card.addEventListener('focusin', startShowcase);
+      card.addEventListener('focusout', (event) => {
+        if (!card.contains(event.relatedTarget)) {
+          stopShowcase();
         }
+      });
+    });
 
-        function closeToast() {
-            botToast.classList.remove('show');
+    document.querySelectorAll('.category-card[data-href]').forEach((card) => {
+      card.addEventListener('click', () => {
+        const href = card.getAttribute('data-href');
+        if (href) window.location.href = href;
+      });
+
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          const href = card.getAttribute('data-href');
+          if (href) window.location.href = href;
         }
+      });
+    });
 
-        let idleMessageTimer;
-        let hideMessageTimer;
-        const randomMessages = [
-            "I am here to assist you ✦",
-            "Glad to see you here!",
-            "Let's discover all sections ✨",
-            "Need a perfect gift recommendation?",
-            "Try moving me around!",
-            "Take your time, I'm right here."
-        ];
+    const secretCard = document.getElementById('secret-card');
+    const popup = document.getElementById('secret-popup');
+    const closeX = document.getElementById('popup-close-x');
+    const popupImage = popup?.querySelector('.popup-image');
 
-        function showBotMessage(msg, keepAliveMs) {
-            botChatBubble.textContent = msg;
-            botChatBubble.classList.add('show');
-            
-            clearTimeout(hideMessageTimer);
-            hideMessageTimer = setTimeout(() => {
-                botChatBubble.classList.remove('show');
-            }, keepAliveMs);
+    function openPopup() {
+      popup?.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePopup() {
+      popup?.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    secretCard?.addEventListener('click', openPopup);
+    secretCard?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openPopup();
+      }
+    });
+
+    closeX?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      closePopup();
+    });
+
+    popupImage?.addEventListener('click', closePopup);
+
+    popup?.addEventListener('click', (event) => {
+      if (event.target === popup) {
+        closePopup();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && popup?.classList.contains('open')) {
+        closePopup();
+      }
+    });
+
+    const navGhostCart = document.getElementById('ghost-cart');
+    const navCartCount = document.getElementById('cart-count');
+
+    function updateCartCount(count) {
+      if (!navCartCount) return;
+      const normalized = Number(count) || 0;
+      if (normalized > 0) {
+        navCartCount.textContent = String(normalized);
+        navCartCount.classList.add('visible');
+      } else {
+        navCartCount.textContent = '0';
+        navCartCount.classList.remove('visible');
+      }
+    }
+
+    function readCartCountFromStorage() {
+      try {
+        const cart = JSON.parse(localStorage.getItem('meltix_cart') || '[]');
+        const count = Array.isArray(cart)
+          ? cart.reduce((sum, item) => sum + (Number(item.qty) || 0), 0)
+          : 0;
+        updateCartCount(count);
+      } catch (_error) {
+        updateCartCount(0);
+      }
+    }
+
+    if (navGhostCart) {
+      navGhostCart.addEventListener('click', () => {
+        if (window.MeltixCart && typeof window.MeltixCart.openCart === 'function') {
+          window.MeltixCart.openCart();
+        } else {
+          const fallbackGhost = document.getElementById('meltixCartGhostBtn');
+          fallbackGhost?.click();
         }
+      });
+    }
 
-        function startIdleMessages() {
-            clearInterval(idleMessageTimer);
-            idleMessageTimer = setInterval(() => {
-                if (!document.getElementById('meltix-side-panel').classList.contains('active') && !isDraggingBot && botActive) {
-                    const randomMsg = randomMessages[Math.floor(Math.random() * randomMessages.length)];
-                    showBotMessage(randomMsg, 4000); 
-                }
-            }, 30000); 
+    document.addEventListener('meltix:cart-updated', (event) => {
+      updateCartCount(event.detail?.count || 0);
+    });
+
+    readCartCountFromStorage();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('open_cart') === '1') {
+      window.setTimeout(() => {
+        if (window.MeltixCart && typeof window.MeltixCart.openCart === 'function') {
+          window.MeltixCart.openCart();
         }
-
-        let mouseX = window.innerWidth / 2;
-        let mouseY = window.innerHeight / 2;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        window.addEventListener('load', () => {
-            if (botActive) {
-                botToast.classList.remove('show');
-                
-                const edge = getClosestEdge(xOffset + 85, yOffset + 100);
-                botContainer.style.transition = 'none';
-                setTranslate(edge.x, edge.y, botContainer);
-                
-                void botContainer.offsetWidth; 
-
-                setTimeout(() => {
-                    botContainer.style.transition = 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
-                    setTranslate(xOffset, yOffset, botContainer);
-                    
-                    setTimeout(() => {
-                        showBotMessage("I'm back! ✨", 3000);
-                    }, 800);
-                    
-                    startIdleMessages();
-                }, 500); 
-
-            } else if(fromIntro) { 
-                setTimeout(() => {
-                    botToast.classList.add('show');
-                }, 2500); 
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (botToast.classList.contains('show')) {
-                closeToast();
-            }
-        });
-
-        function getClosestEdge(targetX, targetY) {
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            const distTop = targetY;
-            const distBottom = h - targetY;
-            const distLeft = targetX;
-            const distRight = w - targetX;
-            const minDist = Math.min(distTop, distBottom, distLeft, distRight);
-
-            let startX = targetX - 85; 
-            let startY = targetY - 100; 
-            const hideOffset = 250; 
-
-            if (minDist === distTop) startY = -hideOffset;
-            else if (minDist === distBottom) startY = h + hideOffset;
-            else if (minDist === distLeft) startX = -hideOffset;
-            else startX = w + hideOffset;
-
-            return { x: startX, y: startY };
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key.toLowerCase() === 'c' && !botActive) {
-                botActive = true;
-                writeUiPrefs({ meltixBotActive: true }); 
-                
-                closeToast(); 
-                
-                const edge = getClosestEdge(mouseX, mouseY);
-                botContainer.style.transition = 'none';
-                setTranslate(edge.x, edge.y, botContainer);
-                void botContainer.offsetWidth; 
-                
-                const finalX = mouseX - 85; 
-                const finalY = mouseY - 100; 
-                
-                botContainer.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-                setTranslate(finalX, finalY, botContainer);
-                
-                xOffset = finalX;
-                yOffset = finalY;
-                writeUiPrefs({
-                    meltixBotActive: true,
-                    meltixBotX: xOffset,
-                    meltixBotY: yOffset
-                }); 
-
-                setTimeout(() => {
-                    showBotMessage("Hey! I am Meltix Bot, here to help you. ✨", 3500);
-                    startIdleMessages();
-                }, 600); 
-            }
-            
-            if (e.key.toLowerCase() === 'g' && botActive) {
-                botActive = false;
-                writeUiPrefs({ meltixBotActive: false }); 
-                
-                closeSidePanel(); 
-                botChatBubble.classList.remove('show'); 
-                clearInterval(idleMessageTimer); 
-                
-                const edge = getClosestEdge(xOffset + 85, yOffset + 100);
-                botContainer.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-                setTranslate(edge.x, edge.y, botContainer);
-                
-                xOffset = edge.x;
-                yOffset = edge.y;
-            }
-        });
-
-        botContainer.addEventListener('mousedown', dragStart);
-        window.addEventListener('mouseup', dragEnd);
-        window.addEventListener('mousemove', drag);
-
-        function dragStart(e) {
-            if (e.target.id !== 'bot-video') return; 
-            
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-            isClick = true; 
-            isDraggingBot = true;
-
-            botVideo.src = videoDrag;
-            botVideo.play();
-            botContainer.classList.add('dragging');
-            closeSidePanel(); 
-            botChatBubble.classList.remove('show'); 
-            
-            botContainer.style.transition = 'none';
-        }
-
-        function drag(e) {
-            if (isDraggingBot) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-
-                if (Math.abs(currentX - xOffset) > 5 || Math.abs(currentY - yOffset) > 5) {
-                    isClick = false; 
-                }
-
-                xOffset = currentX;
-                yOffset = currentY;
-                setTranslate(currentX, currentY, botContainer);
-            }
-        }
-
-        function dragEnd(e) {
-            if (!isDraggingBot) return;
-            initialX = currentX;
-            initialY = currentY;
-            isDraggingBot = false;
-            
-            writeUiPrefs({
-                meltixBotActive: botActive,
-                meltixBotX: xOffset,
-                meltixBotY: yOffset
-            });
-
-            botVideo.src = videoIdle;
-            botVideo.play();
-            botContainer.classList.remove('dragging');
-
-            if (isClick && e.target.id === 'bot-video') {
-                openSidePanel(); 
-            }
-        }
-
-        function setTranslate(xPos, yPos, el) {
-            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-        }
-    </script>
-    {% include '_ghost_cart.html' %}
-    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+      }, 320);
+    }
+  </script>
 </body>
 </html>

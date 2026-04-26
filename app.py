@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, jsonify, session, url_for
+from flask import Flask, render_template, request, jsonify, session, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event, inspect, text
+from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 from collections import defaultdict, deque
-from datetime import datetime
+from datetime import datetime, timedelta
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from html import escape
 from pathlib import Path
 from threading import Lock
 from urllib.error import HTTPError, URLError
@@ -11,10 +15,17 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 import hashlib
 import json
+import smtplib
 import re
 import os
+import ssl
 import time
 import razorpay
+
+try:
+    from litellm import completion as litellm_completion
+except ModuleNotFoundError:
+    litellm_completion = None
 
 try:
     from dotenv import load_dotenv
@@ -52,8 +63,18 @@ class CheckoutError(Exception):
 
 DEFAULT_WHATSAPP_BUSINESS = '919876543210'
 GENERIC_ERROR_MESSAGE = 'Something went wrong. Please try again.'
+ADMIN_SECRET_PASSWORD = (os.environ.get('ADMIN_SECRET_PASSWORD') or 'meltix-founder-desk').strip()
+PAYMENT_STATUS_OPTIONS = ('Pending', 'Paid', 'Failed')
+DELIVERY_STATUS_OPTIONS = ('Pending', 'Shipped', 'Delivered')
+DELIVERY_STAGE_MAP = {
+    'Pending': 'placed',
+    'Shipped': 'shipped',
+    'Delivered': 'delivered',
+}
 FORM_RATE_LIMIT_WINDOW_SECONDS = max(60, int(os.environ.get('FORM_RATE_LIMIT_WINDOW_SECONDS', '600') or 600))
 FORM_RATE_LIMIT_MAX_ATTEMPTS = max(1, int(os.environ.get('FORM_RATE_LIMIT_MAX_ATTEMPTS', '5') or 5))
+BOT_RATE_LIMIT_WINDOW_SECONDS = max(10, int(os.environ.get('BOT_RATE_LIMIT_WINDOW_SECONDS', '60') or 60))
+BOT_RATE_LIMIT_MAX_ATTEMPTS = max(1, int(os.environ.get('BOT_RATE_LIMIT_MAX_ATTEMPTS', '12') or 12))
 FORM_RATE_LIMIT_BUCKETS = defaultdict(deque)
 FORM_RATE_LIMIT_LOCK = Lock()
 TRUST_PROXY_HEADERS = env_flag('TRUST_PROXY_HEADERS', default=False)
@@ -80,6 +101,206 @@ CATALOG_CATEGORY_ALIASES = {
     'gift_sets': 'gift-sets',
     'gifts': 'gift-sets',
 }
+SHOP_COLLECTIONS = [
+    {
+        'number': '01',
+        'slug': 'hidden-message',
+        'href': '/hidden-message',
+        'title_lines': ['Hidden', 'Message'],
+        'quote': 'The flame fades. The words remain.',
+        'cta_label': 'Uncover',
+        'caption': 'Hidden Message Candle',
+    },
+    {
+        'number': '02',
+        'slug': 'story-candle',
+        'href': '/story-candle',
+        'title_lines': ['Story', 'Candle'],
+        'quote': 'A new chapter with every burn.',
+        'cta_label': 'Begin the Story',
+        'caption': 'Story Candle',
+    },
+    {
+        'number': '03',
+        'slug': 'zodiac-candle',
+        'href': '/zodiac-candle',
+        'title_lines': ['Zodiac', 'Candle'],
+        'quote': 'The stars chose your scent.',
+        'cta_label': 'Find Your Sign',
+        'caption': 'Zodiac Candle',
+    },
+    {
+        'number': '04',
+        'slug': 'break-to-reveal',
+        'href': '/break-to-reveal',
+        'title_lines': ['Break to', 'Reveal'],
+        'quote': 'Shatter it. The secret is inside.',
+        'cta_label': 'Break It Open',
+        'caption': 'Break to Reveal',
+    },
+    {
+        'number': '05',
+        'slug': 'candle-date-kit',
+        'href': '/candle-date-kit',
+        'title_lines': ['Candle', 'Date Kit'],
+        'quote': 'Set the mood. Let the wax do the rest.',
+        'cta_label': 'Plan the Night',
+        'caption': 'Candle Date Kit',
+    },
+]
+
+BOT_MAX_HISTORY = 16
+BOT_MODELS_TO_TRY = [
+    "groq/llama-3.1-8b-instant",
+    "gemini/gemini-2.5-flash",
+    "nvidia_nim/meta/llama-3.1-8b-instruct",
+    "github/gpt-4o",
+]
+BOT_TOOL_MODELS_TO_TRY = [
+    "github/gpt-4o",
+    "gemini/gemini-2.5-flash",
+    "groq/llama-3.1-8b-instant",
+    "nvidia_nim/meta/llama-3.1-8b-instruct",
+]
+BOT_TOOLS = [{
+    "type": "function",
+    "function": {
+        "name": "search_store_products",
+        "description": (
+            "Meltix database se real products dhundne ke liye. "
+            "Sirf tab use karo jab user kisi specific product, category ya gift ke baare mein pooche. "
+            "Normal greetings ya general baat pe mat chalao."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "search_term": {
+                    "type": "string",
+                    "description": "Product ki category ya naam (eg. hidden, story, zodiac, break, date, gift)"
+                },
+                "max_price": {
+                    "type": "integer",
+                    "description": "Maximum budget agar user ne bataya ho, warna 100000"
+                }
+            },
+            "required": ["search_term"]
+        }
+    }
+}, {
+    "type": "function",
+    "function": {
+        "name": "suggest_product_card",
+        "description": (
+            "Jab user ko ek specific candle ya product recommend karna ho aur chat ke andar clickable product card dikhana ho tab use karo. "
+            "Real Meltix product pick karo aur sirf tab use karo jab user buying intent, recommendation, ya product interest dikhaye."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "search_term": {
+                    "type": "string",
+                    "description": "Product, collection, mood, ya keyword jiske basis par ek best product card suggest karna hai."
+                },
+                "max_price": {
+                    "type": "integer",
+                    "description": "Optional budget ceiling agar user ne budget bataya ho."
+                }
+            },
+            "required": ["search_term"]
+        }
+    }
+}, {
+    "type": "function",
+    "function": {
+        "name": "redirect_user",
+        "description": (
+            "Jab user kahe ki kisi collection, product page, shop, gift sets, profile, cart, studio, suggestions, "
+            "feedback ya bug report par jana hai tab use karo. Is tool ka kaam user ko correct Meltix page par le jana hai."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "destination": {
+                    "type": "string",
+                    "description": "User jis page ya section par jana chahta hai. Example: zodiac candle, hidden message, shop, gift sets, profile, cart"
+                }
+            },
+            "required": ["destination"]
+        }
+    }
+}]
+BOT_SYSTEM_PROMPT = """You are Meltix Bot, a highly professional, concise sales assistant at Meltix Atelier. Your only job is to help users discover and buy the right product.
+
+[STRICT LANGUAGE MATCHING]
+- Reply only in the language and script the user started the conversation in.
+- If they start in English, reply in English.
+- If they start in Hinglish, reply in Hinglish.
+- If they start in Hindi, reply in Hindi.
+- Do not switch languages unless the user clearly switches first.
+
+[SMART SALES MODE]
+- Keep every reply extremely short: maximum 1 to 3 sentences.
+- Politely greet the user, then quickly ask what they want to buy, gift, explore, or get suggested.
+- Move the conversation toward a product, collection, budget, occasion, or next page.
+- If the user is vague, ask one short sales question such as who the gift is for, budget, occasion, or preferred collection.
+- If the user is browsing a product page, stay relevant to that page first.
+
+[ANTI-WASTE PROTOCOL]
+- Do not entertain off-topic chats, jokes, or casual hanging out.
+- If the user tries unrelated conversation, politely and firmly redirect them toward gifts, candles, suggestions, collections, or buying intent.
+- If the user only says hello or asks how you are, answer briefly and immediately ask what they want to shop for.
+- No long paragraphs, no essays, no storytelling unless it directly helps sell the product.
+
+[SELLING STYLE]
+- Sound polished, warm, and efficient.
+- Focus on what the user wants to buy, gift, or explore.
+- Mention price only if the user asks for price, budget, affordability, or options in a range.
+- End with a short sales CTA when useful, such as asking whether they want a suggestion, a collection, or a specific product.
+
+[PRODUCT GUIDE]
+1. Hidden Message Candles -> for personal messages, confessions, surprises, reveal moments.
+2. Story Candles -> for mood shifts, routines, calming rituals, layered experiences.
+3. Zodiac Candles -> for astrology lovers, zodiac gifting, crystal-led gifting.
+4. Break to Reveal -> for surprise gifting, stress release, dramatic reveal moments.
+5. Candle Date Kit -> for date nights, anniversaries, cozy romantic setups.
+6. Gift Sets -> best option when the user is unsure and wants a polished gift.
+
+[TOOL USE]
+- Use search_store_products only when the user wants real product options, suggestions, budgets, or a specific collection/product.
+- Use suggest_product_card when you are recommending one specific product and want the UI to show a tappable product card.
+- If the user asks to see a specific collection, go to a different page, visit the shop, open profile, or view cart, use redirect_user.
+- Do not use the tool for greetings, jokes, or off-topic chatter."""
+BOT_ROMAN_HINDI_MARKERS = (
+    'acha', 'achha', 'are', 'arre', 'bata', 'batao', 'batau', 'bhai', 'bhaiya', 'bolo', 'chaiye',
+    'chahiye', 'dekh', 'dekhna', 'dena', 'hona', 'hoon', 'hu', 'kafi', 'kaisa', 'kaise', 'kar',
+    'karna', 'karo', 'koi', 'kr', 'krna', 'krta', 'krte', 'kya', 'kyu', 'kyun', 'lena', 'mai',
+    'main', 'mera', 'mere', 'mood', 'mujhe', 'nhi', 'nahi', 'pasand', 'raha', 'rha', 'sahi',
+    'samjha', 'suno', 'tha', 'thoda', 'toh', 'tum', 'tumhe', 'wala', 'wali', 'yar', 'yaar'
+)
+BOT_CONTEXT_LABELS = {
+    'shop': 'main shop',
+    'hidden-message': 'Hidden Message collection page',
+    'story-candle': 'Story Candle collection page',
+    'zodiac-candle': 'Zodiac Candle collection page',
+    'break-to-reveal': 'Break to Reveal collection page',
+    'candle-date-kit': 'Candle Date Kit collection page',
+}
+BOT_REDIRECT_DESTINATIONS = [
+    {'keywords': ('hidden message', 'hidden-message', 'hidden'), 'endpoint': 'hidden_message', 'label': 'Hidden Message'},
+    {'keywords': ('story candle', 'story-candle', 'story'), 'endpoint': 'story_candle', 'label': 'Story Candle'},
+    {'keywords': ('zodiac candle', 'zodiac-candle', 'zodiac'), 'endpoint': 'zodiac_candle', 'label': 'Zodiac Candle'},
+    {'keywords': ('break to reveal', 'break-to-reveal', 'break reveal', 'treasure hunt', 'stress buster'), 'endpoint': 'break_to_reveal', 'label': 'Break to Reveal'},
+    {'keywords': ('candle date kit', 'candle-date-kit', 'date kit', 'date night'), 'endpoint': 'candle_date_kit', 'label': 'Candle Date Kit'},
+    {'keywords': ('shop', 'collections', 'browse'), 'endpoint': 'shop', 'label': 'Shop'},
+    {'keywords': ('gift sets', 'gift set', 'gifts'), 'endpoint': 'gift_sets', 'label': 'Gift Sets'},
+    {'keywords': ('profile', 'account', 'my profile'), 'endpoint': 'profile', 'label': 'Profile'},
+    {'keywords': ('cart', 'bag', 'basket', 'checkout bag'), 'endpoint': 'shop', 'label': 'Cart', 'query': {'open_cart': '1'}},
+    {'keywords': ('meltix studio', 'craft studio', 'studio'), 'endpoint': 'craft_studio', 'label': 'Meltix Studio'},
+    {'keywords': ('suggestions', 'suggestion', 'recommendations', 'recommendation'), 'endpoint': 'suggestions', 'label': 'Suggestions'},
+    {'keywords': ('another section', 'head to', 'navigation'), 'endpoint': 'head_to', 'label': 'Another Section'},
+    {'keywords': ('feedback', 'review page'), 'endpoint': 'feedback', 'label': 'Feedback'},
+    {'keywords': ('bug report', 'bug', 'issue'), 'endpoint': 'bug_report', 'label': 'Bug Report'},
+]
 
 
 app = Flask(__name__)
@@ -452,6 +673,8 @@ class ProfileOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_email = db.Column(db.String(120), nullable=False, index=True)
     order_code = db.Column(db.String(40), unique=True, nullable=False, index=True)
+    payment_status = db.Column(db.String(20), nullable=False, default='Pending')
+    delivery_status = db.Column(db.String(20), nullable=False, default='Pending')
     stage_key = db.Column(db.String(30), nullable=False, default='placed')
     status_label = db.Column(db.String(80), nullable=False, default='Order Placed')
     tracking_note = db.Column(
@@ -466,6 +689,8 @@ class ProfileOrder(db.Model):
     item_count = db.Column(db.Integer, nullable=False, default=0)
     line_items_json = db.Column(db.Text, nullable=False, default='[]')
     scent_notes_json = db.Column(db.Text, nullable=False, default='[]')
+    confirmation_email_sent = db.Column(db.Boolean, nullable=False, default=False)
+    paid_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -753,6 +978,25 @@ def ensure_profile_schema():
             )
 
 
+def ensure_order_schema():
+    inspector = inspect(db.engine)
+    if not inspector.has_table('profile_order'):
+        return
+
+    order_columns = {column['name'] for column in inspector.get_columns('profile_order')}
+    column_definitions = {
+        'payment_status': "ALTER TABLE profile_order ADD COLUMN payment_status VARCHAR(20) NOT NULL DEFAULT 'Pending'",
+        'delivery_status': "ALTER TABLE profile_order ADD COLUMN delivery_status VARCHAR(20) NOT NULL DEFAULT 'Pending'",
+        'confirmation_email_sent': "ALTER TABLE profile_order ADD COLUMN confirmation_email_sent BOOLEAN NOT NULL DEFAULT FALSE",
+        'paid_at': "ALTER TABLE profile_order ADD COLUMN paid_at TIMESTAMP NULL",
+    }
+
+    for column_name, statement in column_definitions.items():
+        if column_name not in order_columns:
+            with db.engine.begin() as connection:
+                connection.execute(text(statement))
+
+
 def ensure_coupon_catalog():
     reward_codes = [coupon_data["code"] for coupon_data in LEVEL_REWARD_COUPONS.values()]
     existing_coupons = {
@@ -800,6 +1044,7 @@ with app.app_context():
     ensure_product_schema()
     ensure_review_schema()
     ensure_profile_schema()
+    ensure_order_schema()
     ensure_coupon_catalog()
     if AUTO_SEED_INVENTORY:
         seed_inventory()
@@ -882,6 +1127,77 @@ def serialize_product(product_record):
         'details': details,
         'ui_flags': ui_flags,
     }
+
+
+def _seed_shop_preview_images():
+    preview_images_by_slug = defaultdict(list)
+
+    try:
+        seed_rows = load_catalog_seed()
+    except (FileNotFoundError, ValueError, json.JSONDecodeError):
+        return preview_images_by_slug
+
+    valid_slugs = {collection['slug'] for collection in SHOP_COLLECTIONS}
+    for raw_row in seed_rows:
+        collection_slug = normalize_catalog_category(raw_row.get('collection_slug'))
+        if collection_slug not in valid_slugs:
+            continue
+
+        image_path = str(raw_row.get('image_path') or '').strip().replace('\\', '/').lstrip('/')
+        if not image_path:
+            continue
+
+        preview_images_by_slug[collection_slug].append(
+            {
+                'url': url_for('static', filename=image_path),
+                'alt': str(raw_row.get('name') or raw_row.get('collection_label') or 'Collection preview').strip(),
+            }
+        )
+
+    return preview_images_by_slug
+
+
+def build_shop_collections(max_preview_images=3):
+    collection_slugs = [collection['slug'] for collection in SHOP_COLLECTIONS]
+    product_rows = (
+        Product.query
+        .filter(Product.collection_slug.in_(collection_slugs))
+        .order_by(Product.collection_slug.asc(), Product.id.asc())
+        .all()
+    )
+
+    products_by_slug = defaultdict(list)
+    for product in product_rows:
+        products_by_slug[product.collection_slug].append(product)
+
+    seed_preview_images = _seed_shop_preview_images()
+    shop_collections = []
+
+    for collection in SHOP_COLLECTIONS:
+        preview_images = []
+
+        for product in products_by_slug.get(collection['slug'], [])[:max_preview_images]:
+            image_url = product_image_url(product)
+            if not image_url:
+                continue
+            preview_images.append(
+                {
+                    'url': image_url,
+                    'alt': (product.name or collection['slug']).strip(),
+                }
+            )
+
+        if not preview_images:
+            preview_images = seed_preview_images.get(collection['slug'], [])[:max_preview_images]
+
+        shop_collections.append(
+            {
+                **collection,
+                'preview_images': preview_images,
+            }
+        )
+
+    return shop_collections
 
 
 def normalize_level(level_value):
@@ -1016,6 +1332,342 @@ def get_session_user():
     return UserAccount.query.filter_by(email=session_email).first()
 
 
+def is_admin_desk_authenticated():
+    return session.get('admin_secret_authenticated') is True
+
+
+def search_store_products(search_term="", max_price=100000):
+    clean_term = str(search_term or '').strip()
+    if not clean_term:
+        return "System info: Search term missing."
+
+    try:
+        normalized_max_price = max(0, int(max_price or 100000))
+    except (TypeError, ValueError):
+        normalized_max_price = 100000
+
+    try:
+        products = find_bot_products(search_term=clean_term, max_price=normalized_max_price, limit=5)
+    except Exception as exc:
+        app.logger.warning('Bot product search failed: %s', exc)
+        return f"Database Error: {exc}"
+
+    if not products:
+        return f"System info: '{clean_term}' se related ₹{normalized_max_price} ke andar koi product database mein nahi mila."
+
+    result_lines = ["Items found in database:"]
+    for product in products:
+        result_lines.append(
+            f"- {product.name} | {product.collection_label} | {product.group_name} (Price: ₹{max(0, int(product.price or 0))})"
+        )
+    return "\n".join(result_lines)
+
+
+def normalize_bot_history(raw_history):
+    if not isinstance(raw_history, list):
+        return []
+
+    normalized = []
+    for entry in raw_history[-BOT_MAX_HISTORY:]:
+        if not isinstance(entry, dict):
+            continue
+        role = str(entry.get('role') or '').strip().lower()
+        if role not in {'user', 'assistant'}:
+            continue
+        content = str(entry.get('text') or entry.get('content') or '').strip()
+        if not content:
+            continue
+        normalized.append({'role': role, 'content': content[:3000]})
+    return normalized[-BOT_MAX_HISTORY:]
+
+
+def bot_collection_redirect_url(collection_slug):
+    endpoint_map = {
+        'hidden-message': 'hidden_message',
+        'story-candle': 'story_candle',
+        'zodiac-candle': 'zodiac_candle',
+        'break-to-reveal': 'break_to_reveal',
+        'candle-date-kit': 'candle_date_kit',
+        'gift-sets': 'gift_sets',
+    }
+    endpoint_name = endpoint_map.get(normalize_catalog_category(collection_slug) or str(collection_slug or '').strip().lower())
+    if not endpoint_name:
+        return url_for('shop')
+    return url_for(endpoint_name)
+
+
+def score_bot_product_match(product, search_term, normalized_slug):
+    haystacks = {
+        'name': str(product.name or '').strip().lower(),
+        'collection_label': str(product.collection_label or '').strip().lower(),
+        'group_name': str(product.group_name or '').strip().lower(),
+        'collection_slug': str(product.collection_slug or '').strip().lower(),
+    }
+    search_lower = str(search_term or '').strip().lower()
+    search_words = [word for word in re.findall(r'[a-z0-9]+', search_lower) if len(word) > 1]
+    score = 0
+
+    if normalized_slug and haystacks['collection_slug'] == normalized_slug:
+        score += 120
+    if search_lower and haystacks['name'] == search_lower:
+        score += 100
+
+    for key, value in haystacks.items():
+        if not value:
+            continue
+        if search_lower and search_lower in value:
+            score += 32 if key == 'name' else 24
+        for word in search_words:
+            if word in value:
+                score += 12 if key == 'name' else 8
+
+    score += min(max(0, int(product.likes or 0)), 25)
+    return score
+
+
+def find_bot_products(search_term="", max_price=100000, limit=5):
+    clean_term = str(search_term or '').strip()
+    if not clean_term:
+        return []
+
+    try:
+        normalized_max_price = max(0, int(max_price or 100000))
+    except (TypeError, ValueError):
+        normalized_max_price = 100000
+
+    normalized_slug = normalize_catalog_category(clean_term)
+    pattern = f"%{clean_term}%"
+    query = Product.query.filter(Product.price <= normalized_max_price)
+
+    filters = [
+        Product.collection_label.ilike(pattern),
+        Product.group_name.ilike(pattern),
+        Product.collection_slug.ilike(pattern),
+        Product.name.ilike(pattern),
+    ]
+    if normalized_slug:
+        filters.append(Product.collection_slug == normalized_slug)
+
+    products = (
+        query
+        .filter(or_(*filters))
+        .order_by(Product.likes.desc(), Product.id.asc())
+        .limit(max(limit * 3, 9))
+        .all()
+    )
+
+    ranked = sorted(
+        products,
+        key=lambda product: (
+            -score_bot_product_match(product, clean_term, normalized_slug),
+            -max(0, int(product.likes or 0)),
+            int(product.id or 0),
+        )
+    )
+    return ranked[:limit]
+
+
+def build_bot_product_card(product_record):
+    if not product_record:
+        return None
+
+    image_url = product_image_url(product_record)
+    if not image_url:
+        return None
+
+    return {
+        'product_id': int(product_record.id),
+        'name': str(product_record.name or 'Meltix Pick').strip(),
+        'image_url': image_url,
+        'redirect_url': f"{bot_collection_redirect_url(product_record.collection_slug)}?product={int(product_record.id)}",
+    }
+
+
+def suggest_product_card(search_term="", max_price=100000):
+    products = find_bot_products(search_term=search_term, max_price=max_price, limit=1)
+    product = products[0] if products else None
+    if not product:
+        return "No suitable product card found for that request.", None
+
+    tool_text = (
+        f"Suggested product card ready: {product.name} | {product.collection_label} | "
+        f"{product.group_name or product.collection_slug}"
+    )
+    return tool_text, build_bot_product_card(product)
+
+
+def resolve_bot_redirect(destination):
+    clean_destination = str(destination or '').strip().lower()
+    if not clean_destination:
+        return None
+
+    for target in BOT_REDIRECT_DESTINATIONS:
+        if any(keyword in clean_destination for keyword in target['keywords']):
+            endpoint = target['endpoint']
+            query = target.get('query') or {}
+            return {
+                'label': target['label'],
+                'redirect_url': url_for(endpoint, **query),
+            }
+
+    normalized_category = normalize_catalog_category(clean_destination)
+    if normalized_category:
+        endpoint_map = {
+            'hidden-message': 'hidden_message',
+            'story-candle': 'story_candle',
+            'zodiac-candle': 'zodiac_candle',
+            'break-to-reveal': 'break_to_reveal',
+            'candle-date-kit': 'candle_date_kit',
+            'gift-sets': 'gift_sets',
+        }
+        endpoint_name = endpoint_map.get(normalized_category)
+        if endpoint_name:
+            return {
+                'label': normalized_category.replace('-', ' ').title(),
+                'redirect_url': url_for(endpoint_name),
+            }
+
+    return None
+
+
+def redirect_user(destination=""):
+    resolved = resolve_bot_redirect(destination)
+    if not resolved:
+        return "Destination not available for redirect.", None
+
+    return (
+        f"Redirect prepared for {resolved['label']}.",
+        resolved,
+    )
+
+
+
+
+def detect_bot_language_style(prior_history, user_message):
+    opener = ''
+    for entry in prior_history:
+        if entry.get('role') == 'user' and entry.get('content'):
+            opener = str(entry.get('content') or '').strip()
+            if opener:
+                break
+    if not opener:
+        opener = str(user_message or '').strip()
+
+    if re.search(r'[\u0900-\u097F]', opener):
+        return 'hindi'
+
+    words = re.findall(r'[a-z]+', opener.lower())
+    if any(word in BOT_ROMAN_HINDI_MARKERS for word in words):
+        return 'hinglish'
+
+    return 'english'
+
+
+def build_bot_system_prompt(prior_history, user_message, bot_context):
+    language_style = detect_bot_language_style(prior_history, user_message)
+    context_label = BOT_CONTEXT_LABELS.get(str(bot_context or '').strip().lower(), 'general browsing')
+    return (
+        f"{BOT_SYSTEM_PROMPT}\n\n"
+        f"[SESSION LOCK]\n"
+        f"- The user started in {language_style}. Reply only in {language_style} unless the user clearly switches.\n"
+        f"- Current page context: {context_label}.\n"
+        f"- Your first goal in this session is to move the user toward a product, recommendation, budget, or collection choice."
+    )
+
+
+def get_bot_static_message(language_style, key):
+    language = str(language_style or 'english').strip().lower()
+    copy = {
+        'busy': {
+            'english': 'Meltix Bot is busy right now. Try again in a moment.',
+            'hinglish': 'Meltix Bot abhi busy hai. Thodi der mein phir try karo.',
+            'hindi': '\u092e\u0947\u0932\u094d\u091f\u093f\u0915\u094d\u0938 \u092c\u0949\u091f \u0905\u092d\u0940 \u0935\u094d\u092f\u0938\u094d\u0924 \u0939\u0948\u0964 \u0925\u094b\u0921\u093c\u0940 \u0926\u0947\u0930 \u092e\u0947\u0902 \u092b\u093f\u0930 \u0915\u094b\u0936\u093f\u0936 \u0915\u0930\u0947\u0902\u0964',
+        },
+        'empty': {
+            'english': 'Welcome. Looking for a gift, a candle, or a quick suggestion?',
+            'hinglish': 'Welcome. Gift, candle, ya quick suggestion chahiye?',
+            'hindi': '\u0938\u094d\u0935\u093e\u0917\u0924 \u0939\u0948\u0964 \u0917\u093f\u092b\u094d\u091f, \u0915\u0948\u0902\u0921\u0932, \u092f\u093e \u0915\u094b\u0908 quick suggestion \u091a\u093e\u0939\u093f\u090f?',
+        }
+    }
+    return copy.get(key, {}).get(language) or copy.get(key, {}).get('english', '')
+
+
+def finalize_bot_reply(raw_text, language_style, fallback_key='empty'):
+    text = re.sub(r'\s+', ' ', str(raw_text or '')).strip()
+    if not text:
+        text = get_bot_static_message(language_style, fallback_key)
+
+    parts = [part.strip() for part in re.split(r'(?<=[.!?\u0964])\s+|\n+', text) if part.strip()]
+    concise = ' '.join(parts[:3]) if parts else text
+
+    if len(concise) > 260:
+        concise = concise[:257].rsplit(' ', 1)[0].rstrip(' ,;:-') + '...'
+
+    return concise or get_bot_static_message(language_style, fallback_key)
+
+
+def make_bot_assistant_message(content, tool_calls=None):
+    message = {"role": "assistant", "content": content or ""}
+    if tool_calls:
+        message["tool_calls"] = [
+            {
+                "id": tool_call.id,
+                "type": "function",
+                "function": {
+                    "name": tool_call.function.name,
+                    "arguments": tool_call.function.arguments,
+                }
+            }
+            for tool_call in tool_calls
+        ]
+    return message
+
+
+def has_malformed_bot_tool_call(message):
+    if getattr(message, "tool_calls", None):
+        return False
+    content = (getattr(message, "content", "") or "").lower()
+    bad_markers = ("<function", "</function>", "search_store_products")
+    return any(marker in content for marker in bad_markers)
+
+
+def get_bot_completion(messages, use_tools=True):
+    if litellm_completion is None:
+        return None, None
+
+    request_kwargs = {"messages": messages}
+    models = BOT_MODELS_TO_TRY
+    if use_tools:
+        request_kwargs["tools"] = BOT_TOOLS
+        request_kwargs["tool_choice"] = "auto"
+        models = BOT_TOOL_MODELS_TO_TRY
+
+    for model in models:
+        try:
+            response = litellm_completion(model=model, **request_kwargs)
+            if use_tools and has_malformed_bot_tool_call(response.choices[0].message):
+                app.logger.warning('%s returned malformed tool-call text instead of structured tool_calls.', model)
+                continue
+            return response, model
+        except Exception as exc:
+            app.logger.warning('Bot model %s failed: %s', model, exc)
+            continue
+
+    return None, None
+
+
+def parse_bot_tool_arguments(raw_arguments):
+    if isinstance(raw_arguments, dict):
+        return raw_arguments
+    if isinstance(raw_arguments, str):
+        try:
+            parsed = json.loads(raw_arguments)
+            return parsed if isinstance(parsed, dict) else {}
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return {}
+    return {}
+
+
 def parse_money_value(value):
     if isinstance(value, (int, float)):
         return int(round(float(value)))
@@ -1061,6 +1713,16 @@ def parse_datetime_value(value):
 
 def format_money(amount):
     return f"INR {int(amount):,}"
+
+
+def normalize_payment_status(value):
+    candidate = str(value or '').strip().title()
+    return candidate if candidate in PAYMENT_STATUS_OPTIONS else 'Pending'
+
+
+def normalize_delivery_status(value):
+    candidate = str(value or '').strip().title()
+    return candidate if candidate in DELIVERY_STATUS_OPTIONS else 'Pending'
 
 
 def get_stage_config(stage_key):
@@ -1466,6 +2128,8 @@ def finalize_checkout_order(checkout_draft, payment_context=None):
     order_record = ProfileOrder(
         user_email=checkout_draft['email'],
         order_code=order_code,
+        payment_status='Pending',
+        delivery_status='Pending',
         stage_key='placed',
         status_label=stage['label'],
         tracking_note=stage['description'],
@@ -1476,6 +2140,7 @@ def finalize_checkout_order(checkout_draft, payment_context=None):
         item_count=sum(item['quantity'] for item in line_items),
         line_items_json=json.dumps(line_items, ensure_ascii=False),
         scent_notes_json=json.dumps(scent_notes, ensure_ascii=False),
+        confirmation_email_sent=False,
     )
     db.session.add(order_record)
     db.session.flush()
@@ -1601,6 +2266,8 @@ def serialize_order(order_record):
         "order_id": order_record.order_code,
         "date": order_record.created_at.strftime("%d %b %Y"),
         "created_at": order_record.created_at.isoformat(),
+        "payment_status": normalize_payment_status(getattr(order_record, 'payment_status', 'Pending')),
+        "delivery_status": normalize_delivery_status(getattr(order_record, 'delivery_status', 'Pending')),
         "status": order_record.status_label,
         "stage_key": order_record.stage_key,
         "stage_label": stage["label"],
@@ -1614,6 +2281,158 @@ def serialize_order(order_record):
         "item_count": order_record.item_count,
         "items": items,
         "scent_notes": scent_notes,
+    }
+
+
+def format_profile_shipping_address(profile_record):
+    if not profile_record:
+        return "Address unavailable"
+
+    address_parts = [
+        str(profile_record.shipping_name or '').strip(),
+        str(profile_record.shipping_line1 or '').strip(),
+        str(profile_record.shipping_line2 or '').strip(),
+        str(profile_record.shipping_city or '').strip(),
+        str(profile_record.shipping_state or '').strip(),
+        str(profile_record.shipping_postal_code or '').strip(),
+        str(profile_record.shipping_country or '').strip(),
+    ]
+    compact = [part for part in address_parts if part]
+    return ", ".join(compact) if compact else "Address unavailable"
+
+
+def normalize_order_item_quantity(value):
+    try:
+        return max(1, int(value or 1))
+    except (TypeError, ValueError):
+        return 1
+
+
+def build_order_items_summary(order_record, separator=", "):
+    item_labels = []
+    for item in safe_json_loads(order_record.line_items_json, []):
+        name = str(item.get('title') or item.get('name') or 'Meltix Candle').strip()
+        quantity = normalize_order_item_quantity(item.get('quantity'))
+        item_labels.append(f"{name} x{quantity}")
+    return separator.join(item_labels) if item_labels else "Meltix creation"
+
+
+def build_order_confirmation_email_html(order_record, profile_record, estimated_delivery_date):
+    customer_name = escape(
+        (profile_record.display_name if profile_record else '') or order_record.user_email.split('@')[0] or 'Collector'
+    )
+    order_code = escape(order_record.order_code)
+    total_amount = escape(format_money(order_record.total_amount))
+    delivery_date = escape(estimated_delivery_date.strftime("%d %b %Y"))
+    delivery_address = escape(format_profile_shipping_address(profile_record))
+    items_markup = ''.join(
+        (
+            f"<li style=\"margin:0 0 10px; color:#f5f0e8;\">"
+            f"{escape(str(item.get('title') or item.get('name') or 'Meltix Candle'))}"
+            f" <span style=\"color:#dcae6f;\">x{normalize_order_item_quantity(item.get('quantity'))}</span>"
+            f"</li>"
+        )
+        for item in safe_json_loads(order_record.line_items_json, [])
+    ) or "<li style=\"color:#f5f0e8;\">Your Meltix order is being prepared.</li>"
+
+    return f"""
+    <div style="margin:0; padding:32px 16px; background:#050505; font-family:Georgia, 'Times New Roman', serif; color:#f5f0e8;">
+      <div style="max-width:680px; margin:0 auto; background:linear-gradient(180deg, rgba(220,174,111,0.08), rgba(5,5,5,0.98)); border:1px solid rgba(220,174,111,0.3); border-radius:28px; overflow:hidden; box-shadow:0 28px 80px rgba(0,0,0,0.45);">
+        <div style="padding:40px 40px 28px; border-bottom:1px solid rgba(220,174,111,0.18);">
+          <div style="font-size:12px; letter-spacing:0.38em; text-transform:uppercase; color:#dcae6f; margin-bottom:18px;">Meltix Atelier</div>
+          <h1 style="margin:0; font-size:38px; line-height:1.1; font-weight:500; color:#fdfbf7;">Thank you for joining the Atelier</h1>
+          <p style="margin:18px 0 0; font-size:16px; line-height:1.7; color:rgba(253,251,247,0.72);">Dear {customer_name}, your order has been received and the atelier is now preparing your ritual-worthy package.</p>
+        </div>
+        <div style="padding:32px 40px;">
+          <div style="display:block; margin-bottom:24px; padding:22px 24px; border-radius:22px; background:rgba(255,255,255,0.02); border:1px solid rgba(220,174,111,0.18);">
+            <div style="margin-bottom:10px; font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:rgba(253,251,247,0.54);">Order Reference</div>
+            <div style="font-size:24px; color:#fdfbf7;">{order_code}</div>
+            <div style="margin-top:16px; font-size:15px; color:rgba(253,251,247,0.72);">Amount Paid: <span style="color:#dcae6f;">{total_amount}</span></div>
+            <div style="margin-top:10px; font-size:15px; color:rgba(253,251,247,0.72);">Estimated Delivery: <span style="color:#dcae6f;">{delivery_date}</span></div>
+          </div>
+          <div style="margin-bottom:24px;">
+            <h2 style="margin:0 0 14px; font-size:18px; letter-spacing:0.08em; text-transform:uppercase; color:#dcae6f;">Inside Your Order</h2>
+            <ul style="margin:0; padding-left:20px; color:#f5f0e8; line-height:1.7;">{items_markup}</ul>
+          </div>
+          <div style="padding:20px 22px; border-radius:20px; background:rgba(220,174,111,0.06); border:1px solid rgba(220,174,111,0.18);">
+            <div style="margin-bottom:8px; font-size:12px; letter-spacing:0.24em; text-transform:uppercase; color:rgba(253,251,247,0.56);">Delivery Address</div>
+            <div style="font-size:15px; line-height:1.8; color:#f5f0e8;">{delivery_address}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """.strip()
+
+
+def build_order_confirmation_email_text(order_record, profile_record, estimated_delivery_date):
+    customer_name = (
+        (profile_record.display_name if profile_record else '') or order_record.user_email.split('@')[0] or 'Collector'
+    )
+    return (
+        f"Thank you for joining the Atelier, {customer_name}.\n"
+        f"Order ID: {order_record.order_code}\n"
+        f"Amount Paid: {format_money(order_record.total_amount)}\n"
+        f"Estimated Delivery: {estimated_delivery_date.strftime('%d %b %Y')}\n"
+        f"Items: {build_order_items_summary(order_record)}\n"
+        f"Delivery Address: {format_profile_shipping_address(profile_record)}"
+    )
+
+
+def send_order_confirmation_email(order_record, profile_record, estimated_delivery_date):
+    smtp_host = (os.environ.get('SMTP_HOST') or '').strip()
+    try:
+        smtp_port = int(os.environ.get('SMTP_PORT') or 587)
+    except (TypeError, ValueError):
+        smtp_port = 587
+    smtp_username = (os.environ.get('SMTP_USERNAME') or '').strip()
+    smtp_password = (os.environ.get('SMTP_PASSWORD') or '').strip()
+    smtp_from_email = (os.environ.get('SMTP_FROM_EMAIL') or smtp_username).strip()
+    smtp_from_name = (os.environ.get('SMTP_FROM_NAME') or 'Meltix Atelier').strip()
+    use_ssl = env_flag('SMTP_USE_SSL', default=False)
+    use_tls = env_flag('SMTP_USE_TLS', default=not use_ssl)
+
+    if not smtp_host or not smtp_from_email:
+        app.logger.warning('Order confirmation email skipped because SMTP is not configured.')
+        return False
+
+    message = MIMEMultipart('alternative')
+    message['Subject'] = f"Meltix Atelier | Order Confirmation {order_record.order_code}"
+    message['From'] = f"{smtp_from_name} <{smtp_from_email}>"
+    message['To'] = order_record.user_email
+    message.attach(MIMEText(build_order_confirmation_email_text(order_record, profile_record, estimated_delivery_date), 'plain', 'utf-8'))
+    message.attach(MIMEText(build_order_confirmation_email_html(order_record, profile_record, estimated_delivery_date), 'html', 'utf-8'))
+
+    try:
+        if use_ssl:
+            server = smtplib.SMTP_SSL(smtp_host, smtp_port, context=ssl.create_default_context(), timeout=20)
+        else:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=20)
+
+        with server:
+            if not use_ssl and use_tls:
+                server.starttls(context=ssl.create_default_context())
+            if smtp_username and smtp_password:
+                server.login(smtp_username, smtp_password)
+            server.sendmail(smtp_from_email, [order_record.user_email], message.as_string())
+        return True
+    except Exception:
+        app.logger.exception('Order confirmation email failed for %s', order_record.order_code)
+        return False
+
+
+def serialize_admin_order(order_record, profile_record):
+    return {
+        'order_id': order_record.order_code,
+        'created_at': order_record.created_at,
+        'created_at_display': order_record.created_at.strftime("%d %b %Y, %I:%M %p"),
+        'customer_name': (profile_record.display_name if profile_record else '') or order_record.user_email,
+        'customer_email': order_record.user_email,
+        'customer_phone': (profile_record.phone if profile_record else '') or 'Not available',
+        'customer_address': format_profile_shipping_address(profile_record),
+        'items_summary': build_order_items_summary(order_record, separator=' • '),
+        'amount_display': format_money(order_record.total_amount),
+        'payment_status': normalize_payment_status(getattr(order_record, 'payment_status', 'Pending')),
+        'delivery_status': normalize_delivery_status(getattr(order_record, 'delivery_status', 'Pending')),
     }
 
 
@@ -1817,6 +2636,14 @@ def sync_profile_orders(user_email, orders_payload):
             subtotal = max(total_amount - shipping_fee, 0)
 
         order_record.user_email = user_email
+        order_record.payment_status = normalize_payment_status(raw_order.get("payment_status") or 'Paid')
+        order_record.delivery_status = (
+            'Delivered'
+            if stage_key == 'delivered'
+            else 'Shipped'
+            if stage_key == 'shipped'
+            else 'Pending'
+        )
         order_record.stage_key = stage_key
         order_record.status_label = stage["label"]
         order_record.tracking_note = stage["description"]
@@ -1965,13 +2792,117 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
 # 🔴 FRONTEND PAGE ROUTES (Untouched) 🔴
 # ==========================================
 
+@app.route('/api/bot/chat', methods=['POST'])
+def bot_chat_api():
+    data = request.get_json(silent=True) or {}
+    user_message = str(data.get('message') or '').strip()
+    if not user_message:
+        return jsonify({'success': False, 'message': 'Message is required.'}), 400
+
+    limited_response = rate_limit_response(
+        'bot-chat',
+        user_message='Too many bot messages too quickly. Please wait a few seconds and try again.',
+        window_seconds=BOT_RATE_LIMIT_WINDOW_SECONDS,
+        max_attempts=BOT_RATE_LIMIT_MAX_ATTEMPTS,
+    )
+    if limited_response:
+        app.logger.warning('Bot chat rate limit hit for IP %s', get_client_ip())
+        return limited_response
+
+    prior_history = normalize_bot_history(data.get('history'))
+    bot_context = str(data.get('context') or 'general').strip().lower()
+    language_style = detect_bot_language_style(prior_history, user_message)
+    system_prompt = build_bot_system_prompt(prior_history, user_message, bot_context)
+    messages = [{"role": "system", "content": system_prompt}] + prior_history + [{
+        "role": "user",
+        "content": user_message[:3000],
+    }]
+
+    ai_response, used_model = get_bot_completion(messages, use_tools=True)
+    if not ai_response:
+        return jsonify({
+            'success': False,
+            'message': get_bot_static_message(language_style, 'busy'),
+        }), 503
+
+    response_message = ai_response.choices[0].message
+    reply_text = (response_message.content or '').strip()
+    product_card = None
+    redirect_url = None
+
+    if getattr(response_message, 'tool_calls', None):
+        followup_messages = messages + [
+            make_bot_assistant_message(reply_text, getattr(response_message, 'tool_calls', None))
+        ]
+
+        for tool_call in response_message.tool_calls:
+            tool_name = str(tool_call.function.name or '').strip()
+            tool_args = parse_bot_tool_arguments(tool_call.function.arguments)
+            tool_output = "Tool unavailable."
+
+            if tool_name == 'search_store_products':
+                tool_output = search_store_products(
+                    search_term=tool_args.get('search_term', ''),
+                    max_price=tool_args.get('max_price', 100000),
+                )
+            elif tool_name == 'suggest_product_card':
+                tool_output, suggested_card = suggest_product_card(
+                    search_term=tool_args.get('search_term', ''),
+                    max_price=tool_args.get('max_price', 100000),
+                )
+                if suggested_card:
+                    product_card = suggested_card
+            elif tool_name == 'redirect_user':
+                tool_output, redirect_payload = redirect_user(
+                    destination=tool_args.get('destination', ''),
+                )
+                if redirect_payload:
+                    redirect_url = redirect_payload.get('redirect_url')
+
+            followup_messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "name": tool_name,
+                "content": tool_output,
+            })
+
+        final_response, final_model = get_bot_completion(followup_messages, use_tools=False)
+        final_text = finalize_bot_reply(
+            ((final_response.choices[0].message.content or '').strip()) if final_response else reply_text,
+            language_style,
+        )
+
+        return jsonify({
+            'success': True,
+            'reply': final_text,
+            'product_card': product_card,
+            'redirect_url': redirect_url,
+            'model': final_model or used_model,
+            'used_tool': True,
+        }), 200
+
+    return jsonify({
+        'success': True,
+        'reply': finalize_bot_reply(reply_text, language_style),
+        'product_card': None,
+        'redirect_url': None,
+        'model': used_model,
+        'used_tool': False,
+    }), 200
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/shop')
 def shop():
-    return render_template('shop.html')
+    return render_template(
+        'shop.html',
+        shop_collections=build_shop_collections(),
+        show_nav_options=True,
+        bot_context='shop',
+    )
 
 @app.route('/checkout')
 def checkout():
@@ -1992,29 +2923,149 @@ def checkout():
         checkout_prefill=prefill,
     )
 
+
+@app.route('/order-success')
+def order_success():
+    order_id = str(request.args.get('order_id') or session.get('last_order_id') or '').strip().upper()
+    if not order_id:
+        return redirect(url_for('shop'))
+
+    order_record = ProfileOrder.query.filter_by(order_code=order_id).first()
+    if not order_record:
+        return redirect(url_for('profile'))
+
+    profile_record = UserAccount.query.filter_by(email=order_record.user_email).first()
+    if normalize_payment_status(order_record.payment_status) != 'Paid':
+        order_record.payment_status = 'Paid'
+        order_record.paid_at = order_record.paid_at or datetime.utcnow()
+
+    payment_reference_date = order_record.paid_at or datetime.utcnow()
+    estimated_delivery_date = payment_reference_date + timedelta(days=5)
+
+    if not bool(getattr(order_record, 'confirmation_email_sent', False)):
+        if send_order_confirmation_email(order_record, profile_record, estimated_delivery_date):
+            order_record.confirmation_email_sent = True
+
+    db.session.commit()
+    session['last_order_id'] = order_record.order_code
+    session.modified = True
+
+    return render_template(
+        'order_success.html',
+        order=serialize_order(order_record),
+        customer_name=(profile_record.display_name if profile_record else '') or order_record.user_email,
+        customer_email=order_record.user_email,
+        estimated_delivery_date=estimated_delivery_date.strftime("%d %b %Y"),
+    )
+
+
+@app.route('/admin-secret-desk', methods=['GET', 'POST'])
+def admin_secret_desk():
+    if request.args.get('logout') == '1':
+        session.pop('admin_secret_authenticated', None)
+        session.modified = True
+        return redirect(url_for('admin_secret_desk'))
+
+    auth_error = ''
+    if request.method == 'POST':
+        submitted_password = str(request.form.get('password') or '').strip()
+        if submitted_password == ADMIN_SECRET_PASSWORD:
+            session['admin_secret_authenticated'] = True
+            session.modified = True
+            return redirect(url_for('admin_secret_desk'))
+        auth_error = 'Incorrect password. Please try again.'
+
+    if not is_admin_desk_authenticated():
+        return render_template('admin_dashboard.html', is_authenticated=False, auth_error=auth_error)
+
+    orders = ProfileOrder.query.order_by(ProfileOrder.created_at.desc()).all()
+    order_emails = sorted({order.user_email for order in orders if order.user_email})
+    profiles = {
+        profile.email: profile
+        for profile in UserAccount.query.filter(UserAccount.email.in_(order_emails)).all()
+    } if order_emails else {}
+    admin_orders = [serialize_admin_order(order, profiles.get(order.user_email)) for order in orders]
+
+    return render_template(
+        'admin_dashboard.html',
+        is_authenticated=True,
+        orders=admin_orders,
+        delivery_status_options=DELIVERY_STATUS_OPTIONS,
+    )
+
+
+@app.route('/update-order-status/<order_id>', methods=['POST'])
+def update_order_status(order_id):
+    if not is_admin_desk_authenticated():
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+
+    order_record = ProfileOrder.query.filter_by(order_code=str(order_id).strip().upper()).first()
+    if not order_record:
+        return jsonify({'success': False, 'message': 'Order not found'}), 404
+
+    data = request.get_json(silent=True) or {}
+    requested_status = str(data.get('delivery_status') or '').strip().title()
+    if requested_status not in DELIVERY_STATUS_OPTIONS:
+        return jsonify({'success': False, 'message': 'Invalid delivery status'}), 400
+
+    order_record.delivery_status = requested_status
+    mapped_stage_key = DELIVERY_STAGE_MAP.get(requested_status, 'placed')
+    stage = get_stage_config(mapped_stage_key)
+    order_record.stage_key = mapped_stage_key
+    order_record.status_label = stage['label']
+    order_record.tracking_note = stage['description']
+    db.session.commit()
+
+    return jsonify({
+        'success': True,
+        'delivery_status': order_record.delivery_status,
+        'status_label': order_record.status_label,
+        'tracking_note': order_record.tracking_note,
+    }), 200
+
 @app.route('/refund-policy')
 def refund_policy():
     return render_template('refund_policy.html')
 
 @app.route('/hidden-message')
 def hidden_message():
-    return render_template('hidden_message.html')
+    return render_template(
+        'hidden_message.html',
+        show_nav_options=False,
+        bot_context='hidden-message',
+    )
 
 @app.route('/story-candle')
 def story_candle():
-    return render_template('story_candle.html')
+    return render_template(
+        'story_candle.html',
+        show_nav_options=False,
+        bot_context='story-candle',
+    )
 
 @app.route('/zodiac-candle')
 def zodiac_candle():
-    return render_template('zodiac_candle.html')
+    return render_template(
+        'zodiac_candle.html',
+        show_nav_options=False,
+        bot_context='zodiac-candle',
+    )
 
 @app.route('/break-to-reveal')
 def break_to_reveal():
-    return render_template('break_to_reveal.html')
+    return render_template(
+        'break_to_reveal.html',
+        show_nav_options=False,
+        bot_context='break-to-reveal',
+    )
 
 @app.route('/candle-date-kit')
 def candle_date_kit():
-    return render_template('candle_date_kit.html')
+    return render_template(
+        'candle_date_kit.html',
+        show_nav_options=False,
+        bot_context='candle-date-kit',
+    )
 
 @app.route('/about-us')
 def about_us():
@@ -2162,27 +3213,43 @@ def get_client_ip():
     return (request.remote_addr or 'unknown').strip() or 'unknown'
 
 
-def check_form_rate_limit(bucket_name):
+def check_rate_limit(bucket_name, window_seconds, max_attempts, identity_key=None):
     now = time.time()
-    bucket_key = f"{bucket_name}:{get_client_ip()}"
+    bucket_identity = (identity_key or get_client_ip() or 'unknown').strip() or 'unknown'
+    bucket_key = f"{bucket_name}:{bucket_identity}"
 
     with FORM_RATE_LIMIT_LOCK:
         attempt_times = FORM_RATE_LIMIT_BUCKETS[bucket_key]
-        cutoff = now - FORM_RATE_LIMIT_WINDOW_SECONDS
+        cutoff = now - window_seconds
 
         while attempt_times and attempt_times[0] <= cutoff:
             attempt_times.popleft()
 
-        if len(attempt_times) >= FORM_RATE_LIMIT_MAX_ATTEMPTS:
-            retry_after = max(1, int(FORM_RATE_LIMIT_WINDOW_SECONDS - (now - attempt_times[0])))
+        if len(attempt_times) >= max_attempts:
+            retry_after = max(1, int(window_seconds - (now - attempt_times[0])))
             return retry_after
 
         attempt_times.append(now)
         return 0
 
 
-def rate_limit_response(bucket_name, user_message='Too many submissions. Please wait a few minutes and try again.'):
-    retry_after = check_form_rate_limit(bucket_name)
+def check_form_rate_limit(bucket_name):
+    return check_rate_limit(bucket_name, FORM_RATE_LIMIT_WINDOW_SECONDS, FORM_RATE_LIMIT_MAX_ATTEMPTS)
+
+
+def rate_limit_response(
+    bucket_name,
+    user_message='Too many submissions. Please wait a few minutes and try again.',
+    window_seconds=None,
+    max_attempts=None,
+    identity_key=None,
+):
+    retry_after = check_rate_limit(
+        bucket_name,
+        window_seconds if window_seconds is not None else FORM_RATE_LIMIT_WINDOW_SECONDS,
+        max_attempts if max_attempts is not None else FORM_RATE_LIMIT_MAX_ATTEMPTS,
+        identity_key=identity_key,
+    )
     if retry_after <= 0:
         return None
 
@@ -3221,12 +4288,14 @@ def verify_payment():
         }), 500
 
     session.pop('pending_checkout', None)
+    session['last_order_id'] = finalized_order['order_record'].order_code
     session.modified = True
 
     return jsonify({
         'success': True,
         'message': 'Payment verified and order placed successfully.',
         'order': serialize_order(finalized_order['order_record']),
+        'success_url': url_for('order_success', order_id=finalized_order['order_record'].order_code),
         'subtotal': finalized_order['subtotal'],
         'shipping_fee': finalized_order['shipping_fee'],
         'discount_amount': finalized_order['discount_amount'],
@@ -3239,12 +4308,18 @@ def verify_payment():
 @app.route('/api/orders/place', methods=['POST'])
 def place_order():
     try:
+        data = request.get_json() or {}
         checkout_draft = build_checkout_draft(data)
         finalized_order = finalize_checkout_order(checkout_draft)
+        finalized_order['order_record'].payment_status = 'Paid'
+        finalized_order['order_record'].paid_at = datetime.utcnow()
         db.session.commit()
+        session['last_order_id'] = finalized_order['order_record'].order_code
+        session.modified = True
         return jsonify({
             'success': True,
             'order': serialize_order(finalized_order['order_record']),
+            'success_url': url_for('order_success', order_id=finalized_order['order_record'].order_code),
             'subtotal': finalized_order['subtotal'],
             'shipping_fee': finalized_order['shipping_fee'],
             'discount_amount': finalized_order['discount_amount'],
@@ -3287,3 +4362,4 @@ def leaderboard_api():
 
 if __name__ == '__main__':
     app.run(debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
+

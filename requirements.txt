@@ -1,5 +1,6 @@
 Flask
 Flask-SQLAlchemy
+litellm
 psycopg2-binary
 gunicorn
 python-dotenv

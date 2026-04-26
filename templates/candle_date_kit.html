@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='candle_date_kit.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -196,9 +197,13 @@
         </div>
     </div>
 
+    {% with show_nav_options=False, bot_context='candle-date-kit' %}
+      {% include '_bot_panel.html' %}
+    {% endwith %}
     {% include '_ghost_cart.html' %}
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/meltix-core.js') }}?v=ghost-cart-1"></script>
+    <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
+    <script src="{{ url_for('static', filename='js/meltix-core.js') }}?v=ghost-cart-3"></script>
     <script>
         MeltixCore.initCarouselCollection({
             catalogEndpoint: "{{ url_for('catalog_api', category='candle-date-kit') }}",

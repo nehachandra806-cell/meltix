@@ -7,82 +7,35 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at top, rgba(212, 163, 115, 0.18), transparent 35%),
-                linear-gradient(180deg, #0a0705 0%, #030201 100%);
-            color: #eadfce;
-            font-family: "Lato", sans-serif;
-        }
-
-        .policy-wrap {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 56px 20px 80px;
-        }
-
-        .policy-card {
-            border: 1px solid rgba(212, 163, 115, 0.18);
-            border-radius: 28px;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 32px;
-            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.35);
-        }
-
-        h1, h2 {
-            font-family: "Playfair Display", serif;
-            color: #fff3e2;
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: clamp(2rem, 5vw, 3.4rem);
-        }
-
-        h2 {
-            margin-top: 28px;
-            font-size: 1.3rem;
-        }
-
-        p, li {
-            color: #d9ccb9;
-            line-height: 1.75;
-        }
-
-        a {
-            color: #f4c98a;
-        }
-
-        .back-link {
-            display: inline-flex;
-            margin-bottom: 20px;
-            color: #f4c98a;
-            text-decoration: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='refund_policy.css') }}">
 </head>
 <body>
-    <div class="policy-wrap">
-        <a class="back-link" href="/checkout">Back to Checkout</a>
-        <div class="policy-card">
+    <nav class="top-nav">
+        <a href="/checkout" class="back-btn"><span>✦</span> Back to Checkout</a>
+        <div class="nav-brand">
+            <span class="nav-brand-sub">Secure Atelier</span>
+            <span class="nav-brand-name">Refund Policy</span>
+        </div>
+    </nav>
+
+    <main class="policy-wrap">
+        <section class="policy-card">
             <h1>Meltix Refund Policy</h1>
             <p>We handle every order with care. If a payment succeeds but your order cannot be fulfilled because of stock or verification issues, our team initiates a refund through the same payment source whenever possible.</p>
+
             <h2>Order Processing</h2>
             <p>Orders are confirmed only after payment verification and final stock confirmation. Custom or personalized details are reviewed as part of fulfillment.</p>
+
             <h2>Refund Cases</h2>
             <ul>
                 <li>Failed stock confirmation after payment</li>
                 <li>Duplicate payment capture</li>
                 <li>Platform-side payment verification failure after successful charge</li>
             </ul>
+
             <h2>Support</h2>
             <p>If you need help with a payment, please contact Meltix support through the contact page and include your order code or payment reference.</p>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>
