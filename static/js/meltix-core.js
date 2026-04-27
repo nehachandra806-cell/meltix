@@ -827,12 +827,18 @@
       this.track = byId("carousel-track");
       this.scrubber = byId("custom-scrubber");
       this.bgTitle = byId("bg-dynamic-title");
+      this.backToOptionsButton = byId("backToOptionsBtn");
       this.productShowcase = byId("product-showcase");
       this.accordionBox = byId("accordion-box");
       this.fabMenu = byId("fab-menu");
       this.fabOptions = byId("fab-options");
       this.stopButton = byId("stop-showcase-btn");
+      this.prevButton = byId("showcasePrevBtn");
+      this.nextButton = byId("showcaseNextBtn");
+      this.indicatorsContainer = byId("showcaseIndicators");
       this.modal = byId("productModal");
+      this.showcaseMode = textOrEmpty(this.config.showcaseMode).trim().toLowerCase() || "legacy-3d";
+      this.isSnapShowcase = this.showcaseMode === "luxury-snap";
       this.isDragging = false;
       this.isActuallyDragging = false;
       this.isScrubbing = false;
@@ -847,10 +853,16 @@
       this.singleSetWidth = 0;
       this.legacyScrollLoop = this.config.legacyScrollLoop !== false;
       this.reducedMotion = false;
+      this.currentIndex = 0;
+      this.autoShowcaseInterval = null;
+      this.snapCurrentX = 0;
+      this.snapBaseOffset = 0;
+      this.snapDirection = 1;
 
       renderDust(config.dustContainerId || "dust-particles", config.dustCount || 50);
       this.reducedMotion = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
       this.bindCarouselInteractions();
+      this.bindBackToOptions();
       this.bindGlobals({
         handleSelection: this.handleSelection.bind(this),
         switchVariant: this.switchVariant.bind(this),
@@ -868,6 +880,11 @@
 
     bindCarouselInteractions() {
       if (!this.dragArea || !this.track) {
+        return;
+      }
+
+      if (this.isSnapShowcase) {
+        this.bindSnapCarouselInteractions();
         return;
       }
 
@@ -936,8 +953,385 @@
       }
     }
 
+    bindSnapCarouselInteractions() {
+      this.ensureSnapControlLayout();
+      this.dragArea.style.cursor = "grab";
+      this.dragArea.style.touchAction = "pan-y";
+
+      this.prevButton?.addEventListener("click", () => {
+        this.snapDirection = -1;
+        this.goToSnapSlide(this.currentIndex - 1);
+      });
+
+      this.nextButton?.addEventListener("click", () => {
+        this.snapDirection = 1;
+        this.goToSnapSlide(this.currentIndex + 1);
+      });
+
+      this.dragArea.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) {
+          return;
+        }
+        if (event.target instanceof Element && event.target.closest(".like-btn")) {
+          return;
+        }
+        this.isDragging = true;
+        this.isActuallyDragging = false;
+        this.mouseDownX = event.clientX;
+        this.startX = event.clientX;
+        this.snapCurrentX = event.clientX;
+        this.track.style.transition = "none";
+        this.stopSnapAutoShowcase();
+        this.dragArea.style.cursor = "grabbing";
+        if (typeof this.dragArea.setPointerCapture === "function") {
+          try {
+            this.dragArea.setPointerCapture(event.pointerId);
+          } catch (_error) {
+            // Ignore pointer capture failures.
+          }
+        }
+      });
+
+      this.dragArea.addEventListener("pointermove", (event) => {
+        if (!this.isDragging) {
+          return;
+        }
+        event.preventDefault();
+        this.snapCurrentX = event.clientX;
+        const diff = this.snapCurrentX - this.startX;
+        this.applySnapTransform(this.snapBaseOffset + diff);
+        if (Math.abs(this.snapCurrentX - this.mouseDownX) > this.clickThreshold) {
+          this.isActuallyDragging = true;
+        }
+      });
+
+      const endSnapDrag = (event) => {
+        if (!this.isDragging) {
+          return;
+        }
+        const wasActuallyDragging = this.isActuallyDragging;
+        this.isDragging = false;
+        this.dragArea.style.cursor = "grab";
+        const metrics = this.getSnapMetrics();
+        const diff = this.snapCurrentX - this.startX;
+        const threshold = metrics ? metrics.cardWidth / 4 : 80;
+
+        if (Math.abs(diff) > threshold) {
+          this.snapDirection = diff > 0 ? -1 : 1;
+          this.currentIndex += diff > 0 ? -1 : 1;
+        }
+
+        if (!wasActuallyDragging && this.tryOpenSnapCardAtPoint(event?.clientX, event?.clientY)) {
+          this.isActuallyDragging = false;
+          return;
+        }
+        this.updateSnapCarousel(true);
+        this.resetSnapAutoShowcase();
+        window.setTimeout(() => {
+          this.isActuallyDragging = false;
+        }, 0);
+      };
+
+      this.dragArea.addEventListener("pointerup", endSnapDrag);
+      this.dragArea.addEventListener("pointercancel", endSnapDrag);
+      this.dragArea.addEventListener("lostpointercapture", endSnapDrag);
+
+      this.dragArea.addEventListener("click", (event) => {
+        if (event.target instanceof Element && event.target.closest(".like-btn")) {
+          return;
+        }
+        if (!this.isActuallyDragging) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+      }, true);
+
+      this.scrubber?.addEventListener("input", () => {
+        const cards = this.getSnapCards();
+        const lastIndex = cards.length - 1;
+        if (lastIndex < 1) {
+          this.scrubber.value = "0";
+          return;
+        }
+
+        this.isScrubbing = true;
+        this.stopSnapAutoShowcase();
+        const progress = Math.max(0, Math.min(1, Number(this.scrubber.value || 0) / 100));
+        const previewIndex = Math.round(progress * lastIndex);
+        if (previewIndex !== this.currentIndex) {
+          this.snapDirection = previewIndex > this.currentIndex ? 1 : -1;
+        }
+        this.previewSnapProgress(progress);
+      });
+
+      ["change", "mouseup", "touchend"].forEach((eventName) => {
+        this.scrubber?.addEventListener(eventName, () => {
+          if (!this.isScrubbing) {
+            return;
+          }
+          this.isScrubbing = false;
+          const cards = this.getSnapCards();
+          const lastIndex = cards.length - 1;
+          const progress = Math.max(0, Math.min(1, Number(this.scrubber?.value || 0) / 100));
+          const targetIndex = lastIndex > 0 ? Math.round(progress * lastIndex) : 0;
+          this.goToSnapSlide(targetIndex);
+        });
+      });
+
+      this.productShowcase?.addEventListener("mouseenter", () => {
+        this.stopSnapAutoShowcase();
+      });
+
+      this.productShowcase?.addEventListener("mouseleave", () => {
+        this.resetSnapAutoShowcase();
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (!this.productShowcase?.classList.contains("show")) {
+          return;
+        }
+        if (event.key === "ArrowRight") {
+          this.goToSnapSlide(this.currentIndex + 1);
+        }
+        if (event.key === "ArrowLeft") {
+          this.goToSnapSlide(this.currentIndex - 1);
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        this.updateSnapCarousel(false);
+      });
+
+      if (this.modal) {
+        window.addEventListener("click", (event) => {
+          if (event.target === this.modal) {
+            this.closeModal();
+          }
+        });
+      }
+    }
+
+    getSnapCards() {
+      return Array.from(this.track?.querySelectorAll(".showcase-product-card") || []);
+    }
+
+    ensureSnapControlLayout() {
+      const scrubberWrapper = this.scrubber?.closest(".scrubber-wrapper");
+      if (!scrubberWrapper) {
+        return;
+      }
+
+      let scrubberControls = scrubberWrapper.querySelector(".scrubber-controls");
+      if (!scrubberControls) {
+        scrubberControls = document.createElement("div");
+        scrubberControls.className = "scrubber-controls";
+        scrubberWrapper.prepend(scrubberControls);
+      }
+
+      if (this.prevButton) {
+        scrubberControls.appendChild(this.prevButton);
+      }
+      if (this.scrubber) {
+        scrubberControls.appendChild(this.scrubber);
+      }
+      if (this.nextButton) {
+        scrubberControls.appendChild(this.nextButton);
+      }
+
+      if (this.indicatorsContainer) {
+        this.indicatorsContainer.innerHTML = "";
+        this.indicatorsContainer.remove();
+        this.indicatorsContainer = null;
+      }
+
+      const legacyControls = this.productShowcase?.querySelector(".carousel-controls--luxury, .carousel-controls");
+      if (legacyControls && legacyControls !== scrubberControls) {
+        legacyControls.remove();
+      }
+    }
+
+    tryOpenSnapCardAtPoint(clientX, clientY) {
+      if (typeof clientX !== "number" || typeof clientY !== "number") {
+        return false;
+      }
+
+      const target = document.elementFromPoint(clientX, clientY);
+      if (!(target instanceof Element)) {
+        return false;
+      }
+      if (target.closest(".like-btn")) {
+        return false;
+      }
+
+      const card = target.closest(".showcase-product-card");
+      const productId = Number(card?.dataset.productId || 0);
+      if (!card || !productId) {
+        return false;
+      }
+
+      this.openModal(productId);
+      return true;
+    }
+
+    getSnapMetrics() {
+      const cards = this.getSnapCards();
+      const firstCard = cards[0];
+      if (!firstCard || !this.dragArea) {
+        return null;
+      }
+      const trackStyles = window.getComputedStyle(this.track);
+      const gap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap || "30") || 30;
+      return {
+        cards,
+        cardWidth: firstCard.getBoundingClientRect().width,
+        gap,
+        viewportWidth: this.dragArea.clientWidth,
+      };
+    }
+
+    getSnapOffset(index) {
+      const metrics = this.getSnapMetrics();
+      if (!metrics) {
+        return 0;
+      }
+      return ((metrics.viewportWidth - metrics.cardWidth) / 2) - (index * (metrics.cardWidth + metrics.gap));
+    }
+
+    applySnapTransform(offset) {
+      if (this.track) {
+        this.track.style.transform = `translateX(${offset}px)`;
+      }
+    }
+
+    setSnapActiveState(activeIndex, cards = null) {
+      const resolvedCards = cards || this.getSnapCards();
+      resolvedCards.forEach((card, index) => {
+        card.classList.toggle("is-active", index === activeIndex);
+      });
+
+      Array.from(this.indicatorsContainer?.children || []).forEach((indicator, index) => {
+        indicator.classList.toggle("is-active", index === activeIndex);
+      });
+    }
+
+    bindBackToOptions() {
+      this.backToOptionsButton?.addEventListener("click", (event) => {
+        const optionsVisible = Boolean(this.accordionBox && !this.accordionBox.classList.contains("fade-out-active"));
+        const showcaseVisible = Boolean(this.productShowcase?.classList.contains("show"));
+        const modalVisible = Boolean(this.modal?.classList.contains("show"));
+
+        if (optionsVisible && !showcaseVisible && !modalVisible) {
+          return;
+        }
+
+        event.preventDefault();
+        this.returnToOptions();
+      });
+    }
+
+    previewSnapProgress(progress) {
+      const metrics = this.getSnapMetrics();
+      if (!metrics || metrics.cards.length < 2) {
+        this.updateSnapCarousel(false);
+        return;
+      }
+
+      const maxIndex = metrics.cards.length - 1;
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const firstOffset = this.getSnapOffset(0);
+      const lastOffset = this.getSnapOffset(maxIndex);
+      const previewOffset = firstOffset + ((lastOffset - firstOffset) * clampedProgress);
+
+      if (this.track) {
+        this.track.style.transition = "none";
+      }
+      this.applySnapTransform(previewOffset);
+      this.setSnapActiveState(Math.round(clampedProgress * maxIndex), metrics.cards);
+    }
+
+    renderSnapIndicators(products) {
+      void products;
+      this.ensureSnapControlLayout();
+    }
+
+    updateSnapCarousel(animate = true) {
+      const cards = this.getSnapCards();
+      if (!cards.length) {
+        return;
+      }
+
+      const maxIndex = cards.length - 1;
+      this.currentIndex = Math.max(0, Math.min(this.currentIndex, maxIndex));
+      this.snapBaseOffset = this.getSnapOffset(this.currentIndex);
+
+      if (this.track) {
+        this.track.style.transition = animate
+          ? "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+          : "none";
+      }
+      this.applySnapTransform(this.snapBaseOffset);
+      this.setSnapActiveState(this.currentIndex, cards);
+      this.updateScrubber();
+    }
+
+    stopSnapAutoShowcase() {
+      if (this.autoShowcaseInterval) {
+        window.clearInterval(this.autoShowcaseInterval);
+        this.autoShowcaseInterval = null;
+      }
+    }
+
+    startSnapAutoShowcase() {
+      if (!this.isSnapShowcase || this.reducedMotion) {
+        return;
+      }
+      const cards = this.getSnapCards();
+      if (cards.length < 2) {
+        return;
+      }
+      this.stopSnapAutoShowcase();
+      this.autoShowcaseInterval = window.setInterval(() => {
+        if (!this.isDragging && !this.isScrubbing && this.productShowcase?.classList.contains("show")) {
+          const lastIndex = cards.length - 1;
+          if (this.currentIndex >= lastIndex) {
+            this.snapDirection = -1;
+          } else if (this.currentIndex <= 0) {
+            this.snapDirection = 1;
+          }
+          this.currentIndex += this.snapDirection;
+          this.updateSnapCarousel(true);
+        }
+      }, Number(this.config.autoShowcaseDelay || 3200));
+    }
+
+    resetSnapAutoShowcase() {
+      if (!this.productShowcase?.classList.contains("show")) {
+        return;
+      }
+      this.startSnapAutoShowcase();
+    }
+
+    goToSnapSlide(index) {
+      const previousIndex = this.currentIndex;
+      const maxIndex = Math.max(this.getSnapCards().length - 1, 0);
+      this.currentIndex = Math.max(0, Math.min(index, maxIndex));
+      if (this.currentIndex !== previousIndex) {
+        this.snapDirection = this.currentIndex > previousIndex ? 1 : -1;
+      }
+      this.updateSnapCarousel(true);
+      this.resetSnapAutoShowcase();
+    }
+
     updateScrubber() {
       if (!this.scrubber || !this.dragArea || !this.track) {
+        return;
+      }
+      if (this.isSnapShowcase) {
+        const cards = this.getSnapCards();
+        const maxIndex = cards.length - 1;
+        const progress = maxIndex > 0 ? (this.currentIndex / maxIndex) * 100 : 0;
+        this.scrubber.value = String(Math.max(0, Math.min(100, progress)));
         return;
       }
       const loopStart = this.singleSetWidth || 0;
@@ -964,6 +1358,9 @@
     }
 
     scheduleRenderFrame() {
+      if (this.isSnapShowcase) {
+        return;
+      }
       if (this.reducedMotion) {
         return;
       }
@@ -978,6 +1375,9 @@
     }
 
     forceRenderFrame() {
+      if (this.isSnapShowcase) {
+        return;
+      }
       if (!this.dragArea || !this.track) {
         return;
       }
@@ -1009,6 +1409,10 @@
     }
 
     startAutoScroll() {
+      if (this.isSnapShowcase) {
+        this.startSnapAutoShowcase();
+        return;
+      }
       if (!this.dragArea || !this.track) {
         return;
       }
@@ -1057,6 +1461,99 @@
       this.track && (this.track.innerHTML = "");
       await this.refreshProductStates(products.map((product) => product.id));
 
+      if (this.isSnapShowcase) {
+        this.currentIndex = 0;
+        this.snapDirection = 1;
+        this.stopSnapAutoShowcase();
+        this.renderSnapIndicators(products);
+
+        products.forEach((product) => {
+          const details = product.details || {};
+          const card = document.createElement("article");
+          card.className = "img-container showcase-product-card product-card";
+          card.dataset.productId = String(product.id);
+          card.tabIndex = 0;
+          card.setAttribute("role", "button");
+          card.setAttribute("aria-label", `Open ${details.title || product.title || product.name || "product"} details`);
+
+          const media = document.createElement("div");
+          media.className = "showcase-card-media";
+          const image = document.createElement("img");
+          image.className = "carousel-img showcase-card-image";
+          image.src = product.image_url || product.src || "";
+          image.alt = details.title || product.title || product.name || "";
+          image.draggable = false;
+          media.appendChild(image);
+          card.appendChild(media);
+
+          const info = document.createElement("div");
+          info.className = "showcase-card-info";
+
+          const title = document.createElement("h3");
+          title.className = "showcase-card-title";
+          title.textContent = details.title || product.title || product.name || "Hidden Message";
+          info.appendChild(title);
+
+          const price = document.createElement("p");
+          price.className = "showcase-card-price";
+          price.textContent = formatPrice(product.price || 500);
+          info.appendChild(price);
+
+          card.appendChild(info);
+
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              this.openModal(product.id);
+            }
+          });
+
+          card.addEventListener("click", (event) => {
+            if (this.isActuallyDragging) {
+              return;
+            }
+            if (event.target instanceof Element && event.target.closest(".like-btn")) {
+              return;
+            }
+            if (this.modal?.classList.contains("show")) {
+              return;
+            }
+            this.openModal(product.id);
+          });
+
+          if (this.config.enableLikeButtons !== false) {
+            const likeButton = document.createElement("button");
+            likeButton.className = "like-btn";
+            likeButton.dataset.productId = product.id;
+            likeButton.setAttribute("aria-label", `Save ${details.title || product.title || product.name || "product"} for later`);
+            likeButton.innerHTML = `
+              <svg class="heart-icon" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+              </svg>`;
+            likeButton.classList.toggle("liked", this.likedProductIds.has(String(product.id)));
+            ["pointerdown", "mousedown", "touchstart"].forEach((eventName) => {
+              likeButton.addEventListener(eventName, (event) => {
+                event.stopPropagation();
+              });
+            });
+            likeButton.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              this.toggleProductLike(product.id, likeButton);
+            });
+            card.appendChild(likeButton);
+          }
+
+          this.track?.appendChild(card);
+        });
+
+        requestAnimationFrame(() => {
+          this.updateSnapCarousel(false);
+          this.startSnapAutoShowcase();
+        });
+        return;
+      }
+
       const loopedProducts = this.legacyScrollLoop ? products : [...products, ...products, ...products];
       loopedProducts.forEach((product) => {
         const container = document.createElement("div");
@@ -1085,6 +1582,11 @@
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
             </svg>`;
           likeButton.classList.toggle("liked", this.likedProductIds.has(String(product.id)));
+          ["pointerdown", "mousedown", "touchstart"].forEach((eventName) => {
+            likeButton.addEventListener(eventName, (event) => {
+              event.stopPropagation();
+            });
+          });
           likeButton.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -1155,6 +1657,34 @@
       }, Number(this.config.selectionRevealDelay || 800));
     }
 
+    returnToOptions() {
+      if (this.modal?.classList.contains("show")) {
+        this.modal.classList.remove("show");
+        document.body.style.overflow = "";
+        this.activeProductId = null;
+        if (typeof this.config.onModalClose === "function") {
+          this.config.onModalClose();
+        }
+      }
+
+      this.stopSnapAutoShowcase?.();
+      if (this.autoScrollFrame) {
+        cancelAnimationFrame(this.autoScrollFrame);
+        this.autoScrollFrame = null;
+      }
+      this.lastAutoScrollTimestamp = 0;
+      this.isDragging = false;
+      this.isActuallyDragging = false;
+      this.isScrubbing = false;
+      this.fabOptions?.classList.remove("open");
+      this.fabMenu?.classList.remove("show");
+      this.productShowcase?.classList.remove("show");
+      if (this.productShowcase) {
+        this.productShowcase.style.opacity = "";
+      }
+      this.accordionBox?.classList.remove("fade-out-active");
+    }
+
     async switchVariant(groupName) {
       const group = this.groupMeta.get(groupName) || {};
       this.fabOptions?.classList.remove("open");
@@ -1202,6 +1732,9 @@
         return;
       }
 
+      if (this.isSnapShowcase) {
+        this.stopSnapAutoShowcase();
+      }
       this.activeProductId = Number(productId);
       const details = product.details || {};
       const groupMeta = this.groupMeta.get(product.group_name) || {};
@@ -1233,6 +1766,9 @@
       this.modal?.classList.remove("show");
       document.body.style.overflow = "";
       this.activeProductId = null;
+      if (this.isSnapShowcase) {
+        this.resetSnapAutoShowcase();
+      }
       if (typeof this.config.onModalClose === "function") {
         this.config.onModalClose();
       }

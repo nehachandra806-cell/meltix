@@ -11,6 +11,7 @@
   --bot-gold-soft: rgba(220, 174, 111, 0.12);
   --bot-gold-border: rgba(220, 174, 111, 0.18);
   --bot-shadow: 0 34px 90px rgba(0, 0, 0, 0.52);
+  --bot-top-chrome: 68px;
 }
 
 .meltix-bot-visually-hidden {
@@ -78,8 +79,12 @@
 
 .meltix-bot-head {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 16px;
+  right: 18px;
+  left: 18px;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
   z-index: 4;
 }
 
@@ -90,6 +95,9 @@
 .meltix-bot-close {
   width: 38px;
   height: 38px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
   border: 1px solid rgba(220, 174, 111, 0.22);
   background: rgba(255, 255, 255, 0.02);
@@ -97,6 +105,8 @@
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
   transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
 }
 
@@ -113,7 +123,7 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   height: 100%;
-  padding: 18px;
+  padding: var(--bot-top-chrome) 18px 18px;
 }
 
 .meltix-bot-layout--with-rail {
@@ -715,12 +725,16 @@
 }
 
 @media (max-width: 760px) {
+  .meltix-bot-root {
+    --bot-top-chrome: 58px;
+  }
+
   .meltix-bot-panel {
     inset: 8px;
   }
 
   .meltix-bot-layout {
-    padding: 12px;
+    padding: var(--bot-top-chrome) 12px 12px;
   }
 
   .meltix-bot-layout--with-rail {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Zodiac Candle | Meltix</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='zodiac_candle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='collection_snap.css', v='collection-snap-20260428-2') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}">
@@ -15,7 +16,7 @@
 <body>
 
     <nav class="top-nav">
-        <a href="/shop" class="back-btn"><span>✦</span> Back to Collection</a>
+        <a href="/shop" class="back-btn" id="backToOptionsBtn"><span>✦</span> Back to Collection</a>
     </nav>
 
     <div id="dust-particles"></div>
@@ -52,21 +53,23 @@
         </div>
     </div>
 
-    <div id="product-showcase" class="hidden-showcase">
+    <div id="product-showcase" class="hidden-showcase hidden-showcase--luxury-snap">
         <div class="glow-orb"></div>
         <h1 id="bg-dynamic-title" class="bg-watermark">ZODIAC</h1>
         
-        <div class="carousel-viewport" id="drag-area">
-            <div class="carousel-track" id="carousel-track"></div>
-        </div>
-        
-        <div class="scrubber-wrapper">
-            <input type="range" id="custom-scrubber" min="0" max="100" value="0">
-            <p class="drag-hint">← Drag to explore →</p>
-        </div>
-
-        <div class="carousel-controls">
-            <button id="stop-showcase-btn" class="meltix-btn-secondary">Stop Auto Showcasing</button>
+        <div class="showcase-shell">
+            <div class="carousel-viewport" id="drag-area">
+                <div class="carousel-track" id="carousel-track"></div>
+            </div>
+            
+            <div class="scrubber-wrapper">
+                <div class="scrubber-controls">
+                    <button id="showcasePrevBtn" class="showcase-nav-btn" type="button" aria-label="Previous candle">&lsaquo;</button>
+                    <input type="range" id="custom-scrubber" min="0" max="100" value="0" aria-label="Showcase progress">
+                    <button id="showcaseNextBtn" class="showcase-nav-btn" type="button" aria-label="Next candle">&rsaquo;</button>
+                </div>
+                <p class="drag-hint">&larr; Drag to explore &rarr;</p>
+            </div>
         </div>
     </div>
 
@@ -203,12 +206,14 @@
     {% include '_ghost_cart.html' %}
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
-    <script src="{{ url_for('static', filename='js/meltix-core.js') }}?v=ghost-cart-3"></script>
+    <script src="{{ url_for('static', filename='js/meltix-core.js', v='collection-core-20260428-2') }}"></script>
     <script>
         MeltixCore.initCarouselCollection({
             catalogEndpoint: "{{ url_for('catalog_api', category='zodiac-candle') }}",
             profileBootstrapUrl: "{{ url_for('profile_bootstrap') }}",
             productStatesUrl: "{{ url_for('product_states') }}",
+            showcaseMode: "luxury-snap",
+            dustCount: 18,
             currentUserEmail: "{{ session.get('profile_email', '') }}",
             currentUserName: "{{ session.get('profile_name', '') }}",
             currentUserPicture: "{{ session.get('profile_picture', '') }}",

@@ -30,6 +30,23 @@ body {
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+}
+
+.shop-star-field {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#shop-star-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 body::before {

@@ -500,6 +500,197 @@ body {
     transform: translateY(-1px);
 }
 
+.hidden-showcase--luxury-snap {
+    padding: 5.75rem 0 2.5rem;
+    justify-content: center;
+}
+
+.hidden-showcase--luxury-snap .glow-orb {
+    width: 980px;
+    height: 980px;
+    background: radial-gradient(circle, rgba(212, 163, 115, 0.14) 0%, rgba(0, 0, 0, 0) 72%);
+}
+
+.hidden-showcase--luxury-snap .bg-watermark {
+    top: 42%;
+    font-size: min(14vw, 180px);
+    letter-spacing: 0.38em;
+}
+
+.showcase-shell {
+    width: min(1080px, calc(100vw - 52px));
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 0.85rem;
+    align-items: center;
+    justify-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.hidden-showcase--luxury-snap .carousel-viewport {
+    width: 100%;
+    height: 404px;
+    overflow: hidden;
+    align-items: stretch;
+    padding: 10px 0 8px;
+    touch-action: pan-y;
+}
+
+.hidden-showcase--luxury-snap .carousel-track {
+    gap: 24px;
+    padding: 8px 0 12px;
+    width: max-content;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+}
+
+.hidden-showcase--luxury-snap .img-container.showcase-product-card {
+    width: 258px;
+    height: 348px;
+    border-radius: 16px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(36, 28, 22, 0.96), rgba(16, 12, 10, 0.98)),
+        radial-gradient(circle at top, rgba(212, 163, 115, 0.18), transparent 55%);
+    border: 1px solid rgba(212, 163, 115, 0.18);
+    box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.48),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    display: block;
+    transform: scale(0.96);
+    opacity: 0.72;
+    transition:
+        transform 0.38s ease,
+        opacity 0.38s ease,
+        border-color 0.38s ease,
+        box-shadow 0.38s ease;
+    cursor: pointer;
+}
+
+.hidden-showcase--luxury-snap .img-container.showcase-product-card.is-active {
+    transform: scale(1.05);
+    opacity: 1;
+    border-color: rgba(212, 163, 115, 0.52);
+    box-shadow:
+        0 28px 64px rgba(0, 0, 0, 0.58),
+        0 0 28px rgba(212, 163, 115, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.showcase-card-media {
+    width: 100%;
+    height: 72%;
+    overflow: hidden;
+    position: relative;
+}
+
+.hidden-showcase--luxury-snap .showcase-card-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+    object-fit: cover;
+    filter: saturate(0.92) contrast(1.04) brightness(0.96);
+}
+
+.showcase-card-info {
+    min-height: 28%;
+    padding: 1rem 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0.38rem;
+}
+
+.showcase-card-title {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.02rem;
+    line-height: 1.12;
+    color: #f5efe8;
+}
+
+.showcase-card-price {
+    margin: 0;
+    color: #d4a373;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+}
+
+.hidden-showcase--luxury-snap .like-btn {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(7, 6, 5, 0.56);
+    border-color: rgba(212, 163, 115, 0.24);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+}
+
+.showcase-nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(212, 163, 115, 0.34);
+    background: rgba(12, 10, 8, 0.56);
+    color: #d4a373;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    backdrop-filter: blur(10px);
+}
+
+.showcase-nav-btn:hover {
+    transform: scale(1.06);
+    border-color: rgba(212, 163, 115, 0.65);
+    background: rgba(212, 163, 115, 0.12);
+}
+
+.scrubber-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    width: auto;
+    max-width: 100%;
+}
+
+.showcase-indicators,
+#showcaseIndicators,
+.carousel-controls--luxury {
+    display: none !important;
+}
+
+.hidden-showcase--luxury-snap .drag-hint {
+    margin-top: 0;
+    letter-spacing: 0.26em;
+    color: rgba(212, 163, 115, 0.56);
+}
+
+.hidden-showcase--luxury-snap .scrubber-wrapper {
+    position: static;
+    bottom: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.hidden-showcase--luxury-snap #custom-scrubber {
+    width: min(380px, calc(100vw - 154px));
+    max-width: 100%;
+    flex: 0 1 auto;
+}
+
 /* =========================================
    🔴 9. ULTIMATE LUXURY MODAL (POP-UP) 🔴
    ========================================= */
@@ -1114,4 +1305,94 @@ textarea.premium-input, #reviewText {
 .absolute-wishlist.saved svg {
     stroke: #030201; 
     fill: #030201;  
+}
+
+@media (max-width: 900px) {
+    .hidden-showcase--luxury-snap {
+        padding-top: 5.5rem;
+    }
+
+    .showcase-shell {
+        width: min(100vw - 30px, 900px);
+        gap: 1rem;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        height: 378px;
+    }
+
+    .hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        width: 232px;
+        height: 322px;
+    }
+}
+
+@media (max-width: 640px) {
+    .top-nav {
+        padding: 22px 20px;
+    }
+
+    .back-btn {
+        font-size: 0.96rem;
+    }
+
+    .fab-menu-container {
+        bottom: 22px;
+        left: 20px;
+    }
+
+    .hidden-showcase--luxury-snap {
+        padding-top: 5rem;
+    }
+
+    .showcase-shell {
+        width: calc(100vw - 20px);
+        gap: 0.95rem;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        height: 316px;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-track {
+        gap: 16px;
+    }
+
+    .hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        width: 196px;
+        height: 276px;
+        border-radius: 15px;
+    }
+
+    .showcase-card-info {
+        padding: 0.8rem 0.75rem 0.9rem;
+        gap: 0.28rem;
+    }
+
+    .showcase-card-title {
+        font-size: 0.92rem;
+    }
+
+    .showcase-card-price {
+        font-size: 0.8rem;
+    }
+
+    .showcase-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .hidden-showcase--luxury-snap .drag-hint {
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+    }
+
+    .scrubber-controls {
+        gap: 0.45rem;
+    }
+
+    .hidden-showcase--luxury-snap #custom-scrubber {
+        width: min(240px, calc(100vw - 116px));
+    }
 }

@@ -4,13 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shop - Meltix Atelier</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='shop.css', v='shop-20260423-11') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='shop.css', v='shop-20260427-1') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='cart.css', v='shop-20260422-1') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 <body id="shop-body">
+  <div class="shop-star-field" aria-hidden="true">
+    <canvas id="shop-star-canvas" aria-hidden="true"></canvas>
+  </div>
 
   <nav class="nav">
     <div class="nav-left">
@@ -135,6 +138,140 @@
   <script src="{{ url_for('static', filename='js/cart.js', v='shop-20260422-1') }}"></script>
 <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
   <script>
+    const starCanvas = document.getElementById('shop-star-canvas');
+    const starContext = starCanvas?.getContext('2d');
+
+    if (starCanvas && starContext) {
+      const heroSection = document.querySelector('.shop-hero');
+      const heroDivider = heroSection?.querySelector('.hero-divider');
+      const starField = document.querySelector('.shop-star-field');
+      let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const layers = [
+        { count: 60, size: 0.8, speed: 0.02, color: 'rgba(193,154,107,' },
+        { count: 40, size: 1.2, speed: 0.05, color: 'rgba(212,175,122,' },
+        { count: 20, size: 1.8, speed: 0.09, color: 'rgba(235,200,150,' }
+      ];
+
+      let stars = [];
+      let starBounds = { x: 80, y: 64 };
+
+      function updateStarBounds() {
+        starBounds.x = Math.max(72, Math.round(starCanvas.width * 0.08));
+        starBounds.y = Math.max(54, Math.round(starCanvas.height * 0.08));
+      }
+
+      function wrapStarPosition(value, min, max) {
+        const span = max - min;
+        if (value < min) return value + span;
+        if (value > max) return value - span;
+        return value;
+      }
+
+      class Star {
+        constructor(layer) {
+          this.layer = layer;
+          this.size = layer.size + Math.random() * 0.5;
+          this.twinkleSpeed = Math.random() * 0.03 + 0.01;
+          this.twinkleOffset = Math.random() * Math.PI * 2;
+          this.opacity = Math.random() * 0.6 + 0.4;
+          this.currentOpacity = this.opacity;
+          this.resetBasePosition();
+        }
+
+        resetBasePosition() {
+          this.baseX = (Math.random() * (starCanvas.width + starBounds.x * 2)) - starBounds.x;
+          this.baseY = (Math.random() * (starCanvas.height + starBounds.y * 2)) - starBounds.y;
+          this.x = this.baseX;
+          this.y = this.baseY;
+        }
+
+        update() {
+          const shiftX = (mouse.x - starCanvas.width / 2) * this.layer.speed;
+          const shiftY = (mouse.y - starCanvas.height / 2) * this.layer.speed;
+          const minX = -starBounds.x;
+          const maxX = starCanvas.width + starBounds.x;
+          const minY = -starBounds.y;
+          const maxY = starCanvas.height + starBounds.y;
+
+          this.x = wrapStarPosition(this.baseX - shiftX, minX, maxX);
+          this.y = wrapStarPosition(this.baseY - shiftY, minY, maxY);
+
+          this.twinkleOffset += this.twinkleSpeed;
+          this.currentOpacity = this.opacity + Math.sin(this.twinkleOffset) * 0.3;
+        }
+
+        draw() {
+          starContext.globalAlpha = Math.max(0.1, this.currentOpacity);
+          starContext.fillStyle = this.layer.color + '1)';
+          starContext.beginPath();
+          starContext.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          starContext.fill();
+        }
+      }
+
+      function initStars() {
+        stars = [];
+        layers.forEach((layer) => {
+          for (let i = 0; i < layer.count; i += 1) {
+            stars.push(new Star(layer));
+          }
+        });
+      }
+
+      function getStarFieldHeight() {
+        const dividerBottom = heroDivider
+          ? heroDivider.getBoundingClientRect().bottom + window.scrollY + 24
+          : 0;
+        const heroBottom = heroSection
+          ? heroSection.getBoundingClientRect().bottom + window.scrollY - 28
+          : window.innerHeight * 0.55;
+        return Math.max(280, Math.round(dividerBottom || heroBottom));
+      }
+
+      function resizeStarCanvas() {
+        const starFieldHeight = getStarFieldHeight();
+        if (starField) {
+          starField.style.height = `${starFieldHeight}px`;
+        }
+
+        starCanvas.width = window.innerWidth;
+        starCanvas.height = starFieldHeight;
+        mouse.x = starCanvas.width / 2;
+        mouse.y = starCanvas.height / 2;
+        updateStarBounds();
+        initStars();
+      }
+
+      function animateStars() {
+        starContext.clearRect(0, 0, starCanvas.width, starCanvas.height);
+        stars.forEach((star) => {
+          star.update();
+          star.draw();
+        });
+        starContext.globalAlpha = 1;
+        window.requestAnimationFrame(animateStars);
+      }
+
+      window.addEventListener('mousemove', (event) => {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+      }, { passive: true });
+
+      window.addEventListener('mouseleave', () => {
+        mouse.x = starCanvas.width / 2;
+        mouse.y = starCanvas.height / 2;
+      });
+
+      window.addEventListener('resize', resizeStarCanvas);
+      window.addEventListener('load', resizeStarCanvas);
+
+      resizeStarCanvas();
+      if (document.fonts && typeof document.fonts.ready?.then === 'function') {
+        document.fonts.ready.then(resizeStarCanvas).catch(() => {});
+      }
+      animateStars();
+    }
+
     const setShowcaseState = (nodes, activeIndex, previousIndex = activeIndex) => {
       nodes.forEach((node, index) => {
         node.classList.remove('is-active', 'is-prev', 'is-next');
