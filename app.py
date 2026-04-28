@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from html import escape
+from functools import lru_cache
 from pathlib import Path
 from threading import Lock
 from urllib.error import HTTPError, URLError
@@ -372,6 +373,42 @@ def public_avatar_url(filename):
     return url_for('static', filename=f'images/avatar/{public_avatar_filename(filename)}')
 
 
+@lru_cache(maxsize=512)
+def resolve_static_asset_path(path_value):
+    normalized_path = str(path_value or '').strip().replace('\\', '/').lstrip('/')
+    if not normalized_path:
+        return ''
+
+    static_root = BASE_DIR / 'static'
+    candidate_path = static_root / normalized_path
+    if candidate_path.exists():
+        return normalized_path
+
+    current_path = static_root
+    resolved_parts = []
+    for part in Path(normalized_path).parts:
+        exact_match = current_path / part
+        if exact_match.exists():
+            current_path = exact_match
+            resolved_parts.append(exact_match.name)
+            continue
+
+        if not current_path.exists() or not current_path.is_dir():
+            return normalized_path
+
+        matched_entry = next(
+            (entry for entry in current_path.iterdir() if entry.name.lower() == part.lower()),
+            None,
+        )
+        if matched_entry is None:
+            return normalized_path
+
+        current_path = matched_entry
+        resolved_parts.append(matched_entry.name)
+
+    return '/'.join(resolved_parts)
+
+
 def public_profile_identity(profile_record, fallback_name='Meltix Collector'):
     display_name = fallback_name
     level = 1
@@ -668,11 +705,10 @@ def seed_inventory():
         if not collection_slug:
             raise ValueError(f"Unsupported catalog category for product {product_id}: {raw_row.get('collection_slug')}")
 
-        image_path = str(raw_row.get('image_path') or '').strip().replace('\\', '/')
+        image_path = resolve_static_asset_path(raw_row.get('image_path'))
         if not image_path:
             raise ValueError(f"Missing image path for product {product_id}")
 
-        image_path = image_path.lstrip('/')
         absolute_image_path = BASE_DIR / 'static' / image_path
         if not absolute_image_path.exists():
             raise FileNotFoundError(f"Catalog image missing for product {product_id}: {absolute_image_path}")
@@ -924,15 +960,14 @@ def product_static_path(product_record):
     if not product_record:
         return ''
 
-    image_path = (product_record.image_path or '').strip().replace('\\', '/')
+    image_path = resolve_static_asset_path(product_record.image_path)
     if image_path:
-        return image_path.lstrip('/')
+        return image_path
 
     image_file = (product_record.image_file or '').strip()
     if image_file:
-        if '/' in image_file:
-            return image_file.lstrip('/')
-        return f"images/{image_file}"
+        candidate_path = image_file.lstrip('/') if '/' in image_file else f"images/{image_file}"
+        return resolve_static_asset_path(candidate_path) or candidate_path
 
     return ''
 
@@ -986,7 +1021,7 @@ def _seed_shop_preview_images():
         if collection_slug not in valid_slugs:
             continue
 
-        image_path = str(raw_row.get('image_path') or '').strip().replace('\\', '/').lstrip('/')
+        image_path = resolve_static_asset_path(raw_row.get('image_path'))
         if not image_path:
             continue
 
