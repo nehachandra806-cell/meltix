@@ -885,3 +885,180 @@ body.light-mode .transaction-container:hover {
     0% { opacity: 0; transform: translateY(-5px); }
     100% { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    #start-overlay h2 {
+        font-size: 1.3rem;
+        letter-spacing: 4px;
+        line-height: 1.4;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    #audio-controls {
+        top: 14px;
+        right: 14px;
+        gap: 10px;
+        padding: 8px 12px;
+        transform: scale(0.92);
+        transform-origin: top right;
+    }
+
+    #main-studio-content {
+        min-height: 100vh;
+        height: auto;
+    }
+
+    .studio-nav {
+        min-height: 92px;
+        padding: 18px 16px 28px;
+    }
+
+    .back-btn {
+        left: 16px;
+        font-size: 0.95rem;
+    }
+
+    .pointer-star {
+        font-size: 1.1rem;
+    }
+
+    .header-center {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .theme-switch {
+        --toggle-size: 12px;
+        --container-width: 12.5em;
+    }
+
+    .theme-switch__text {
+        font-size: 0.95rem;
+        letter-spacing: 1.2px;
+    }
+
+    .studio-layout {
+        flex-direction: column;
+        overflow: visible;
+    }
+
+    .display-section {
+        padding: 28px 16px 24px;
+    }
+
+    .model-container {
+        width: 100%;
+        height: min(54vw, 320px);
+        min-height: 240px;
+    }
+
+    .empty-state {
+        width: 100%;
+        padding: 24px 18px;
+    }
+
+    .empty-state h3 {
+        font-size: 1.45rem;
+    }
+
+    .finalize-btn {
+        width: 100%;
+        max-width: 320px;
+        margin-top: 24px;
+        padding: 14px 20px;
+        font-size: 0.95rem;
+        letter-spacing: 1.5px;
+    }
+
+    .controls-section {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding: 24px 16px 32px;
+        gap: 24px;
+        overflow: visible;
+    }
+
+    .control-group h3 {
+        font-size: 1.15rem;
+    }
+
+    .vessel-grid {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .vessel-item {
+        width: 58px;
+        height: 58px;
+    }
+
+    .container-items {
+        gap: 14px;
+        flex-wrap: wrap;
+        transform: none;
+    }
+
+    .fragrance-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .frag-box {
+        padding: 12px;
+        font-size: 0.92rem;
+    }
+
+    .qty-box input {
+        width: 100%;
+        max-width: 90px;
+    }
+
+    textarea {
+        min-height: 110px;
+    }
+
+    .modal-content {
+        width: calc(100vw - 24px);
+        padding: 28px 20px;
+        border-radius: 14px;
+    }
+
+    .modal-content h3 {
+        font-size: 1.5rem;
+    }
+
+    .modal-content p {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    .modal-content input,
+    .modal-btn {
+        font-size: 0.95rem;
+    }
+
+    .transaction-container {
+        min-height: 92px;
+        height: auto;
+    }
+
+    .transaction-container .left-side {
+        width: 96px;
+    }
+
+    .transaction-container .right-side {
+        gap: 10px;
+        padding: 0 12px;
+    }
+
+    .transaction-container .new {
+        font-size: 1rem;
+        white-space: normal;
+    }
+}

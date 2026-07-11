@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meltix | Profile Studio</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css', v='scent-quiz-fix-v2-20260709') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
 </head>
@@ -16,7 +16,7 @@
         <div class="orb orb-cream"></div>
         <div class="grain"></div>
     </div>
-    <div id="g_id_onload" data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+    <div id="g_id_onload" data-client_id="{{ google_client_id }}" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
     <nav class="top-nav">
         <a href="/shop" class="back-btn"><span>✦</span> Back to Shop</a>
         <div class="brand-lockup">
@@ -94,8 +94,14 @@
             </div>
         </section>
 
+        <nav class="profile-mobile-tabs" aria-label="Profile sections">
+            <button class="profile-mobile-tab is-active" type="button" data-profile-tab="details">Details</button>
+            <button class="profile-mobile-tab" type="button" data-profile-tab="rewards">Missions &amp; Rewards</button>
+            <button class="profile-mobile-tab" type="button" data-profile-tab="top">Top Meltix Member</button>
+        </nav>
+
         <section class="content-grid atelier-content" id="atelier-content">
-            <article class="glass-card account-card">
+            <article class="glass-card account-card profile-panel-card profile-mobile-panel-active" data-profile-panel="details">
                 <div class="card-head">
                     <p class="card-kicker">Account Snapshot</p>
                     <h2>Profile Details</h2>
@@ -127,7 +133,7 @@
                 <p class="support-copy" id="support-copy">Sign in with Google to activate your private atelier and save your profile preferences.</p>
             </article>
 
-            <article class="glass-card address-card">
+            <article class="glass-card address-card profile-panel-card profile-mobile-panel-active" data-profile-panel="details">
                 <div class="card-head">
                     <p class="card-kicker">Address Book</p>
                     <h2>Shipping &amp; Billing Details</h2>
@@ -213,7 +219,7 @@
                     </div>
                 </form>
             </article>
-            <article class="glass-card rewards-card">
+            <article class="glass-card rewards-card profile-panel-card" data-profile-panel="rewards">
                 <div class="card-head">
                     <p class="card-kicker">Glow Points</p>
                     <h2>Rewards Ledger</h2>
@@ -246,7 +252,7 @@
                 <div class="ledger-list" id="reward-ledger"></div>
             </article>
 
-            <article class="glass-card rewards-card vault-card">
+            <article class="glass-card rewards-card vault-card profile-panel-card" data-profile-panel="rewards">
                 <div class="card-head">
                     <p class="card-kicker">Reward Vault</p>
                     <h2>Your Reward Vault</h2>
@@ -291,7 +297,7 @@
                 </div>
             </article>
 
-            <article class="glass-card rewards-card">
+            <article class="glass-card rewards-card profile-panel-card" data-profile-panel="rewards">
                 <div class="card-head">
                     <p class="card-kicker">Mission Board</p>
                     <h2>Your Atelier Missions</h2>
@@ -318,7 +324,7 @@
 
 
 
-            <article class="glass-card wishlist-card">
+            <article class="glass-card wishlist-card profile-panel-card profile-mobile-secondary" data-profile-panel="hidden-mobile">
                 <div class="card-head">
                     <p class="card-kicker">Saved For Later</p>
                     <h2>Wishlist</h2>
@@ -332,7 +338,7 @@
                 </div>
             </article>
 
-            <article class="glass-card review-card">
+            <article class="glass-card review-card profile-panel-card profile-mobile-secondary" data-profile-panel="hidden-mobile">
                 <div class="card-head">
                     <p class="card-kicker">Your Voice</p>
                     <h2>Recent Reviews</h2>
@@ -346,7 +352,7 @@
                 </div>
             </article>
 
-            <article class="glass-card orders-card">
+            <article class="glass-card orders-card profile-panel-card profile-mobile-secondary" data-profile-panel="hidden-mobile">
                 <div class="card-head">
                     <p class="card-kicker">Order Timeline</p>
                     <h2>Your Past Orders</h2>
@@ -360,11 +366,11 @@
                 </div>
             </article>
 
-            <article class="glass-card leaderboard-card">
+            <article class="glass-card leaderboard-card profile-panel-card" data-profile-panel="top">
                 <div class="card-head">
-                    <p class="card-kicker">Status Flex</p>
-                    <h2>Meltix Royalty (Top 50)</h2>
-                    <p class="body-copy">The atelier's highest spenders and most elevated collectors, updated with their current avatar and ring status.</p>
+                    <p class="card-kicker">Top Meltix Member</p>
+                    <h2>Top Meltix Member</h2>
+                    <p class="body-copy">The atelier's most elevated collectors, updated with their current avatar and ring status.</p>
                 </div>
 
                 <div id="leaderboard-list" class="leaderboard-list"></div>
@@ -484,7 +490,7 @@
         const claimMissionUrl = "{{ url_for('claim_mission') }}";
         const leaderboardUrl = "{{ url_for('leaderboard_api') }}";
         const defaultAvatarUrl = "{{ default_avatar }}";
-        const googleClientId = "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com";
+        const googleClientId = {{ google_client_id | tojson }};
         const initialProfile = {{ profile_data | tojson }};
         const initialUser = {{ current_user | tojson }};
         const avatarSrcMap = new Map(avatarOptions.map((avatar) => [avatar.filename, avatar.src]));
@@ -689,13 +695,18 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        credential: response.credential
+                        credential: response.credential,
+                        next_path: window.location.pathname + window.location.search
                     })
                 });
                 
                 const data = await bootstrapResponse.json();
                 
                 if (bootstrapResponse.ok && data.success === true) {
+                    if (data.admin_challenge_required && data.admin_challenge_url) {
+                        window.location.href = data.admin_challenge_url;
+                        return;
+                    }
                     window.location.reload();
                 } else {
                     throw new Error(data.message || 'Profile sync failed');
@@ -1476,6 +1487,22 @@
         quizOptions.forEach((button) => button.addEventListener('click', () => toggleQuizNote(button.dataset.note)));
         [avatarModal, trackingModal, scentQuizModal, levelUpModal].forEach((modalElement) => modalElement.addEventListener('click', (event) => { if (event.target === modalElement) closeModal(modalElement); }));
         document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeModal(avatarModal); closeModal(trackingModal); closeModal(scentQuizModal); closeModal(levelUpModal); } });
+
+        function activateProfileMobileTab(tabName) {
+            const selected = tabName || 'details';
+            document.querySelectorAll('.profile-mobile-tab').forEach((button) => {
+                button.classList.toggle('is-active', button.dataset.profileTab === selected);
+            });
+            document.querySelectorAll('[data-profile-panel]').forEach((panel) => {
+                const shouldShow = panel.dataset.profilePanel === selected;
+                panel.classList.toggle('profile-mobile-panel-active', shouldShow);
+            });
+        }
+
+        document.querySelectorAll('.profile-mobile-tab').forEach((button) => {
+            button.addEventListener('click', () => activateProfileMobileTab(button.dataset.profileTab));
+        });
+        activateProfileMobileTab('details');
 
         window.handleCredentialResponse = handleCredentialResponse;
         window.claimMission = claimMission;

@@ -204,6 +204,35 @@
   text-wrap: pretty;
 }
 
+.meltix-bot-message--typing {
+  min-width: 104px;
+  padding-block: 14px;
+}
+
+.meltix-bot-typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 18px;
+}
+
+.meltix-bot-typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(248, 243, 234, 0.82);
+  box-shadow: 0 0 0 1px rgba(220, 174, 111, 0.08);
+  animation: meltixBotTypingBounce 1s infinite ease-in-out;
+}
+
+.meltix-bot-typing-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.meltix-bot-typing-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
 .chat-product-card {
   display: block;
   flex: 0 0 auto;
@@ -852,6 +881,19 @@
   }
 }
 
+@keyframes meltixBotTypingBounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0) scale(0.9);
+    opacity: 0.45;
+  }
+  40% {
+    transform: translateY(-4px) scale(1);
+    opacity: 1;
+  }
+}
+
 @keyframes meltixBotFloat {
   0%,
   100% {
@@ -860,4 +902,785 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+/* Phase 1 bot mobile fit */
+@media (max-width: 768px) {
+    .meltix-bot-root {
+        --bot-top-chrome: 56px;
+    }
+
+    .meltix-bot-panel {
+        inset: 6px;
+    }
+
+    .meltix-bot-panel-shell {
+        border-radius: 22px;
+    }
+
+    .meltix-bot-layout {
+        gap: 10px;
+        padding: var(--bot-top-chrome) 10px 10px;
+    }
+
+    .meltix-bot-layout--with-rail {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .meltix-bot-rail {
+        padding: 0;
+    }
+
+    .meltix-bot-quicknav-grid {
+        grid-template-columns: 1fr;
+        max-height: 180px;
+    }
+
+    .meltix-bot-history {
+        padding: 16px 14px 12px;
+        gap: 12px;
+    }
+
+    .meltix-bot-message {
+        max-width: 88%;
+        padding: 14px 15px;
+        font-size: 13px;
+    }
+
+    .chat-product-card {
+        width: min(68%, 190px);
+        margin-left: 10px;
+    }
+
+    .meltix-bot-floor {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .meltix-bot-desk-scene {
+        width: 110px;
+        height: 86px;
+        margin: 0 auto;
+    }
+
+    .meltix-bot-seat-avatar {
+        width: 56px;
+        height: 56px;
+        bottom: 26px;
+    }
+
+    .meltix-bot-desk {
+        width: 110px;
+    }
+
+    .meltix-bot-compose {
+        gap: 8px;
+    }
+
+    .meltix-bot-input {
+        height: 48px;
+        padding: 0 16px;
+        font-size: 13px;
+    }
+
+    .meltix-bot-send {
+        width: 48px;
+        min-width: 48px;
+        height: 48px;
+    }
+
+    .meltix-bot-send::after {
+        width: 18px;
+        height: 18px;
+    }
+
+    .meltix-bot-dock {
+        transform: translate3d(calc(100vw - 132px), calc(100vh - 154px), 0);
+    }
+
+    .meltix-bot-root.is-open .meltix-bot-dock {
+        transform: translate3d(calc(100vw - 128px), calc(100vh - 146px), 0) scale(0.94);
+    }
+
+    .meltix-bot-launcher,
+    .meltix-bot-avatar {
+        width: 86px;
+        height: 86px;
+    }
+
+    .meltix-bot-whisper {
+        left: 50%;
+        bottom: 98px;
+        width: min(224px, calc(100vw - 32px));
+        min-width: 0;
+        font-size: 12px;
+    }
+}
+
+/* Phase 1 premium bot polish */
+@media (max-width: 768px) {
+    .meltix-bot-panel {
+        inset: auto 0 0 0;
+        height: min(88svh, 820px);
+        max-height: calc(100dvh - 8px);
+        transform: translateY(18px);
+    }
+
+    .meltix-bot-panel-shell {
+        border-radius: 26px 26px 0 0;
+    }
+
+    .meltix-bot-layout {
+        height: 100%;
+        gap: 12px;
+        padding: calc(var(--bot-top-chrome) + 2px) 12px 12px;
+    }
+
+    .meltix-bot-chat {
+        min-height: 0;
+        border-radius: 20px;
+    }
+
+    .meltix-bot-history-wrap {
+        min-height: 0;
+    }
+
+    .meltix-bot-history {
+        padding: 18px 16px 16px;
+    }
+
+    .meltix-bot-message {
+        max-width: min(90%, 420px);
+        border-radius: 20px;
+        line-height: 1.6;
+    }
+
+    .chat-product-card {
+        width: min(74%, 228px);
+        margin-left: 0;
+    }
+
+    .meltix-bot-floor {
+        padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .meltix-bot-quicknav-grid {
+        max-height: 160px;
+    }
+
+    .meltix-bot-dock {
+        transform: translate3d(calc(100vw - 118px), calc(100svh - 142px), 0);
+    }
+
+    .meltix-bot-root.is-open .meltix-bot-dock {
+        transform: translate3d(calc(100vw - 116px), calc(100svh - 138px), 0) scale(0.94);
+    }
+
+    .meltix-bot-launcher,
+    .meltix-bot-avatar {
+        width: 78px;
+        height: 78px;
+    }
+
+    .meltix-bot-whisper {
+        bottom: 92px;
+        width: min(210px, calc(100vw - 28px));
+    }
+
+    .meltix-bot-toast {
+        left: 50%;
+        transform: translate(-50%, 10px);
+        bottom: 168px;
+        width: min(260px, calc(100vw - 32px));
+    }
+
+    .meltix-bot-toast.is-visible {
+        transform: translate(-50%, 0);
+    }
+}
+
+@media (max-width: 480px) {
+    .meltix-bot-root {
+        --bot-top-chrome: 54px;
+    }
+
+    .meltix-bot-panel {
+        height: min(90svh, 760px);
+    }
+
+    .meltix-bot-panel-shell {
+        border-radius: 22px 22px 0 0;
+    }
+
+    .meltix-bot-head {
+        top: 12px;
+        right: 12px;
+        left: 12px;
+    }
+
+    .meltix-bot-close {
+        width: 36px;
+        height: 36px;
+        font-size: 22px;
+    }
+
+    .meltix-bot-layout {
+        padding: calc(var(--bot-top-chrome) + 2px) 10px 10px;
+        gap: 10px;
+    }
+
+    .meltix-bot-history {
+        padding: 16px 12px 12px;
+        gap: 10px;
+    }
+
+    .meltix-bot-message {
+        max-width: 92%;
+        padding: 13px 14px;
+        font-size: 12.5px;
+    }
+
+    .chat-product-card {
+        width: min(82%, 228px);
+    }
+
+    .meltix-bot-floor {
+        padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+        gap: 8px;
+    }
+
+    .meltix-bot-desk-scene {
+        width: 96px;
+        height: 74px;
+    }
+
+    .meltix-bot-seat-avatar {
+        width: 48px;
+        height: 48px;
+        bottom: 22px;
+    }
+
+    .meltix-bot-desk {
+        width: 96px;
+    }
+
+    .meltix-bot-compose {
+        gap: 7px;
+    }
+
+    .meltix-bot-input {
+        height: 48px;
+        padding: 0 14px;
+        font-size: 12.5px;
+    }
+
+    .meltix-bot-send {
+        width: 48px;
+        min-width: 48px;
+        height: 48px;
+    }
+
+    .meltix-bot-dock {
+        transform: translate3d(calc(100vw - 104px), calc(100svh - 132px), 0);
+    }
+
+    .meltix-bot-root.is-open .meltix-bot-dock {
+        transform: translate3d(calc(100vw - 102px), calc(100svh - 128px), 0) scale(0.94);
+    }
+
+    .meltix-bot-launcher,
+    .meltix-bot-avatar {
+        width: 72px;
+        height: 72px;
+    }
+
+    .meltix-bot-whisper {
+        bottom: 84px;
+        font-size: 11px;
+    }
+
+    .meltix-bot-toast {
+        bottom: 154px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) and (max-height: 760px) {
+    .meltix-bot-panel {
+        height: calc(100svh - 4px);
+    }
+
+    .meltix-bot-quicknav-grid {
+        max-height: 128px;
+    }
+
+    .meltix-bot-floor {
+        gap: 8px;
+    }
+
+    .meltix-bot-desk-scene {
+        display: none;
+    }
+}
+
+/* Phase 2 bot keyboard + private doors mobile fix */
+@media (max-width: 768px) {
+    .meltix-bot-panel {
+        height: 100svh !important;
+        max-height: calc(100svh - 8px) !important;
+    }
+
+    .meltix-bot-panel-shell {
+        height: 100svh !important;
+        max-height: 100svh !important;
+    }
+
+    .meltix-bot-layout {
+        height: 100svh !important;
+    }
+
+    .meltix-bot-head {
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .meltix-bot-nav-toggle[hidden] {
+        display: grid !important;
+    }
+
+    .meltix-bot-nav-toggle {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 50%;
+        border: 1px solid rgba(220, 174, 111, 0.24);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--bot-gold);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+        cursor: pointer;
+        pointer-events: auto;
+        place-items: center;
+        gap: 4px;
+    }
+
+    .meltix-bot-nav-toggle span {
+        display: block;
+        width: 16px;
+        height: 1.5px;
+        border-radius: 999px;
+        background: currentColor;
+    }
+
+    .meltix-bot-rail {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: min(82vw, 280px);
+        padding: 74px 12px 12px;
+        background: rgba(11, 9, 7, 0.98);
+        border-right: 1px solid rgba(220, 174, 111, 0.16);
+        box-shadow: 20px 0 44px rgba(0, 0, 0, 0.34);
+        transform: translateX(-104%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform 0.26s ease, opacity 0.26s ease;
+        z-index: 6;
+    }
+
+    .meltix-bot-quicknav {
+        display: none;
+    }
+
+    .meltix-bot-root.is-rail-open .meltix-bot-rail {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .meltix-bot-root.is-rail-open .meltix-bot-quicknav {
+        display: flex;
+    }
+
+    .meltix-bot-root.is-rail-open .meltix-bot-chat {
+        filter: blur(2px);
+        pointer-events: none;
+        user-select: none;
+    }
+
+    .meltix-bot-quicknav-title {
+        padding-left: 0;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+    }
+
+    .meltix-bot-quicknav-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+        max-height: none;
+        padding-right: 0;
+    }
+}
+/* Mobile chat must fully cover fixed page chrome. */
+@media (max-width: 768px) {
+    .meltix-bot-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        z-index: 999998 !important;
+        background: #0c0907 !important;
+    }
+
+    .meltix-bot-panel {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        max-width: none !important;
+        max-height: 100svh !important;
+        z-index: 999999 !important;
+        background: #0c0907 !important;
+    }
+
+    .meltix-bot-panel-shell {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100svh !important;
+        border-radius: 0 !important;
+        background: #0c0907 !important;
+    }
+}
+.meltix-bot-close-label {
+    display: none;
+}
+
+/* Final mobile bot architecture: dedicated chat interface, no Private Doors rail. */
+@media (max-width: 768px) {
+    .meltix-bot-nav-toggle,
+    .meltix-bot-nav-toggle[hidden],
+    .meltix-bot-rail,
+    .meltix-bot-quicknav {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    .meltix-bot-root.is-rail-open .meltix-bot-chat {
+        filter: none !important;
+        pointer-events: auto !important;
+        user-select: auto !important;
+    }
+
+    .meltix-bot-panel,
+    .meltix-bot-panel-shell {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        max-width: none !important;
+        max-height: 100svh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        background: #0c0907 !important;
+    }
+
+    .meltix-bot-panel {
+        z-index: 999999 !important;
+    }
+
+    .meltix-bot-layout,
+    .meltix-bot-layout--with-rail {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 0 !important;
+        width: 100% !important;
+        height: 100svh !important;
+        padding: 70px 0 0 !important;
+    }
+
+    .meltix-bot-chat {
+        width: 100% !important;
+        height: calc(100svh - 70px) !important;
+        min-height: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #0c0907 !important;
+    }
+
+    .meltix-bot-head {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 70px !important;
+        padding: 10px 12px !important;
+        z-index: 1000000 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #0c0907 !important;
+        border-bottom: 1px solid rgba(220, 174, 111, 0.2) !important;
+        pointer-events: none !important;
+    }
+
+    .meltix-bot-close {
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        height: 48px !important;
+        padding: 0 18px !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        background: #dcae6f !important;
+        border: 1px solid #e7c28d !important;
+        color: #0c0907 !important;
+        font-family: 'Lato', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase !important;
+        pointer-events: auto !important;
+        transform: none !important;
+    }
+
+    .meltix-bot-close:hover,
+    .meltix-bot-close:focus-visible {
+        transform: none !important;
+        background: #e7c28d !important;
+    }
+
+    .meltix-bot-close-label {
+        display: inline !important;
+    }
+
+    .meltix-bot-history {
+        padding-top: 18px !important;
+    }
+}
+/* Mobile chat polish: compact 3:4 popup over a blurred page. */
+@media (max-width: 768px) {
+    .meltix-bot-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        z-index: 999998 !important;
+        background: rgba(2, 2, 2, 0.72) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(0.72) !important;
+        backdrop-filter: blur(14px) saturate(0.72) !important;
+    }
+    .meltix-bot-panel {
+        position: fixed !important;
+        inset: auto !important;
+        top: 50% !important;
+        left: 50% !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: min(88vw, 360px, 58.5svh) !important;
+        height: auto !important;
+        max-width: 360px !important;
+        max-height: 78svh !important;
+        aspect-ratio: 3 / 4 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        overflow: visible !important;
+        background: transparent !important;
+        transform: translate(-50%, -47%) scale(0.97) !important;
+        z-index: 999999 !important;
+    }
+    .meltix-bot-root.is-open .meltix-bot-panel {
+        transform: translate(-50%, -50%) scale(1) !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+    .meltix-bot-panel-shell {
+        position: relative !important;
+        inset: auto !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: none !important;
+        overflow: visible !important;
+        border: 1px solid rgba(220, 174, 111, 0.34) !important;
+        border-radius: 20px !important;
+        background: #0c0907 !important;
+        box-shadow: 0 26px 80px rgba(0, 0, 0, 0.7), 0 0 38px rgba(220, 174, 111, 0.08) !important;
+    }
+    .meltix-bot-layout, .meltix-bot-layout--with-rail {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border-radius: 20px !important;
+        background: #0c0907 !important;
+    }
+    .meltix-bot-chat {
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        border-radius: 20px !important;
+        background: linear-gradient(180deg, #100c09 0%, #090705 100%) !important;
+        box-shadow: inset 0 0 0 1px rgba(220, 174, 111, 0.12) !important;
+    }
+    .meltix-bot-head {
+        position: absolute !important;
+        top: -16px !important;
+        right: -16px !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 40px !important;
+        height: 40px !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        pointer-events: none !important;
+        z-index: 1000000 !important;
+    }
+    .meltix-bot-close {
+        position: relative !important;
+        inset: auto !important;
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        padding: 0 !important;
+        border: 2px solid #0c0907 !important;
+        border-radius: 50% !important;
+        display: grid !important;
+        place-items: center !important;
+        background: #dcae6f !important;
+        color: #0c0907 !important;
+        font-size: 25px !important;
+        line-height: 1 !important;
+        letter-spacing: 0 !important;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.48) !important;
+        pointer-events: auto !important;
+        transform: none !important;
+    }
+    .meltix-bot-close-label { display: none !important; }
+    .meltix-bot-history { padding: 20px 14px 14px !important; gap: 12px !important; }
+    .meltix-bot-floor {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 0 !important;
+        align-items: stretch !important;
+        padding: 10px !important;
+        background: rgba(10, 7, 5, 0.98) !important;
+        border-top: 1px solid rgba(220, 174, 111, 0.12) !important;
+    }
+    .meltix-bot-seat,
+    .meltix-bot-desk-scene,
+    .meltix-bot-seat-avatar,
+    .meltix-bot-desk,
+    .meltix-bot-seat-aura,
+    .meltix-bot-seat-label {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+    .meltix-bot-compose {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+}
+/* Shop-only concierge prompts. Product pages retain chat without floating copy. */
+.meltix-bot-root:not([data-bot-context="shop"]) .meltix-bot-toast,
+.meltix-bot-root:not([data-bot-context="shop"]) .meltix-bot-whisper {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.meltix-bot-root[data-bot-context="shop"] .meltix-bot-whisper {
+    bottom: 122px;
+    width: min(264px, calc(100vw - 40px));
+    min-width: 0;
+    padding: 13px 16px;
+    border: 1px solid rgba(220, 174, 111, 0.42);
+    border-radius: 15px;
+    background: linear-gradient(145deg, rgba(14, 11, 9, 0.97), rgba(29, 21, 15, 0.96));
+    color: #f8f1e7;
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: center;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 244, 224, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.meltix-bot-root[data-bot-context="shop"] .meltix-bot-whisper::after {
+    bottom: -6px;
+    width: 12px;
+    height: 12px;
+    background: #1b140f;
+    border-right: 1px solid rgba(220, 174, 111, 0.42);
+    border-bottom: 1px solid rgba(220, 174, 111, 0.42);
+}
+
+.meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast {
+    width: min(286px, calc(100vw - 40px));
+    padding: 15px 18px;
+    border: 1px solid rgba(220, 174, 111, 0.38);
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(13, 10, 8, 0.98), rgba(28, 20, 14, 0.97));
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 244, 224, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast::after {
+    background: #1a130e;
+    border-right-color: rgba(220, 174, 111, 0.38);
+    border-bottom-color: rgba(220, 174, 111, 0.38);
+}
+
+.meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast-title {
+    margin: 0 24px 4px 0;
+    color: #e0b172;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+}
+
+.meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast-copy {
+    color: rgba(248, 241, 231, 0.78);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+    .meltix-bot-root[data-bot-context="shop"] .meltix-bot-whisper {
+        bottom: 84px;
+        width: auto;
+        max-width: min(174px, calc(100vw - 32px));
+        padding: 9px 12px;
+        border-radius: 12px;
+        font-size: 11.5px;
+        line-height: 1.35;
+    }
+
+    .meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast {
+        bottom: 148px;
+        width: min(206px, calc(100vw - 32px));
+        padding: 12px 14px;
+        border-radius: 14px;
+    }
+
+    .meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast-title {
+        font-size: 13px;
+    }
+
+    .meltix-bot-root[data-bot-context="shop"] .meltix-bot-toast-copy {
+        font-size: 11px;
+        line-height: 1.35;
+    }
 }

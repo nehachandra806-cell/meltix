@@ -2265,7 +2265,7 @@ body {
     }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 768px) {
     .form-grid,
     .impact-grid,
     .tracking-summary,
@@ -2430,4 +2430,1683 @@ body {
     padding-right: 10px;
     -webkit-mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
+}
+
+/* Phase 2 profile mobile fit */
+@media (max-width: 768px) {
+    .top-nav,
+    .profile-shell {
+        width: calc(100% - 24px);
+    }
+
+    .top-nav {
+        margin-top: 12px;
+        padding: 14px 16px;
+        gap: 14px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .brand-lockup {
+        text-align: left;
+    }
+
+    .brand-word {
+        font-size: 1.2rem;
+    }
+
+    .brand-sub {
+        letter-spacing: 0.16rem;
+    }
+
+    .profile-shell {
+        margin: 18px auto 34px;
+    }
+
+    .hero-panel {
+        padding: 34px 16px 24px;
+        border-radius: 24px;
+    }
+
+    .eyebrow,
+    .card-kicker {
+        font-size: 0.72rem;
+        letter-spacing: 0.16rem;
+    }
+
+    .avatar-stage {
+        width: 208px;
+        height: 208px;
+        margin: 18px auto 12px;
+    }
+
+    .avatar-ring {
+        width: 176px;
+        height: 176px;
+    }
+
+    .avatar-trigger {
+        width: 170px;
+        height: 170px;
+    }
+
+    #profile-name {
+        font-size: clamp(2rem, 9vw, 2.6rem);
+    }
+
+    .hero-email {
+        font-size: 0.92rem;
+    }
+
+    .hero-scent-profile {
+        margin-top: 14px;
+    }
+
+    .hero-stats {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+        margin-top: 22px;
+    }
+
+    .stat-pill {
+        width: 100%;
+        max-width: none !important;
+        flex: 1 1 auto !important;
+    }
+
+    .hero-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        border-radius: 22px;
+        margin-top: 20px;
+        padding: 10px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+        width: 100%;
+        min-height: 50px;
+    }
+
+    .google-signin-shell,
+    #google-signin-btn {
+        width: 100%;
+    }
+
+    .content-grid {
+        margin-top: 18px;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .account-card,
+    .address-card,
+    .rewards-card,
+    .wishlist-card,
+    .review-card,
+    .leaderboard-card,
+    .orders-card {
+        grid-column: 1 / -1;
+    }
+
+    .glass-card,
+    .locked-gate {
+        padding: 20px 16px;
+        border-radius: 22px;
+    }
+
+    .card-head h2,
+    .locked-gate h2 {
+        font-size: clamp(1.7rem, 8vw, 2.2rem);
+    }
+
+    .detail-row {
+        padding: 14px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .detail-value {
+        text-align: left;
+    }
+
+    .form-grid,
+    .impact-grid,
+    .tracking-summary,
+    .quiz-grid,
+    .rewards-summary,
+    .order-meta-grid,
+    .avatar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field input {
+        min-height: 50px;
+    }
+
+    .save-row,
+    .ledger-item,
+    .tracking-item,
+    .quiz-footer,
+    .order-top,
+    .review-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .wishlist-item {
+        grid-template-columns: 1fr;
+    }
+
+    .wishlist-thumb {
+        height: 220px;
+    }
+
+    .review-item,
+    .order-item,
+    .vault-empty-state {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .review-rating-block {
+        justify-items: start;
+        text-align: left;
+    }
+
+    .review-impact-row {
+        gap: 8px;
+    }
+
+    .avatar-micro-wrapper {
+        width: 56px;
+        height: 56px;
+    }
+
+    .avatar-micro-wrapper .avatar-stage {
+        transform: scale(0.21);
+        transform-origin: center;
+    }
+
+    .leaderboard-row {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 12px;
+    }
+
+    .leaderboard-user {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .leaderboard-rank {
+        width: 40px;
+        height: 40px;
+    }
+
+    .leaderboard-spend-badge {
+        margin-left: 0;
+        justify-self: start;
+    }
+
+    .order-meta {
+        padding: 12px;
+    }
+
+    .order-actions {
+        justify-content: flex-start;
+    }
+
+    .tracking-card,
+    .scent-card-modal {
+        width: 100%;
+    }
+
+    .timeline-step {
+        grid-template-columns: 16px 1fr;
+        gap: 12px;
+        padding: 14px 15px;
+    }
+
+    .quiz-footer {
+        align-items: stretch;
+    }
+
+    .vault-empty-state {
+        padding: 2.5rem 1rem;
+    }
+
+    .review-list {
+        max-height: none;
+        padding-right: 0;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+}
+
+/* Phase 1 premium profile polish */
+@media (max-width: 480px) {
+    .top-nav,
+    .profile-shell {
+        width: calc(100% - 16px);
+    }
+
+    .top-nav {
+        margin-top: 10px;
+        padding: 12px 14px;
+    }
+
+    .profile-shell {
+        margin: 14px auto 28px;
+    }
+
+    .hero-panel {
+        padding: 28px 14px 20px;
+    }
+
+    .hero-panel::before {
+        opacity: 0.45;
+    }
+
+    .avatar-stage {
+        width: 178px;
+        height: 178px;
+        margin: 14px auto 10px;
+    }
+
+    .avatar-stage::before,
+    .avatar-stage::after {
+        filter: blur(28px);
+        opacity: 0.26;
+    }
+
+    .avatar-ring {
+        width: 150px;
+        height: 150px;
+    }
+
+    .avatar-trigger {
+        width: 144px;
+        height: 144px;
+    }
+
+    #profile-name {
+        font-size: clamp(1.7rem, 9.5vw, 2.2rem);
+    }
+
+    .hero-email,
+    .hero-scent-profile {
+        font-size: 0.88rem;
+    }
+
+    .hero-stats {
+        gap: 10px;
+    }
+
+    .stat-pill {
+        padding: 12px 14px;
+    }
+
+    .hero-actions {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .glass-card,
+    .locked-gate {
+        padding: 18px 14px;
+        border-radius: 20px;
+    }
+
+    .card-head h2,
+    .locked-gate h2 {
+        font-size: clamp(1.45rem, 8vw, 1.9rem);
+    }
+
+    .wishlist-thumb {
+        height: 180px;
+    }
+
+    .review-item,
+    .order-item,
+    .vault-empty-state {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .avatar-micro-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+
+    .avatar-micro-wrapper .avatar-stage {
+        transform: scale(0.18);
+    }
+
+    .tracking-card,
+    .scent-card-modal {
+        padding: 16px 14px;
+    }
+
+    .review-list {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) and (max-height: 760px) {
+    .hero-panel {
+        padding-top: 26px;
+    }
+
+    .content-grid {
+        gap: 12px;
+    }
+}
+
+/* Profile mobile category tabs */
+.profile-mobile-tabs {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    html,
+    body {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .top-nav {
+        width: calc(100vw - 24px) !important;
+        margin: 12px auto 0 !important;
+        padding: 12px 14px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        border-radius: 18px !important;
+    }
+
+    .top-nav .back-btn {
+        font-size: 0.82rem !important;
+        white-space: nowrap !important;
+    }
+
+    .brand-lockup {
+        text-align: right !important;
+        min-width: 0 !important;
+    }
+
+    .brand-word {
+        font-size: 1.02rem !important;
+    }
+
+    .brand-sub {
+        font-size: 0.52rem !important;
+        letter-spacing: 0.13rem !important;
+    }
+
+    .profile-shell {
+        width: calc(100vw - 24px) !important;
+        margin: 14px auto 36px !important;
+    }
+
+    .hero-panel {
+        min-height: auto !important;
+        padding: 22px 13px 14px !important;
+        border-radius: 22px !important;
+        overflow: hidden !important;
+    }
+
+    .hero-panel > .eyebrow {
+        font-size: 0.56rem !important;
+        letter-spacing: 0.18rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    .avatar-stage {
+        width: 126px !important;
+        height: 126px !important;
+        margin: 8px auto 10px !important;
+    }
+
+    .avatar-stage::before,
+    .avatar-stage::after,
+    .avatar-aura {
+        opacity: 0.42 !important;
+        filter: blur(22px) !important;
+    }
+
+    .avatar-ring {
+        width: 116px !important;
+        height: 116px !important;
+    }
+
+    .avatar-trigger {
+        width: 108px !important;
+        height: 108px !important;
+    }
+
+    .avatar-edit-btn {
+        right: 5px !important;
+        bottom: 6px !important;
+        width: 34px !important;
+        height: 34px !important;
+    }
+
+    #profile-name {
+        font-size: clamp(1.65rem, 8.8vw, 2.2rem) !important;
+        line-height: 0.98 !important;
+        margin-top: 8px !important;
+        word-break: break-word !important;
+    }
+
+    .hero-email {
+        width: min(100%, 280px) !important;
+        margin: 9px auto 0 !important;
+        font-size: 0.75rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .hero-scent-profile {
+        width: 100% !important;
+        margin: 12px auto 0 !important;
+        padding: 8px 10px !important;
+        gap: 7px !important;
+        justify-content: center !important;
+    }
+
+    .scent-signature-label {
+        width: 100% !important;
+        text-align: center !important;
+        font-size: 0.68rem !important;
+    }
+
+    .notes-row {
+        justify-content: center !important;
+    }
+
+    .hero-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+        margin-top: 14px !important;
+    }
+
+    .stat-pill {
+        width: 100% !important;
+        max-width: none !important;
+        min-height: 76px !important;
+        padding: 11px 9px !important;
+        border-radius: 17px !important;
+    }
+
+    .stat-label {
+        font-size: 0.58rem !important;
+        letter-spacing: 0.14rem !important;
+    }
+
+    .stat-pill strong {
+        font-size: 1.05rem !important;
+    }
+
+    .hero-actions {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        margin-top: 14px !important;
+        padding: 8px !important;
+        gap: 8px !important;
+        border-radius: 18px !important;
+    }
+
+    .hero-actions .primary-btn,
+    .hero-actions .secondary-btn,
+    .hero-actions .danger-btn {
+        width: 100% !important;
+        min-height: 42px !important;
+        padding: 10px 14px !important;
+        font-size: 0.72rem !important;
+    }
+
+    .profile-mobile-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 7px !important;
+        width: 100% !important;
+        margin: 12px 0 10px !important;
+        padding: 7px !important;
+        border: 1px solid rgba(212, 163, 115, 0.2) !important;
+        border-radius: 18px !important;
+        background: rgba(10, 6, 4, 0.78) !important;
+        backdrop-filter: blur(14px) !important;
+        -webkit-backdrop-filter: blur(14px) !important;
+        position: sticky !important;
+        top: 8px !important;
+        z-index: 30 !important;
+    }
+
+    .profile-mobile-tab {
+        min-height: 42px !important;
+        border: 1px solid rgba(212, 163, 115, 0.16) !important;
+        border-radius: 14px !important;
+        background: rgba(28, 18, 12, 0.64) !important;
+        color: rgba(248, 241, 232, 0.78) !important;
+        font-family: 'Lato', sans-serif !important;
+        font-size: 0.58rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.08rem !important;
+        line-height: 1.15 !important;
+        text-transform: uppercase !important;
+        padding: 8px 5px !important;
+    }
+
+    .profile-mobile-tab.is-active {
+        background: linear-gradient(135deg, #f2c98a, #d4a373) !important;
+        color: #120907 !important;
+        border-color: rgba(242, 201, 138, 0.88) !important;
+        box-shadow: 0 10px 28px rgba(212, 163, 115, 0.22) !important;
+    }
+
+    .content-grid {
+        display: block !important;
+        margin-top: 10px !important;
+    }
+
+    .profile-panel-card {
+        display: none !important;
+    }
+
+    .profile-panel-card.profile-mobile-panel-active {
+        display: block !important;
+        animation: profilePanelIn 0.28s ease both !important;
+    }
+
+    .profile-panel-card.profile-mobile-panel-active + .profile-panel-card.profile-mobile-panel-active {
+        margin-top: 12px !important;
+    }
+
+    .profile-locked .profile-mobile-tabs {
+        display: none !important;
+    }
+
+    .profile-mobile-secondary {
+        display: none !important;
+    }
+
+    .glass-card,
+    .locked-gate {
+        width: 100% !important;
+        padding: 17px 13px !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
+    }
+
+    .card-head {
+        margin-bottom: 13px !important;
+    }
+
+    .card-head h2,
+    .locked-gate h2 {
+        font-size: clamp(1.35rem, 7.2vw, 1.85rem) !important;
+        line-height: 1.05 !important;
+    }
+
+    .card-kicker {
+        font-size: 0.58rem !important;
+        letter-spacing: 0.18rem !important;
+    }
+
+    .body-copy,
+    .support-copy,
+    .inline-status {
+        font-size: 0.82rem !important;
+        line-height: 1.45 !important;
+    }
+
+    .detail-list {
+        gap: 8px !important;
+    }
+
+    .detail-row {
+        padding: 12px 13px !important;
+        border-radius: 15px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+    }
+
+    .detail-label,
+    .detail-value {
+        font-size: 0.84rem !important;
+        min-width: 0 !important;
+    }
+
+    .detail-value {
+        text-align: right !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .address-form,
+    .form-grid {
+        width: 100% !important;
+    }
+
+    .form-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .field span,
+    .checkbox-row {
+        font-size: 0.73rem !important;
+    }
+
+    .field input {
+        min-height: 44px !important;
+        border-radius: 14px !important;
+        padding: 11px 13px !important;
+        font-size: 0.84rem !important;
+    }
+
+    .save-row {
+        gap: 9px !important;
+        align-items: stretch !important;
+    }
+
+    .save-row .primary-btn,
+    .save-row .secondary-btn,
+    .save-row .compact-btn {
+        width: 100% !important;
+        min-height: 42px !important;
+        justify-content: center !important;
+    }
+
+    .rewards-summary {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    .reward-spotlight,
+    .reward-next,
+    .order-meta,
+    .tracking-summary-tile {
+        padding: 13px !important;
+        border-radius: 16px !important;
+    }
+
+    .reward-spotlight strong,
+    .reward-next strong {
+        font-size: clamp(1.45rem, 8vw, 2rem) !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .ledger-item {
+        display: grid !important;
+        grid-template-columns: 1fr auto !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 12px !important;
+        border-radius: 15px !important;
+    }
+
+    .reward-vault-grid,
+    .missions-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 11px !important;
+    }
+
+    .mission-card,
+    .coupon-ticket {
+        padding: 14px !important;
+        border-radius: 17px !important;
+    }
+
+    .mission-copy strong,
+    .coupon-ticket-copy strong {
+        font-size: 1rem !important;
+        line-height: 1.25 !important;
+    }
+
+    .mission-status-btn,
+    .mission-card .compact-btn,
+    .coupon-ticket .compact-btn {
+        width: 100% !important;
+        min-height: 40px !important;
+        margin-top: 10px !important;
+    }
+
+    .vault-empty-state {
+        min-height: 260px !important;
+        padding: 32px 18px !important;
+    }
+
+    .leaderboard-card .card-head h2 {
+        font-size: clamp(1.5rem, 8vw, 2rem) !important;
+    }
+
+    .leaderboard-list {
+        display: grid !important;
+        gap: 10px !important;
+    }
+
+    .leaderboard-row {
+        display: grid !important;
+        grid-template-columns: 42px 1fr !important;
+        gap: 10px !important;
+        align-items: center !important;
+        padding: 12px !important;
+        border-radius: 17px !important;
+    }
+
+    .leaderboard-user {
+        min-width: 0 !important;
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 42px 1fr !important;
+        gap: 10px !important;
+        align-items: center !important;
+    }
+
+    .leaderboard-rank {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 0.92rem !important;
+    }
+
+    .leaderboard-avatar,
+    .leaderboard-fallback-avatar {
+        width: 42px !important;
+        height: 42px !important;
+    }
+
+    .leaderboard-name {
+        font-size: 1rem !important;
+        line-height: 1.15 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    .leaderboard-level {
+        font-size: 0.62rem !important;
+        letter-spacing: 0.09rem !important;
+    }
+
+    .leaderboard-spend-badge {
+        grid-column: 1 / -1 !important;
+        justify-self: stretch !important;
+        width: 100% !important;
+        min-height: 34px !important;
+        display: inline-flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 0.7rem !important;
+    }
+
+    .modal-card {
+        width: calc(100vw - 24px) !important;
+        max-height: 86svh !important;
+        border-radius: 22px !important;
+        padding: 20px 14px !important;
+        overflow-y: auto !important;
+    }
+
+    .avatar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .avatar-option {
+        padding: 10px !important;
+    }
+
+    .avatar-option img {
+        height: 118px !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .profile-mobile-tab {
+        font-size: 0.52rem !important;
+        letter-spacing: 0.055rem !important;
+        padding-inline: 3px !important;
+    }
+
+    .hero-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    .detail-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .detail-value {
+        text-align: left !important;
+    }
+}
+
+@keyframes profilePanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+/* =========================================
+   Mobile Profile App Polish - 20260709
+   ========================================= */
+@media (max-width: 768px) {
+    .profile-shell {
+        margin-top: 10px !important;
+    }
+
+    .hero-panel {
+        padding: 18px 12px 13px !important;
+        border-radius: 24px !important;
+        background:
+            radial-gradient(circle at 50% 6%, rgba(242, 201, 138, 0.16), transparent 38%),
+            linear-gradient(180deg, rgba(41, 27, 19, 0.9), rgba(17, 10, 7, 0.92)) !important;
+    }
+
+    .avatar-stage {
+        width: 112px !important;
+        height: 112px !important;
+        margin: 4px auto 8px !important;
+    }
+
+    .avatar-ring {
+        width: 104px !important;
+        height: 104px !important;
+    }
+
+    .avatar-trigger {
+        width: 96px !important;
+        height: 96px !important;
+    }
+
+    #profile-name {
+        font-size: clamp(1.45rem, 7.4vw, 1.95rem) !important;
+        line-height: 1.02 !important;
+        margin-top: 7px !important;
+    }
+
+    .hero-email {
+        margin-top: 6px !important;
+        font-size: 0.7rem !important;
+        opacity: 0.82 !important;
+    }
+
+    .hero-scent-profile {
+        margin-top: 10px !important;
+        padding: 7px 9px !important;
+        border-radius: 16px !important;
+        background: rgba(255, 255, 255, 0.035) !important;
+    }
+
+    .hero-stats {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        margin-top: 11px !important;
+    }
+
+    .stat-pill {
+        min-height: 58px !important;
+        padding: 9px 8px !important;
+        border-radius: 16px !important;
+        display: grid !important;
+        align-content: center !important;
+        gap: 4px !important;
+    }
+
+    .stat-label {
+        font-size: 0.5rem !important;
+        letter-spacing: 0.12rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .stat-pill strong {
+        font-size: 0.96rem !important;
+        line-height: 1.05 !important;
+    }
+
+    .hero-actions {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-top: 11px !important;
+        padding: 7px !important;
+        border-radius: 18px !important;
+    }
+
+    .hero-actions .primary-btn,
+    .hero-actions .secondary-btn,
+    .hero-actions .danger-btn {
+        min-height: 38px !important;
+        padding: 9px 8px !important;
+        font-size: 0.65rem !important;
+        letter-spacing: 0.06rem !important;
+        white-space: nowrap !important;
+    }
+
+    .hero-actions .danger-btn {
+        grid-column: 1 / -1 !important;
+    }
+
+    .profile-mobile-tabs {
+        gap: 6px !important;
+        padding: 6px !important;
+        border-radius: 17px !important;
+        background: rgba(8, 5, 4, 0.72) !important;
+    }
+
+    .profile-mobile-tab {
+        min-height: 36px !important;
+        border-radius: 12px !important;
+        font-size: 0.54rem !important;
+        letter-spacing: 0.055rem !important;
+        line-height: 1.12 !important;
+        padding: 5px 4px !important;
+    }
+
+    .glass-card,
+    .locked-gate {
+        padding: 16px 12px !important;
+        border-radius: 21px !important;
+    }
+
+    .card-head {
+        margin-bottom: 10px !important;
+    }
+
+    .card-head h2,
+    .locked-gate h2 {
+        font-size: clamp(1.22rem, 6.3vw, 1.65rem) !important;
+    }
+
+    .card-kicker {
+        font-size: 0.52rem !important;
+        letter-spacing: 0.16rem !important;
+    }
+
+    .rewards-summary {
+        display: grid !important;
+        grid-template-columns: minmax(76px, 0.72fr) minmax(0, 1.28fr) !important;
+        gap: 8px !important;
+        align-items: stretch !important;
+        margin-bottom: 11px !important;
+        padding: 7px !important;
+        border-radius: 18px !important;
+        background: rgba(255, 255, 255, 0.025) !important;
+        border: 1px solid rgba(212, 163, 115, 0.09) !important;
+    }
+
+    .reward-spotlight,
+    .reward-next {
+        min-height: 66px !important;
+        padding: 10px 9px !important;
+        border-radius: 14px !important;
+        display: grid !important;
+        align-content: center !important;
+        gap: 4px !important;
+    }
+
+    .reward-label {
+        font-size: 0.58rem !important;
+        line-height: 1.15 !important;
+    }
+
+    .reward-spotlight strong,
+    .reward-next strong {
+        margin-top: 0 !important;
+        font-size: clamp(1rem, 5.4vw, 1.32rem) !important;
+        line-height: 1.04 !important;
+        overflow-wrap: normal !important;
+    }
+
+    .reward-next strong {
+        font-size: clamp(0.96rem, 4.9vw, 1.22rem) !important;
+    }
+
+    .reward-progress-track {
+        height: 8px !important;
+        margin-top: 10px !important;
+    }
+
+    .reward-progress-copy {
+        font-size: 0.66rem !important;
+        margin-top: 8px !important;
+    }
+
+    .leaderboard-card .card-head {
+        margin-bottom: 9px !important;
+    }
+
+    .leaderboard-card .card-head h2 {
+        font-size: clamp(1.22rem, 6.5vw, 1.55rem) !important;
+    }
+
+    .leaderboard-card .body-copy {
+        font-size: 0.66rem !important;
+        line-height: 1.28 !important;
+        max-width: 100% !important;
+    }
+
+    .leaderboard-list {
+        gap: 7px !important;
+    }
+
+    .leaderboard-row {
+        display: flex !important;
+        grid-template-columns: none !important;
+        align-items: center !important;
+        justify-items: stretch !important;
+        gap: 7px !important;
+        min-height: 48px !important;
+        padding: 7px 8px !important;
+        border-radius: 15px !important;
+    }
+
+    .leaderboard-rank {
+        width: 28px !important;
+        height: 28px !important;
+        flex: 0 0 28px !important;
+        font-size: 0.72rem !important;
+    }
+
+    .leaderboard-user {
+        display: flex !important;
+        grid-template-columns: none !important;
+        align-items: center !important;
+        gap: 7px !important;
+        width: auto !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    .leaderboard-avatar,
+    .leaderboard-fallback-avatar {
+        width: 30px !important;
+        height: 30px !important;
+        flex: 0 0 30px !important;
+        font-size: 0.78rem !important;
+    }
+
+    .leaderboard-copy {
+        min-width: 0 !important;
+        gap: 1px !important;
+    }
+
+    .leaderboard-name {
+        font-size: 0.82rem !important;
+        line-height: 1.05 !important;
+        max-width: 86px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    .leaderboard-level,
+    .leaderboard-sub {
+        font-size: 0.48rem !important;
+        letter-spacing: 0.065rem !important;
+        white-space: nowrap !important;
+    }
+
+    .leaderboard-spend-badge {
+        grid-column: auto !important;
+        justify-self: auto !important;
+        align-self: center !important;
+        width: auto !important;
+        min-width: 74px !important;
+        min-height: 26px !important;
+        margin-left: auto !important;
+        padding: 5px 8px !important;
+        border-radius: 999px !important;
+        flex: 0 0 auto !important;
+        font-size: 0.52rem !important;
+        letter-spacing: 0.04rem !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .hero-actions {
+        grid-template-columns: 1fr !important;
+    }
+
+    .leaderboard-name {
+        max-width: 72px !important;
+    }
+
+    .leaderboard-spend-badge {
+        min-width: 66px !important;
+        padding-inline: 6px !important;
+        font-size: 0.48rem !important;
+    }
+}
+/* =========================================
+   Mobile Profile App Polish v2 - 20260709
+   Compact app-style profile dashboard
+   ========================================= */
+@media (max-width: 768px) {
+    .profile-wrap {
+        padding-inline: 10px !important;
+    }
+
+    .profile-shell {
+        gap: 12px !important;
+    }
+
+    .hero-panel {
+        padding: 15px 11px 12px !important;
+        border-radius: 22px !important;
+        overflow: hidden !important;
+    }
+
+    .avatar-stage {
+        width: 92px !important;
+        height: 92px !important;
+        margin: 2px auto 7px !important;
+    }
+
+    .avatar-ring {
+        width: 88px !important;
+        height: 88px !important;
+    }
+
+    .avatar-trigger {
+        width: 80px !important;
+        height: 80px !important;
+    }
+
+    .avatar-edit {
+        width: 30px !important;
+        height: 30px !important;
+        right: -4px !important;
+        bottom: 2px !important;
+    }
+
+    #profile-name {
+        font-size: clamp(1.28rem, 6.4vw, 1.7rem) !important;
+        margin-top: 4px !important;
+    }
+
+    .hero-email {
+        font-size: 0.66rem !important;
+        margin-top: 4px !important;
+    }
+
+    .hero-scent-profile {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        justify-items: center !important;
+        gap: 6px !important;
+        margin-top: 9px !important;
+        padding: 8px !important;
+    }
+
+    .hero-scent-profile .signature-chip,
+    .hero-scent-profile .secondary-btn {
+        width: min(100%, 210px) !important;
+        min-height: 30px !important;
+        font-size: 0.58rem !important;
+        padding: 7px 10px !important;
+    }
+
+    .hero-stats {
+        display: flex !important;
+        grid-template-columns: none !important;
+        gap: 7px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        margin-top: 10px !important;
+        padding-bottom: 2px !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+
+    .hero-stats::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .stat-pill {
+        flex: 0 0 86px !important;
+        min-height: 54px !important;
+        padding: 8px 7px !important;
+        border-radius: 15px !important;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)) !important;
+    }
+
+    .stat-label {
+        font-size: 0.45rem !important;
+        letter-spacing: 0.095rem !important;
+    }
+
+    .stat-pill strong {
+        font-size: 0.82rem !important;
+    }
+
+    .hero-actions {
+        display: flex !important;
+        grid-template-columns: none !important;
+        gap: 7px !important;
+        overflow-x: auto !important;
+        padding: 6px !important;
+        scrollbar-width: none !important;
+    }
+
+    .hero-actions::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .hero-actions .primary-btn,
+    .hero-actions .secondary-btn,
+    .hero-actions .danger-btn {
+        flex: 0 0 auto !important;
+        min-width: 118px !important;
+        min-height: 34px !important;
+        padding: 8px 11px !important;
+        font-size: 0.58rem !important;
+    }
+
+    .hero-actions .danger-btn {
+        grid-column: auto !important;
+    }
+
+    .profile-mobile-tabs {
+        position: sticky !important;
+        top: 6px !important;
+        z-index: 40 !important;
+        gap: 5px !important;
+        padding: 5px !important;
+        margin: 4px 0 8px !important;
+        backdrop-filter: blur(18px) !important;
+    }
+
+    .profile-mobile-tab {
+        min-height: 32px !important;
+        border-radius: 11px !important;
+        font-size: 0.48rem !important;
+        letter-spacing: 0.045rem !important;
+        padding: 5px 3px !important;
+    }
+
+    .glass-card,
+    .locked-gate {
+        padding: 14px 11px !important;
+        border-radius: 20px !important;
+    }
+
+    .details-grid,
+    .wishlist-review-grid {
+        gap: 10px !important;
+    }
+
+    .profile-info-list {
+        gap: 7px !important;
+    }
+
+    .profile-info-item {
+        min-height: 40px !important;
+        padding: 8px 10px !important;
+        border-radius: 13px !important;
+    }
+
+    .profile-info-item span,
+    .profile-info-item strong {
+        font-size: 0.72rem !important;
+    }
+
+    .address-grid {
+        gap: 9px !important;
+    }
+
+    .address-form input {
+        min-height: 40px !important;
+        border-radius: 13px !important;
+    }
+
+    .rewards-summary {
+        display: flex !important;
+        grid-template-columns: none !important;
+        align-items: stretch !important;
+        gap: 0 !important;
+        padding: 0 !important;
+        min-height: 72px !important;
+        border-radius: 18px !important;
+        overflow: hidden !important;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.058), rgba(255, 255, 255, 0.018)) !important;
+        border: 1px solid rgba(212, 163, 115, 0.13) !important;
+    }
+
+    .reward-spotlight,
+    .reward-next {
+        min-height: 72px !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 9px 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 4px !important;
+    }
+
+    .reward-spotlight {
+        flex: 0 0 34% !important;
+        border-right: 1px solid rgba(212, 163, 115, 0.13) !important;
+    }
+
+    .reward-next {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    .reward-label {
+        font-size: 0.52rem !important;
+        opacity: 0.82 !important;
+    }
+
+    .reward-spotlight strong {
+        font-size: clamp(1rem, 5.2vw, 1.28rem) !important;
+        line-height: 1 !important;
+    }
+
+    .reward-next strong {
+        font-size: clamp(0.86rem, 4.6vw, 1.08rem) !important;
+        line-height: 1.08 !important;
+        max-width: 100% !important;
+    }
+
+    .reward-progress-track {
+        height: 6px !important;
+        margin-top: 8px !important;
+    }
+
+    .reward-progress-copy {
+        font-size: 0.58rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .mission-grid {
+        gap: 8px !important;
+    }
+
+    .mission-card {
+        min-height: 0 !important;
+        padding: 11px 10px !important;
+        border-radius: 15px !important;
+    }
+
+    .mission-card h3 {
+        font-size: 0.82rem !important;
+    }
+
+    .leaderboard-card {
+        padding: 13px 10px !important;
+    }
+
+    .leaderboard-card .card-head h2 {
+        font-size: clamp(1.08rem, 5.8vw, 1.42rem) !important;
+    }
+
+    .leaderboard-card .body-copy {
+        font-size: 0.58rem !important;
+        line-height: 1.25 !important;
+    }
+
+    .leaderboard-list {
+        gap: 6px !important;
+    }
+
+    .leaderboard-row {
+        display: flex !important;
+        grid-template-columns: none !important;
+        align-items: center !important;
+        gap: 6px !important;
+        min-height: 42px !important;
+        padding: 6px 7px !important;
+        border-radius: 13px !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .leaderboard-rank {
+        width: 24px !important;
+        height: 24px !important;
+        flex: 0 0 24px !important;
+        font-size: 0.64rem !important;
+    }
+
+    .leaderboard-user {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    .leaderboard-avatar,
+    .leaderboard-fallback-avatar {
+        width: 25px !important;
+        height: 25px !important;
+        flex: 0 0 25px !important;
+        font-size: 0.64rem !important;
+        box-shadow: 0 0 12px rgba(242, 201, 138, 0.22) !important;
+    }
+
+    .leaderboard-copy {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    .leaderboard-name {
+        font-size: 0.68rem !important;
+        line-height: 1.05 !important;
+        max-width: none !important;
+        width: 100% !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    .leaderboard-level,
+    .leaderboard-sub {
+        font-size: 0.42rem !important;
+        letter-spacing: 0.052rem !important;
+    }
+
+    .leaderboard-spend-badge {
+        width: auto !important;
+        min-width: 58px !important;
+        min-height: 22px !important;
+        padding: 4px 7px !important;
+        margin-left: auto !important;
+        border-radius: 999px !important;
+        font-size: 0.43rem !important;
+        letter-spacing: 0.035rem !important;
+        white-space: nowrap !important;
+        flex: 0 0 auto !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .stat-pill {
+        flex-basis: 80px !important;
+    }
+
+    .leaderboard-row {
+        gap: 5px !important;
+        padding-inline: 6px !important;
+    }
+
+    .leaderboard-spend-badge {
+        min-width: 50px !important;
+        padding-inline: 5px !important;
+        font-size: 0.39rem !important;
+    }
+}
+/* =========================================
+   Mobile Scent Quiz Modal Fix - 20260709
+   ========================================= */
+@media (max-width: 768px) {
+    #scent-quiz-modal {
+        padding: 12px !important;
+        align-items: center !important;
+        justify-items: center !important;
+    }
+
+    #scent-quiz-modal .scent-card-modal {
+        width: min(92vw, 340px) !important;
+        max-height: 82svh !important;
+        min-height: 0 !important;
+        padding: 16px 10px 12px !important;
+        border-radius: 19px !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        background: linear-gradient(180deg, rgba(35, 23, 16, 0.96), rgba(12, 7, 5, 0.97)) !important;
+        border: 1px solid rgba(212, 163, 115, 0.28) !important;
+        box-shadow: 0 22px 70px rgba(0, 0, 0, 0.56) !important;
+        scrollbar-width: thin !important;
+        scrollbar-color: rgba(212, 163, 115, 0.55) transparent !important;
+    }
+
+    #scent-quiz-modal .modal-close {
+        top: 10px !important;
+        right: 10px !important;
+        width: 31px !important;
+        height: 31px !important;
+        z-index: 20 !important;
+    }
+
+    #scent-quiz-modal .modal-head {
+        padding-right: 34px !important;
+        margin-bottom: 0 !important;
+    }
+
+    #scent-quiz-modal .card-kicker {
+        font-size: 0.46rem !important;
+        letter-spacing: 0.14rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    #scent-quiz-modal .modal-head h2 {
+        font-size: clamp(1.32rem, 7vw, 1.72rem) !important;
+        line-height: 1.02 !important;
+        margin: 4px 0 7px !important;
+    }
+
+    #scent-quiz-modal .modal-head .body-copy {
+        font-size: 0.61rem !important;
+        line-height: 1.36 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        color: rgba(248, 241, 232, 0.72) !important;
+    }
+
+    #scent-quiz-modal .quiz-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        width: 100% !important;
+        margin-top: 2px !important;
+    }
+
+    #scent-quiz-modal .quiz-option {
+        min-height: 42px !important;
+        height: auto !important;
+        padding: 9px 8px !important;
+        border-radius: 13px !important;
+        font-size: 0.64rem !important;
+        line-height: 1.12 !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.01rem !important;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)) !important;
+        border-color: rgba(212, 163, 115, 0.17) !important;
+    }
+
+    #scent-quiz-modal .quiz-option.is-selected {
+        background: linear-gradient(135deg, #f2c98a, #d4a373) !important;
+        border-color: rgba(255, 235, 186, 0.85) !important;
+        color: #120907 !important;
+        box-shadow: 0 8px 20px rgba(212, 163, 115, 0.22) !important;
+    }
+
+    #scent-quiz-modal .quiz-footer {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        align-items: stretch !important;
+        margin-top: 0 !important;
+        padding-top: 8px !important;
+        border-top: 1px solid rgba(212, 163, 115, 0.10) !important;
+    }
+
+    #scent-quiz-modal #quiz-status {
+        font-size: 0.62rem !important;
+        line-height: 1.3 !important;
+        text-align: center !important;
+        margin: 0 !important;
+    }
+
+    #scent-quiz-modal #save-scent-persona {
+        width: 100% !important;
+        min-height: 39px !important;
+        padding: 9px 12px !important;
+        border-radius: 999px !important;
+        font-size: 0.62rem !important;
+        letter-spacing: 0.08rem !important;
+    }
+}
+
+@media (max-width: 380px), (max-height: 700px) {
+    #scent-quiz-modal .scent-card-modal {
+        max-height: 78svh !important;
+        padding-top: 13px !important;
+    }
+
+    #scent-quiz-modal .modal-head h2 {
+        font-size: clamp(1.16rem, 6.4vw, 1.45rem) !important;
+    }
+
+    #scent-quiz-modal .modal-head .body-copy {
+        font-size: 0.55rem !important;
+    }
+
+    #scent-quiz-modal .quiz-option {
+        min-height: 36px !important;
+        padding-block: 7px !important;
+        font-size: 0.58rem !important;
+    }
+}
+@media (max-width: 768px) {
+    #scent-quiz-modal .quiz-option.active {
+        transform: translateY(-1px) !important;
+        background: linear-gradient(135deg, #f2c98a, #d4a373) !important;
+        border-color: rgba(255, 235, 186, 0.85) !important;
+        color: #120907 !important;
+        box-shadow: 0 8px 20px rgba(212, 163, 115, 0.22) !important;
+    }
 }

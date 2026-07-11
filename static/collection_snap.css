@@ -192,7 +192,7 @@
     flex: 0 1 auto;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .hidden-showcase--luxury-snap {
         padding-top: 5.5rem;
     }
@@ -279,5 +279,1167 @@
 
     .hidden-showcase--luxury-snap #custom-scrubber {
         width: min(240px, calc(100vw - 116px));
+    }
+}
+
+/* Phase 1 collection snap mobile fit */
+@media (max-width: 768px) {
+    .hidden-showcase--luxury-snap {
+        padding-top: 5.15rem;
+        padding-bottom: 2.25rem;
+    }
+
+    .showcase-shell {
+        width: calc(100vw - 24px);
+        gap: 0.85rem;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        height: 332px;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-track {
+        gap: 16px;
+    }
+
+    .hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        width: 204px;
+        height: 286px;
+        border-radius: 15px;
+    }
+
+    .showcase-card-info {
+        padding: 0.82rem 0.75rem 0.9rem;
+        gap: 0.3rem;
+    }
+
+    .showcase-card-title {
+        font-size: 0.95rem;
+    }
+
+    .showcase-card-price {
+        font-size: 0.82rem;
+    }
+
+    .hidden-showcase--luxury-snap .like-btn {
+        top: 10px;
+        right: 10px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .showcase-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .scrubber-controls {
+        gap: 0.45rem;
+        width: 100%;
+    }
+
+    .hidden-showcase--luxury-snap .scrubber-wrapper {
+        gap: 0.55rem;
+    }
+
+    .hidden-showcase--luxury-snap #custom-scrubber {
+        width: min(230px, calc(100vw - 114px));
+    }
+
+    .hidden-showcase--luxury-snap .drag-hint {
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-align: center;
+    }
+}
+
+/* Phase 1 premium collection snap polish */
+@media (max-width: 480px) {
+    .hidden-showcase--luxury-snap {
+        padding-top: 4.7rem;
+        padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    }
+
+    .showcase-shell {
+        width: calc(100vw - 16px);
+        gap: 0.65rem;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        height: clamp(286px, 92vw, 340px);
+    }
+
+    .hidden-showcase--luxury-snap .carousel-track {
+        gap: 12px;
+    }
+
+    .hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        width: min(68vw, 220px);
+        height: clamp(306px, 92vw, 356px);
+        border-radius: 18px;
+    }
+
+    .showcase-card-info {
+        padding: 0.9rem 0.82rem calc(0.96rem + env(safe-area-inset-bottom));
+    }
+
+    .showcase-card-title {
+        font-size: 1rem;
+        line-height: 1.22;
+    }
+
+    .showcase-card-price {
+        font-size: 0.84rem;
+    }
+
+    .hidden-showcase--luxury-snap .like-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .scrubber-controls {
+        gap: 0.4rem;
+    }
+
+    .showcase-nav-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .hidden-showcase--luxury-snap #custom-scrubber {
+        width: min(210px, calc(100vw - 108px));
+    }
+
+    .hidden-showcase--luxury-snap .drag-hint {
+        font-size: 0.62rem;
+        letter-spacing: 0.16em;
+    }
+}
+
+@media (max-width: 768px) and (max-height: 760px) {
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        height: clamp(258px, 54vh, 316px);
+    }
+
+    .hidden-showcase--luxury-snap .scrubber-wrapper {
+        gap: 0.45rem;
+    }
+}
+/* Mobile showcase clipping and layer-isolation armor */
+@media (max-width: 768px) {
+    .showcase-shell,
+    .hidden-showcase--luxury-snap .carousel-viewport,
+    .hidden-showcase--luxury-snap .carousel-track,
+    .product-card,
+    .hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        height: auto !important;
+        min-height: fit-content !important;
+        overflow: visible !important;
+    }
+
+    .hidden-showcase--luxury-snap .showcase-card-media {
+        height: auto !important;
+        aspect-ratio: 1 / 1;
+    }
+
+    .hidden-showcase--luxury-snap .showcase-card-info {
+        min-height: fit-content !important;
+    }
+}
+/* Product category pages: keep bot logic loaded, hide its mobile UI. */
+@media (max-width: 768px) {
+    .meltix-bot-root,
+    .meltix-bot-panel,
+    .meltix-bot-overlay,
+    .meltix-bot-dock,
+    .meltix-bot-launcher,
+    .meltix-bot-avatar {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}
+/* Mobile product modal: centered contained card, not a full-page sheet. */
+@media (max-width: 768px) {
+    html body #productModal.modal-overlay,
+    html body #productModal.modal-overlay.show {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        max-height: 100svh !important;
+        min-height: 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+        z-index: 9999 !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+        overflow: hidden !important;
+    }
+
+    html body #productModal.modal-overlay .modal-container {
+        position: relative !important;
+        width: 92vw !important;
+        max-width: 520px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: 85svh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        background: transparent !important;
+        overflow: visible !important;
+    }
+
+    html body #productModal.modal-overlay .modal-content {
+        position: relative !important;
+        width: 92vw !important;
+        max-width: 520px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: 85svh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(220, 174, 111, 0.3) !important;
+        margin: 0 !important;
+        padding: 16px 14px 30px !important;
+        background: linear-gradient(145deg, rgba(26, 20, 16, 0.98), rgba(10, 8, 5, 0.98)) !important;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.82), inset 0 0 36px rgba(212, 163, 115, 0.05) !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html body #productModal.modal-overlay .modal-left,
+    html body #productModal.modal-overlay .modal-right {
+        flex: none !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+
+    html body #productModal.modal-overlay .close-modal {
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        z-index: 1000 !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+        padding: 0 !important;
+        background: var(--gold, #dcae6f) !important;
+        color: #000 !important;
+        border: 1px solid rgba(8, 6, 4, 0.82) !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 1.28rem !important;
+        line-height: 1 !important;
+        transform: none !important;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55) !important;
+    }
+
+    html body #productModal.modal-overlay .close-modal:hover {
+        transform: none !important;
+        filter: brightness(1.08) !important;
+    }
+}
+/* Desktop centering lock: prevents mobile carousel/card-deck rules from leaking upward. */
+@media (min-width: 769px) {
+    .accordion-container {
+        width: 100vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+    }
+
+    .hidden-showcase {
+        width: 100vw !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+    }
+
+    .hidden-showcase.show {
+        display: flex !important;
+    }
+
+    .hidden-showcase--luxury-snap {
+        padding: 5.75rem 0 2.5rem !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    .showcase-shell {
+        width: min(1080px, calc(100vw - 52px)) !important;
+        max-width: min(1080px, calc(100vw - 52px)) !important;
+        display: grid !important;
+        grid-template-rows: auto auto !important;
+        align-items: center !important;
+        justify-items: center !important;
+        gap: 0.85rem !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        transform: none !important;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        width: 100% !important;
+        height: 404px !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        overflow: hidden !important;
+        padding: 10px 0 8px !important;
+        margin: 0 auto !important;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-track {
+        width: max-content !important;
+        height: auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        align-items: stretch !important;
+        gap: 24px !important;
+        padding: 8px 0 12px !important;
+        margin: 0 !important;
+        overflow: visible !important;
+    }
+
+    .hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        translate: none !important;
+        width: 258px !important;
+        height: 348px !important;
+        min-height: 0 !important;
+        aspect-ratio: auto !important;
+        overflow: hidden !important;
+    }
+
+    .hidden-showcase--luxury-snap .showcase-card-media {
+        height: 72% !important;
+        aspect-ratio: auto !important;
+        overflow: hidden !important;
+    }
+
+    .hidden-showcase--luxury-snap .showcase-card-info {
+        min-height: 28% !important;
+    }
+
+    .hidden-showcase--luxury-snap .scrubber-wrapper {
+        position: static !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0.7rem !important;
+        margin: 0 auto !important;
+        transform: none !important;
+    }
+
+    .scrubber-controls {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0.55rem !important;
+        width: auto !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        transform: none !important;
+    }
+
+    .hidden-showcase--luxury-snap #custom-scrubber {
+        width: min(380px, calc(100vw - 154px)) !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+}
+/* Desktop carousel alignment repair: keep cards and scrubber centered without clipping neighbors. */
+@media (min-width: 769px) {
+    .hidden-showcase--luxury-snap .showcase-shell {
+        width: min(1200px, calc(100vw - 96px)) !important;
+        max-width: min(1200px, calc(100vw - 96px)) !important;
+        margin: 0 auto !important;
+        overflow: visible !important;
+        justify-self: center !important;
+        align-self: center !important;
+    }
+
+    .hidden-showcase--luxury-snap .mobile-deck-stage {
+        width: 100% !important;
+        max-width: min(1200px, calc(100vw - 96px)) !important;
+        margin: 0 auto !important;
+        justify-self: center !important;
+        align-self: center !important;
+    }
+
+    .hidden-showcase--luxury-snap .hidden-message-bot-footer {
+        position: absolute !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        pointer-events: none !important;
+    }
+
+    .hidden-showcase--luxury-snap .hidden-message-bot-footer .meltix-bot-root {
+        pointer-events: auto !important;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-viewport {
+        width: 100% !important;
+        max-width: min(1200px, calc(100vw - 96px)) !important;
+        margin: 0 auto !important;
+        padding: 10px 0 8px !important;
+        overflow: visible !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+
+    .hidden-showcase--luxury-snap .carousel-track {
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+        margin: 0 !important;
+        padding: 8px 0 12px !important;
+        overflow: visible !important;
+    }
+
+    .hidden-showcase--luxury-snap .scrubber-wrapper {
+        width: 100% !important;
+        max-width: min(1200px, calc(100vw - 96px)) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 40px auto 0 !important;
+        justify-self: center !important;
+        align-self: center !important;
+        transform: none !important;
+    }
+
+    .hidden-showcase--luxury-snap .scrubber-controls {
+        width: min(520px, calc(100vw - 180px)) !important;
+        max-width: 520px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        margin: 0 auto !important;
+        transform: none !important;
+    }
+
+    .hidden-showcase--luxury-snap #custom-scrubber {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 260px !important;
+        max-width: 360px !important;
+        margin: 0 !important;
+    }
+}
+/* Mobile modal close alignment: pin X to the modal box, not over the image. */
+@media (max-width: 768px) {
+    html body #productModal.modal-overlay .modal-container {
+        position: relative !important;
+    }
+
+    html body #productModal.modal-overlay .modal-content {
+        position: relative !important;
+        padding-top: 56px !important;
+    }
+
+    html body #productModal.modal-overlay .modal-left,
+    html body #productModal.modal-overlay .main-image-container {
+        position: static !important;
+    }
+
+    html body #productModal.modal-overlay .close-modal {
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        z-index: 9999 !important;
+    }
+
+    html body #productModal.modal-overlay .main-image-container {
+        margin-top: 0 !important;
+    }
+}
+/* Mobile structural correction: separate modal anchors and lock hidden deck stage. */
+@media (max-width: 768px) {
+    html body #productModal.modal-overlay .modal-container,
+    html body #productModal.modal-overlay .modal-content {
+        position: relative !important;
+    }
+
+    html body #productModal.modal-overlay .main-image-container {
+        position: relative !important;
+        margin-top: 10px !important;
+    }
+
+    html body #productModal.modal-overlay .modal-left {
+        position: static !important;
+    }
+
+    html body #productModal.modal-overlay .absolute-wishlist,
+    html body #productModal.modal-overlay .save-later-btn.absolute-wishlist {
+        position: absolute !important;
+        top: 12px !important;
+        left: 12px !important;
+        right: auto !important;
+        z-index: 50 !important;
+    }
+
+    html body #productModal.modal-overlay .close-modal {
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        left: auto !important;
+        z-index: 1000 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap.show {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        min-height: 100svh !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .showcase-shell {
+        width: 100vw !important;
+        height: 100svh !important;
+        min-height: 100svh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-stage {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100svh !important;
+        min-height: 100svh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 30 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap #drag-area.carousel-viewport {
+        flex: 0 0 auto !important;
+        overflow: visible !important;
+        margin: 0 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-controls {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 20px !important;
+        margin-top: 40px !important;
+        position: relative !important;
+        z-index: 100 !important;
+    }
+}
+/* Mobile modal final polish: desktop-style X corner, image bookmark anchor, no content overlap. */
+@media (max-width: 768px) {
+    html body #productModal.modal-overlay .modal-container {
+        position: relative !important;
+        overflow: visible !important;
+    }
+
+    html body #productModal.modal-overlay .modal-content {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        padding: 16px 14px 30px !important;
+    }
+
+    html body #productModal.modal-overlay .modal-left,
+    html body #productModal.modal-overlay .modal-right {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 0 !important;
+    }
+
+    html body #productModal.modal-overlay .details-accordion {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    html body #productModal.modal-overlay .main-image-container {
+        position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        margin-top: 0 !important;
+        margin-bottom: 12px !important;
+        overflow: hidden !important;
+    }
+
+    html body #productModal.modal-overlay .absolute-wishlist,
+    html body #productModal.modal-overlay .save-later-btn.absolute-wishlist {
+        position: absolute !important;
+        top: 12px !important;
+        left: 12px !important;
+        right: auto !important;
+        z-index: 50 !important;
+    }
+
+    html body #productModal.modal-overlay .close-modal {
+        position: absolute !important;
+        top: -14px !important;
+        right: -14px !important;
+        left: auto !important;
+        z-index: 1000 !important;
+    }
+}
+
+/* Mobile modal product info/reviews switch */
+@media (min-width: 769px) {
+    .modal-mobile-tabs {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    html body #productModal.modal-overlay .modal-mobile-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        width: 100% !important;
+        margin: 12px 0 14px !important;
+        padding: 4px !important;
+        border: 1px solid rgba(220, 174, 111, 0.22) !important;
+        border-radius: 999px !important;
+        background: rgba(8, 5, 3, 0.72) !important;
+        box-shadow: inset 0 1px 14px rgba(220, 174, 111, 0.08) !important;
+    }
+
+    html body #productModal.modal-overlay .modal-mobile-tab {
+        min-height: 38px !important;
+        border: 0 !important;
+        border-radius: 999px !important;
+        background: transparent !important;
+        color: rgba(244, 228, 205, 0.76) !important;
+        font-family: 'Lato', sans-serif !important;
+        font-size: 0.72rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase !important;
+        cursor: pointer !important;
+    }
+
+    html body #productModal.modal-overlay .modal-mobile-tab.is-active {
+        background: linear-gradient(135deg, #e2b16f, #9d6d3f) !important;
+        color: #120b05 !important;
+        box-shadow: 0 10px 24px rgba(220, 174, 111, 0.22) !important;
+    }
+
+    html body #productModal.modal-overlay .modal-left {
+        position: relative !important;
+    }
+
+    html body #productModal.modal-overlay .main-image-container {
+        position: relative !important;
+        margin-top: 6px !important;
+    }
+
+    html body #productModal.modal-overlay .modal-right {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    html body #productModal.modal-overlay .modal-interactions {
+        display: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    html body #productModal.modal-overlay.modal-mobile-show-reviews .modal-right {
+        display: none !important;
+    }
+
+    html body #productModal.modal-overlay.modal-mobile-show-reviews .modal-interactions {
+        display: block !important;
+    }
+
+    html body #productModal.modal-overlay .rating-section {
+        display: none !important;
+    }
+
+    html body #productModal.modal-overlay .reviews-section {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 12px 0 0 !important;
+        border-top: 1px solid rgba(220, 174, 111, 0.16) !important;
+    }
+
+    html body #productModal.modal-overlay .reviews-container,
+    html body #productModal.modal-overlay #reviewFormArea {
+        width: 100% !important;
+    }
+}
+/* Collection transition lock: Back is available only after the active view settles. */
+#backToOptionsBtn.back-btn {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    transition: opacity 0.5s ease, visibility 0.5s ease !important;
+}
+
+#backToOptionsBtn.back-btn.back-btn-active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+}
+
+@media (max-width: 768px) {
+    body:has(#productModal.show) .top-nav,
+    body:has(#productModal.show) #backToOptionsBtn.back-btn {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        z-index: 1 !important;
+    }
+}
+body.collection-view-transitioning #accordion-box,
+body.collection-view-transitioning #product-showcase,
+body.collection-view-transitioning #fab-menu {
+    pointer-events: none !important;
+    user-select: none !important;
+}
+/* Mobile category selection: standalone luxury cards. */
+@media (max-width: 768px) {
+    #accordion-box.accordion-container {
+        width: 100vw !important;
+        height: 100svh !important;
+        min-height: 100svh !important;
+        padding: 72px 20px 34px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+    }
+
+    #accordion-box .meltix-accordion {
+        width: 100% !important;
+        max-width: 350px !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        background: transparent !important;
+        border: 0 !important;
+        backdrop-filter: none !important;
+        overflow: visible !important;
+    }
+
+    #accordion-box .meltix-accordion > p {
+        flex: 0 0 auto !important;
+        width: 85vw !important;
+        max-width: 350px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 25px 20px !important;
+        margin: 0 !important;
+        border: 1px solid rgba(220, 174, 111, 0.4) !important;
+        border-radius: 12px !important;
+        background: rgba(20, 15, 10, 0.6) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        backdrop-filter: blur(8px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        text-align: center !important;
+        overflow: hidden !important;
+        transform: none !important;
+        opacity: 1 !important;
+        transition: border-color 0.2s ease, background-color 0.2s ease !important;
+    }
+
+    #accordion-box .meltix-accordion > p > span,
+    #accordion-box .meltix-accordion > p:hover > span {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+    }
+
+    #accordion-box .meltix-accordion > p:hover {
+        flex: 0 0 auto !important;
+    }
+
+
+}
+
+/* Shared mobile flashcard deck: mirrors the final Hidden Message phone experience across collection pages. */
+@media (max-width: 768px) {
+    html body #fab-menu,
+    html body .fab-menu-container {
+        display: none !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding-top: 0 !important;
+        padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+        min-height: 100svh !important;
+        height: auto !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        background: transparent !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .showcase-shell {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        background: transparent !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-stage {
+        height: 100svh !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap #drag-area.carousel-viewport {
+        position: relative !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100vw !important;
+        height: 55vh !important;
+        max-height: 450px !important;
+        min-height: 280px !important;
+        margin-top: 0 !important;
+        margin-left: calc(50% - 50vw) !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        touch-action: pan-y !important;
+        background: transparent !important;
+        isolation: isolate !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap #carousel-track.carousel-track {
+        position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-width: none !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        transform: none !important;
+        transition: none !important;
+        gap: 0 !important;
+        background: transparent !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card {
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        translate: -50% -50% !important;
+        width: 75vw !important;
+        max-width: 320px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        aspect-ratio: 4 / 5 !important;
+        overflow: hidden !important;
+        border-radius: 16px !important;
+        opacity: 0 !important;
+        z-index: 1 !important;
+        pointer-events: none !important;
+        transform: scale(0.86) !important;
+        transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease !important;
+        will-change: transform, opacity !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card .showcase-card-media {
+        width: 100% !important;
+        height: 72% !important;
+        aspect-ratio: auto !important;
+        overflow: hidden !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card .showcase-card-info {
+        min-height: 28% !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-active {
+        z-index: 10 !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transform: translateX(var(--deck-drag-x, 0px)) translateY(0) scale(1) rotate(0deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-1 {
+        z-index: 9 !important;
+        opacity: 0.9 !important;
+        pointer-events: none !important;
+        transform: translateY(12px) scale(0.96) rotate(4deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-2 {
+        z-index: 8 !important;
+        opacity: 0.7 !important;
+        pointer-events: none !important;
+        transform: translateY(24px) scale(0.92) rotate(-3deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-3 {
+        z-index: 7 !important;
+        opacity: 0.5 !important;
+        pointer-events: none !important;
+        transform: translateY(36px) scale(0.88) rotate(5deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-4 {
+        z-index: 6 !important;
+        opacity: 0.3 !important;
+        pointer-events: none !important;
+        transform: translateY(48px) scale(0.84) rotate(-2deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-5 {
+        z-index: 5 !important;
+        opacity: 0.1 !important;
+        pointer-events: none !important;
+        transform: translateY(60px) scale(0.80) rotate(1deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-swiped-right {
+        z-index: 12 !important;
+        opacity: 1 !important;
+        pointer-events: none !important;
+        transform: translateX(105vw) rotate(16deg) scale(0.97) !important;
+        transition: none !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-prev-entering.card-active {
+        z-index: 12 !important;
+        pointer-events: auto !important;
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-receding-behind {
+        z-index: 10 !important;
+        opacity: 0.9 !important;
+        pointer-events: none !important;
+        transform: translateY(12px) scale(0.96) rotate(4deg) !important;
+        transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-hidden {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        z-index: 1 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-fly-out {
+        z-index: 11 !important;
+        pointer-events: none !important;
+        transform: translateX(-120vw) rotate(-20deg) !important;
+        opacity: 0 !important;
+        transition: transform 0.4s ease-in, opacity 0.3s ease-in !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-fly-out-right {
+        z-index: 11 !important;
+        pointer-events: none !important;
+        transform: translateX(120vw) rotate(20deg) !important;
+        opacity: 0 !important;
+        transition: transform 0.4s ease-in, opacity 0.3s ease-in !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap #carousel-track:not(.deck-initialized) > .img-container.showcase-product-card:nth-child(1) {
+        opacity: 1 !important;
+        z-index: 10 !important;
+        pointer-events: auto !important;
+        transform: translateY(0) scale(1) rotate(0deg) !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .deck-transition-card {
+        display: grid !important;
+        place-items: center !important;
+        padding: 24px !important;
+        text-align: center !important;
+        background:
+            radial-gradient(circle at 50% 20%, rgba(212, 163, 115, 0.18), transparent 42%),
+            linear-gradient(145deg, rgba(24, 17, 12, 0.88), rgba(7, 6, 5, 0.84)) !important;
+        border-color: rgba(212, 163, 115, 0.42) !important;
+    }
+
+    .mobile-deck-transition-inner {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .mobile-deck-transition-kicker {
+        color: rgba(212, 163, 115, 0.68) !important;
+        font-size: 0.58rem !important;
+        letter-spacing: 0.25em !important;
+        text-transform: uppercase !important;
+    }
+
+    .mobile-deck-transition-title {
+        margin: 0 !important;
+        color: #f5efe8 !important;
+        font-family: 'Playfair Display', serif !important;
+        font-size: clamp(1.55rem, 7vw, 2.15rem) !important;
+        font-weight: 400 !important;
+        line-height: 1.05 !important;
+    }
+
+    .mobile-deck-transition-copy {
+        margin: 0 !important;
+        max-width: 24ch !important;
+        color: rgba(245, 239, 232, 0.62) !important;
+        font-size: 0.8rem !important;
+        line-height: 1.5 !important;
+    }
+
+    .mobile-deck-transition-cta {
+        color: #d4a373 !important;
+        font-size: 0.64rem !important;
+        letter-spacing: 0.18em !important;
+        text-transform: uppercase !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .scrubber-wrapper {
+        display: none !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-controls {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 20px !important;
+        width: 100% !important;
+        max-width: 360px !important;
+        margin-top: 20px !important;
+        margin-bottom: 0 !important;
+        position: relative !important;
+        z-index: 100 !important;
+        pointer-events: auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-button {
+        flex: 0 0 82px !important;
+        min-width: 82px !important;
+        min-height: 42px !important;
+        padding: 9px 14px !important;
+        border: 1px solid rgba(212, 163, 115, 0.34) !important;
+        border-radius: 999px !important;
+        background: rgba(12, 10, 8, 0.74) !important;
+        color: #d4a373 !important;
+        font-family: 'Lato', sans-serif !important;
+        font-size: 0.66rem !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase !important;
+        cursor: pointer !important;
+        touch-action: manipulation !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-button:disabled {
+        opacity: 0.34 !important;
+        cursor: default !important;
+    }
+
+    html body #product-showcase.hidden-showcase--luxury-snap .mobile-deck-status {
+        flex: 0 1 72px !important;
+        min-width: 0 !important;
+        color: rgba(245, 239, 232, 0.54) !important;
+        font-size: 0.64rem !important;
+        letter-spacing: 0.12em !important;
+        text-align: center !important;
+        text-transform: uppercase !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-deck-stage {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .mobile-deck-controls {
+        display: none !important;
     }
 }

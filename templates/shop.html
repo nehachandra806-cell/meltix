@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shop - Meltix Atelier</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='shop.css', v='shop-20260427-1') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='shop.css', v='shop-20260707-mobile-showcase-loop-3') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='cart.css', v='shop-20260422-1') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260710-shop-whispers') }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -17,6 +17,23 @@
 
   <nav class="nav">
     <div class="nav-left">
+      <button type="button" class="mobile-menu-icon" id="mobile-menu-button" aria-label="Open Menu" aria-expanded="false" aria-controls="mobile-side-drawer">
+        <span></span><span></span><span></span>
+      </button>
+
+      <aside class="mobile-side-drawer" id="mobile-side-drawer" aria-hidden="true" inert>
+        <div class="drawer-content">
+          <p class="drawer-title">Private Doors</p>
+          <a href="{{ url_for('head_to') }}" id="another-section-link">Another Section</a>
+          <a href="{{ url_for('suggestions') }}">Suggestions</a>
+          <a href="{{ url_for('gift_sets') }}">Gift Sets</a>
+          <a href="{{ url_for('craft_studio') }}">Meltix Studio</a>
+          <a href="{{ url_for('feedback') }}">Feedback</a>
+          <a href="{{ url_for('bug_report') }}">Bug Report</a>
+        </div>
+      </aside>
+      <button type="button" class="mobile-drawer-backdrop" aria-label="Close menu" tabindex="-1"></button>
+
       <a href="/profile" class="nav-profile" aria-label="Profile">
         <svg viewBox="0 0 24 24" stroke-width="1.5">
           <path
@@ -28,7 +45,6 @@
       </a>
     </div>
   </nav>
-
   <header class="shop-hero">
     <span class="shop-hero-eyebrow">The Collections</span>
     <h1 class="shop-hero-title">
@@ -110,6 +126,7 @@
     id="secret-popup"
     role="dialog"
     aria-modal="true"
+    aria-hidden="true"
     aria-label="Surprise preview"
   >
     <button class="popup-close-x popup-close-floating" id="popup-close-x" aria-label="Close surprise preview">&times;</button>
@@ -117,6 +134,23 @@
       class="popup-image"
       src="{{ url_for('static', filename='images/surprise_card.png') }}"
       alt="Surprise Card preview"
+      loading="lazy"
+    />
+  </div>
+
+  <div
+    class="popup-overlay popup-overlay-image"
+    id="another-section-popup"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-label="Another section preview"
+  >
+    <button class="popup-close-x popup-close-floating" id="another-section-popup-close" aria-label="Close another section preview">&times;</button>
+    <img
+      class="popup-image"
+      src="{{ url_for('static', filename='images/another_section.png') }}"
+      alt="Another section preview"
       loading="lazy"
     />
   </div>
@@ -136,7 +170,7 @@
   {% include '_ghost_cart.html' %}
 
   <script src="{{ url_for('static', filename='js/cart.js', v='shop-20260422-1') }}"></script>
-<script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
+<script src="{{ url_for('static', filename='js/bot.js', v='bot-20260710-shop-whispers') }}"></script>
   <script>
     const starCanvas = document.getElementById('shop-star-canvas');
     const starContext = starCanvas?.getContext('2d');
@@ -290,6 +324,9 @@
       });
     };
 
+    const mobileShowcaseQuery = window.matchMedia('(max-width: 768px)');
+    const showcaseControllers = [];
+
     document.querySelectorAll('.category-card').forEach((card) => {
       const frames = Array.from(card.querySelectorAll('.showcase-frame'));
       if (!frames.length) return;
@@ -335,15 +372,106 @@
         setShowcaseState(nameFrames, frameIndex, frameIndex);
       }
 
-      card.addEventListener('mouseenter', startShowcase);
-      card.addEventListener('mouseleave', stopShowcase);
-      card.addEventListener('focusin', startShowcase);
+      card.addEventListener('mouseenter', () => {
+        if (mobileShowcaseQuery.matches) return;
+        startShowcase();
+      });
+      card.addEventListener('mouseleave', () => {
+        if (mobileShowcaseQuery.matches) return;
+        stopShowcase();
+      });
+      card.addEventListener('focusin', () => {
+        if (mobileShowcaseQuery.matches) return;
+        startShowcase();
+      });
       card.addEventListener('focusout', (event) => {
+        if (mobileShowcaseQuery.matches) return;
         if (!card.contains(event.relatedTarget)) {
           stopShowcase();
         }
       });
+
+      showcaseControllers.push({
+        card,
+        startShowcase,
+        stopShowcase
+      });
     });
+
+    (() => {
+      const mobileShowcaseCards = showcaseControllers.filter(({ card }) => !card.classList.contains('card-secret'));
+      if (!mobileShowcaseCards.length) return;
+
+      let idleTimer = null;
+      let revealTimer = null;
+
+      const clearMobileLoop = () => {
+        if (idleTimer) {
+          window.clearTimeout(idleTimer);
+          idleTimer = null;
+        }
+
+        if (revealTimer) {
+          window.clearTimeout(revealTimer);
+          revealTimer = null;
+        }
+      };
+
+      const setMobileCardsState = (isRevealed) => {
+        mobileShowcaseCards.forEach(({ startShowcase, stopShowcase }) => {
+          if (isRevealed) {
+            startShowcase();
+            return;
+          }
+
+          stopShowcase();
+        });
+      };
+
+      const queueRevealPhase = () => {
+        idleTimer = window.setTimeout(() => {
+          setMobileCardsState(true);
+          const longestShowcase = mobileShowcaseCards.reduce((duration, { card }) => {
+            const frameCount = Math.max(1, card.querySelectorAll('.showcase-frame').length);
+            return Math.max(duration, (Math.min(frameCount, 3) * 1500) + 350);
+          }, 4850);
+
+          revealTimer = window.setTimeout(() => {
+            setMobileCardsState(false);
+            queueRevealPhase();
+          }, longestShowcase);
+        }, 6000);
+      };
+
+      const syncMobileLoop = () => {
+        clearMobileLoop();
+        setMobileCardsState(false);
+
+        if (!mobileShowcaseQuery.matches) {
+          return;
+        }
+
+        queueRevealPhase();
+      };
+
+      if (typeof mobileShowcaseQuery.addEventListener === 'function') {
+        mobileShowcaseQuery.addEventListener('change', syncMobileLoop);
+      } else if (typeof mobileShowcaseQuery.addListener === 'function') {
+        mobileShowcaseQuery.addListener(syncMobileLoop);
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          clearMobileLoop();
+          setMobileCardsState(false);
+          return;
+        }
+
+        syncMobileLoop();
+      });
+
+      syncMobileLoop();
+    })();
 
     document.querySelectorAll('.category-card[data-href]').forEach((card) => {
       card.addEventListener('click', () => {
@@ -364,15 +492,45 @@
     const popup = document.getElementById('secret-popup');
     const closeX = document.getElementById('popup-close-x');
     const popupImage = popup?.querySelector('.popup-image');
+    const anotherSectionLink = document.getElementById('another-section-link');
+    const anotherSectionPopup = document.getElementById('another-section-popup');
+    const anotherSectionPopupClose = document.getElementById('another-section-popup-close');
+    const anotherSectionPopupImage = anotherSectionPopup?.querySelector('.popup-image');
 
-    function openPopup() {
-      popup?.classList.add('open');
+    function openOverlay(overlay, bodyClass) {
+      if (!overlay) return;
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add(bodyClass);
+      document.body.classList.add('shop-overlay-open');
       document.body.style.overflow = 'hidden';
     }
 
+    function closeOverlay(overlay, bodyClass) {
+      if (!overlay) return;
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove(bodyClass);
+      if (!document.querySelector('.popup-overlay.open')) {
+        document.body.classList.remove('shop-overlay-open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    function openPopup() {
+      openOverlay(popup, 'shop-secret-popup-open');
+    }
+
     function closePopup() {
-      popup?.classList.remove('open');
-      document.body.style.overflow = '';
+      closeOverlay(popup, 'shop-secret-popup-open');
+    }
+
+    function openAnotherSectionPopup() {
+      openOverlay(anotherSectionPopup, 'shop-another-section-popup-open');
+    }
+
+    function closeAnotherSectionPopup() {
+      closeOverlay(anotherSectionPopup, 'shop-another-section-popup-open');
     }
 
     secretCard?.addEventListener('click', openPopup);
@@ -396,9 +554,26 @@
       }
     });
 
+    anotherSectionPopupClose?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      closeAnotherSectionPopup();
+    });
+
+    anotherSectionPopupImage?.addEventListener('click', closeAnotherSectionPopup);
+
+    anotherSectionPopup?.addEventListener('click', (event) => {
+      if (event.target === anotherSectionPopup) {
+        closeAnotherSectionPopup();
+      }
+    });
+
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && popup?.classList.contains('open')) {
+      if (event.key !== 'Escape') return;
+      if (popup?.classList.contains('open')) {
         closePopup();
+      }
+      if (anotherSectionPopup?.classList.contains('open')) {
+        closeAnotherSectionPopup();
       }
     });
 
@@ -455,5 +630,55 @@
       }, 320);
     }
   </script>
-</body>
+  <script>
+    (() => {
+      const icon = document.getElementById('mobile-menu-button');
+      const drawer = document.getElementById('mobile-side-drawer');
+      const backdrop = document.querySelector('.mobile-drawer-backdrop');
+      if (!icon || !drawer || !backdrop) return;
+
+      const setDrawerOpen = (isOpen) => {
+        drawer.classList.toggle('is-open', isOpen);
+        backdrop.classList.toggle('is-open', isOpen);
+        drawer.toggleAttribute('inert', !isOpen);
+        drawer.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        icon.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        icon.setAttribute('aria-label', isOpen ? 'Close Menu' : 'Open Menu');
+        document.body.classList.toggle('mobile-drawer-open', isOpen);
+      };
+
+      icon.addEventListener('click', () => {
+        setDrawerOpen(!drawer.classList.contains('is-open'));
+      });
+
+      backdrop.addEventListener('click', () => {
+        setDrawerOpen(false);
+      });
+
+      drawer.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const isAnotherSectionMobile = link.id === 'another-section-link' && window.innerWidth <= 768;
+          if (isAnotherSectionMobile) {
+            event.preventDefault();
+            setDrawerOpen(false);
+            window.setTimeout(() => {
+              openAnotherSectionPopup();
+            }, 180);
+            return;
+          }
+
+          setDrawerOpen(false);
+        });
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !drawer.classList.contains('is-open')) return;
+        setDrawerOpen(false);
+      });
+
+      setDrawerOpen(false);
+    })();
+  </script></body>
 </html>
+
+

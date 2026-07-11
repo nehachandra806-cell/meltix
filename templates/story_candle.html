@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Story Candle | Meltix</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='story_candle.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='collection_snap.css', v='collection-snap-20260428-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='collection_snap.css', v='collection-snap-20260708-stage-visible') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260710-shop-whispers') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -58,8 +58,16 @@
         <h1 id="bg-dynamic-title" class="bg-watermark">STORY</h1>
         
         <div class="showcase-shell">
-            <div class="carousel-viewport" id="drag-area">
-                <div class="carousel-track" id="carousel-track">
+            <div class="mobile-deck-stage">
+                <div class="carousel-viewport" id="drag-area">
+                    <div class="carousel-track" id="carousel-track">
+                    </div>
+                </div>
+
+                <div class="mobile-deck-controls" aria-label="Story Candle card deck controls">
+                    <button id="mobileDeckPrev" class="mobile-deck-button" type="button" aria-label="Previous product">Prev</button>
+                    <span id="mobileDeckStatus" class="mobile-deck-status" aria-live="polite">1 / 1</span>
+                    <button id="mobileDeckNext" class="mobile-deck-button" type="button" aria-label="Next product">Next</button>
                 </div>
             </div>
             
@@ -96,7 +104,10 @@
                         <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
                         <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
                     </div> 
-                    
+                    <div class="modal-mobile-tabs" role="tablist" aria-label="Product modal sections">
+                        <button type="button" class="modal-mobile-tab is-active" data-modal-tab="info" aria-selected="true">Product Info</button>
+                        <button type="button" class="modal-mobile-tab" data-modal-tab="reviews" aria-selected="false">Reviews</button>
+                    </div>
                     <div class="modal-interactions"> 
                         <div class="rating-section"> 
                             <h4 class="section-title-premium">Rating & Reviews</h4> 
@@ -124,7 +135,7 @@
                                     <p class="review-text">Sign in with Google to share your experience or save items.</p> 
                                     
                                     <div id="g_id_onload"
-                                         data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com"
+                                         data-client_id="{{ google_client_id }}"
                                          data-callback="handleCredentialResponse"
                                          data-auto_prompt="false">
                                     </div>
@@ -251,10 +262,11 @@
     {% endwith %}
     {% include '_ghost_cart.html' %}
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
-    <script src="{{ url_for('static', filename='js/meltix-core.js', v='collection-core-20260428-2') }}"></script>
+    <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260710-shop-whispers') }}"></script>
+    <script src="{{ url_for('static', filename='js/meltix-core.js', v='collection-core-20260708-products-restore') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile_collection_deck.js', v='mobile-deck-20260707-1') }}"></script>
     <script>
-        MeltixCore.initCarouselCollection({
+        window.storyCandleController = MeltixCore.initCarouselCollection({
             catalogEndpoint: "{{ url_for('catalog_api', category='story-candle') }}",
             profileBootstrapUrl: "{{ url_for('profile_bootstrap') }}",
             productStatesUrl: "{{ url_for('product_states') }}",
@@ -271,6 +283,40 @@
             modalCategoryFormatter: () => "Meltix Story Collection",
             uiHooks: [MeltixCore.createStoryArtisanHook()]
         });
+        window.MeltixMobileDeck.init({
+            controllerKey: 'storyCandleController',
+            groups: ['Layered Scent', 'Countdown', 'Visual Reveal'],
+            finalHref: '/zodiac-candle',
+            finalTitle: 'Head to another section',
+            finalCopy: 'Continue into the Zodiac Candle collection.'
+        });
     </script>
+<script>
+(function () {
+    function setModalTab(modal, mode) {
+        if (!modal) return;
+        var showReviews = mode === "reviews";
+        modal.classList.toggle("modal-mobile-show-reviews", showReviews);
+        modal.querySelectorAll(".modal-mobile-tab").forEach(function (button) {
+            var active = button.getAttribute("data-modal-tab") === mode;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-selected", active ? "true" : "false");
+        });
+    }
+
+    document.addEventListener("click", function (event) {
+        var tab = event.target.closest(".modal-mobile-tab");
+        if (tab) {
+            setModalTab(tab.closest(".modal-overlay"), tab.getAttribute("data-modal-tab") || "info");
+            return;
+        }
+
+        if (event.target.closest(".close-modal")) {
+            var modal = event.target.closest(".modal-overlay");
+            window.setTimeout(function () { setModalTab(modal, "info"); }, 0);
+        }
+    });
+})();
+</script>
 </body>
 </html>

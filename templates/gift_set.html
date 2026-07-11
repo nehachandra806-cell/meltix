@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meltix Gift Sets | The Vault</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='gift_set.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='gift_set.css', v='gift-mobile-vault-natural-20260708') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -12,16 +12,16 @@
 </head>
 <body>
 
+    {% if show_gift_intro %}
     <div id="start-overlay">
         <h2 class="pulse-text">TAP TO ENTER THE VAULT</h2>
     </div>
-
     <audio loop preload="auto" id="bg-music">
         <source src="{{ url_for('static', filename='videos/Linen_and_Cold_Water.mp3') }}" type="audio/mpeg">
     </audio>
-
+{% endif %}
     <div id="dust-particles"></div>
-
+{% if show_gift_intro %}
     <div id="cinematic-intro">
         <video muted playsinline preload="auto" id="bg-video">
             <source src="{{ url_for('static', filename='videos/0401.mp4') }}" type="video/mp4">
@@ -29,14 +29,14 @@
         <div class="video-vignette"></div>
         <div class="intro-content" id="btn-container">
             <button class="enter-vault-btn" onclick="enterVault()">
-                Enter the Gifting Vault <span>✦</span>
+                Enter the Gifting Vault <span>&#10022;</span>
             </button>
         </div>
     </div>
-
-    <div id="main-content" class="hidden-main">
+{% endif %}
+    <div id="main-content" class="{{ 'hidden-main' if show_gift_intro else 'show-main' }}">
         <nav class="top-nav">
-            <a href="/shop" class="back-btn"><span>✦</span> Back to Collection</a>
+            <a href="/shop" class="back-btn"><span>&#10022;</span> Back to Collection</a>
         </nav>
 
         <div class="vault-wrapper">
@@ -90,7 +90,7 @@
 
     <div id="category-modal" class="category-modal hidden-modal">
         <div class="category-modal-content">
-            <button class="close-modal-cat" onclick="closeCategory()">×</button>
+            <button class="close-modal-cat" onclick="closeCategory()">&times;</button>
             <div class="modal-left-cat">
                 
                 <div class="cat-vid-loader" id="catVidLoader"></div>
@@ -110,8 +110,8 @@
 
     <div id="product-modal" class="modal-overlay">
         <div class="modal-container">
-            <button class="back-to-cat-btn" onclick="backToCategory()">✦ Back</button>
-            <button class="close-modal" onclick="closeProductModal()">×</button>
+            <button class="back-to-cat-btn" onclick="backToCategory()">&#10022; Back</button>
+            <button class="close-modal" onclick="closeProductModal()">&times;</button>
 
             <div class="modal-content">
                 <div class="modal-left"> 
@@ -130,6 +130,10 @@
                         <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
                         <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
                     </div> 
+                    <div class="modal-mobile-tabs" role="tablist" aria-label="Product modal sections">
+                        <button type="button" class="modal-mobile-tab is-active" data-modal-tab="info" aria-selected="true">Product Info</button>
+                        <button type="button" class="modal-mobile-tab" data-modal-tab="reviews" aria-selected="false">Reviews</button>
+                    </div>
                     
                     <div class="modal-interactions"> 
                         <div class="rating-section"> 
@@ -143,11 +147,11 @@
                             <div id="reviewFormArea"> 
                                 <form class="write-review-form locked" id="reviewForm" onsubmit="submitReview(event)" style="display:none;"> 
                                     <div class="form-stars-container"> 
-                                        <span class="form-star" data-val="1">★</span> 
-                                        <span class="form-star" data-val="2">★</span> 
-                                        <span class="form-star" data-val="3">★</span> 
-                                        <span class="form-star" data-val="4">★</span> 
-                                        <span class="form-star" data-val="5">★</span> 
+                                        <span class="form-star" data-val="1">&#9733;</span> 
+                                        <span class="form-star" data-val="2">&#9733;</span> 
+                                        <span class="form-star" data-val="3">&#9733;</span> 
+                                        <span class="form-star" data-val="4">&#9733;</span> 
+                                        <span class="form-star" data-val="5">&#9733;</span> 
                                     </div> 
                                     <input type="hidden" id="reviewRating" value="0"> 
                                     <textarea id="reviewText" placeholder="Write your experience..." class="premium-input" rows="2" required></textarea> 
@@ -193,7 +197,7 @@
 
                         <div class="price-block">
                             <p class="price-label">Price</p>
-                            <p class="product-price-premium" id="modalPrice">₹0</p>
+                            <p class="product-price-premium" id="modalPrice">&#8377;0</p>
                         </div>
 
                         <div class="purchase-section">
@@ -227,83 +231,90 @@
 
     {% include '_ghost_cart.html' %}
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/meltix-core.js') }}?v=ghost-cart-1"></script>
+    <script src="{{ url_for('static', filename='js/meltix-core.js', v='gift-vault-footer-20260708') }}"></script>
     <script>
-        const currentUserEmail = "{{ session.get('profile_email', '') }}";
+                const currentUserEmail = "{{ session.get('profile_email', '') }}";
         const currentUserName = "{{ session.get('profile_name', '') }}";
         const profileBootstrapUrl = "{{ url_for('profile_bootstrap') }}";
         const productStatesUrl = "{{ url_for('product_states') }}";
-        const uiPrefsKey = "meltix_ui_prefs";
-
-        function readUiPrefs() {
-            try {
-                return JSON.parse(localStorage.getItem(uiPrefsKey)) || {};
-            } catch (error) {
-                return {};
-            }
-        }
-
-        function writeUiPrefs(updates) {
-            const nextPrefs = { ...readUiPrefs(), ...updates };
-            localStorage.setItem(uiPrefsKey, JSON.stringify(nextPrefs));
-            return nextPrefs;
-        }
-
+        const showGiftIntro = {{ 'true' if show_gift_intro else 'false' }};
+        const giftIntroCompleteUrl = "{{ gift_intro_complete_url }}";
         document.addEventListener("DOMContentLoaded", function() {
             const startOverlay = document.getElementById('start-overlay');
+            const introSection = document.getElementById('cinematic-intro');
             const bgVideo = document.getElementById('bg-video');
             const bgMusic = document.getElementById('bg-music');
             const btnContainer = document.getElementById('btn-container');
             const dustParticles = document.getElementById('dust-particles');
-            const hasWatchedIntro = Boolean(readUiPrefs().meltix_gift_intro_watched);
-
-            startOverlay.addEventListener('click', function() {
-                startOverlay.classList.add('hidden');
-                bgMusic.play().catch(e => console.log('Audio play prevented:', e));
-
-                const videoPromise = bgVideo.play();
-                if (videoPromise !== undefined) {
-                    videoPromise.catch(e => {
-                        console.log('Video autoplay prevented or missing. Forcing button display.', e);
+            const mainContent = document.getElementById('main-content');
+            if (dustParticles) {
+                dustParticles.style.opacity = '1';
+            }
+            if (!showGiftIntro) {
+                if (mainContent) {
+                    mainContent.classList.add('show-main');
+                }
+                return;
+            }
+            if (startOverlay) {
+                startOverlay.addEventListener('click', function() {
+                    startOverlay.classList.add('hidden');
+                    if (bgMusic) {
+                        bgMusic.play().catch(() => {});
+                    }
+                    const videoPromise = bgVideo ? bgVideo.play() : null;
+                    if (videoPromise && typeof videoPromise.catch === 'function') {
+                        videoPromise.catch(() => {
+                            if (btnContainer) {
+                                btnContainer.style.opacity = '1';
+                                btnContainer.style.pointerEvents = 'auto';
+                            }
+                        });
+                    }
+                });
+            }
+            if (bgVideo) {
+                bgVideo.addEventListener('ended', function() {
+                    bgVideo.classList.add('alive-video');
+                    if (btnContainer) {
                         btnContainer.style.opacity = '1';
                         btnContainer.style.pointerEvents = 'auto';
-                        dustParticles.style.opacity = '1';
-                    });
-                }
-
-                if (hasWatchedIntro) {
-                    btnContainer.style.opacity = '1';
-                    btnContainer.style.pointerEvents = 'auto';
-                    dustParticles.style.opacity = '1';
-                }
-            });
-
-            bgVideo.addEventListener('ended', function() {
-                bgVideo.classList.add('alive-video');
-                if (!hasWatchedIntro) {
-                    btnContainer.style.opacity = '1';
-                    btnContainer.style.pointerEvents = 'auto';
-                    dustParticles.style.opacity = '1';
-                    writeUiPrefs({ meltix_gift_intro_watched: true });
-                }
-            });
+                    }
+                });
+            }
         });
-
         function enterVault() {
             const introSection = document.getElementById('cinematic-intro');
             const mainContent = document.getElementById('main-content');
             const bgVideo = document.getElementById('bg-video');
             const bgMusic = document.getElementById('bg-music');
-
-            const fadeAudio = setInterval(function () {
-                if (bgMusic.volume > 0.1) bgMusic.volume -= 0.1;
-                else { clearInterval(fadeAudio); bgMusic.pause(); }
-            }, 100);
-
-            introSection.style.opacity = '0';
-            introSection.style.pointerEvents = 'none';
-            mainContent.classList.add('show-main');
-            setTimeout(() => { introSection.style.display = 'none'; bgVideo.pause(); }, 1500);
+            if (showGiftIntro && currentUserEmail && giftIntroCompleteUrl) {
+                fetch(giftIntroCompleteUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                }).catch(() => {});
+            }
+            if (bgMusic) {
+                const fadeAudio = setInterval(function () {
+                    if (bgMusic.volume > 0.1) bgMusic.volume -= 0.1;
+                    else { clearInterval(fadeAudio); bgMusic.pause(); }
+                }, 100);
+            }
+            if (introSection) {
+                introSection.style.opacity = '0';
+                introSection.style.pointerEvents = 'none';
+            }
+            if (mainContent) {
+                mainContent.classList.add('show-main');
+            }
+            if (bgVideo) {
+                setTimeout(() => {
+                    if (introSection) {
+                        introSection.style.display = 'none';
+                    }
+                    bgVideo.pause();
+                }, 1500);
+            }
         }
 
         const dustContainer = document.getElementById('dust-particles');
@@ -328,7 +339,7 @@
             catalogEndpoint: "{{ url_for('catalog_api', category='gift-sets') }}",
             profileBootstrapUrl: profileBootstrapUrl,
             productStatesUrl: productStatesUrl,
-            googleClientId: "17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com",
+            googleClientId: {{ google_client_id | tojson }},
             currentUserEmail: currentUserEmail,
             currentUserName: currentUserName,
             categoryMeta: categoryMeta,
@@ -351,5 +362,34 @@
         window.changeModalImage = (...args) => window.meltixGiftVault?.changeModalImage(...args);
         window.toggleWishlist = (...args) => window.meltixGiftVault?.toggleWishlist(...args);
     </script>
+    <script>
+    (function () {
+        function setModalTab(modal, mode) {
+            if (!modal) return;
+            var showReviews = mode === "reviews";
+            modal.classList.toggle("modal-mobile-show-reviews", showReviews);
+            modal.querySelectorAll(".modal-mobile-tab").forEach(function (button) {
+                var active = button.getAttribute("data-modal-tab") === mode;
+                button.classList.toggle("is-active", active);
+                button.setAttribute("aria-selected", active ? "true" : "false");
+            });
+        }
+
+        document.addEventListener("click", function (event) {
+            var tab = event.target.closest(".modal-mobile-tab");
+            if (tab) {
+                setModalTab(tab.closest(".modal-overlay"), tab.getAttribute("data-modal-tab") || "info");
+                return;
+            }
+
+            if (event.target.closest(".close-modal")) {
+                var modal = event.target.closest(".modal-overlay");
+                window.setTimeout(function () { setModalTab(modal, "info"); }, 0);
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
+
+

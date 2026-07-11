@@ -17,16 +17,16 @@
   const LARGE_ZONE_MIN_HEIGHT = 180;
   const SEARCH_STEP = 52;
 
-  const CONTEXT_WHISPERS = {
-    shop: [
-      "Gift, candle, or suggestion?",
-      "Budget batao, option dikhata hoon.",
-      "Collection chahiye ya quick pick?"
+  const SHOP_WHISPERS = {
+    desktop: [
+      "Looking for a candle, gift, or quick recommendation?",
+      "Tell me the occasion or budget. I'll narrow it down.",
+      "Ready to explore the Meltix collections?"
     ],
-    general: [
-      "Gift chahiye ya product suggestion?",
-      "Tell me the collection or budget.",
-      "Need a candle, gift, or quick pick?"
+    mobile: [
+      "Let's explore.",
+      "Find your candle.",
+      "Need a quick pick?"
     ]
   };
   const ROMAN_HINDI_MARKERS = [
@@ -78,6 +78,19 @@
     ].join("");
   }
 
+  function renderTypingIndicator() {
+    return [
+      '<article class="meltix-bot-message meltix-bot-message--assistant meltix-bot-message--typing" aria-label="Meltix Bot is typing">',
+      '<span class="meltix-bot-message-label">Meltix Bot</span>',
+      '<div class="meltix-bot-typing-dots" aria-hidden="true">',
+      '<span></span>',
+      '<span></span>',
+      '<span></span>',
+      '</div>',
+      '</article>'
+    ].join("");
+  }
+
   function detectUiLanguage(value) {
     const text = String(value || "").trim();
     if (/[\u0900-\u097F]/.test(text)) {
@@ -119,6 +132,7 @@
 
   function initBot(root) {
     const context = root.dataset.botContext || "general";
+    const popupsEnabled = context === "shop";
     const chatUrl = root.dataset.chatUrl || "/api/bot/chat";
     const prefsKey = `meltix_bot_prefs:${context}`;
     const historyKey = `meltix_bot_history:${context}`;
@@ -135,6 +149,8 @@
       dismiss: root.querySelector("[data-bot-dismiss]"),
       dock: root.querySelector("[data-bot-dock]"),
       launcher: root.querySelector("[data-bot-launcher]"),
+      navToggle: root.querySelector("[data-bot-nav-toggle]"),
+      navRail: root.querySelector(".meltix-bot-rail"),
       avatar: root.querySelector("[data-bot-avatar]"),
       avatarDrag: root.querySelector("[data-bot-avatar-drag]"),
       whisper: root.querySelector("[data-bot-whisper]"),
@@ -183,6 +199,7 @@
     let whisperHide = null;
     let dragState = null;
     let isSending = false;
+    let isTypingVisible = false;
     let escapeCooldown = 0;
     let collisionFrame = null;
 
@@ -385,7 +402,7 @@
     }
 
     function renderHistory() {
-      refs.history.innerHTML = history.map((entry) => {
+      const itemsHtml = history.map((entry) => {
         if (entry.role === "product-card") {
           return renderProductCard(entry.productCard);
         }
@@ -398,7 +415,16 @@
           "</article>"
         ].join("");
       }).join("");
+
+      refs.history.innerHTML = isTypingVisible
+        ? `${itemsHtml}${renderTypingIndicator()}`
+        : itemsHtml;
       scrollHistoryToBottom();
+    }
+
+    function setTypingIndicator(state) {
+      isTypingVisible = Boolean(state);
+      renderHistory();
     }
 
     function addMessage(role, text, options = {}) {
@@ -442,7 +468,7 @@
     }
 
     function showToast() {
-      if (prefs.introDismissed) return;
+      if (!popupsEnabled || prefs.introDismissed) return;
       refs.toast?.classList.add("is-visible");
     }
 
@@ -473,6 +499,7 @@
 
     function openPanel(focusInput) {
       root.classList.add("is-open");
+      setRailOpen(false);
       refs.panel.setAttribute("aria-hidden", "false");
       prefs = writePrefs({ panelOpen: true, introDismissed: true });
       refs.toast?.classList.remove("is-visible");
@@ -484,28 +511,42 @@
     function closePanel() {
       root.classList.remove("is-open");
       refs.panel.setAttribute("aria-hidden", "true");
+      setRailOpen(false);
       prefs = writePrefs({ panelOpen: false });
     }
 
+    function setRailOpen(nextOpen) {
+      if (!refs.navToggle || !refs.navRail) return;
+      root.classList.toggle("is-rail-open", !!nextOpen);
+      refs.navToggle.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+      refs.navToggle.setAttribute("aria-label", nextOpen ? "Close Private Doors" : "Open Private Doors");
+    }
+
+    function toggleRail() {
+      if (!refs.navToggle || !refs.navRail) return;
+      setRailOpen(!root.classList.contains("is-rail-open"));
+    }
+
     function showWhisper(message) {
-      if (!refs.whisper || !message) return;
+      if (!popupsEnabled || !refs.whisper || !message) return;
       refs.whisper.textContent = message;
       refs.whisper.classList.add("is-visible");
       window.clearTimeout(whisperHide);
       whisperHide = window.setTimeout(() => {
         refs.whisper.classList.remove("is-visible");
-      }, 3200);
+      }, window.innerWidth <= 768 ? 2300 : 3200);
     }
 
     function cycleWhisper() {
-      if (root.classList.contains("is-open") || dragState?.active) return;
-      const pool = CONTEXT_WHISPERS[context] || CONTEXT_WHISPERS.general;
+      if (!popupsEnabled || root.classList.contains("is-open") || dragState?.active) return;
+      const pool = window.innerWidth <= 768 ? SHOP_WHISPERS.mobile : SHOP_WHISPERS.desktop;
       const message = pool[Math.floor(Math.random() * pool.length)];
       showWhisper(message);
     }
 
     function startWhispers() {
       window.clearInterval(whisperLoop);
+      if (!popupsEnabled) return;
       whisperLoop = window.setInterval(cycleWhisper, 18000);
     }
 
@@ -592,7 +633,8 @@
     function getFallbackReply(message) {
       const lower = String(message || "").toLowerCase();
       const language = detectUiLanguage(message);
-      if (/(hello|hi|hey|namaste|salam|kaise)/.test(lower)) {
+
+      if (/\b(hello|hi|hey|namaste|salam|kaise)\b/.test(lower)) {
         if (language === "hindi") {
           return "स्वागत है। गिफ्ट, कैंडल, या suggestion चाहिए?";
         }
@@ -601,7 +643,8 @@
         }
         return "Welcome. Looking for a gift, a candle, or a suggestion?";
       }
-      if (/(gift|birthday|anniversary|surprise)/.test(lower)) {
+
+      if (/\b(gift|birthday|anniversary|surprise)\b/.test(lower)) {
         if (language === "hindi") {
           return "गिफ्ट के लिए budget या occasion बताइए, मैं सही option दिखाऊंगा।";
         }
@@ -610,41 +653,9 @@
         }
         return "Share the occasion or budget, and I will point you to the right gift.";
       }
+
       if (language === "hindi") {
         return "कृपया product, budget, ya collection बताइए, मैं सीधे वहीं ले चलता हूँ।";
-      }
-      if (language === "hinglish") {
-        return "Product, budget, ya collection batao, main seedha ussi direction me le chalta hoon.";
-      }
-      return "Tell me the product, budget, or collection, and I will take you straight there.";
-    }
-
-    function getFallbackReply(message) {
-      const lower = String(message || "").toLowerCase();
-      const language = detectUiLanguage(message);
-
-      if (/(hello|hi|hey|namaste|salam|kaise)/.test(lower)) {
-        if (language === "hindi") {
-          return "\u0938\u094d\u0935\u093e\u0917\u0924 \u0939\u0948\u0964 \u0917\u093f\u092b\u094d\u091f, \u0915\u0948\u0902\u0921\u0932, \u092f\u093e suggestion \u091a\u093e\u0939\u093f\u090f?";
-        }
-        if (language === "hinglish") {
-          return "Welcome. Gift, candle, ya suggestion chahiye?";
-        }
-        return "Welcome. Looking for a gift, a candle, or a suggestion?";
-      }
-
-      if (/(gift|birthday|anniversary|surprise)/.test(lower)) {
-        if (language === "hindi") {
-          return "\u0917\u093f\u092b\u094d\u091f \u0915\u0947 \u0932\u093f\u090f budget \u092f\u093e occasion \u092c\u0924\u093e\u0907\u090f, \u092e\u0948\u0902 \u0938\u0939\u0940 option \u0926\u093f\u0916\u093e\u090a\u0902\u0917\u093e\u0964";
-        }
-        if (language === "hinglish") {
-          return "Gift ke liye budget ya occasion batao, main sahi option dikhaunga.";
-        }
-        return "Share the occasion or budget, and I will point you to the right gift.";
-      }
-
-      if (language === "hindi") {
-        return "\u0915\u0943\u092a\u092f\u093e product, budget, ya collection \u092c\u0924\u093e\u0907\u090f, \u092e\u0948\u0902 \u0938\u0940\u0927\u0947 \u0935\u0939\u0940\u0902 \u0932\u0947 \u091a\u0932\u0924\u093e \u0939\u0942\u0901\u0964";
       }
       if (language === "hinglish") {
         return "Product, budget, ya collection batao, main seedha ussi direction me le chalta hoon.";
@@ -662,8 +673,10 @@
       refs.input.focus();
 
       setSendingState(true);
+      setTypingIndicator(true);
       try {
         const data = await requestBotReply(text, priorHistory);
+        setTypingIndicator(false);
         addMessage("assistant", data.reply);
         if (data.product_card) {
           addProductCard(data.product_card);
@@ -674,6 +687,7 @@
           }, 1500);
         }
       } catch (error) {
+        setTypingIndicator(false);
         addMessage("assistant", getFallbackReply(text));
       } finally {
         setSendingState(false);
@@ -686,6 +700,11 @@
         label,
         href: button.dataset.botHref || "#"
       };
+      if (window.innerWidth <= 768) {
+        closePanel();
+        window.location.href = route.href;
+        return;
+      }
       addMessage("user", label);
       addMessage("assistant", actionReply(label));
       queueNavigation(route);
@@ -735,7 +754,7 @@
         if (root.classList.contains("is-open")) {
           closePanel();
         } else {
-          openPanel(true);
+          openPanel(window.innerWidth > 768);
         }
       } else {
         escapeInteractiveZone(true);
@@ -774,6 +793,16 @@
     refs.close?.addEventListener("click", closePanel);
     refs.overlay?.addEventListener("click", closePanel);
     refs.dismiss?.addEventListener("click", dismissToast);
+    refs.navToggle?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleRail();
+    });
+    refs.panel?.addEventListener("click", (event) => {
+      if (!root.classList.contains("is-rail-open")) return;
+      if (event.target.closest(".meltix-bot-rail") || event.target.closest("[data-bot-nav-toggle]")) return;
+      setRailOpen(false);
+    });
     refs.launcher.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerup", onPointerUp);
@@ -794,7 +823,10 @@
         event.preventDefault();
         openPanel(true);
       } else if (key === "g" || key === "escape") {
-        if (root.classList.contains("is-open")) {
+        if (root.classList.contains("is-rail-open")) {
+          event.preventDefault();
+          setRailOpen(false);
+        } else if (root.classList.contains("is-open")) {
           event.preventDefault();
           closePanel();
         }
@@ -816,11 +848,16 @@
     startWhispers();
     scheduleCollisionCheck(false);
 
-    if (prefs.panelOpen) {
+    if (prefs.panelOpen && window.innerWidth > 768) {
       openPanel(false);
     } else {
-      window.setTimeout(showToast, 900);
-      window.setTimeout(cycleWhisper, 2200);
+      if (prefs.panelOpen && window.innerWidth <= 768) {
+        prefs = writePrefs({ panelOpen: false });
+      }
+      if (popupsEnabled) {
+        window.setTimeout(showToast, 900);
+        window.setTimeout(cycleWhisper, 2200);
+      }
     }
   }
 
@@ -832,3 +869,4 @@
     document.querySelectorAll("[data-meltix-bot]").forEach(initBot);
   }
 })();
+

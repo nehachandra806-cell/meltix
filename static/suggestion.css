@@ -238,3 +238,392 @@ body, html {
     letter-spacing: 1px;
     margin-top: 20px;
 }
+/* Phase 2 suggestion mobile fit */
+@media (max-width: 768px) {
+    #intro-screen {
+        padding: 0 16px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .scroll-prompt {
+        font-size: 0.9rem;
+        letter-spacing: 0.26rem;
+        text-align: center;
+        width: 100%;
+        margin-inline: auto;
+    }
+
+    .back-btn {
+        top: 18px;
+        left: 16px;
+        font-size: 0.98rem;
+        gap: 4px;
+    }
+
+    .pointer-star {
+        font-size: 1.12rem;
+    }
+
+    #scroll-container {
+        height: 420vh;
+    }
+
+    .sticky-wrapper {
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    #video-canvas {
+        transform: scale(1.02);
+    }
+
+    #text-overlay {
+        top: 48%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(calc(100% - 32px), 420px);
+        margin-inline: auto;
+        text-align: center;
+        align-items: center;
+    }
+
+    #top-group {
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .overline {
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
+        text-align: center;
+    }
+
+    .main-title {
+        font-size: clamp(2.2rem, 10vw, 3.4rem);
+        line-height: 1.12;
+        text-align: center;
+    }
+
+    .subtitle {
+        margin-top: 12px;
+        font-size: 1.15rem;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .next-section {
+        justify-content: flex-start;
+        align-items: center;
+        padding: 36px 12px 56px;
+        text-align: center;
+    }
+
+    .next-section h2 {
+        width: 100%;
+        margin-inline: auto;
+        font-size: 1.7rem;
+        line-height: 1.18;
+        text-align: center;
+    }
+
+    .next-section p {
+        font-size: 1rem;
+    }
+
+    .suggestion-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: min(100%, 420px);
+        gap: 10px;
+        margin-top: 22px;
+        margin-inline: auto;
+        align-items: start;
+    }
+
+    .suggest-card {
+        width: 100%;
+        min-width: 0;
+        border-radius: 12px;
+    }
+
+    .img-wrapper {
+        height: clamp(94px, 28vw, 126px);
+    }
+
+    .suggest-info {
+        padding: 9px 8px 10px;
+    }
+
+    .suggest-info h3 {
+        font-size: 0.7rem;
+        line-height: 1.2;
+        margin-bottom: 6px;
+        letter-spacing: 0.02em;
+    }
+
+    .like-count {
+        gap: 4px;
+        font-size: 0.62rem;
+    }
+
+    .mini-heart {
+        width: 12px;
+        height: 12px;
+    }
+
+    .no-likes-msg {
+        grid-column: 1 / -1;
+        margin-top: 12px;
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: center;
+    }
+}
+
+/* Phase 1 premium suggestion polish */
+@media (max-width: 480px) {
+    #scroll-container {
+        height: 360vh;
+    }
+
+    .sticky-wrapper {
+        height: 100svh;
+        height: 100dvh;
+    }
+
+    #text-overlay {
+        top: 49%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(calc(100% - 24px), 380px);
+    }
+
+    .main-title {
+        font-size: clamp(1.9rem, 11vw, 2.8rem);
+        line-height: 1.08;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+
+    .scroll-prompt {
+        font-size: 0.76rem;
+        letter-spacing: 0.18rem;
+    }
+
+    .next-section {
+        padding: 28px 10px 44px;
+    }
+
+    .next-section h2 {
+        font-size: 1.55rem;
+    }
+
+    .suggestion-grid {
+        width: min(100%, 360px);
+        gap: 8px;
+    }
+
+    .suggest-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    .suggest-card:hover {
+        transform: none;
+    }
+
+    .img-wrapper {
+        height: clamp(88px, 28vw, 114px);
+    }
+
+    .suggest-info {
+        padding: 8px 7px 9px;
+    }
+
+    .suggest-info h3 {
+        font-size: 0.66rem;
+    }
+
+    .like-count {
+        font-size: 0.58rem;
+    }
+
+    .mini-heart {
+        width: 11px;
+        height: 11px;
+    }
+
+    .no-likes-msg {
+        font-size: 0.92rem;
+    }
+}
+
+@media (max-width: 768px) and (max-height: 760px) {
+    #scroll-container {
+        height: 340vh;
+    }
+
+    #text-overlay {
+        top: 50%;
+    }
+
+    .next-section {
+        padding-top: 28px;
+    }
+}
+
+/* Phase 2 suggestion mobile svh fix */
+@media (max-width: 768px) {
+    .sticky-wrapper {
+        height: 100svh !important;
+    }
+}
+
+/* Mobile suggestion polish: centered cue + equal 3-up product cards */
+@media (max-width: 768px) {
+    #intro-screen {
+        display: grid !important;
+        place-items: center !important;
+        padding: 0 !important;
+    }
+
+    .scroll-prompt {
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: max-content !important;
+        max-width: calc(100vw - 36px) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        letter-spacing: 0.22rem !important;
+        white-space: nowrap !important;
+    }
+
+    .scroll-arrow {
+        position: absolute !important;
+        left: 50% !important;
+        top: calc(50% + 28px) !important;
+        margin: 0 !important;
+        transform: translateX(-50%) rotate(45deg) !important;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0) rotate(45deg); }
+        40% { transform: translateX(-50%) translateY(-12px) rotate(45deg); }
+        60% { transform: translateX(-50%) translateY(-6px) rotate(45deg); }
+    }
+
+    .next-section {
+        width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    .suggestion-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        width: min(calc(100vw - 28px), 360px) !important;
+        max-width: 360px !important;
+        gap: 8px !important;
+        margin: 22px auto 0 !important;
+        align-items: stretch !important;
+        justify-items: stretch !important;
+    }
+
+    .suggest-card {
+        width: 100% !important;
+        height: 172px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+    }
+
+    .suggest-card:hover {
+        transform: none !important;
+    }
+
+    .img-wrapper {
+        flex: 0 0 104px !important;
+        height: 104px !important;
+        width: 100% !important;
+    }
+
+    .img-wrapper img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    .suggest-info {
+        flex: 1 1 auto !important;
+        min-height: 68px !important;
+        padding: 8px 6px 7px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 5px !important;
+    }
+
+    .suggest-info h3 {
+        width: 100% !important;
+        min-height: 2.35em !important;
+        max-height: 2.35em !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        text-overflow: ellipsis !important;
+        font-size: clamp(0.56rem, 2.25vw, 0.68rem) !important;
+        line-height: 1.18 !important;
+        letter-spacing: 0 !important;
+        text-align: center !important;
+    }
+
+    .like-count {
+        flex: 0 0 auto !important;
+        height: 13px !important;
+        line-height: 1 !important;
+        gap: 3px !important;
+        font-size: clamp(0.52rem, 2vw, 0.6rem) !important;
+        white-space: nowrap !important;
+    }
+
+    .mini-heart {
+        width: 9px !important;
+        height: 9px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .suggestion-grid {
+        width: min(calc(100vw - 24px), 336px) !important;
+        gap: 7px !important;
+    }
+
+    .suggest-card {
+        height: 164px !important;
+    }
+
+    .img-wrapper {
+        flex-basis: 98px !important;
+        height: 98px !important;
+    }
+
+    .suggest-info {
+        min-height: 66px !important;
+        padding-inline: 5px !important;
+    }
+}
+

@@ -198,7 +198,7 @@ body {
 /* =========================================
    Responsive Design
    ========================================= */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .split-section, .split-section.reverse {
         flex-direction: column;
         gap: 30px;
@@ -209,4 +209,83 @@ body {
     
     .teams-grid { grid-template-columns: 1fr; }
     .main-title, .section-title { font-size: 2.8rem; }
+}
+
+@media (max-width: 768px) {
+    .top-nav {
+        padding: 18px 20px;
+    }
+
+    .back-btn {
+        font-size: 1rem;
+    }
+
+    .about-wrapper {
+        margin-top: 92px;
+        padding: 0 16px;
+    }
+
+    .split-section,
+    .split-section.reverse {
+        gap: 24px;
+        margin-bottom: 72px;
+    }
+
+    .sub-title {
+        font-size: 0.76rem;
+        letter-spacing: 2.6px;
+    }
+
+    .main-title,
+    .section-title {
+        font-size: clamp(2.1rem, 11vw, 2.7rem);
+        line-height: 1.08;
+        margin-bottom: 16px;
+    }
+
+    .person-name {
+        font-size: 1.55rem;
+        margin-bottom: 16px;
+    }
+
+    .title-separator {
+        width: 48px;
+        margin-bottom: 22px;
+    }
+
+    .story-text {
+        font-size: 0.98rem;
+        line-height: 1.75;
+    }
+
+    .image-content,
+    .image-content img {
+        border-radius: 12px;
+    }
+
+    .teams-grid {
+        gap: 24px;
+        margin-bottom: 72px;
+    }
+
+    .team-img-wrapper {
+        height: 200px;
+    }
+
+    .team-info {
+        padding: 22px 18px;
+    }
+
+    .team-title {
+        font-size: 1.45rem;
+        margin-bottom: 12px;
+    }
+
+    .team-desc {
+        font-size: 0.95rem;
+    }
+
+    .footer-spacer {
+        height: 72px;
+    }
 }

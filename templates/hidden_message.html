@@ -4,12 +4,546 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Hidden Message Candle | Meltix</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='hidden_message.css', v='hidden-20260428-1') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='collection_snap.css', v='collection-snap-20260428-2') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='hidden_message.css', v='hidden-modal-20260708-deck-gap') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='collection_snap.css', v='collection-snap-20260708-stage-visible') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='cart.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='vip_reviews.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260426-8') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bot.css', v='bot-20260710-shop-whispers') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+    /* Hidden Message — premium mobile card-deck (inline overrides win over external sheets) */
+    @media (max-width: 768px) {
+        #fab-menu,
+        .fab-menu-container {
+            display: none !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            padding-top: 0 !important;
+            padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+            min-height: 100svh !important;
+            height: auto !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            background: transparent !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .showcase-shell {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important;
+            max-width: none !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            gap: 0 !important;
+            background: transparent !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .mobile-deck-stage {
+            height: 100svh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap #drag-area.carousel-viewport {
+            position: relative !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100vw !important;
+            height: 55vh !important;
+            max-height: 450px !important;
+            min-height: 280px !important;
+            margin-top: 0 !important;
+            margin-left: calc(50% - 50vw) !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            touch-action: pan-y !important;
+            background: transparent !important;
+            isolation: isolate;
+            flex-shrink: 0;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap #carousel-track.carousel-track {
+            position: relative !important;
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            max-width: none !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            transform: none !important;
+            transition: none !important;
+            gap: 0 !important;
+            background: transparent !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            translate: -50% -50%;
+            width: 75vw !important;
+            max-width: 320px !important;
+            height: auto !important;
+            min-height: 0 !important;
+            aspect-ratio: 4 / 5 !important;
+            overflow: hidden !important;
+            border-radius: 16px !important;
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+            transform: scale(0.86);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+            will-change: transform, opacity;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card .showcase-card-media {
+            width: 100% !important;
+            height: 72% !important;
+            aspect-ratio: auto !important;
+            overflow: hidden !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card .showcase-card-info {
+            min-height: 28% !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-active {
+            z-index: 10;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(var(--deck-drag-x, 0px)) translateY(0) scale(1) rotate(0deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-1 {
+            z-index: 9;
+            opacity: 0.9;
+            pointer-events: none;
+            transform: translateY(12px) scale(0.96) rotate(4deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-2 {
+            z-index: 8;
+            opacity: 0.7;
+            pointer-events: none;
+            transform: translateY(24px) scale(0.92) rotate(-3deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-3 {
+            z-index: 7;
+            opacity: 0.5;
+            pointer-events: none;
+            transform: translateY(36px) scale(0.88) rotate(5deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-4 {
+            z-index: 6;
+            opacity: 0.3;
+            pointer-events: none;
+            transform: translateY(48px) scale(0.84) rotate(-2deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-behind-5 {
+            z-index: 5;
+            opacity: 0.1;
+            pointer-events: none;
+            transform: translateY(60px) scale(0.80) rotate(1deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-swiped-right {
+            z-index: 12 !important;
+            opacity: 1 !important;
+            pointer-events: none !important;
+            transform: translateX(105vw) rotate(16deg) scale(0.97) !important;
+            transition: none !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-prev-entering.card-active {
+            z-index: 12 !important;
+            pointer-events: auto !important;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-receding-behind {
+            z-index: 10 !important;
+            opacity: 0.9 !important;
+            pointer-events: none !important;
+            transform: translateY(12px) scale(0.96) rotate(4deg) !important;
+            transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-fly-out {
+            z-index: 11 !important;
+            pointer-events: none !important;
+            transform: translateX(-120vw) rotate(-20deg) !important;
+            opacity: 0 !important;
+            transition: transform 0.4s ease-in, opacity 0.3s ease-in !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .img-container.showcase-product-card.card-fly-out-right {
+            z-index: 11 !important;
+            pointer-events: none !important;
+            transform: translateX(120vw) rotate(20deg) !important;
+            opacity: 0 !important;
+            transition: transform 0.4s ease-in, opacity 0.3s ease-in !important;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap #carousel-track:not(.deck-initialized) > .img-container.showcase-product-card:nth-child(1) {
+            opacity: 1;
+            z-index: 10;
+            pointer-events: auto;
+            transform: translateY(0) scale(1) rotate(0deg);
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .deck-transition-card {
+            display: grid !important;
+            place-items: center;
+            padding: 24px;
+            text-align: center;
+            background:
+                radial-gradient(circle at 50% 20%, rgba(212, 163, 115, 0.18), transparent 42%),
+                linear-gradient(145deg, rgba(24, 17, 12, 0.88), rgba(7, 6, 5, 0.84)) !important;
+            border-color: rgba(212, 163, 115, 0.42);
+        }
+
+        .mobile-deck-transition-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-deck-transition-kicker {
+            color: rgba(212, 163, 115, 0.68);
+            font-size: 0.58rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+        }
+
+        .mobile-deck-transition-title {
+            margin: 0;
+            color: #f5efe8;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.55rem, 7vw, 2.15rem);
+            font-weight: 400;
+            line-height: 1.05;
+        }
+
+        .mobile-deck-transition-copy {
+            margin: 0;
+            max-width: 24ch;
+            color: rgba(245, 239, 232, 0.62);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .mobile-deck-transition-cta {
+            color: #d4a373;
+            font-size: 0.64rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        #product-showcase.hidden-showcase--luxury-snap .scrubber-wrapper {
+            display: none !important;
+        }
+
+        .mobile-deck-controls {
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 360px;
+            margin-top: 34px;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 100;
+            pointer-events: auto;
+            flex-shrink: 0;
+        }
+
+        .mobile-deck-button {
+            flex: 0 0 82px;
+            min-width: 82px;
+            min-height: 42px;
+            padding: 9px 14px;
+            border: 1px solid rgba(212, 163, 115, 0.34);
+            border-radius: 999px;
+            background: rgba(12, 10, 8, 0.74);
+            color: #d4a373;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.66rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .mobile-deck-button:disabled {
+            opacity: 0.34;
+            cursor: default;
+        }
+
+        .mobile-deck-status {
+            flex: 0 1 72px;
+            min-width: 0;
+            color: rgba(245, 239, 232, 0.54);
+            font-size: 0.64rem;
+            letter-spacing: 0.12em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .hidden-message-bot-footer {
+            position: relative;
+            width: 100%;
+            min-height: 96px;
+            margin-top: 8px;
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+
+        .hidden-message-bot-footer .meltix-bot-root {
+            position: relative !important;
+            inset: auto !important;
+            width: 100%;
+            height: 96px;
+            min-height: 96px;
+            pointer-events: none;
+        }
+
+        .hidden-message-bot-footer .meltix-bot-dock {
+            position: absolute !important;
+            top: auto !important;
+            left: auto !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            z-index: 50 !important;
+            transform: none !important;
+            pointer-events: auto;
+            transition: opacity 0.22s ease !important;
+        }
+
+        .hidden-message-bot-footer .meltix-bot-root.is-open .meltix-bot-dock {
+            opacity: 0;
+            pointer-events: none;
+            transform: none !important;
+        }
+
+        .hidden-message-bot-footer .meltix-bot-panel,
+        .hidden-message-bot-footer .meltix-bot-overlay {
+            position: fixed !important;
+        }
+
+        .hidden-message-bot-footer .meltix-bot-whisper,
+        .hidden-message-bot-footer .meltix-bot-toast,
+        body .meltix-bot-whisper,
+        body .meltix-bot-toast {
+            display: none !important;
+        }
+
+        /* Product modal — scrollable mobile sheet */
+        #productModal.modal-overlay {
+            align-items: flex-start !important;
+            justify-content: flex-start !important;
+            padding-top: 60px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        #productModal.modal-overlay.show {
+            z-index: 10150 !important;
+        }
+
+        body:has(#productModal.show) .top-nav,
+        body:has(#productModal.show) .back-btn {
+            z-index: 1 !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+        }
+
+        #productModal .modal-container {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: calc(100svh - 60px) !important;
+            max-height: calc(100svh - 60px) !important;
+            margin: 0 !important;
+            padding: 12px 14px 0 !important;
+            border-radius: 20px 20px 0 0 !important;
+            overflow: hidden !important;
+            position: relative !important;
+        }
+
+        #productModal .close-modal {
+            position: absolute !important;
+            top: 15px !important;
+            right: 15px !important;
+            z-index: 9999 !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            backdrop-filter: blur(5px) !important;
+            -webkit-backdrop-filter: blur(5px) !important;
+            border-radius: 50% !important;
+            width: auto !important;
+            height: auto !important;
+            padding: 8px !important;
+            min-width: 35px !important;
+            min-height: 35px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            border: 1px solid rgba(212, 163, 115, 0.28) !important;
+            color: #d4a373 !important;
+            font-size: 1.35rem !important;
+            line-height: 1 !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+            transform: none !important;
+        }
+
+        #productModal .close-modal:hover {
+            transform: none !important;
+            filter: brightness(1.1) !important;
+        }
+
+        #productModal .modal-content {
+            display: flex !important;
+            flex-direction: column !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            padding-bottom: 150px !important;
+            padding-right: 0 !important;
+            padding-top: 44px !important;
+            gap: 0 !important;
+            position: relative !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #productModal .modal-left,
+        #productModal .modal-right,
+        #productModal .details-accordion {
+            display: contents !important;
+        }
+
+        #productModal .main-image-container {
+            display: block !important;
+            order: 1 !important;
+            width: 100% !important;
+            aspect-ratio: 1 / 1 !important;
+            height: auto !important;
+            min-height: min(75vw, 400px) !important;
+            max-height: none !important;
+            margin-bottom: 10px !important;
+            flex-shrink: 0 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            overflow: hidden !important;
+        }
+
+        #productModal .main-image-container img,
+        #productModal #modalMainImage {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-height: min(75vw, 400px) !important;
+            object-fit: cover !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        #productModal .thumbnail-gallery {
+            order: 2 !important;
+            margin-bottom: 15px !important;
+            width: 100% !important;
+            flex-shrink: 0 !important;
+        }
+
+        #productModal .modal-header-info {
+            order: 2 !important;
+            width: 100% !important;
+        }
+
+        #productModal .price-block {
+            order: 5 !important;
+            width: 100% !important;
+            margin-top: 8px !important;
+        }
+
+        #productModal .detail-item {
+            order: 3 !important;
+            width: 100% !important;
+        }
+
+        #productModal .custom-order-section {
+            order: 4 !important;
+            width: 100% !important;
+            margin-top: 20px !important;
+        }
+
+        #productModal .purchase-section {
+            order: 6 !important;
+            position: relative !important;
+            width: 100% !important;
+            margin-top: 15px !important;
+            padding: 0 !important;
+            background: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            bottom: auto !important;
+            z-index: 1 !important;
+        }
+
+        #productModal .magic-cart-btn,
+        #productModal .modal-right .magic-cart-btn {
+            position: relative !important;
+            width: 100% !important;
+            margin-top: 15px !important;
+            margin-bottom: 0 !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            transform: none !important;
+        }
+
+        #productModal .modal-interactions {
+            order: 7 !important;
+            width: 100% !important;
+            margin-top: 30px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding-top: 20px !important;
+        }
+
+        #productModal .rating-section,
+        #productModal .reviews-section {
+            order: 7 !important;
+            width: 100% !important;
+        }
+
+        #productModal .modal-interactions {
+            margin-bottom: 150px !important;
+        }
+    }
+    </style>
     
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -58,9 +592,23 @@
         <h1 id="bg-dynamic-title" class="bg-watermark">ALPHABET</h1>
         
         <div class="showcase-shell">
-            <div class="carousel-viewport" id="drag-area">
-                <div class="carousel-track" id="carousel-track">
+            <div class="mobile-deck-stage">
+                <div class="carousel-viewport" id="drag-area">
+                    <div class="carousel-track" id="carousel-track">
+                    </div>
                 </div>
+
+                <div class="mobile-deck-controls" aria-label="Hidden Message card deck controls">
+                    <button id="mobileDeckPrev" class="mobile-deck-button" type="button" aria-label="Previous product">Prev</button>
+                    <span id="mobileDeckStatus" class="mobile-deck-status" aria-live="polite">1 / 1</span>
+                    <button id="mobileDeckNext" class="mobile-deck-button" type="button" aria-label="Next product">Next</button>
+                </div>
+            </div>
+
+            <div class="hidden-message-bot-footer" id="hiddenMessageBotFooter">
+                {% with show_nav_options=False, bot_context='hidden-message' %}
+                  {% include '_bot_panel.html' %}
+                {% endwith %}
             </div>
 
             <div class="scrubber-wrapper">
@@ -96,7 +644,10 @@
                         <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
                         <img src="" onclick="changeModalImage(this, this.src)" class="thumb-img"> 
                     </div> 
-                    
+                    <div class="modal-mobile-tabs" role="tablist" aria-label="Product modal sections">
+                        <button type="button" class="modal-mobile-tab is-active" data-modal-tab="info" aria-selected="true">Product Info</button>
+                        <button type="button" class="modal-mobile-tab" data-modal-tab="reviews" aria-selected="false">Reviews</button>
+                    </div>
                     <div class="modal-interactions"> 
                         <div class="rating-section"> 
                             <h4 class="section-title-premium">Rating & Reviews</h4> 
@@ -124,7 +675,7 @@
                                     <p class="review-text">Sign in with Google to share your experience or save items.</p> 
                                     
                                     <div id="g_id_onload"
-                                         data-client_id="17754358545-qfrigfjcbm0lfnab47d0l1gokgride78.apps.googleusercontent.com"
+                                         data-client_id="{{ google_client_id }}"
                                          data-callback="handleCredentialResponse"
                                          data-auto_prompt="false">
                                     </div>
@@ -219,15 +770,12 @@
         </div>
     </div>
 
-    {% with show_nav_options=False, bot_context='hidden-message' %}
-      {% include '_bot_panel.html' %}
-    {% endwith %}
     {% include '_ghost_cart.html' %}
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260426-4') }}"></script>
-    <script src="{{ url_for('static', filename='js/meltix-core.js', v='hidden-core-20260428-2') }}"></script>
+    <script src="{{ url_for('static', filename='js/bot.js', v='bot-20260710-shop-whispers') }}"></script>
+    <script src="{{ url_for('static', filename='js/meltix-core.js', v='collection-core-20260708-products-restore') }}"></script>
     <script>
-        MeltixCore.initCarouselCollection({
+        window.hiddenMessageController = MeltixCore.initCarouselCollection({
             catalogEndpoint: "{{ url_for('catalog_api', category='hidden-message') }}",
             profileBootstrapUrl: "{{ url_for('profile_bootstrap') }}",
             productStatesUrl: "{{ url_for('product_states') }}",
@@ -245,5 +793,380 @@
             uiHooks: [MeltixCore.createHiddenMessageHook()]
         });
     </script>
+    <script>
+    (function initHiddenMessageMobileDeck() {
+        const MOBILE_QUERY = window.matchMedia('(max-width: 768px)');
+        const GROUPS = ['Alphabet Beads', 'Magic Paper', 'Heat Activated'];
+        const FLY_OUT_MS = 400;
+        const SWIPE_THRESHOLD = 44;
+
+        const BEHIND_CLASSES = [
+            'card-behind-1', 'card-behind-2', 'card-behind-3',
+            'card-behind-4', 'card-behind-5'
+        ];
+
+        const DECK_CLASSES = [
+            'card-active', 'card-hidden',
+            'card-fly-out', 'card-fly-out-right',
+            'card-swiped-right', 'card-prev-entering', 'card-receding-behind',
+            'stack-active', 'stack-next', 'stack-prev', 'is-active'
+        ].concat(BEHIND_CLASSES);
+
+        let cards = [];
+        let activeIndex = 0;
+        let animating = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let dragX = 0;
+        let gestureAxis = null;
+        let touching = false;
+
+        let controller = null;
+        let deck = null;
+        let track = null;
+        let prevButton = null;
+        let nextButton = null;
+        let status = null;
+
+        function isMobile() {
+            return MOBILE_QUERY.matches;
+        }
+
+        function stopCoreAutoShowcase() {
+            controller?.stopSnapAutoShowcase?.();
+        }
+
+        function getGroupIndex() {
+            return Math.max(GROUPS.indexOf(controller.activeGroup), 0);
+        }
+
+        function activateTransition() {
+            const groupIndex = getGroupIndex();
+            if (groupIndex === GROUPS.length - 1) {
+                window.location.href = '/story-candle';
+                return;
+            }
+            window.switchVariant(GROUPS[groupIndex + 1]);
+        }
+
+        function applyDeckState() {
+            if (!cards.length) return;
+            activeIndex = Math.max(0, Math.min(activeIndex, cards.length - 1));
+
+            cards.forEach(function (card, index) {
+                card.classList.remove.apply(card.classList, DECK_CLASSES);
+                card.style.removeProperty('--deck-drag-x');
+
+                const distance = index - activeIndex;
+                if (distance === 0) {
+                    card.classList.add('card-active');
+                } else if (distance > 0 && distance <= BEHIND_CLASSES.length) {
+                    card.classList.add(BEHIND_CLASSES[distance - 1]);
+                } else {
+                    card.classList.add('card-hidden');
+                }
+                card.setAttribute('aria-hidden', distance === 0 ? 'false' : 'true');
+            });
+
+            const activeCard = cards[activeIndex];
+            const isTransition = activeCard.classList.contains('deck-transition-card');
+            const productCount = Math.max(cards.length - 1, 0);
+
+            status.textContent = isTransition
+                ? (activeCard.dataset.deckLabel || 'Discover More')
+                : (activeIndex + 1) + ' / ' + productCount;
+            prevButton.disabled = animating || activeIndex === 0;
+            nextButton.disabled = animating;
+            nextButton.textContent = isTransition ? 'Enter' : 'Next';
+            stopCoreAutoShowcase();
+        }
+
+        function promoteStackDuringFlyOut() {
+            const nextCard = cards[activeIndex + 1];
+            if (nextCard) {
+                nextCard.classList.remove.apply(nextCard.classList, DECK_CLASSES);
+                nextCard.classList.add('card-active');
+                nextCard.setAttribute('aria-hidden', 'false');
+            }
+
+            for (let layer = 1; layer <= BEHIND_CLASSES.length; layer += 1) {
+                const behindCard = cards[activeIndex + 1 + layer];
+                if (!behindCard) break;
+                behindCard.classList.remove.apply(behindCard.classList, DECK_CLASSES);
+                behindCard.classList.add(BEHIND_CLASSES[layer - 1]);
+            }
+        }
+
+        function moveDeckPrev() {
+            const activeCard = cards[activeIndex];
+            const incomingCard = cards[activeIndex - 1];
+            if (!incomingCard) return;
+
+            animating = true;
+            prevButton.disabled = true;
+            nextButton.disabled = true;
+            activeCard.style.removeProperty('--deck-drag-x');
+            incomingCard.style.removeProperty('--deck-drag-x');
+
+            incomingCard.classList.remove.apply(incomingCard.classList, DECK_CLASSES);
+            incomingCard.classList.add('card-swiped-right');
+            void incomingCard.offsetWidth;
+
+            incomingCard.classList.remove('card-swiped-right');
+            incomingCard.classList.add('card-active', 'card-prev-entering');
+            incomingCard.setAttribute('aria-hidden', 'false');
+
+            activeCard.classList.remove('card-active');
+            activeCard.classList.add('card-receding-behind');
+
+            window.setTimeout(function () {
+                activeCard.classList.remove('card-receding-behind', 'card-fly-out', 'card-fly-out-right');
+                incomingCard.classList.remove('card-prev-entering', 'card-swiped-right');
+                activeIndex -= 1;
+                animating = false;
+                applyDeckState();
+            }, FLY_OUT_MS);
+        }
+
+        function moveDeck(direction) {
+            if (animating || !cards.length) return;
+            if (direction < 0 && activeIndex === 0) return;
+
+            if (direction < 0) {
+                moveDeckPrev();
+                return;
+            }
+
+            const activeCard = cards[activeIndex];
+            const leavingTransition = activeIndex === cards.length - 1;
+
+            animating = true;
+            prevButton.disabled = true;
+            nextButton.disabled = true;
+            activeCard.style.removeProperty('--deck-drag-x');
+            activeCard.classList.remove('card-active');
+            BEHIND_CLASSES.forEach(function (cls) { activeCard.classList.remove(cls); });
+            activeCard.classList.add('card-fly-out');
+
+            if (!leavingTransition) {
+                promoteStackDuringFlyOut();
+            }
+
+            void activeCard.offsetWidth;
+
+            window.setTimeout(function () {
+                activeCard.classList.remove('card-fly-out', 'card-fly-out-right');
+
+                if (leavingTransition) {
+                    activateTransition();
+                    return;
+                }
+
+                activeIndex += 1;
+                animating = false;
+                applyDeckState();
+            }, FLY_OUT_MS);
+        }
+
+        function createTransitionCard() {
+            const groupIndex = getGroupIndex();
+            const isFinalGroup = groupIndex === GROUPS.length - 1;
+            const nextGroup = GROUPS[groupIndex + 1] || '';
+            const transition = document.createElement('article');
+
+            transition.className = 'img-container showcase-product-card product-card deck-transition-card';
+            transition.tabIndex = 0;
+            transition.setAttribute('role', 'button');
+            transition.dataset.deckLabel = isFinalGroup ? 'Another Section' : 'Discover More';
+            transition.setAttribute(
+                'aria-label',
+                isFinalGroup ? 'Head to another section' : 'Discover ' + nextGroup
+            );
+            transition.innerHTML =
+                '<div class="mobile-deck-transition-inner">' +
+                    '<span class="mobile-deck-transition-kicker">' + (isFinalGroup ? 'The Journey Continues' : 'Next Private Door') + '</span>' +
+                    '<h3 class="mobile-deck-transition-title">' + (isFinalGroup ? 'Head to another section' : 'Discover More') + '</h3>' +
+                    '<p class="mobile-deck-transition-copy">' + (isFinalGroup
+                        ? 'Continue into the Story Candle collection.'
+                        : 'Step into ' + nextGroup + '.') + '</p>' +
+                    '<span class="mobile-deck-transition-cta">Tap to continue &rarr;</span>' +
+                '</div>';
+
+            transition.addEventListener('click', function () { moveDeck(1); });
+            transition.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    moveDeck(1);
+                }
+            });
+            return transition;
+        }
+
+        function ensureFirstCardVisible() {
+            const firstCard = track.querySelector('.showcase-product-card:not(.deck-transition-card)');
+            if (firstCard && !track.querySelector('.card-active')) {
+                firstCard.classList.add('card-active');
+                firstCard.setAttribute('aria-hidden', 'false');
+            }
+        }
+
+        function initializeDeck() {
+            if (!isMobile()) return;
+
+            track.querySelector('.deck-transition-card')?.remove();
+            const productCards = Array.from(track.querySelectorAll('.showcase-product-card:not(.deck-transition-card)'));
+            if (!productCards.length) return;
+
+            track.classList.add('deck-initialized');
+            track.appendChild(createTransitionCard());
+            cards = Array.from(track.querySelectorAll('.showcase-product-card'));
+            activeIndex = 0;
+            animating = false;
+
+            cards[0].classList.add('card-active');
+            cards[0].setAttribute('aria-hidden', 'false');
+            applyDeckState();
+
+            window.requestAnimationFrame(function () {
+                window.requestAnimationFrame(stopCoreAutoShowcase);
+            });
+            window.setTimeout(stopCoreAutoShowcase, 100);
+        }
+
+        function bindDeckInteractions() {
+            const blockCorePointer = function (event) {
+                if (event.pointerType === 'touch' && !event.target.closest('.like-btn')) {
+                    event.stopImmediatePropagation();
+                }
+            };
+            ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (name) {
+                deck.addEventListener(name, blockCorePointer, { capture: true, passive: true });
+            });
+
+            prevButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                moveDeck(-1);
+            });
+            nextButton.addEventListener('click', function (event) {
+                event.preventDefault();
+                moveDeck(1);
+            });
+
+            deck.addEventListener('touchstart', function (event) {
+                if (event.touches.length !== 1 || !cards.length || animating) return;
+                if (event.target.closest('.like-btn')) return;
+                touching = true;
+                dragX = 0;
+                gestureAxis = null;
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+                stopCoreAutoShowcase();
+            }, { passive: true });
+
+            deck.addEventListener('touchmove', function (event) {
+                if (!touching || event.touches.length !== 1) return;
+                const deltaX = event.touches[0].clientX - touchStartX;
+                const deltaY = event.touches[0].clientY - touchStartY;
+                if (!gestureAxis && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > 7) {
+                    gestureAxis = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+                }
+                if (gestureAxis !== 'horizontal') return;
+
+                event.preventDefault();
+                dragX = Math.max(-120, Math.min(120, deltaX));
+                cards[activeIndex]?.style.setProperty('--deck-drag-x', dragX + 'px');
+            }, { passive: false });
+
+            function finishTouch() {
+                if (!touching) return;
+                touching = false;
+                cards[activeIndex]?.style.removeProperty('--deck-drag-x');
+                if (gestureAxis === 'horizontal' && Math.abs(dragX) >= SWIPE_THRESHOLD) {
+                    moveDeck(dragX < 0 ? 1 : -1);
+                } else {
+                    applyDeckState();
+                }
+                dragX = 0;
+                gestureAxis = null;
+                stopCoreAutoShowcase();
+            }
+
+            deck.addEventListener('touchend', finishTouch, { passive: true });
+            deck.addEventListener('touchcancel', finishTouch, { passive: true });
+        }
+
+        function hookController() {
+            const originalRenderGroup = controller.renderGroup.bind(controller);
+            controller.renderGroup = async function () {
+                const result = await originalRenderGroup.apply(controller, arguments);
+                initializeDeck();
+                return result;
+            };
+        }
+
+        function boot() {
+            if (!isMobile()) return;
+
+            controller = window.hiddenMessageController;
+            if (controller?._hiddenMobileDeckReady) return;
+            deck = document.getElementById('drag-area');
+            track = document.getElementById('carousel-track');
+            prevButton = document.getElementById('mobileDeckPrev');
+            nextButton = document.getElementById('mobileDeckNext');
+            status = document.getElementById('mobileDeckStatus');
+
+            if (!controller || !deck || !track || !prevButton || !nextButton || !status) return;
+
+            ensureFirstCardVisible();
+            new MutationObserver(ensureFirstCardVisible).observe(track, { childList: true });
+
+            bindDeckInteractions();
+            hookController();
+
+            if (track.querySelector('.showcase-product-card')) {
+                initializeDeck();
+            }
+
+            controller._hiddenMobileDeckReady = true;
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', boot);
+        } else {
+            boot();
+        }
+
+        MOBILE_QUERY.addEventListener('change', function () {
+            if (MOBILE_QUERY.matches) boot();
+        });
+    })();
+    </script>
+<script>
+(function () {
+    function setModalTab(modal, mode) {
+        if (!modal) return;
+        var showReviews = mode === "reviews";
+        modal.classList.toggle("modal-mobile-show-reviews", showReviews);
+        modal.querySelectorAll(".modal-mobile-tab").forEach(function (button) {
+            var active = button.getAttribute("data-modal-tab") === mode;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-selected", active ? "true" : "false");
+        });
+    }
+
+    document.addEventListener("click", function (event) {
+        var tab = event.target.closest(".modal-mobile-tab");
+        if (tab) {
+            setModalTab(tab.closest(".modal-overlay"), tab.getAttribute("data-modal-tab") || "info");
+            return;
+        }
+
+        if (event.target.closest(".close-modal")) {
+            var modal = event.target.closest(".modal-overlay");
+            window.setTimeout(function () { setModalTab(modal, "info"); }, 0);
+        }
+    });
+})();
+</script>
 </body>
 </html>

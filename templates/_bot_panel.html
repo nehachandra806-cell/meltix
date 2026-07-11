@@ -18,8 +18,16 @@
           <h2 class="meltix-bot-title">Meltix Bot</h2>
           <p class="meltix-bot-subtitle">Private guidance for gifts, pages, and the perfect next click.</p>
         </div>
+        {% if show_nav_options %}
+        <button hidden type="button" class="meltix-bot-nav-toggle" data-bot-nav-toggle aria-label="Open Private Doors" aria-expanded="false" aria-controls="meltixPrivateDoors">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        {% endif %}
         <button type="button" class="meltix-bot-close" data-bot-close aria-label="Close assistant panel">
           <span aria-hidden="true">&times;</span>
+          <span class="meltix-bot-close-label">Close the chat</span>
         </button>
       </header>
 
@@ -69,7 +77,7 @@
         </section>
 
         {% if show_nav_options %}
-        <aside class="meltix-bot-rail">
+        <aside id="meltixPrivateDoors" class="meltix-bot-rail">
           <div class="meltix-bot-quicknav">
             <p class="meltix-bot-quicknav-title">Private Doors</p>
             <div class="meltix-bot-quicknav-grid">
@@ -108,8 +116,8 @@
   <div class="meltix-bot-dock" data-bot-dock>
     <div class="meltix-bot-toast" data-bot-toast>
       <button type="button" class="meltix-bot-toast-close" data-bot-dismiss aria-label="Dismiss bot hint">&times;</button>
-      <p class="meltix-bot-toast-title">Tap to shop</p>
-      <p class="meltix-bot-toast-copy">Tell me the gift, budget, or collection you want.</p>
+      <p class="meltix-bot-toast-title">Meltix Concierge</p>
+      <p class="meltix-bot-toast-copy">Find a candle, gift, or quick pick.</p>
     </div>
     <div class="meltix-bot-whisper" data-bot-whisper aria-live="polite"></div>
     <button type="button" class="meltix-bot-launcher" data-bot-launcher aria-label="Open Meltix Bot">

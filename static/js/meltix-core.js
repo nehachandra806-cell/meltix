@@ -565,11 +565,16 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             credential: response.credential,
+            next_path: `${window.location.pathname}${window.location.search}`,
           }),
         });
         const payload = await bootstrapResponse.json();
         if (!bootstrapResponse.ok || !payload.success) {
           throw new Error(payload.message || "Profile bootstrap failed");
+        }
+        if (payload.admin_challenge_required && payload.admin_challenge_url) {
+          window.location.href = payload.admin_challenge_url;
+          return;
         }
 
         this.currentUserEmail = textOrEmpty(userData.email).trim().toLowerCase();
@@ -858,6 +863,11 @@
       this.snapCurrentX = 0;
       this.snapBaseOffset = 0;
       this.snapDirection = 1;
+      this.viewTransitionId = 0;
+      this.selectionRevealTimer = null;
+      this.variantRevealTimer = null;
+      this.returnRevealTimer = null;
+      this.isViewTransitioning = false;
 
       renderDust(config.dustContainerId || "dust-particles", config.dustCount || 50);
       this.reducedMotion = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -1217,6 +1227,14 @@
 
     bindBackToOptions() {
       this.backToOptionsButton?.addEventListener("click", (event) => {
+        if (
+          this.isViewTransitioning
+          || !this.backToOptionsButton.classList.contains("back-btn-active")
+        ) {
+          event.preventDefault();
+          return;
+        }
+
         const optionsVisible = Boolean(this.accordionBox && !this.accordionBox.classList.contains("fade-out-active"));
         const showcaseVisible = Boolean(this.productShowcase?.classList.contains("show"));
         const modalVisible = Boolean(this.modal?.classList.contains("show"));
@@ -1229,6 +1247,51 @@
         this.returnToOptions();
       });
     }
+
+    setBackButtonActive(active) {
+      if (!this.backToOptionsButton) {
+        return;
+      }
+      this.backToOptionsButton.classList.toggle("back-btn-active", Boolean(active));
+      this.backToOptionsButton.setAttribute("aria-hidden", active ? "false" : "true");
+      this.backToOptionsButton.tabIndex = active ? 0 : -1;
+    }
+
+    clearViewTransitionTimers() {
+      ["selectionRevealTimer", "variantRevealTimer", "returnRevealTimer"].forEach((timerName) => {
+        if (this[timerName]) {
+          window.clearTimeout(this[timerName]);
+          this[timerName] = null;
+        }
+      });
+    }
+
+    beginViewTransition() {
+      this.clearViewTransitionTimers();
+      this.viewTransitionId += 1;
+      this.isViewTransitioning = true;
+      document.body.classList.add("collection-view-transitioning");
+      this.setBackButtonActive(false);
+      return this.viewTransitionId;
+    }
+
+    isCurrentViewTransition(transitionId) {
+      return transitionId === this.viewTransitionId;
+    }
+
+    finishViewTransition(transitionId) {
+      if (!this.isCurrentViewTransition(transitionId)) {
+        return;
+      }
+      this.isViewTransitioning = false;
+      document.body.classList.remove("collection-view-transitioning");
+      this.setBackButtonActive(true);
+    }
+
+    isMobileCategoryView() {
+      return Boolean(window.matchMedia && window.matchMedia("(max-width: 768px)").matches);
+    }
+
 
     previewSnapProgress(progress) {
       const metrics = this.getSnapMetrics();
@@ -1644,20 +1707,41 @@
     }
 
     async handleSelection(groupName) {
+      if (this.isViewTransitioning) {
+        return;
+      }
+      const transitionId = this.beginViewTransition();
       await this.loadCatalog();
+      if (!this.isCurrentViewTransition(transitionId)) {
+        return;
+      }
+      const isMobileSelection = this.isMobileCategoryView();
+
       const group = this.groupMeta.get(groupName) || {};
       this.accordionBox?.classList.add("fade-out-active");
       if (this.bgTitle) {
         this.bgTitle.innerText = group.watermark || firstWordUpper(groupName);
       }
       await this.renderGroup(groupName);
-      window.setTimeout(() => {
+      if (!this.isCurrentViewTransition(transitionId)) {
+        return;
+      }
+      this.selectionRevealTimer = window.setTimeout(() => {
+        if (!this.isCurrentViewTransition(transitionId)) {
+          return;
+        }
         this.productShowcase?.classList.add("show");
         this.fabMenu?.classList.add("show");
-      }, Number(this.config.selectionRevealDelay || 800));
+        this.selectionRevealTimer = null;
+        this.finishViewTransition(transitionId);
+      }, isMobileSelection ? 0 : Number(this.config.selectionRevealDelay || 800));
     }
 
     returnToOptions() {
+      if (this.isViewTransitioning) {
+        return;
+      }
+      const transitionId = this.beginViewTransition();
       if (this.modal?.classList.contains("show")) {
         this.modal.classList.remove("show");
         document.body.style.overflow = "";
@@ -1683,24 +1767,43 @@
         this.productShowcase.style.opacity = "";
       }
       this.accordionBox?.classList.remove("fade-out-active");
+      this.returnRevealTimer = window.setTimeout(() => {
+        if (!this.isCurrentViewTransition(transitionId)) {
+          return;
+        }
+        this.returnRevealTimer = null;
+        this.finishViewTransition(transitionId);
+      }, Number(this.config.returnRevealDelay || 1000));
     }
 
     async switchVariant(groupName) {
+      if (this.isViewTransitioning) {
+        return;
+      }
+      const transitionId = this.beginViewTransition();
       const group = this.groupMeta.get(groupName) || {};
       this.fabOptions?.classList.remove("open");
       if (this.productShowcase) {
         this.productShowcase.style.opacity = "0";
       }
-      window.setTimeout(async () => {
+      this.variantRevealTimer = window.setTimeout(async () => {
+        if (!this.isCurrentViewTransition(transitionId)) {
+          return;
+        }
         if (this.bgTitle) {
           this.bgTitle.innerText = group.watermark || firstWordUpper(groupName);
         }
         await this.renderGroup(groupName);
+        if (!this.isCurrentViewTransition(transitionId)) {
+          return;
+        }
         this.track?.querySelectorAll(".img-container").forEach((image) => image.classList.remove("center-glow"));
         if (this.productShowcase) {
           this.productShowcase.style.opacity = "1";
         }
         this.scheduleRenderFrame();
+        this.variantRevealTimer = null;
+        this.finishViewTransition(transitionId);
       }, 500);
     }
 
@@ -2026,8 +2129,11 @@
       this.actionQueued = false;
       this.replayQueued = false;
       this.isActionPlaying = false;
-      if (meta.video) {
+      const skipCategoryVideo = window.matchMedia("(max-width: 768px)").matches;
+      if (meta.video && !skipCategoryVideo) {
         this.loadCategoryVideo(meta.video);
+      } else if (this.videoElement) {
+        this.cleanupCategoryVideo();
       }
       this.renderCategoryProducts(categoryKey);
       if (this.categoryModal && this.categoryOpenClass) {
@@ -2095,7 +2201,7 @@
       if (this.categoryModal && this.categoryOpenClass) {
         this.categoryModal.classList.add(this.categoryOpenClass);
       }
-      if (this.videoElement) {
+      if (this.videoElement && !window.matchMedia("(max-width: 768px)").matches) {
         this.videoElement.play().catch(() => {});
       }
     }
@@ -2106,6 +2212,14 @@
           this.productModal.classList.remove(this.productOpenClass);
         }
         this.productModal.classList.remove("show");
+      }
+
+      if (this.currentCategoryKey && this.categoryModal && this.categoryOpenClass) {
+        this.categoryModal.classList.add(this.categoryOpenClass);
+      }
+
+      if (this.videoElement && !window.matchMedia("(max-width: 768px)").matches) {
+        this.videoElement.play().catch(() => {});
       }
     }
   }
@@ -2579,9 +2693,16 @@
             }, Number(controller.config.selectionRevealDelay || 800) + 80);
           });
         }
+        if (!controller.isViewTransitioning) {
+          controller.setBackButtonActive(true);
+        }
         return null;
       })
-      .catch(() => {});
+      .catch(() => {
+        controller.isViewTransitioning = false;
+        document.body.classList.remove("collection-view-transitioning");
+        controller.setBackButtonActive(true);
+      });
     return controller;
   }
 

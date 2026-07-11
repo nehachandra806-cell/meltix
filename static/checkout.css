@@ -1,4 +1,4 @@
-﻿/* =========================================
+/* =========================================
    MELTIX CHECKOUT â€” Single Column Card
    ========================================= */
 
@@ -847,5 +847,261 @@ body.modal-open {
     .details-drawer {
         max-height: 84vh;
         border-radius: 22px;
+    }
+}
+
+/* Phase 2 checkout mobile fit */
+@media (max-width: 768px) {
+    .top-nav {
+        padding: 18px 16px;
+        gap: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-brand {
+        text-align: left;
+    }
+
+    .checkout-main {
+        padding: 0 14px 56px;
+    }
+
+    .checkout-card {
+        border-radius: 24px;
+    }
+
+    .checkout-card-head {
+        padding: 18px 18px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-head-meta {
+        flex-wrap: wrap;
+        gap: 6px 8px;
+    }
+
+    .items-scroll-shell {
+        max-height: min(40vh, 300px);
+        padding: 14px 18px;
+    }
+
+    .summary-item {
+        grid-template-columns: 64px 1fr;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .summary-item img {
+        width: 64px;
+        height: 64px;
+        border-radius: 10px;
+    }
+
+    .summary-item-title {
+        font-size: 0.95rem;
+    }
+
+    .summary-item-meta,
+    .summary-item-custom {
+        font-size: 0.8rem;
+    }
+
+    .price-breakdown,
+    .security-note {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .price-row {
+        gap: 12px;
+    }
+
+    .price-total-row strong {
+        font-size: 1.25rem;
+    }
+
+    .security-note p {
+        font-size: 0.8rem;
+    }
+
+    .pay-btn {
+        width: calc(100% - 36px);
+        margin-left: 18px;
+        margin-right: 18px;
+        padding: 15px 22px;
+        font-size: 0.88rem;
+        letter-spacing: 1.6px;
+    }
+
+    .checkout-status {
+        margin: 0 18px 16px;
+    }
+
+    .empty-state {
+        padding: 46px 18px;
+    }
+
+    .drawer-overlay {
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .details-drawer {
+        max-height: 88vh;
+        border-radius: 22px 22px 0 0;
+    }
+
+    .drawer-head {
+        padding: 14px 18px 16px;
+        gap: 12px;
+    }
+
+    .drawer-title {
+        font-size: 1.55rem;
+    }
+
+    .drawer-sub {
+        font-size: 0.82rem;
+    }
+
+    .drawer-body {
+        padding: 16px 18px 12px;
+    }
+
+    .drawer-footer {
+        padding-top: 10px;
+    }
+
+    .field-row,
+    .field-row-3 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .field-full {
+        grid-column: 1;
+    }
+
+    .field input {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+    }
+
+    .address-block {
+        margin-top: 16px;
+        padding: 16px;
+    }
+
+    .billing-toggle {
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.45;
+    }
+}
+
+/* Phase 1 premium checkout polish */
+@media (max-width: 480px) {
+    body {
+        min-height: 100svh;
+    }
+
+    .top-nav {
+        padding: 16px 14px;
+    }
+
+    .nav-brand {
+        display: none;
+    }
+
+    .checkout-main {
+        padding: 0 10px calc(76px + env(safe-area-inset-bottom));
+    }
+
+    .checkout-card {
+        border-radius: 22px;
+    }
+
+    .checkout-card-head {
+        padding: 16px 16px 12px;
+    }
+
+    .card-eyebrow {
+        font-size: 0.68rem;
+        letter-spacing: 0.22em;
+    }
+
+    .head-total {
+        font-size: 1.02rem;
+    }
+
+    .items-scroll-shell {
+        max-height: min(34svh, 240px);
+        padding: 12px 16px;
+    }
+
+    .price-breakdown,
+    .security-note {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .pay-btn {
+        width: calc(100% - 28px);
+        margin-left: 14px;
+        margin-right: 14px;
+        min-height: 56px;
+        padding: 16px 18px;
+        letter-spacing: 0.12em;
+    }
+
+    .checkout-status {
+        margin: 0 14px 14px;
+    }
+
+    .drawer-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .details-drawer {
+        width: 100vw;
+        max-height: min(92svh, 100dvh);
+        border-radius: 24px 24px 0 0;
+    }
+
+    .drawer-head {
+        padding: 14px 16px 14px;
+    }
+
+    .drawer-body {
+        padding: 14px 16px 10px;
+    }
+
+    .drawer-footer {
+        position: sticky;
+        bottom: 0;
+        padding: 10px 0 calc(14px + env(safe-area-inset-bottom));
+        background: linear-gradient(to top, rgba(7, 5, 3, 0.96) 58%, rgba(12, 8, 5, 0.86) 86%, transparent 100%);
+    }
+
+    .drawer-pay-btn {
+        min-height: 54px;
+    }
+
+    .field input {
+        min-height: 50px;
+        padding: 13px 14px;
+    }
+}
+
+@media (max-width: 768px) and (max-height: 760px) {
+    .items-scroll-shell {
+        max-height: 28svh;
+    }
+
+    .details-drawer {
+        max-height: 96svh;
     }
 }

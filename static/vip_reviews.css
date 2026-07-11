@@ -574,3 +574,112 @@
         opacity: 0.28 !important;
     }
 }
+
+/* Phase 1 vip review mobile fit */
+@media (max-width: 768px) {
+    .avatar-stage {
+        width: 220px;
+        height: 220px;
+        margin: 18px auto 14px;
+    }
+
+    .avatar-ring {
+        width: 188px;
+        height: 188px;
+    }
+
+    .avatar-trigger {
+        width: 176px;
+        height: 176px;
+    }
+
+    .avatar-empty-title {
+        font-size: 1.05rem;
+        white-space: normal;
+        text-align: center;
+        padding: 0 18px;
+    }
+
+    .review-user-info {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .review-user-text {
+        min-width: 0;
+    }
+
+    .avatar-micro-wrapper {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        min-height: 48px;
+        flex-basis: 48px;
+    }
+
+    .avatar-micro-wrapper .avatar-stage {
+        width: 250px !important;
+        height: 250px !important;
+        margin: -125px 0 0 -125px !important;
+        transform: scale(0.192) !important;
+    }
+
+    .avatar-micro-wrapper .avatar-empty-title {
+        font-size: 3.8rem !important;
+    }
+}
+
+/* Phase 1 premium vip polish */
+@media (max-width: 480px) {
+    .avatar-stage {
+        width: 184px;
+        height: 184px;
+        margin: 14px auto 12px;
+    }
+
+    .avatar-stage::before,
+    .avatar-stage::after,
+    .avatar-aura,
+    .avatar-trigger::after {
+        filter: blur(16px) !important;
+        opacity: 0.22 !important;
+    }
+
+    .avatar-ring {
+        width: 152px;
+        height: 152px;
+    }
+
+    .avatar-trigger {
+        width: 144px;
+        height: 144px;
+    }
+
+    .review-user-info {
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .review-user-text {
+        min-width: 0;
+    }
+
+    .avatar-micro-wrapper {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        flex-basis: 44px;
+    }
+
+    .avatar-micro-wrapper .avatar-stage {
+        width: 232px !important;
+        height: 232px !important;
+        margin: -116px 0 0 -116px !important;
+        transform: scale(0.19) !important;
+    }
+
+    .avatar-micro-wrapper .avatar-empty-title {
+        font-size: 3.3rem !important;
+    }
+}

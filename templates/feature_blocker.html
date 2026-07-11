@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ blocker_title or 'Meltix' }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --meltix-bg: #030201;
+      --meltix-gold: #d4a373;
+      --meltix-border: rgba(212, 163, 115, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--meltix-bg);
+      color: #f6efe4;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 86px 48px 48px;
+      overflow: hidden;
+      font-family: 'Lato', sans-serif;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      border-radius: 999px;
+      filter: blur(42px);
+      opacity: 0.24;
+    }
+
+    body::before {
+      width: 30vw;
+      height: 30vw;
+      left: 12vw;
+      bottom: -14vw;
+      background: rgba(212, 163, 115, 0.18);
+    }
+
+    body::after {
+      width: 24vw;
+      height: 24vw;
+      right: 12vw;
+      top: 12vh;
+      background: rgba(212, 163, 115, 0.12);
+    }
+
+    .back-link {
+      position: fixed;
+      top: 30px;
+      left: 50px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--meltix-gold);
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      letter-spacing: 0;
+      text-transform: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-link span {
+      color: var(--meltix-gold);
+      font-size: 1.2rem;
+    }
+
+    .back-link:hover {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(212, 163, 115, 0.8);
+    }
+
+    .blocker-shell {
+      position: relative;
+      z-index: 1;
+      width: min(92vw, 980px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .blocker-figure {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .blocker-image {
+      display: block;
+      width: min(100%, 780px);
+      max-height: 72vh;
+      object-fit: contain;
+      filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.5));
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 72px 18px 32px;
+      }
+
+      .back-link {
+        top: 18px;
+        left: 18px;
+        font-size: 0.96rem;
+      }
+
+      .back-link span {
+        font-size: 0.96rem;
+      }
+
+      .blocker-shell {
+        width: 100%;
+      }
+
+      .blocker-image {
+        width: min(100%, 560px);
+        max-height: 68vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% if blocker_back_url %}
+  <a class="back-link" href="{{ blocker_back_url }}"><span>&#10022;</span> Back to Collection</a>
+  {% endif %}
+
+  <main class="blocker-shell">
+    <figure class="blocker-figure">
+      <img class="blocker-image" src="{{ blocker_image_url }}" alt="{{ blocker_alt }}">
+    </figure>
+  </main>
+</body>
+</html>

@@ -4,44 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meltix | Report a Bug</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bug_report.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bug_report.css', v='bug-video-freeze-20260709') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-    <div class="video-background">
+    <div class="video-background" aria-hidden="true">
         <video autoplay loop muted playsinline id="bg-video">
             <source src="{{ url_for('static', filename='models/support_video.mp4') }}" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
     </div>
 
-    <div class="page-fade-in">
-        
-        <a href="javascript:history.back()" class="back-btn"><span>✦</span> Return</a>
+    <main class="page-fade-in">
+        <a href="javascript:history.back()" class="back-btn"><span>&#10022;</span> Return</a>
 
-        <div class="support-container-glass">
-            <div class="glow-line"></div>
-            
+        <section class="support-container-glass" aria-labelledby="dynamicTitle">
             <div class="glass-inner-split">
-                
                 <div class="glass-left meltix-HUD-interface">
-                    <div class="hud-pattern-overlay"></div>
                     <div class="meltix-icon-circle-container">
                         <div class="meltix-icon-circle">
-                            <img src="{{ url_for('static', filename='models/__“A_clean_modern_202604040015.jpg') }}" alt="Meltix Icon" id="meltix-icon-img">
-                            <div class="icon-inner-glow"></div>
+                            <img src="/static/models/__%E2%80%9CA_clean_modern_202604040015.jpg" alt="Meltix support icon" id="meltix-icon-img">
                         </div>
                         <div class="icon-halo-glow"></div>
                     </div>
 
                     <div class="header-section">
+                        <p class="eyebrow">Meltix Support</p>
                         <h1 class="dynamic-title" id="dynamicTitle">Report a Bug</h1>
-                        <p class="dynamic-subtitle" id="dynamicSubtitle">Help us fix the glitches in the matrix.</p>
-                    </div>
-                    
-                    <div class="decorative-lines-container">
-                        <div class="hud-line-pattern"></div>
+                        <p class="dynamic-subtitle" id="dynamicSubtitle">Tell us what broke. A screenshot helps us fix it faster.</p>
                     </div>
                 </div>
 
@@ -49,33 +39,116 @@
                     <div id="form-container">
                         <form id="reportForm" onsubmit="handleFormSubmit(event)">
                             <div class="form-group">
-                                <label class="form-label">Your Email</label>
+                                <label class="form-label" for="userEmail">Your Email</label>
                                 <input type="email" id="userEmail" class="premium-input" placeholder="hello@example.com" value="{{ session.get('profile_email', '') }}" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Describe the Issue</label>
+                                <label class="form-label" for="userMessage">Describe the Issue</label>
                                 <textarea id="userMessage" class="premium-input" placeholder="What exactly happened? Where did it break?" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="screenshot-picker" for="bugScreenshot">
+                                    <input type="file" id="bugScreenshot" accept="image/png,image/jpeg,image/webp,image/gif">
+                                    <span class="screenshot-main">Attach Screenshot</span>
+                                    <span class="screenshot-sub" id="screenshotName">Optional PNG, JPG, WebP, or GIF up to 3 MB</span>
+                                </label>
                             </div>
 
                             <button type="submit" class="submit-btn" id="submitBtn">Submit Bug Report</button>
                         </form>
                     </div>
 
-                    <div id="thank-you-msg" style="display: none; text-align: center; padding: 20px 0; opacity: 0;">
-                        <h2 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #f2c98a; margin-bottom: 15px;">Report Received.</h2>
-                        <p style="font-family: 'Lato', sans-serif; font-size: 1.1rem; color: #eaddcf; margin-bottom: 30px; line-height: 1.6;">
-                            Thanks for being our eyes in the dark.<br>Our team is already on it to restore the perfect glow.
-                        </p>
-                        <button onclick="goToShop()" class="submit-btn" style="width: auto; padding: 12px 40px;"> OK </button>
+                    <div id="thank-you-msg" class="thank-you-msg" hidden>
+                        <h2>Report Received.</h2>
+                        <p>Thanks for being our eyes in the dark. Our team is already on it.</p>
+                        <button onclick="goToShop()" class="submit-btn ok-btn">OK</button>
                     </div>
                 </div>
             </div>
-        </div>
-
-    </div>
+        </section>
+    </main>
 
     <script>
+
+        const lockBugVideoViewport = () => {
+            const root = document.documentElement;
+            const width = Math.max(window.innerWidth || 0, root.clientWidth || 0);
+            const height = Math.max(window.innerHeight || 0, root.clientHeight || 0);
+            root.style.setProperty('--bug-fixed-vw', width + 'px');
+            root.style.setProperty('--bug-fixed-vh', height + 'px');
+        };
+
+        lockBugVideoViewport();
+        window.addEventListener('orientationchange', () => window.setTimeout(lockBugVideoViewport, 250));
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lockBugVideoViewport();
+            const bgVideo = document.getElementById('bg-video');
+            if (bgVideo) {
+                bgVideo.muted = true;
+                bgVideo.playsInline = true;
+                const playAttempt = bgVideo.play();
+                if (playAttempt && typeof playAttempt.catch === 'function') {
+                    playAttempt.catch(() => {});
+                }
+            }
+        });
+
+        const MAX_SCREENSHOT_BYTES = 3 * 1024 * 1024;
+        const ALLOWED_SCREENSHOT_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+        const screenshotInput = document.getElementById('bugScreenshot');
+        const screenshotName = document.getElementById('screenshotName');
+
+        document.querySelectorAll('.premium-input').forEach((field) => {
+            field.addEventListener('focus', () => document.body.classList.add('bug-keyboard-mode'));
+            field.addEventListener('blur', () => {
+                window.setTimeout(() => {
+                    if (!document.querySelector('.premium-input:focus')) {
+                        document.body.classList.remove('bug-keyboard-mode');
+                    }
+                }, 80);
+            });
+        });
+
+        screenshotInput.addEventListener('change', () => {
+            const file = screenshotInput.files && screenshotInput.files[0];
+            if (!file) {
+                screenshotName.textContent = 'Optional PNG, JPG, WebP, or GIF up to 3 MB';
+                return;
+            }
+            if (!ALLOWED_SCREENSHOT_TYPES.includes(file.type) || file.size > MAX_SCREENSHOT_BYTES) {
+                screenshotInput.value = '';
+                screenshotName.textContent = 'Use PNG, JPG, WebP, or GIF under 3 MB';
+                return;
+            }
+            screenshotName.textContent = file.name;
+        });
+
+        function readScreenshotPayload() {
+            const file = screenshotInput.files && screenshotInput.files[0];
+            if (!file) return Promise.resolve(null);
+
+            if (!ALLOWED_SCREENSHOT_TYPES.includes(file.type)) {
+                return Promise.reject(new Error('Screenshot must be PNG, JPG, WebP, or GIF.'));
+            }
+            if (file.size > MAX_SCREENSHOT_BYTES) {
+                return Promise.reject(new Error('Screenshot must be under 3 MB.'));
+            }
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve({
+                    name: file.name,
+                    type: file.type,
+                    data: reader.result
+                });
+                reader.onerror = () => reject(new Error('Screenshot could not be read.'));
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function handleFormSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -84,14 +157,17 @@
 
             btn.classList.add('loading');
             btn.disabled = true;
+            btn.textContent = 'Sending';
 
             try {
+                const screenshot = await readScreenshotPayload();
                 const response = await fetch('/api/bug-report', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: email,
                         message: message,
+                        screenshot: screenshot,
                         source_page: 'bug-report'
                     })
                 });
@@ -102,41 +178,20 @@
 
                 btn.classList.remove('loading');
                 btn.classList.add('success');
-                btn.innerText = "SENT ?";
+                btn.textContent = 'Sent';
 
-                setTimeout(() => {
-                    const formContainer = document.getElementById('form-container');
+                window.setTimeout(() => {
+                    document.getElementById('form-container').hidden = true;
                     const thanks = document.getElementById('thank-you-msg');
-                    const glassRight = document.querySelector('.glass-right');
-
-                    glassRight.style.minHeight = glassRight.offsetHeight + 'px';
-                    glassRight.style.position = 'relative';
-
-                    thanks.style.position = 'absolute';
-                    thanks.style.top = '50%';
-                    thanks.style.left = '50%';
-                    thanks.style.transform = 'translate(-50%, -50%)';
-                    thanks.style.width = '80%';
-                    thanks.style.display = 'block';
-                    thanks.style.opacity = '0';
-
-                    formContainer.style.transition = 'opacity 0.6s ease';
-                    thanks.style.transition = 'opacity 0.8s ease';
-
-                    formContainer.style.opacity = '0';
-                    setTimeout(() => {
-                        thanks.style.opacity = '1';
-                    }, 100);
-
-                    setTimeout(() => {
-                        formContainer.style.display = 'none';
-                    }, 600);
-                }, 800);
+                    thanks.hidden = false;
+                    thanks.classList.add('show-thanks');
+                }, 650);
             } catch (error) {
                 console.error(error);
                 btn.classList.remove('loading');
                 btn.disabled = false;
-                btn.innerText = "Error. Try Again.";
+                btn.textContent = 'Try Again';
+                screenshotName.textContent = error.message || 'Something went wrong. Try again.';
             }
         }
 

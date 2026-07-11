@@ -306,8 +306,8 @@
         {% if not is_authenticated %}
           <div class="auth-card">
             <p class="eyebrow">Private Access</p>
-            <h2>The Founder's Desk</h2>
-            <p>Enter the session password to unlock the private Meltix order ledger.</p>
+            <h2>Session Verification</h2>
+            <p>Enter the verification password to continue.</p>
             {% if auth_error %}
             <p class="auth-error">{{ auth_error }}</p>
             {% endif %}
@@ -316,7 +316,7 @@
                 <span>Session Password</span>
                 <input type="password" name="password" autocomplete="current-password" required>
               </label>
-              <button type="submit" class="submit-btn">Unlock Dashboard</button>
+              <button type="submit" class="submit-btn">Continue</button>
             </form>
           </div>
         {% else %}
@@ -429,3 +429,4 @@
   {% endif %}
 </body>
 </html>
+

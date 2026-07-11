@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify, session, url_for, redirect
+from flask import Flask, render_template, request, jsonify, session, url_for, redirect, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event, inspect, text
 from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import HTTPException
 from collections import defaultdict, deque
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
@@ -14,6 +15,7 @@ from threading import Lock
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+import base64
 import hashlib
 import json
 import smtplib
@@ -22,6 +24,7 @@ import os
 import ssl
 import time
 import razorpay
+from werkzeug.security import check_password_hash
 from ai_brain import configure_ai_brain, generate_bot_response
 
 try:
@@ -60,7 +63,13 @@ class CheckoutError(Exception):
 
 DEFAULT_WHATSAPP_BUSINESS = '919876543210'
 GENERIC_ERROR_MESSAGE = 'Something went wrong. Please try again.'
-ADMIN_SECRET_PASSWORD = (os.environ.get('ADMIN_SECRET_PASSWORD') or 'meltix-founder-desk').strip()
+HIDDEN_MESSAGE_CUSTOM_TEXT_MAX_LENGTH = 20
+HIDDEN_MESSAGE_CUSTOM_TEXT_PATTERN = re.compile(r'^[A-Za-z0-9 ]+$')
+ADMIN_ALLOWED_EMAIL = (os.environ.get('ADMIN_ALLOWED_EMAIL') or '').strip().lower()
+ADMIN_PANEL_PASSWORD_HASH = (os.environ.get('ADMIN_PANEL_PASSWORD_HASH') or '').strip()
+ADMIN_PANEL_ENTRY_PATH = '/' + ((os.environ.get('ADMIN_PANEL_ENTRY_PATH') or '__a/quiet-ledger-7f93b2').replace('\\', '/').strip('/'))
+ADMIN_ACCESS_FAILURE_MESSAGE = 'Access unavailable.'
+MELTIX_STUDIO_BLOCKER_ASSET = 'images/meltixstudio_blocker.png'
 PAYMENT_STATUS_OPTIONS = ('Pending', 'Paid', 'Failed')
 DELIVERY_STATUS_OPTIONS = ('Pending', 'Shipped', 'Delivered')
 DELIVERY_STAGE_MAP = {
@@ -76,6 +85,9 @@ FORM_RATE_LIMIT_BUCKETS = defaultdict(deque)
 FORM_RATE_LIMIT_LOCK = Lock()
 TRUST_PROXY_HEADERS = env_flag('TRUST_PROXY_HEADERS', default=False)
 AUTO_SEED_INVENTORY = env_flag('AUTO_SEED_INVENTORY', default=False)
+LOCAL_GOOGLE_VERIFY_FALLBACK = env_flag('LOCAL_GOOGLE_VERIFY_FALLBACK', default=False)
+MOBILE_DEVICE_PATTERN = re.compile(r'(android|iphone|ipad|ipod|iemobile|windows phone|opera mini|mobile)', re.IGNORECASE)
+LOCAL_DEVELOPMENT_HOSTS = {'localhost', '127.0.0.1', '::1', '::ffff:127.0.0.1'}
 CATALOG_CATEGORY_ALIASES = {
     'hidden-message': 'hidden-message',
     'hidden_message': 'hidden-message',
@@ -157,6 +169,54 @@ if not database_url:
     raise RuntimeError("DATABASE_URL environment variable is required. Set it in your environment or .env file.")
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['GOOGLE_CLIENT_ID'] = (os.environ.get('GOOGLE_CLIENT_ID') or '').strip()
+
+
+@app.context_processor
+def inject_google_client_id():
+    return {'google_client_id': app.config['GOOGLE_CLIENT_ID']}
+
+
+@app.after_request
+def apply_google_popup_safe_headers(response):
+    response.headers.setdefault('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
+    return response
+
+
+def render_atelier_error(status_code=500):
+    """Keep browser failures branded while API consumers continue receiving JSON."""
+    if request.path.startswith('/api/'):
+        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), status_code
+
+    error_copy = {
+        400: ('That request needs another try.', 'Refresh the page and try again.'),
+        403: ('This private door is unavailable.', 'Return to the collection or try again shortly.'),
+        404: ('This corner of the atelier is not available.', 'Return to the collection and continue exploring.'),
+        405: ('That action is not available here.', 'Refresh the page and try again.'),
+        503: ('The atelier is reconnecting.', 'A service is taking a short breath. Please try again.'),
+    }
+    title, message = error_copy.get(
+        status_code,
+        ('A small knot interrupted the atelier.', 'Please refresh the page. We will be ready in a moment.'),
+    )
+    return render_template(
+        'error_page.html',
+        status_code=status_code,
+        title=title,
+        message=message,
+    ), status_code
+
+
+@app.errorhandler(HTTPException)
+def handle_http_error(error):
+    return render_atelier_error(error.code or 500)
+
+
+@app.errorhandler(Exception)
+def handle_unexpected_error(error):
+    app.logger.exception('Unhandled request error: %s', error)
+    return render_atelier_error(500)
+
 
 db = SQLAlchemy(app)
 
@@ -435,7 +495,7 @@ def public_profile_identity(profile_record, fallback_name='Meltix Collector'):
     }
 
 # ==========================================
-# 🔴 DATABASE MODELS (TABLES) 🔴
+# Ã°Å¸â€Â´ DATABASE MODELS (TABLES) Ã°Å¸â€Â´
 # ==========================================
 
 # Tera Product Table Model
@@ -474,7 +534,7 @@ class Review(db.Model):
     rating = db.Column(db.Integer, nullable=False) # 1 se 5 tak star rating
     created_at = db.Column(db.DateTime, default=datetime.utcnow) # Review ka time
 
-    # 🔴 STRICT RULE: 1 User = 1 Review per product
+    # Ã°Å¸â€Â´ STRICT RULE: 1 User = 1 Review per product
     __table_args__ = (db.UniqueConstraint('user_id', 'product_id', name='unique_user_review'),)
 
     # Cascade Delete: Review delete hoga toh uske saare likes bhi automatically ud jayenge
@@ -483,7 +543,7 @@ class Review(db.Model):
     def __repr__(self):
         return f"Review('{self.user_name}', Rating: {self.rating}, Product: {self.product_id})"
 
-# 🔴 NAYA TABLE: Review Likes (1 User = 1 Action per review)
+# Ã°Å¸â€Â´ NAYA TABLE: Review Likes (1 User = 1 Action per review)
 class ReviewLike(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     review_id = db.Column(db.Integer, db.ForeignKey('review.id'), nullable=False)
@@ -517,6 +577,7 @@ class UserAccount(db.Model):
     display_name = db.Column(db.String(120), nullable=False, default='Guest')
     avatar_filename = db.Column(db.String(50), nullable=False, default='')
     google_picture_url = db.Column(db.Text, nullable=False, default='')
+    gift_intro_seen = db.Column(db.Boolean, nullable=False, default=False)
     glow_points = db.Column(db.Integer, nullable=False, default=0)
     level = db.Column(db.Integer, nullable=False, default=1)
     completed_missions_json = db.Column(db.Text, nullable=False, default='[]')
@@ -856,6 +917,12 @@ def ensure_profile_schema():
                 text("ALTER TABLE user_account ADD COLUMN google_picture_url TEXT NOT NULL DEFAULT ''")
             )
 
+    if 'gift_intro_seen' not in user_columns:
+        with db.engine.begin() as connection:
+            connection.execute(
+                text("ALTER TABLE user_account ADD COLUMN gift_intro_seen BOOLEAN NOT NULL DEFAULT FALSE")
+            )
+
 
 def ensure_order_schema():
     inspector = inspect(db.engine)
@@ -916,17 +983,20 @@ def ensure_coupon_catalog():
         db.session.commit()
 
 
-# Ye line chalte hi PostgreSQL mein saari tables aur rules ban jayenge
 # Heavy backfills ko startup se hata diya gaya hai; woh CLI se one-time chalenge.
-with app.app_context():
-    db.create_all()
-    ensure_product_schema()
-    ensure_review_schema()
-    ensure_profile_schema()
-    ensure_order_schema()
-    ensure_coupon_catalog()
-    if AUTO_SEED_INVENTORY:
-        seed_inventory()
+# A temporary database outage should not stop Flask from serving the recovery screen.
+try:
+    with app.app_context():
+        db.create_all()
+        ensure_product_schema()
+        ensure_review_schema()
+        ensure_profile_schema()
+        ensure_order_schema()
+        ensure_coupon_catalog()
+        if AUTO_SEED_INVENTORY:
+            seed_inventory()
+except Exception:
+    app.logger.exception('Database schema initialization failed; retryable requests will show the recovery screen.')
 
 
 def safe_json_loads(raw_value, fallback):
@@ -1203,15 +1273,57 @@ def sync_unlocked_coupons_for_level(profile_record):
     return unlocked_coupons, changed
 
 
+def get_session_email():
+    return (session.get('profile_email') or '').strip().lower()
+
+
 def get_session_user():
-    session_email = (session.get('profile_email') or '').strip().lower()
+    session_email = get_session_email()
     if not session_email:
         return None
     return UserAccount.query.filter_by(email=session_email).first()
 
 
-def is_admin_desk_authenticated():
-    return session.get('admin_secret_authenticated') is True
+def is_admin_allowed_email(email=None):
+    return (email or get_session_email()).strip().lower() == ADMIN_ALLOWED_EMAIL
+
+
+def is_admin_session_verified():
+    return bool(ADMIN_PANEL_PASSWORD_HASH) and session.get('admin_verified') is True and is_admin_allowed_email()
+
+
+def clear_admin_session():
+    session.pop('admin_verified', None)
+    session.pop('admin_post_verify_redirect', None)
+
+
+def sanitize_internal_next_path(raw_value):
+    value = str(raw_value or '').strip()
+    if not value.startswith('/') or value.startswith('//'):
+        return ''
+    return value
+
+
+def set_admin_post_verify_redirect(raw_value):
+    next_path = sanitize_internal_next_path(raw_value)
+    if next_path:
+        session['admin_post_verify_redirect'] = next_path
+    else:
+        session.pop('admin_post_verify_redirect', None)
+
+
+def consume_admin_post_verify_redirect():
+    next_path = sanitize_internal_next_path(session.pop('admin_post_verify_redirect', ''))
+    return next_path or ''
+
+
+def should_require_admin_challenge(email=None):
+    return bool(ADMIN_PANEL_PASSWORD_HASH) and is_admin_allowed_email(email) and not is_admin_session_verified()
+
+
+def is_mobile_request():
+    user_agent = str(request.headers.get('User-Agent') or '')
+    return bool(MOBILE_DEVICE_PATTERN.search(user_agent))
 
 
 def bot_collection_redirect_url(collection_slug):
@@ -1508,6 +1620,34 @@ def normalize_checkout_request_items(raw_items):
     return normalized
 
 
+def validate_checkout_item_customizations(requested_items, product_map):
+    for requested_item in requested_items:
+        product = product_map.get(requested_item['product_id'])
+        if not product:
+            continue
+
+        custom_text = str(requested_item.get('custom_text') or '').strip()
+        requested_item['custom_text'] = custom_text
+
+        if normalize_catalog_category(product.collection_slug) != 'hidden-message':
+            continue
+        if not custom_text:
+            raise CheckoutError(
+                'A custom message is required for Hidden Message candles.',
+                error_code='hidden_message_text_required',
+            )
+        if len(custom_text) > HIDDEN_MESSAGE_CUSTOM_TEXT_MAX_LENGTH:
+            raise CheckoutError(
+                f'Custom message must be {HIDDEN_MESSAGE_CUSTOM_TEXT_MAX_LENGTH} characters or fewer.',
+                error_code='hidden_message_text_too_long',
+            )
+        if not HIDDEN_MESSAGE_CUSTOM_TEXT_PATTERN.fullmatch(custom_text):
+            raise CheckoutError(
+                'Custom message may only contain letters, numbers, and spaces.',
+                error_code='hidden_message_text_invalid',
+            )
+
+
 def build_checkout_line_items(requested_items, product_map):
     line_items = []
     subtotal = 0
@@ -1630,6 +1770,8 @@ def build_checkout_draft(raw_payload):
     if missing_ids:
         raise CheckoutError(f"Products not found: {', '.join(missing_ids)}", status_code=404, error_code='products_missing')
 
+    validate_checkout_item_customizations(requested_items, product_map)
+
     requested_quantities = defaultdict(int)
     for item in requested_items:
         requested_quantities[item['product_id']] += item['quantity']
@@ -1726,6 +1868,8 @@ def finalize_checkout_order(checkout_draft, payment_context=None):
     missing_ids = [str(product_id) for product_id in product_ids if product_id not in product_map]
     if missing_ids:
         raise CheckoutError(f"Products not found: {', '.join(missing_ids)}", status_code=404, error_code='products_missing')
+
+    validate_checkout_item_customizations(checkout_draft['items'], product_map)
 
     for product_id, quantity in requested_quantities.items():
         product = product_map[product_id]
@@ -2085,7 +2229,7 @@ def serialize_admin_order(order_record, profile_record):
         'customer_email': order_record.user_email,
         'customer_phone': (profile_record.phone if profile_record else '') or 'Not available',
         'customer_address': format_profile_shipping_address(profile_record),
-        'items_summary': build_order_items_summary(order_record, separator=' • '),
+        'items_summary': build_order_items_summary(order_record, separator=' | '),
         'amount_display': format_money(order_record.total_amount),
         'payment_status': normalize_payment_status(getattr(order_record, 'payment_status', 'Pending')),
         'delivery_status': normalize_delivery_status(getattr(order_record, 'delivery_status', 'Pending')),
@@ -2445,7 +2589,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
     }
 
 # ==========================================
-# 🔴 FRONTEND PAGE ROUTES (Untouched) 🔴
+# Ã°Å¸â€Â´ FRONTEND PAGE ROUTES (Untouched) Ã°Å¸â€Â´
 # ==========================================
 
 @app.route('/api/bot/chat', methods=['POST'])
@@ -2542,23 +2686,27 @@ def order_success():
     )
 
 
-@app.route('/admin-secret-desk', methods=['GET', 'POST'])
+@app.route(ADMIN_PANEL_ENTRY_PATH, methods=['GET', 'POST'])
 def admin_secret_desk():
+    if not ADMIN_PANEL_PASSWORD_HASH or not is_admin_allowed_email():
+        abort(404)
+
     if request.args.get('logout') == '1':
-        session.pop('admin_secret_authenticated', None)
+        clear_admin_session()
         session.modified = True
-        return redirect(url_for('admin_secret_desk'))
+        return redirect(ADMIN_PANEL_ENTRY_PATH)
 
     auth_error = ''
     if request.method == 'POST':
         submitted_password = str(request.form.get('password') or '').strip()
-        if submitted_password == ADMIN_SECRET_PASSWORD:
-            session['admin_secret_authenticated'] = True
+        if submitted_password and check_password_hash(ADMIN_PANEL_PASSWORD_HASH, submitted_password):
+            session['admin_verified'] = True
             session.modified = True
-            return redirect(url_for('admin_secret_desk'))
-        auth_error = 'Incorrect password. Please try again.'
+            next_path = consume_admin_post_verify_redirect()
+            return redirect(next_path or ADMIN_PANEL_ENTRY_PATH)
+        auth_error = ADMIN_ACCESS_FAILURE_MESSAGE
 
-    if not is_admin_desk_authenticated():
+    if not is_admin_session_verified():
         return render_template('admin_dashboard.html', is_authenticated=False, auth_error=auth_error)
 
     orders = ProfileOrder.query.order_by(ProfileOrder.created_at.desc()).all()
@@ -2577,9 +2725,14 @@ def admin_secret_desk():
     )
 
 
+@app.route('/admin-secret-desk', methods=['GET', 'POST'])
+def legacy_admin_secret_desk():
+    abort(404)
+
+
 @app.route('/update-order-status/<order_id>', methods=['POST'])
 def update_order_status(order_id):
-    if not is_admin_desk_authenticated():
+    if not is_admin_session_verified():
         return jsonify({'success': False, 'message': 'Unauthorized'}), 403
 
     order_record = ProfileOrder.query.filter_by(order_code=str(order_id).strip().upper()).first()
@@ -2660,7 +2813,23 @@ def contact_us():
 
 @app.route('/craft-studio')
 def craft_studio():
-    return render_template('craft_studio.html')
+    session_email = get_session_email()
+    if should_require_admin_challenge(session_email):
+        set_admin_post_verify_redirect(request.full_path.rstrip('?') or request.path)
+        session.modified = True
+        return redirect(ADMIN_PANEL_ENTRY_PATH)
+
+    if is_admin_session_verified():
+        return render_template('craft_studio.html')
+
+    return render_template(
+        'feature_blocker.html',
+        blocker_image_url=url_for('static', filename=MELTIX_STUDIO_BLOCKER_ASSET),
+        blocker_alt='Meltix Studio will be available in the future.',
+        blocker_back_url=url_for('shop'),
+        blocker_title='Meltix Atelier',
+        blocker_copy='This feature is being refined for a future release.'
+    )
 
 @app.route('/head_to')
 def head_to():
@@ -2673,14 +2842,53 @@ def suggestions():
 
 @app.route('/gift_sets')
 def gift_sets():
-    return render_template('gift_set.html')
+    session_email = get_session_email()
+    if should_require_admin_challenge(session_email):
+        set_admin_post_verify_redirect(request.full_path.rstrip('?') or request.path)
+        session.modified = True
+        return redirect(ADMIN_PANEL_ENTRY_PATH)
 
-# 🔴 Naya Feedback Route
+    if not session_email and not is_admin_session_verified():
+        return render_template(
+            'gift_set_gate.html',
+            profile_bootstrap_url=url_for('profile_bootstrap'),
+            profile_bootstrap_redirect_url=url_for('profile_bootstrap_redirect', _external=True)
+        )
+
+    profile_record = get_session_user()
+    if not profile_record and session_email:
+        try:
+            profile_record = get_or_create_profile(session_email, session.get('profile_name') or '')
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            profile_record = None
+
+    admin_exempt = is_admin_session_verified()
+    mobile_view = is_mobile_request()
+    gift_intro_pending = bool(
+        session_email
+        and not mobile_view
+        and (
+            admin_exempt
+            or (profile_record and not bool(profile_record.gift_intro_seen))
+        )
+    )
+
+    return render_template(
+        'gift_set.html',
+        show_gift_intro=gift_intro_pending,
+        gift_intro_complete_url=url_for('gift_intro_complete'),
+        admin_exempt=admin_exempt,
+        mobile_view=mobile_view,
+    )
+
+# Feedback route
 @app.route('/feedback')
 def feedback():
     return render_template('feedback.html')
 
-# 🔴 Naya Bug Report Route
+# Bug report route
 @app.route('/bug-report')
 def bug_report():
     return render_template('bug_report.html')
@@ -2727,8 +2935,61 @@ def messagecentral_request(method, endpoint, query_params):
         raise RuntimeError(f'MessageCentral request failed: {exc.reason}') from exc
 
 
+def normalize_request_host():
+    host_value = str(request.host or '').strip().lower()
+    if host_value.startswith('['):
+        return host_value[1:].split(']', 1)[0]
+    return host_value.split(':', 1)[0]
+
+
+def is_local_google_verify_fallback_allowed():
+    if not LOCAL_GOOGLE_VERIFY_FALLBACK:
+        return False
+    host_name = normalize_request_host()
+    remote_addr = str(request.remote_addr or '').strip().lower()
+    return host_name in LOCAL_DEVELOPMENT_HOSTS and remote_addr in LOCAL_DEVELOPMENT_HOSTS
+
+
+def decode_google_jwt_payload_unverified(token):
+    token_parts = str(token or '').split('.')
+    if len(token_parts) < 2:
+        raise ValueError('Google sign-in verification failed.')
+
+    payload_segment = token_parts[1]
+    payload_segment += '=' * (-len(payload_segment) % 4)
+    try:
+        decoded_payload = base64.urlsafe_b64decode(payload_segment.encode('ascii'))
+        return json.loads(decoded_payload.decode('utf-8') or '{}')
+    except (ValueError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ValueError('Google sign-in verification failed.') from exc
+
+
+def google_user_from_verified_payload(payload, google_client_id):
+    issuer = str(payload.get('iss') or '').strip()
+    audience = str(payload.get('aud') or '').strip()
+    email = str(payload.get('email') or '').strip().lower()
+    email_verified_value = payload.get('email_verified')
+    email_verified = email_verified_value is True or str(email_verified_value or '').strip().lower() == 'true'
+
+    try:
+        expires_at = int(payload.get('exp') or 0)
+    except (TypeError, ValueError):
+        expires_at = 0
+
+    if issuer not in {'accounts.google.com', 'https://accounts.google.com'}:
+        raise ValueError('Google sign-in verification failed.')
+    if audience != google_client_id or not email or not email_verified or expires_at <= int(time.time()):
+        raise ValueError('Google sign-in verification failed.')
+
+    return {
+        'email': email,
+        'name': str(payload.get('name') or '').strip(),
+        'picture': str(payload.get('picture') or '').strip(),
+    }
+
+
 def verify_google_credential(credential):
-    google_client_id = (os.environ.get('GOOGLE_CLIENT_ID') or '').strip()
+    google_client_id = app.config['GOOGLE_CLIENT_ID']
     if not google_client_id:
         raise RuntimeError('GOOGLE_CLIENT_ID is not configured.')
 
@@ -2747,28 +3008,13 @@ def verify_google_credential(credential):
         app.logger.warning('Google token verification failed with HTTP %s: %s', exc.code, raw_payload)
         raise ValueError('Google sign-in verification failed.') from exc
     except URLError as exc:
-        raise RuntimeError(f'Google sign-in verification failed: {exc.reason}') from exc
+        if is_local_google_verify_fallback_allowed():
+            app.logger.warning('Using local-only Google credential fallback because remote verification failed: %s', exc.reason)
+            payload = decode_google_jwt_payload_unverified(token)
+        else:
+            raise RuntimeError(f'Google sign-in verification failed: {exc.reason}') from exc
 
-    issuer = str(payload.get('iss') or '').strip()
-    audience = str(payload.get('aud') or '').strip()
-    email = str(payload.get('email') or '').strip().lower()
-    email_verified = str(payload.get('email_verified') or '').strip().lower() == 'true'
-
-    try:
-        expires_at = int(payload.get('exp') or 0)
-    except (TypeError, ValueError):
-        expires_at = 0
-
-    if issuer not in {'accounts.google.com', 'https://accounts.google.com'}:
-        raise ValueError('Google sign-in verification failed.')
-    if audience != google_client_id or not email or not email_verified or expires_at <= int(time.time()):
-        raise ValueError('Google sign-in verification failed.')
-
-    return {
-        'email': email,
-        'name': str(payload.get('name') or '').strip(),
-        'picture': str(payload.get('picture') or '').strip(),
-    }
+    return google_user_from_verified_payload(payload, google_client_id)
 
 
 def get_verified_session_email(request_email=None):
@@ -2895,6 +3141,68 @@ def submit_feedback_form():
         return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
 
 
+
+BUG_SCREENSHOT_MAX_BYTES = 3 * 1024 * 1024
+BUG_SCREENSHOT_TYPES = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+}
+
+
+def save_bug_report_screenshot(payload, user_email):
+    if not isinstance(payload, dict):
+        return ''
+
+    raw_data = (payload.get('data') or '').strip()
+    content_type = (payload.get('type') or '').strip().lower()
+    if not raw_data:
+        return ''
+
+    if raw_data.startswith('data:'):
+        header, _, raw_data = raw_data.partition(',')
+        if ';base64' not in header or not raw_data:
+            raise ValueError('Screenshot could not be read.')
+        content_type = header[5:].split(';', 1)[0].strip().lower() or content_type
+
+    extension = BUG_SCREENSHOT_TYPES.get(content_type)
+    if not extension:
+        raise ValueError('Screenshot must be PNG, JPG, WebP, or GIF.')
+
+    try:
+        decoded = base64.b64decode(raw_data, validate=True)
+    except Exception as exc:
+        raise ValueError('Screenshot could not be read.') from exc
+
+    if len(decoded) > BUG_SCREENSHOT_MAX_BYTES:
+        raise ValueError('Screenshot must be under 3 MB.')
+
+    screenshots_dir = BASE_DIR / 'data' / 'bug_screenshots'
+    screenshots_dir.mkdir(parents=True, exist_ok=True)
+    token = hashlib.sha256(f'{user_email}:{time.time()}:{len(decoded)}'.encode('utf-8')).hexdigest()[:16]
+    filename = f"bug_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{token}.{extension}"
+    target_path = screenshots_dir / filename
+    target_path.write_bytes(decoded)
+    return str(target_path.relative_to(BASE_DIR)).replace('\\', '/')
+
+
+def save_bug_report_fallback(user_email, message, source_page, screenshot_path):
+    fallback_dir = BASE_DIR / 'data'
+    fallback_dir.mkdir(parents=True, exist_ok=True)
+    fallback_path = fallback_dir / 'bug_reports_fallback.jsonl'
+    entry = {
+        'created_at': datetime.utcnow().isoformat(timespec='seconds') + 'Z',
+        'user_email': user_email,
+        'message': message,
+        'source_page': source_page[:120],
+        'screenshot_path': screenshot_path,
+    }
+    with fallback_path.open('a', encoding='utf-8') as handle:
+        handle.write(json.dumps(entry, ensure_ascii=True) + '\n')
+    return str(fallback_path.relative_to(BASE_DIR)).replace('\\', '/')
+
+
 @app.route('/api/bug-report', methods=['POST'])
 def submit_bug_report_form():
     data = request.get_json() or {}
@@ -2913,18 +3221,41 @@ def submit_bug_report_form():
         return limited_response
 
     try:
+        screenshot_path = save_bug_report_screenshot(data.get('screenshot'), user_email)
+    except ValueError as exc:
+        return jsonify({'success': False, 'message': str(exc)}), 400
+
+    stored_message = message
+    if screenshot_path:
+        stored_message = f'{message}\n\nScreenshot: {screenshot_path}'
+
+    try:
         submission = BugReportSubmission(
             user_email=user_email,
-            message=message,
+            message=stored_message,
             source_page=source_page[:120],
         )
         db.session.add(submission)
         db.session.commit()
-        return jsonify({'success': True, 'submission_id': submission.id}), 201
+        return jsonify({
+            'success': True,
+            'submission_id': submission.id,
+            'screenshot_path': screenshot_path,
+        }), 201
     except Exception:
         db.session.rollback()
-        app.logger.exception('Bug report submission failed')
-        return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
+        app.logger.exception('Bug report DB submission failed; saving local fallback')
+        try:
+            fallback_path = save_bug_report_fallback(user_email, stored_message, source_page, screenshot_path)
+        except Exception:
+            app.logger.exception('Bug report fallback save failed')
+            return jsonify({'success': False, 'message': GENERIC_ERROR_MESSAGE}), 500
+        return jsonify({
+            'success': True,
+            'submission_id': None,
+            'screenshot_path': screenshot_path,
+            'fallback_path': fallback_path,
+        }), 202
 
 
 @app.route('/api/studio/send-otp', methods=['POST'])
@@ -3052,7 +3383,7 @@ def profile():
 
 
 # ==========================================
-# 🔴 BACKEND API ROUTES (Product Likes) 🔴
+# Ã°Å¸â€Â´ BACKEND API ROUTES (Product Likes) Ã°Å¸â€Â´
 # ==========================================
 
 @app.route('/like_product', methods=['POST'])
@@ -3147,7 +3478,7 @@ def product_states():
 
 
 # ==========================================
-# 🔴 REVIEW SYSTEM API ROUTES (Fully Updated) 🔴
+# Ã°Å¸â€Â´ REVIEW SYSTEM API ROUTES (Fully Updated) Ã°Å¸â€Â´
 # ==========================================
 
 # 1. Review Save Route
@@ -3229,7 +3560,7 @@ def get_reviews(product_id):
         counts = action_counts.get(r.id, {'likes': 0, 'dislikes': 0})
         
         reviews_list.append({
-            'id': r.id, # 🔴 FIX: ID bhejna zaroori hai Javascript ko delete/like ke liye
+            'id': r.id, # Ã°Å¸â€Â´ FIX: ID bhejna zaroori hai Javascript ko delete/like ke liye
             'user_name': author_identity['display_name'],
             'display_name': author_identity['display_name'],
             'author_email': author.email if author else "",
@@ -3321,7 +3652,7 @@ def toggle_review_like():
     
 
 # ==========================================
-# 🔴 WISH LIST (SAVE FOR LATER) ROUTE 🔴
+# Ã°Å¸â€Â´ WISH LIST (SAVE FOR LATER) ROUTE Ã°Å¸â€Â´
 # ==========================================
 @app.route('/toggle_wishlist', methods=['POST'])
 def toggle_wishlist():
@@ -3358,57 +3689,164 @@ def toggle_wishlist():
         return jsonify({"status": "error", "message": GENERIC_ERROR_MESSAGE}), 500
 
 
-@app.route('/api/profile/bootstrap', methods=['POST'])
-def profile_bootstrap():
-    data = request.get_json() or {}
-    try:
-        verified_google_user = verify_google_credential(data.get('credential'))
-    except ValueError:
-        return jsonify({"success": False, "message": "Google sign-in verification failed"}), 401
-    except RuntimeError:
-        app.logger.exception('Google sign-in verification failed')
-        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 503
-
+def bootstrap_profile_session_from_credential(credential, requested_next_path=''):
+    requested_next_path = sanitize_internal_next_path(requested_next_path)
+    verified_google_user = verify_google_credential(credential)
     email = verified_google_user['email']
     display_name = verified_google_user.get('name') or email.split('@')[0] or 'Meltix Collector'
     google_picture_url = verified_google_user.get('picture') or ''
-
     if not email:
-        return jsonify({"success": False, "message": "Email required"}), 400
+        raise ValueError('Email required')
 
+    profile_record = get_or_create_profile(email, display_name)
+    if google_picture_url:
+        profile_record.google_picture_url = google_picture_url
+
+    clear_admin_session()
+    session['profile_email'] = profile_record.email
+    session['profile_name'] = display_name or profile_record.display_name
+    if google_picture_url:
+        session['profile_picture'] = google_picture_url
+    else:
+        session.pop('profile_picture', None)
+
+    admin_challenge_required = bool(ADMIN_PANEL_PASSWORD_HASH) and is_admin_allowed_email(profile_record.email)
+    if admin_challenge_required:
+        set_admin_post_verify_redirect(requested_next_path)
+
+    db.session.commit()
+    return profile_record, google_picture_url, admin_challenge_required
+
+
+@app.route('/api/profile/bootstrap', methods=['POST'])
+def profile_bootstrap():
+    data = request.get_json(silent=True) or {}
     try:
-        profile_record = get_or_create_profile(email, display_name)
-        if google_picture_url: profile_record.google_picture_url = google_picture_url
-        session['profile_email'] = profile_record.email
-        session['profile_name'] = display_name or profile_record.display_name
-        if google_picture_url:
-            session['profile_picture'] = google_picture_url
-        else:
-            session.pop('profile_picture', None)
-        db.session.commit()
-        prefer_google_picture = bool(google_picture_url and not profile_record.avatar_filename)
-        return jsonify({
-            "success": True,
-            "profile": serialize_profile(
-                profile_record,
-                google_picture_url=google_picture_url,
-                use_google_picture=prefer_google_picture
-            )
-        }), 200
+        profile_record, google_picture_url, admin_challenge_required = bootstrap_profile_session_from_credential(
+            data.get('credential'),
+            data.get('next_path')
+        )
+    except ValueError:
+        db.session.rollback()
+        return jsonify({"success": False, "message": "Google sign-in verification failed"}), 401
+    except RuntimeError:
+        db.session.rollback()
+        app.logger.exception('Google sign-in verification failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 503
     except Exception:
         db.session.rollback()
         app.logger.exception('Profile bootstrap failed')
         return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 
+    prefer_google_picture = bool(google_picture_url and not profile_record.avatar_filename)
+    return jsonify({
+        "success": True,
+        "admin_challenge_required": admin_challenge_required,
+        "admin_challenge_url": ADMIN_PANEL_ENTRY_PATH if admin_challenge_required else None,
+        "profile": serialize_profile(
+            profile_record,
+            google_picture_url=google_picture_url,
+            use_google_picture=prefer_google_picture
+        )
+    }), 200
 
+
+@app.route('/api/profile/bootstrap/redirect', methods=['GET', 'POST'])
+def profile_bootstrap_redirect():
+    if request.method == 'GET':
+        bootstrap_url = url_for('profile_bootstrap')
+        fallback_url = url_for('gift_sets', auth_error='1')
+        return f'''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meltix Sign-In</title>
+  <style>
+    body {{ margin: 0; min-height: 100vh; display: grid; place-items: center; background: #030201; color: #f7f1e6; font-family: system-ui, sans-serif; }}
+    .box {{ width: min(88vw, 420px); padding: 28px; border: 1px solid rgba(212, 163, 115, 0.32); border-radius: 22px; background: rgba(16, 11, 8, 0.94); text-align: center; }}
+  </style>
+</head>
+<body>
+  <div class="box">Completing Google sign-in...</div>
+  <script>
+    (async () => {{
+      const fallbackUrl = {json.dumps(fallback_url)};
+      const hashParams = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+      const queryParams = new URLSearchParams(window.location.search || '');
+      const credential = hashParams.get('id_token') || hashParams.get('credential') || queryParams.get('credential');
+      const nextPath = hashParams.get('state') || queryParams.get('state') || '/gift_sets';
+      if (!credential) {{
+        window.location.replace(fallbackUrl);
+        return;
+      }}
+      try {{
+        const response = await fetch({json.dumps(bootstrap_url)}, {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ credential, next_path: nextPath }})
+        }});
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error('Sign-in failed');
+        if (data.admin_challenge_required && data.admin_challenge_url) {{
+          window.location.replace(data.admin_challenge_url);
+          return;
+        }}
+        window.location.replace(nextPath || '/gift_sets');
+      }} catch (_error) {{
+        window.location.replace(fallbackUrl);
+      }}
+    }})();
+  </script>
+</body>
+</html>'''
+
+    requested_next_path = sanitize_internal_next_path(
+        request.form.get('state') or request.form.get('next_path') or request.referrer or url_for('gift_sets')
+    ) or url_for('gift_sets')
+    try:
+        _profile_record, _google_picture_url, admin_challenge_required = bootstrap_profile_session_from_credential(
+            request.form.get('credential') or request.values.get('credential'),
+            requested_next_path
+        )
+    except ValueError:
+        db.session.rollback()
+        return redirect(url_for('gift_sets', auth_error='1'))
+    except RuntimeError:
+        db.session.rollback()
+        app.logger.exception('Google sign-in redirect verification failed')
+        return redirect(url_for('gift_sets', auth_error='1'))
+    except Exception:
+        db.session.rollback()
+        app.logger.exception('Profile redirect bootstrap failed')
+        return redirect(url_for('gift_sets', auth_error='1'))
+
+    if admin_challenge_required:
+        return redirect(ADMIN_PANEL_ENTRY_PATH)
+    return redirect(requested_next_path)
 @app.route('/api/profile/logout', methods=['POST'])
 def profile_logout():
+    clear_admin_session()
     session.pop('profile_email', None)
     session.pop('profile_name', None)
     session.pop('profile_picture', None)
     return jsonify({"success": True}), 200
-
-
+@app.route('/api/gift-sets/intro-complete', methods=['POST'])
+def gift_intro_complete():
+    if is_admin_session_verified() or is_mobile_request():
+        return jsonify({"success": True, "skipped": True}), 200
+    session_email = get_session_email()
+    if not session_email:
+        return jsonify({"success": False, "message": "Authentication required"}), 401
+    try:
+        profile_record = get_or_create_profile(session_email, session.get('profile_name') or '')
+        profile_record.gift_intro_seen = True
+        db.session.commit()
+        return jsonify({"success": True}), 200
+    except Exception:
+        db.session.rollback()
+        app.logger.exception('Gift intro completion update failed')
+        return jsonify({"success": False, "message": GENERIC_ERROR_MESSAGE}), 500
 @app.route('/api/profile/avatar', methods=['POST'])
 def update_profile_avatar():
     data = request.get_json() or {}
@@ -3574,12 +4012,12 @@ def claim_mission():
                 "message": f"This mission unlocks at Level {mission_data['level']}."
             }), 403
 
-        # ═══════════════════════════════════════════════════════════
-        # 🔒 ANTI-CHEAT VALIDATION — Har mission ke liye real proof
-        # ═══════════════════════════════════════════════════════════
+        # Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+        # Ã°Å¸â€â€™ ANTI-CHEAT VALIDATION Ã¢â‚¬â€ Har mission ke liye real proof
+        # Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
         if not already_claimed:
             if mission_key == 'welcome':
-                # Sirf account hona chahiye — already verified above
+                # Sirf account hona chahiye Ã¢â‚¬â€ already verified above
                 pass
 
             elif mission_key == 'portrait_pick':
@@ -3641,7 +4079,7 @@ def claim_mission():
             elif mission_key in ('zodiac_hunter', 'story_keeper', 'hidden_message',
                                   'craft_studio', 'break_to_reveal', 'date_night',
                                   'gift_set_scout', 'easter_egg', 'head_to_explorer'):
-                # Page exploration missions — honour system (frontend handles navigation)
+                # Page exploration missions Ã¢â‚¬â€ honour system (frontend handles navigation)
                 pass
 
             elif mission_key == 'feedback_share':
@@ -3658,11 +4096,11 @@ def claim_mission():
                     }), 403
 
             elif mission_key == 'bug_reporter':
-                # No strict backend proof needed — honour system
+                # No strict backend proof needed Ã¢â‚¬â€ honour system
                 pass
 
             elif mission_key == 'melt_master':
-                # Final prestige — user must have completed all Level 5 missions except this one
+                # Final prestige Ã¢â‚¬â€ user must have completed all Level 5 missions except this one
                 level5_keys = [m["key"] for m in MISSION_CATALOG.get(5, []) if m["key"] != 'melt_master']
                 if not all(key in completed_missions for key in level5_keys):
                     return jsonify({
@@ -3945,4 +4383,10 @@ def leaderboard_api():
 
 if __name__ == '__main__':
     app.run(debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
+
+
+
+
+
+
 

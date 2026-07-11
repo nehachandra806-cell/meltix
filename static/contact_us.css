@@ -173,7 +173,7 @@ body {
 }
 .card-btn:hover { background-color: #fff; color: #000 !important; box-shadow: 0 0 15px rgba(255,255,255,0.6); }
 
-@media (max-width: 850px) {
+@media (max-width: 768px) {
     .intro-text { font-size: 2.5rem; }
     .cards-container { flex-direction: row; gap: 20px; }
     .flip-card { width: 160px; height: 220px; }
@@ -183,4 +183,89 @@ body {
     .flip-card-back h2 { font-size: 1.5rem; }
     .tagline { font-size: 0.75rem; margin-bottom: 15px; }
     .card-btn { padding: 6px 15px; font-size: 0.7rem; }
+}
+
+@media (max-width: 768px) {
+    body {
+        min-height: 100vh;
+        height: auto;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .back-btn {
+        top: 18px;
+        left: 18px;
+        font-size: 1rem;
+    }
+
+    .intro-screen {
+        padding: 0 18px;
+    }
+
+    .intro-text {
+        font-size: clamp(2rem, 12vw, 2.6rem);
+        line-height: 1.25;
+    }
+
+    .cards-container {
+        width: 100%;
+        min-height: 100vh;
+        height: auto;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: nowrap;
+        padding: 96px 16px 36px;
+    }
+
+    .flip-card {
+        width: min(100%, 320px);
+        height: 220px;
+    }
+
+    .flip-card:hover {
+        transform: none;
+    }
+
+    .icon-wrapper {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 18px;
+    }
+
+    .icon-wrapper svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .tap-hint {
+        font-size: 0.68rem;
+        letter-spacing: 1.5px;
+    }
+
+    .back-overlay {
+        padding: 18px;
+    }
+
+    .flip-card-back h2 {
+        font-size: 1.35rem;
+        text-align: center;
+    }
+
+    .tagline {
+        font-size: 0.78rem;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+
+    .card-btn {
+        width: 100%;
+        max-width: 220px;
+        text-align: center;
+        padding: 10px 16px;
+        font-size: 0.72rem;
+    }
 }

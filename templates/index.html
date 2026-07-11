@@ -33,6 +33,25 @@
             opacity: 1;
         }
     </style>
+    <script>
+        (function () {
+            const introCooldownKey = 'meltix_landing_intro_until';
+            const introCooldownMs = 24 * 60 * 60 * 1000;
+            try {
+                const expiresAt = Number(window.localStorage.getItem(introCooldownKey) || 0);
+                if (expiresAt && Date.now() < expiresAt) {
+                    window.location.replace('/shop');
+                } else if (expiresAt) {
+                    window.localStorage.removeItem(introCooldownKey);
+                }
+                window.meltixRememberLandingIntro = function () {
+                    window.localStorage.setItem(introCooldownKey, String(Date.now() + introCooldownMs));
+                };
+            } catch (_) {
+                window.meltixRememberLandingIntro = function () {};
+            }
+        })();
+    </script>
 </head>
 <body>
 
@@ -101,6 +120,9 @@
         btn.addEventListener('click', function(e) {
             candleState = 'lighting'; // State change kar di! Ab tap karne pe next page jayega
             toastMsg.classList.remove('show'); // Warning popup hata do agar dikh raha ho
+            if (typeof window.meltixRememberLandingIntro === 'function') {
+                window.meltixRememberLandingIntro();
+            }
 
             // Button gayab karo
             this.style.opacity = '0';

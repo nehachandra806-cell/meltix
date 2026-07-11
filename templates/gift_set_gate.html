@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meltix | Private Access</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030201;
+      --panel: rgba(13, 9, 7, 0.9);
+      --gold: #d4a373;
+      --gold-strong: #e2b679;
+      --ivory: #f7f1e6;
+      --muted: rgba(247, 241, 230, 0.68);
+      --border: rgba(212, 163, 115, 0.26);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ivory);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 92px 48px 48px;
+      overflow-x: hidden;
+      font-family: 'Lato', sans-serif;
+      background:
+        radial-gradient(circle at 50% 34%, rgba(212, 163, 115, 0.12), transparent 30%),
+        radial-gradient(circle at 18% 80%, rgba(212, 163, 115, 0.08), transparent 24%),
+        var(--bg);
+    }
+
+    .back-link {
+      position: fixed;
+      top: 30px;
+      left: 50px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gold);
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      letter-spacing: 0;
+      text-transform: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-link span {
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+
+    .back-link:hover {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(212, 163, 115, 0.8);
+    }
+
+    .shell {
+      position: relative;
+      width: min(92vw, 560px);
+      border-radius: 28px;
+      padding: 1px;
+      background: linear-gradient(145deg, rgba(212, 163, 115, 0.54), rgba(212, 163, 115, 0.08) 48%, rgba(212, 163, 115, 0.26));
+      box-shadow: 0 32px 90px rgba(0, 0, 0, 0.58);
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      z-index: -1;
+      border-radius: 44px;
+      background: radial-gradient(circle, rgba(212, 163, 115, 0.12), transparent 65%);
+      filter: blur(18px);
+    }
+
+    .panel {
+      border-radius: 27px;
+      padding: 42px 34px 36px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.035), transparent 32%),
+        radial-gradient(circle at top right, rgba(212, 163, 115, 0.1), transparent 30%),
+        linear-gradient(180deg, rgba(19, 14, 10, 0.98), rgba(5, 4, 3, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.035);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.15rem, 6vw, 3rem);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+    }
+
+    p {
+      margin: 18px auto 0;
+      max-width: 35ch;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .login-shell {
+      margin: 30px auto 0;
+      width: min(100%, 420px);
+      padding: 22px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01)),
+        rgba(0, 0, 0, 0.22);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+        0 18px 44px rgba(0, 0, 0, 0.25);
+    }
+
+    .login-shell strong {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--gold-strong);
+      font-size: 0.78rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    #google-login-button {
+      display: flex;
+      justify-content: center;
+      min-height: 44px;
+    }
+
+    .native-google-login-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 4px;
+      background: #202124;
+      color: #fff;
+      font: 500 0.84rem/1 'Lato', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .native-google-login-btn .google-mark {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 2px;
+      background: #fff;
+      color: #4285f4;
+      font-weight: 900;
+      font-size: 1rem;
+      font-family: Arial, sans-serif;
+    }
+
+    .status {
+      margin-top: 14px;
+      color: var(--gold);
+      font-size: 0.9rem;
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        min-height: 100svh;
+        padding: 76px 18px 28px;
+      }
+
+      .back-link {
+        top: 18px;
+        left: 18px;
+        font-size: 0.96rem;
+      }
+
+      .back-link span {
+        font-size: 0.96rem;
+      }
+
+      .shell {
+        width: min(94vw, 420px);
+        border-radius: 24px;
+      }
+
+      .panel {
+        border-radius: 23px;
+        padding: 32px 20px 28px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 11vw, 2.7rem);
+      }
+
+      p {
+        font-size: 0.95rem;
+        max-width: 30ch;
+      }
+
+      .login-shell {
+        margin-top: 24px;
+        padding: 18px 14px;
+        border-radius: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="{{ url_for('shop') }}"><span>&#10022;</span> Back to Collection</a>
+
+  <main class="shell">
+    <section class="panel">
+      <h1>Unlock The Gifting Vault</h1>
+      <p>Google sign-in is required before entering this private gifting experience.</p>
+      <div class="login-shell">
+        <strong>Continue With Google</strong>
+        <div id="google-login-button"></div>
+        <div class="status" id="gift-login-status"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const profileBootstrapUrl = "{{ profile_bootstrap_url }}";
+    const googleClientId = {{ google_client_id | tojson }};
+    const statusNode = document.getElementById('gift-login-status');
+    const googleButtonNode = document.getElementById('google-login-button');
+
+    function setStatus(message) {
+      statusNode.textContent = message || '';
+    }
+
+    async function handleCredentialResponse(response) {
+      setStatus('Verifying access...');
+      try {
+        const bootstrapResponse = await fetch(profileBootstrapUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            credential: response.credential,
+            next_path: window.location.pathname + window.location.search
+          })
+        });
+        const data = await bootstrapResponse.json();
+        if (!bootstrapResponse.ok || !data.success) {
+          throw new Error(data.message || 'Sign-in failed');
+        }
+        if (data.admin_challenge_required && data.admin_challenge_url) {
+          window.location.href = data.admin_challenge_url;
+          return;
+        }
+        window.location.reload();
+      } catch (_error) {
+        setStatus('Google sign-in could not be completed right now.');
+      }
+    }
+
+    function renderGoogleButton() {
+      if (!window.google?.accounts?.id || !googleClientId) {
+        setStatus('Google sign-in is unavailable right now.');
+        return;
+      }
+
+      window.google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: handleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+
+      window.google.accounts.id.renderButton(googleButtonNode, {
+        theme: 'filled_black',
+        size: 'large',
+        shape: 'rectangular',
+        text: 'continue_with',
+        state: window.location.pathname + window.location.search
+      });
+
+      window.setTimeout(() => {
+        if (!googleButtonNode.querySelector('iframe')) {
+          setStatus('Google button is still loading. Please refresh if it does not appear.');
+        }
+      }, 1800);
+    }
+
+    window.addEventListener('load', renderGoogleButton);
+  </script>
+</body>
+</html>

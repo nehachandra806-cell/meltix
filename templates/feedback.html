@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meltix | Feedback Experience</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='feedback.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='feedback.css', v='phone-feedback-stars-20260708') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -12,11 +12,14 @@
     <a href="javascript:history.back()" class="back-btn"><span>✦</span> Return</a>
 
     <div class="video-background">
+        <video muted playsinline loop autoplay id="fb-mobile-video" class="fb-video mobile-feedback-video" preload="metadata">
+            <source src="{{ url_for('static', filename='videos/phone_feedback.webm') }}" type="video/webm" media="(max-width: 768px)">
+        </video>
         <video muted playsinline id="fb-vid-1" class="fb-video active-vid" preload="auto">
-            <source src="{{ url_for('static', filename='models/feedback_part1.mp4') }}" type="video/mp4">
+            <source src="{{ url_for('static', filename='models/feedback_part1.mp4') }}" type="video/mp4" media="(min-width: 769px)">
         </video>
         <video muted playsinline id="fb-vid-2" class="fb-video" preload="auto">
-            <source src="{{ url_for('static', filename='models/feedback_part2.mp4') }}" type="video/mp4">
+            <source src="{{ url_for('static', filename='models/feedback_part2.mp4') }}" type="video/mp4" media="(min-width: 769px)">
         </video>
         <div class="video-overlay" id="fb-dark-overlay"></div>
     </div>
@@ -31,6 +34,17 @@
         <div class="msg-bubble b7"><div class="lines"><div class="line"></div></div></div>
         <div class="msg-bubble b8"><div class="lines"><div class="line short"></div></div></div>
     </div>
+
+    <section class="mobile-feedback-rating" id="mobile-feedback-rating" aria-label="Rate Meltix">
+        <p class="mobile-feedback-kicker">Please rate us</p>
+        <div class="mobile-feedback-stars" aria-label="Choose a rating from one to five stars">
+            <button type="button" class="mobile-feedback-star" data-val="1" onclick="selectStar(1)" aria-label="Rate 1 star">&#9733;</button>
+            <button type="button" class="mobile-feedback-star" data-val="2" onclick="selectStar(2)" aria-label="Rate 2 stars">&#9733;</button>
+            <button type="button" class="mobile-feedback-star" data-val="3" onclick="selectStar(3)" aria-label="Rate 3 stars">&#9733;</button>
+            <button type="button" class="mobile-feedback-star" data-val="4" onclick="selectStar(4)" aria-label="Rate 4 stars">&#9733;</button>
+            <button type="button" class="mobile-feedback-star" data-val="5" onclick="selectStar(5)" aria-label="Rate 5 stars">&#9733;</button>
+        </div>
+    </section>
 
     <div class="interactive-ui-layer" id="fb-step-1">
         
@@ -95,9 +109,22 @@
     <script>
         const vid1 = document.getElementById('fb-vid-1');
         const vid2 = document.getElementById('fb-vid-2');
+        const mobileVideo = document.getElementById('fb-mobile-video');
         const overlay = document.getElementById('fb-dark-overlay');
+        const mobileFeedbackQuery = window.matchMedia('(max-width: 768px)');
+
+        function isMobileFeedback() {
+            return mobileFeedbackQuery.matches;
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
+            if (isMobileFeedback()) {
+                vid1.pause();
+                vid2.pause();
+                mobileVideo.play().catch(() => {});
+                return;
+            }
+
             vid1.pause();
             vid1.currentTime = 0;
         });
@@ -159,6 +186,24 @@
                 if (parseInt(s.getAttribute('data-val')) <= rating) s.classList.add('active');
                 else s.classList.remove('active');
             });
+
+            const mobileStars = document.querySelectorAll('.mobile-feedback-star');
+            mobileStars.forEach(s => {
+                if (parseInt(s.getAttribute('data-val')) <= rating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+
+            if (isMobileFeedback()) {
+                const mobileRating = document.getElementById('mobile-feedback-rating');
+                mobileRating.classList.add('is-rated');
+                window.setTimeout(() => {
+                    document.body.classList.add('mobile-feedback-form-open');
+                    mobileRating.classList.add('is-complete');
+                    document.getElementById('feedback-form-box').classList.add('show-form');
+                }, 650);
+                return;
+            }
+
             setTimeout(() => {
                 document.getElementById('fb-step-3').style.opacity = '1'; 
                 overlay.style.backgroundColor = "transparent"; 
@@ -202,6 +247,11 @@
                 btn.innerText = "SENT ✓";
 
                 setTimeout(() => {
+                    if (isMobileFeedback()) {
+                        window.location.href = '/shop';
+                        return;
+                    }
+
                     document.getElementById('form-header').style.display = 'none';
                     document.getElementById('reportForm').style.display = 'none';
 

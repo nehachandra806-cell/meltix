@@ -164,7 +164,72 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+      @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      .success-shell {
+        width: 100%;
+      }
+
+      .success-card {
+        padding: 26px 18px;
+        border-radius: 24px;
+      }
+
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.28em;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 12vw, 2.7rem);
+        line-height: 1.05;
+      }
+
+      .lead {
+        margin-top: 14px;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .divider {
+        height: 56px;
+        margin: 24px 0;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .stat {
+        min-height: auto;
+        padding: 18px;
+        border-radius: 18px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .stat-note {
+        font-size: 12px;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .action {
+        width: 100%;
+        text-align: center;
+        padding: 14px 18px;
+      }
+    }
+</style>
 </head>
 <body>
   <main class="success-shell">
