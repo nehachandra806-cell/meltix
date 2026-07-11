@@ -65,6 +65,11 @@
   }
 
   // ── Cart ───────────────────────────────────────────────────────
+  function fallbackFromWebpUrl(value) {
+    const url = String(value || "");
+    return /\.webp(?=([?#]|$))/i.test(url) ? url.replace(/\.webp(?=([?#]|$))/i, ".jpg") : "";
+  }
+
   function loadCart() {
     const parsed = safeParse(localStorage.getItem(STORAGE_KEY), []);
     if (!Array.isArray(parsed)) return [];
@@ -76,6 +81,7 @@
         price: Number(item.price) || 0,
         qty: normalizeQty(item.qty),
         image: String(item.image || FALLBACK_IMAGE),
+        imageFallback: String(item.imageFallback || item.image_fallback_url || fallbackFromWebpUrl(item.image)),
         customText: normalizeCustomText(item.customText),
         fragrance: String(item.fragrance || item.scent || "").trim(),
       };
@@ -155,7 +161,7 @@
         : "";
       return [
         '<article class="summary-item">',
-        `  <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'">`,
+        `  <img src="${escapeHtml(item.image)}" data-fallback-src="${escapeHtml(item.imageFallback)}" alt="${escapeHtml(item.name)}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}else{this.onerror=null;this.src='${FALLBACK_IMAGE}';}">`,
         "  <div>",
         `    <h3 class="summary-item-title">${escapeHtml(item.name)}</h3>`,
         `    <p class="summary-item-meta">Qty: ${item.qty} • ${formatPrice(item.price)} each</p>`,

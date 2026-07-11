@@ -411,7 +411,8 @@ def build_avatar_options():
         {
             'filename': filename,
             'label': AVATAR_NAMES.get(filename, f"Avatar {index:02d}"),
-            'src': url_for('static', filename=f'images/avatar/{filename}'),
+            'src': optimized_static_image_url(f'images/avatar/{filename}'),
+            'fallback_src': url_for('static', filename=f'images/avatar/{filename}'),
             'required_level': avatar_required_level(index)
         }
         for index, filename in enumerate(AVATAR_FILENAMES, start=1)
@@ -430,6 +431,10 @@ def public_avatar_filename(filename):
 
 
 def public_avatar_url(filename):
+    return optimized_static_image_url(f'images/avatar/{public_avatar_filename(filename)}')
+
+
+def public_avatar_fallback_url(filename):
     return url_for('static', filename=f'images/avatar/{public_avatar_filename(filename)}')
 
 
@@ -469,11 +474,33 @@ def resolve_static_asset_path(path_value):
     return '/'.join(resolved_parts)
 
 
+def optimized_static_image_path(path_value):
+    fallback_path = resolve_static_asset_path(path_value)
+    if not fallback_path:
+        return ''
+
+    path = Path(fallback_path)
+    if path.suffix.lower() not in {'.jpg', '.jpeg'}:
+        return fallback_path
+
+    optimized_path = path.with_suffix('.webp').as_posix()
+    if (BASE_DIR / 'static' / optimized_path).exists():
+        return optimized_path
+    return fallback_path
+
+
+@app.template_global()
+def optimized_static_image_url(path_value):
+    optimized_path = optimized_static_image_path(path_value)
+    return url_for('static', filename=optimized_path) if optimized_path else ''
+
+
 def public_profile_identity(profile_record, fallback_name='Meltix Collector'):
     display_name = fallback_name
     level = 1
     avatar_filename = DEFAULT_AVATAR_FILENAME
     avatar_url = public_avatar_url(avatar_filename)
+    avatar_fallback_url = public_avatar_fallback_url(avatar_filename)
 
     if profile_record:
         display_name = (profile_record.display_name or '').strip() or fallback_name
@@ -483,15 +510,18 @@ def public_profile_identity(profile_record, fallback_name='Meltix Collector'):
         if not profile_record.avatar_filename and profile_record.google_picture_url:
             avatar_filename = '' 
             avatar_url = profile_record.google_picture_url
+            avatar_fallback_url = profile_record.google_picture_url
         else:
             avatar_filename = public_avatar_filename(profile_record.avatar_filename)
             avatar_url = public_avatar_url(avatar_filename)
+            avatar_fallback_url = public_avatar_fallback_url(avatar_filename)
 
     return {
         'display_name': display_name,
         'level': level,
         'avatar_filename': avatar_filename,
         'avatar_url': avatar_url,
+        'avatar_fallback_url': avatar_fallback_url,
     }
 
 # ==========================================
@@ -1042,7 +1072,16 @@ def product_static_path(product_record):
     return ''
 
 
+@app.template_global()
 def product_image_url(product_record):
+    image_path = optimized_static_image_path(product_static_path(product_record))
+    if not image_path:
+        return ''
+    return url_for('static', filename=image_path)
+
+
+@app.template_global()
+def product_image_fallback_url(product_record):
     image_path = product_static_path(product_record)
     if not image_path:
         return ''
@@ -1052,7 +1091,10 @@ def product_image_url(product_record):
 def serialize_product(product_record):
     details = safe_json_loads(product_record.details_json, {})
     ui_flags = safe_json_loads(product_record.ui_flags_json, {})
+    image_path = optimized_static_image_path(product_static_path(product_record))
+    image_fallback_path = product_static_path(product_record)
     image_url = product_image_url(product_record)
+    image_fallback_url = product_image_fallback_url(product_record)
     stock_quantity = max(0, int(product_record.stock_quantity or 0))
     price_value = max(0, int(product_record.price or 0))
 
@@ -1069,9 +1111,12 @@ def serialize_product(product_record):
         'stock': stock_quantity,
         'stock_quantity': stock_quantity,
         'image_file': product_record.image_file,
-        'image_path': product_static_path(product_record),
+        'image_path': image_path,
+        'image_fallback_path': image_fallback_path,
         'image_url': image_url,
+        'image_fallback_url': image_fallback_url,
         'gallery_images': [image_url] if image_url else [],
+        'gallery_fallback_images': [image_fallback_url] if image_fallback_url else [],
         'details': details,
         'ui_flags': ui_flags,
     }
@@ -1097,7 +1142,8 @@ def _seed_shop_preview_images():
 
         preview_images_by_slug[collection_slug].append(
             {
-                'url': url_for('static', filename=image_path),
+                'url': optimized_static_image_url(image_path),
+                'fallback_url': url_for('static', filename=image_path),
                 'alt': str(raw_row.get('name') or raw_row.get('collection_label') or 'Collection preview').strip(),
             }
         )
@@ -1131,6 +1177,7 @@ def build_shop_collections(max_preview_images=3):
             preview_images.append(
                 {
                     'url': image_url,
+                    'fallback_url': product_image_fallback_url(product),
                     'alt': (product.name or collection['slug']).strip(),
                 }
             )
@@ -1424,6 +1471,7 @@ def build_bot_product_card(product_record):
         'product_id': int(product_record.id),
         'name': str(product_record.name or 'Meltix Pick').strip(),
         'image_url': image_url,
+        'image_fallback_url': product_image_fallback_url(product_record),
         'redirect_url': f"{bot_collection_redirect_url(product_record.collection_slug)}?product={int(product_record.id)}",
     }
 
@@ -1667,6 +1715,7 @@ def build_checkout_line_items(requested_items, product_map):
             'collection_slug': product.collection_slug,
             'group_name': product.group_name,
             'image_url': product_image_url(product),
+            'image_fallback_url': product_image_fallback_url(product),
             'price': unit_price,
             'quantity': quantity,
             'line_total': line_total,
@@ -2483,7 +2532,8 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
             'name': product.name if product else f"Meltix Candle #{row.product_id}",
             'price': max(0, int(product.price or 0)) if product else 0,
             'likes': product.likes if product else 0,
-            'image_url': product_image_url(product) if product else None
+            'image_url': product_image_url(product) if product else None,
+            'image_fallback_url': product_image_fallback_url(product) if product else None
         })
 
     all_reviews = Review.query.filter(Review.user_id == profile_record.id).order_by(Review.created_at.desc()).all()
@@ -2517,6 +2567,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
             'author_level': current_identity['level'],
             'author_avatar_filename': current_identity['avatar_filename'],
             'author_avatar_url': current_identity['avatar_url'],
+            'author_avatar_fallback_url': current_identity['avatar_fallback_url'],
         }
         for review in recent_reviews
     ]
@@ -2544,13 +2595,16 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
 
     has_custom_avatar = bool(profile_record.avatar_filename)
     avatar_url = None
+    avatar_fallback_url = None
     avatar_label = "Awaiting Sign-In"
 
     if use_google_picture and google_picture_url:
         avatar_url = google_picture_url
+        avatar_fallback_url = google_picture_url
         avatar_label = "Google Profile Photo"
     elif has_custom_avatar:
-        avatar_url = url_for('static', filename=f"images/avatar/{profile_record.avatar_filename}")
+        avatar_url = optimized_static_image_url(f"images/avatar/{profile_record.avatar_filename}")
+        avatar_fallback_url = url_for('static', filename=f"images/avatar/{profile_record.avatar_filename}")
         avatar_label = avatar_label_for_filename(profile_record.avatar_filename)
 
     return {
@@ -2558,6 +2612,7 @@ def serialize_profile(profile_record, google_picture_url=None, use_google_pictur
         'email': profile_record.email,
         'avatar_filename': profile_record.avatar_filename,
         'avatar_url': avatar_url,
+        'avatar_fallback_url': avatar_fallback_url,
         'avatar_label': avatar_label,
         'using_google_avatar': bool(use_google_picture and google_picture_url),
         'level': current_level,
@@ -3373,7 +3428,8 @@ def profile():
     return render_template(
         'profile.html',
         avatar_options=build_avatar_options(),
-        default_avatar=url_for('static', filename=f'images/avatar/{DEFAULT_AVATAR_FILENAME}'),
+        default_avatar=optimized_static_image_url(f'images/avatar/{DEFAULT_AVATAR_FILENAME}'),
+        default_avatar_fallback=url_for('static', filename=f'images/avatar/{DEFAULT_AVATAR_FILENAME}'),
         profile=profile_data,
         profile_data=profile_data,
         stats=profile_data.get('stats', {}),
@@ -3567,6 +3623,7 @@ def get_reviews(product_id):
             'author_level': author_identity['level'],
             'author_avatar_filename': author_identity['avatar_filename'],
             'author_avatar_url': author_identity['avatar_url'],
+            'author_avatar_fallback_url': author_identity['avatar_fallback_url'],
             'review_text': r.review_text,
             'rating': r.rating,
             'date': r.created_at.strftime("%d %b %Y"),
@@ -3873,6 +3930,11 @@ def update_profile_avatar():
         return jsonify({
             "success": True,
             "avatar_url": (
+                google_picture_url
+                if use_google_photo and google_picture_url
+                else optimized_static_image_url(f'images/avatar/{avatar_filename}')
+            ) if (avatar_filename or google_picture_url) else None,
+            "avatar_fallback_url": (
                 google_picture_url
                 if use_google_photo and google_picture_url
                 else url_for('static', filename=f'images/avatar/{avatar_filename}')
@@ -4375,6 +4437,7 @@ def leaderboard_api():
             "level": identity['level'],
             "avatar_filename": identity['avatar_filename'],
             "avatar_url": identity['avatar_url'],
+            "avatar_fallback_url": identity['avatar_fallback_url'],
             "lifetime_spend": int(account.lifetime_spend or 0),
             "lifetime_spend_display": format_money(int(account.lifetime_spend or 0)),
         })

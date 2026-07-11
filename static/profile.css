@@ -1493,6 +1493,9 @@ body {
     background:
         linear-gradient(145deg, rgba(22, 14, 10, 0.94), rgba(10, 6, 4, 0.98)),
         url('images/coupon_bg.jpg');
+    background-image:
+        linear-gradient(145deg, rgba(22, 14, 10, 0.94), rgba(10, 6, 4, 0.98)),
+        image-set(url('images/coupon_bg.webp') type('image/webp'), url('images/coupon_bg.jpg') type('image/jpeg'));
     background-size: cover, 180px;
     background-position: center, center;
     background-blend-mode: normal, overlay;

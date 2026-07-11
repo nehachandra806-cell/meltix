@@ -31,7 +31,7 @@
                 </p>
             </div>
             <div class="image-content">
-                <img src="{{ url_for('static', filename='images/genesis.jpg') }}" alt="Meltix Genesis">
+                <img src="{{ optimized_static_image_url('images/genesis.jpg') }}" data-fallback-src="{{ url_for('static', filename='images/genesis.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Meltix Genesis">
             </div>
         </header>
 
@@ -45,7 +45,7 @@
                 </p>
             </div>
             <div class="image-content">
-                <img src="{{ url_for('static', filename='images/founder.jpg') }}" alt="Founder Neha Singh">
+                <img src="{{ optimized_static_image_url('images/founder.jpg') }}" data-fallback-src="{{ url_for('static', filename='images/founder.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Founder Neha Singh">
             </div>
         </section>
 
@@ -53,7 +53,7 @@
             
             <div class="team-card reveal">
                 <div class="team-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/craft.jpg') }}" alt="Craft Team">
+                    <img src="{{ optimized_static_image_url('images/craft.jpg') }}" data-fallback-src="{{ url_for('static', filename='images/craft.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Craft Team">
                 </div>
                 <div class="team-info">
                     <h3 class="team-title">The Craft Team</h3>
@@ -65,7 +65,7 @@
 
             <div class="team-card reveal">
                 <div class="team-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/tech.jpg') }}" alt="Technical Team">
+                    <img src="{{ optimized_static_image_url('images/tech.jpg') }}" data-fallback-src="{{ url_for('static', filename='images/tech.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Technical Team">
                 </div>
                 <div class="team-info">
                     <h3 class="team-title">The Technical Team</h3>
@@ -77,7 +77,7 @@
 
             <div class="team-card reveal">
                 <div class="team-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/security.jpg') }}" alt="Security Team">
+                    <img src="{{ optimized_static_image_url('images/security.jpg') }}" data-fallback-src="{{ url_for('static', filename='images/security.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Security Team">
                 </div>
                 <div class="team-info">
                     <h3 class="team-title">Security & Clean Check</h3>
@@ -89,7 +89,7 @@
 
             <div class="team-card reveal">
                 <div class="team-img-wrapper">
-                    <img src="{{ url_for('static', filename='images/delivery.jpg') }}" alt="Delivery Team">
+                    <img src="{{ optimized_static_image_url('images/delivery.jpg') }}" data-fallback-src="{{ url_for('static', filename='images/delivery.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Delivery Team">
                 </div>
                 <div class="team-info">
                     <h3 class="team-title">The Delivery Team</h3>

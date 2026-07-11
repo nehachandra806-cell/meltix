@@ -402,7 +402,7 @@
                 {% for avatar in avatar_options %}
                 <button type="button" class="avatar-option" data-avatar="{{ avatar.filename }}" data-label="{{ avatar.label }}" data-required-level="{{ avatar.required_level }}">
                     <span class="avatar-lock-indicator" {% if profile and profile.level and profile.level >= avatar.required_level %}hidden{% endif %}><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1C9.24 1 7 3.24 7 6v1H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2h-2V6c0-2.76-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3v1H9V6c0-1.66 1.34-3 3-3zm0 9a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg></span>
-                    <img src="{{ avatar.src }}" alt="{{ avatar.label }}">
+                    <img src="{{ avatar.src }}" data-fallback-src="{{ avatar.fallback_src }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="{{ avatar.label }}">
                     <span>{{ avatar.label }}</span>
                     <small class="avatar-unlock-note">{% if avatar.required_level > 1 %}Unlocks at Level {{ avatar.required_level }}{% else %}Available from Level 1{% endif %}</small>
                 </button>
@@ -490,10 +490,12 @@
         const claimMissionUrl = "{{ url_for('claim_mission') }}";
         const leaderboardUrl = "{{ url_for('leaderboard_api') }}";
         const defaultAvatarUrl = "{{ default_avatar }}";
+        const defaultAvatarFallbackUrl = "{{ default_avatar_fallback }}";
         const googleClientId = {{ google_client_id | tojson }};
         const initialProfile = {{ profile_data | tojson }};
         const initialUser = {{ current_user | tojson }};
         const avatarSrcMap = new Map(avatarOptions.map((avatar) => [avatar.filename, avatar.src]));
+        const avatarFallbackSrcMap = new Map(avatarOptions.map((avatar) => [avatar.filename, avatar.fallback_src || avatar.src]));
 
         const state = {
             currentUser: initialUser && initialUser.email ? initialUser : null,
@@ -730,8 +732,14 @@
             useGooglePhotoBtn.hidden = !isSignedIn;
         }
 
-        function showAvatarImage(imageUrl) {
+        function showAvatarImage(imageUrl, fallbackUrl = '') {
             if (!imageUrl) return showAvatarEmpty();
+            heroAvatar.onerror = fallbackUrl && fallbackUrl !== imageUrl
+                ? () => {
+                    heroAvatar.onerror = null;
+                    heroAvatar.src = fallbackUrl;
+                }
+                : null;
             heroAvatar.src = imageUrl;
             heroAvatar.hidden = false;
             avatarEmptyState.hidden = true;
@@ -751,7 +759,7 @@
             if (!avatarMeta) return;
             state.selectedAvatar = avatarMeta.filename;
             state.usingGoogleAvatar = false;
-            showAvatarImage(avatarMeta.src);
+            showAvatarImage(avatarMeta.src, avatarMeta.fallback_src || avatarMeta.src);
             detailAvatar.textContent = avatarMeta.label;
             document.querySelectorAll('[data-avatar]').forEach((element) => element.classList.toggle('active-avatar', element.dataset.avatar === avatarMeta.filename));
         }
@@ -782,10 +790,24 @@
             return defaultAvatarUrl;
         }
 
+        function resolveAvatarFallbackSrc(filename, explicitFallbackUrl, primaryUrl) {
+            if (explicitFallbackUrl) return explicitFallbackUrl;
+            if (filename && avatarFallbackSrcMap.has(filename)) return avatarFallbackSrcMap.get(filename);
+            if (/\.webp(?=([?#]|$))/i.test(primaryUrl || '')) {
+                return primaryUrl.replace(/\.webp(?=([?#]|$))/i, '.jpg');
+            }
+            return defaultAvatarFallbackUrl;
+        }
+
         function buildMicroAvatarMarkup(userLike) {
             const level = normalizeLevel(userLike && userLike.author_level ? userLike.author_level : (userLike && userLike.level ? userLike.level : 1));
             const avatarFilename = userLike && (userLike.author_avatar_filename || userLike.avatar_filename) ? (userLike.author_avatar_filename || userLike.avatar_filename) : '';
             const avatarUrl = resolveAvatarSrc(avatarFilename, userLike && (userLike.author_avatar_url || userLike.avatar_url));
+            const avatarFallbackUrl = resolveAvatarFallbackSrc(
+                avatarFilename,
+                userLike && (userLike.author_avatar_fallback_url || userLike.avatar_fallback_url),
+                avatarUrl
+            );
             const displayName = escapeHtml(userLike && (userLike.display_name || userLike.name || userLike.user_name) ? (userLike.display_name || userLike.name || userLike.user_name) : 'Meltix Collector');
 
             return `
@@ -795,7 +817,7 @@
                         <div class="avatar-ring"></div>
                         <div class="avatar-aura"></div>
                         <div class="avatar-trigger avatar-trigger-static has-avatar">
-                            <img src="${avatarUrl}" alt="${displayName}">
+                            <img src="${escapeHtml(avatarUrl)}" data-fallback-src="${escapeHtml(avatarFallbackUrl)}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="${displayName}">
                         </div>
                     </div>
                 </div>
@@ -852,7 +874,11 @@
             items.forEach((item) => {
                 const card = document.createElement('article');
                 card.className = 'wishlist-item';
-                card.innerHTML = `<div class="wishlist-thumb">${item.image_url ? `<img src="${item.image_url}" alt="${item.name}">` : `<div class="wishlist-fallback">#${item.product_id}</div>`}</div><div class="wishlist-copy"><p>Saved Candle</p><h3>${item.name}</h3><span>Product ID #${item.product_id}</span></div>`;
+                const safeName = escapeHtml(item.name || 'Meltix Candle');
+                const imageMarkup = item.image_url
+                    ? '<img src="' + escapeHtml(item.image_url) + '" data-fallback-src="' + escapeHtml(item.image_fallback_url || '') + '" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="' + safeName + '">'
+                    : '<div class="wishlist-fallback">#' + escapeHtml(item.product_id) + '</div>';
+                card.innerHTML = '<div class="wishlist-thumb">' + imageMarkup + '</div><div class="wishlist-copy"><p>Saved Candle</p><h3>' + safeName + '</h3><span>Product ID #' + escapeHtml(item.product_id) + '</span></div>';
                 wishlistGrid.appendChild(card);
             });
         }
@@ -1284,7 +1310,7 @@
             } else if (state.currentUser && state.currentUser.picture) {
                 setGoogleAvatar(state.currentUser.picture);
             } else if (profile.avatar_url) {
-                showAvatarImage(profile.avatar_url);
+                showAvatarImage(profile.avatar_url, profile.avatar_fallback_url || profile.avatar_url);
                 detailAvatar.textContent = profile.avatar_label || 'Profile Photo';
             } else {
                 showAvatarEmpty();

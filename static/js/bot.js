@@ -54,6 +54,11 @@
       .replace(/'/g, "&#39;");
   }
 
+  function fallbackFromWebpUrl(value) {
+    const url = String(value || "");
+    return /\.webp(?=([?#]|$))/i.test(url) ? url.replace(/\.webp(?=([?#]|$))/i, ".jpg") : "";
+  }
+
   function formatMessageHtml(value) {
     return escapeHtml(value).replace(/\n/g, "<br>");
   }
@@ -65,12 +70,16 @@
 
     const productName = escapeHtml(card.name || "Meltix Pick");
     const imageUrl = escapeHtml(card.image_url);
+    const imageFallbackUrl = escapeHtml(card.image_fallback_url || fallbackFromWebpUrl(card.image_url));
+    const fallbackMarkup = imageFallbackUrl
+      ? ' data-fallback-src="' + imageFallbackUrl + '" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}"'
+      : "";
     const redirectUrl = escapeHtml(card.redirect_url);
     const productId = escapeHtml(card.product_id || "");
 
     return [
       `<div class="chat-product-card" data-product-card data-redirect-url="${redirectUrl}" data-product-name="${productName}" data-product-id="${productId}" tabindex="0" role="link" aria-label="Open ${productName}">`,
-      `<img src="${imageUrl}" alt="${productName}">`,
+      '<img src="' + imageUrl + '"' + fallbackMarkup + ' alt="' + productName + '">',
       `<div class="chat-card-caption">`,
       `<span>${productName}</span>`,
       `</div>`,

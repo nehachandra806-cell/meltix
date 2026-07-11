@@ -38,6 +38,11 @@
       .replace(/'/g, "&#39;");
   }
 
+  function fallbackFromWebpUrl(value) {
+    const url = String(value || "");
+    return /\.webp(?=([?#]|$))/i.test(url) ? url.replace(/\.webp(?=([?#]|$))/i, ".jpg") : "";
+  }
+
   function formatPrice(value) {
     const amount = Number(value) || 0;
     return "₹ " + new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(amount);
@@ -65,6 +70,7 @@
       name: String(item.name || "Meltix Creation"),
       price: Number(item.price) || 0,
       image: String(item.image || FALLBACK_IMAGE),
+      imageFallback: String(item.imageFallback || item.image_fallback_url || fallbackFromWebpUrl(item.image)),
       qty,
       stock: hasExplicitStock ? normalizeStock(item.stock ?? item.stock_quantity, 0) : qty,
       customText: normalizeCustomText(item.customText),
@@ -263,7 +269,7 @@
 
       return [
         '<article class="meltix-cart-card">',
-        `  <img class="meltix-cart-card-thumb" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'">`,
+        `  <img class="meltix-cart-card-thumb" src="${escapeHtml(item.image)}" data-fallback-src="${escapeHtml(item.imageFallback)}" alt="${escapeHtml(item.name)}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}else{this.onerror=null;this.src='${FALLBACK_IMAGE}';}">`,
         '  <div class="meltix-cart-card-main">',
         `    <h3 class="meltix-cart-card-title">${escapeHtml(item.name)}</h3>`,
         `    <p class="meltix-cart-card-price">${formatPrice(item.price)}</p>`,
@@ -320,6 +326,8 @@
       const existingItem = cart[existingIndex];
       const stockChanged = existingItem.stock !== availableStock;
       existingItem.stock = availableStock;
+      existingItem.image = normalized.image;
+      existingItem.imageFallback = normalized.imageFallback;
       const nextQty = existingItem.qty + normalized.qty;
       if (nextQty > availableStock) {
         if (stockChanged) {

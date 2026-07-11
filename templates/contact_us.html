@@ -40,7 +40,7 @@
                     </div>
                     <p class="tap-hint">Tap to see<br>Instagram info</p>
                 </div>
-                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/insta_bg.jpg') }}');">
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/insta_bg.jpg') }}'); background-image: image-set(url('{{ optimized_static_image_url('images/insta_bg.jpg') }}') type('image/webp'), url('{{ url_for('static', filename='images/insta_bg.jpg') }}') type('image/jpeg'));">
                     <div class="back-overlay">
                         <h2>Instagram</h2>
                         <p class="tagline">Slide into our DMs or tag us for a feature! 📸</p>
@@ -58,7 +58,7 @@
                     </div>
                     <p class="tap-hint">Tap to see<br>Facebook info</p>
                 </div>
-                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/fb_bg.jpg') }}');">
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/fb_bg.jpg') }}'); background-image: image-set(url('{{ optimized_static_image_url('images/fb_bg.jpg') }}') type('image/webp'), url('{{ url_for('static', filename='images/fb_bg.jpg') }}') type('image/jpeg'));">
                     <div class="back-overlay">
                         <h2>Facebook</h2>
                         <p class="tagline">Join our community & stay updated. 🤝</p>
@@ -76,7 +76,7 @@
                     </div>
                     <p class="tap-hint">Tap to see<br>WhatsApp info</p>
                 </div>
-                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/wa_bg.jpg') }}');">
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/wa_bg.jpg') }}'); background-image: image-set(url('{{ optimized_static_image_url('images/wa_bg.jpg') }}') type('image/webp'), url('{{ url_for('static', filename='images/wa_bg.jpg') }}') type('image/jpeg'));">
                     <div class="back-overlay">
                         <h2>WhatsApp</h2>
                         <p class="tagline">Quick queries? Drop us a text anytime. 💬</p>
@@ -94,7 +94,7 @@
                     </div>
                     <p class="tap-hint">Tap to see<br>Email info</p>
                 </div>
-                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/mail_bg.jpg') }}');">
+                <div class="flip-card-back" style="background-image: url('{{ url_for('static', filename='images/mail_bg.jpg') }}'); background-image: image-set(url('{{ optimized_static_image_url('images/mail_bg.jpg') }}') type('image/webp'), url('{{ url_for('static', filename='images/mail_bg.jpg') }}') type('image/jpeg'));">
                     <div class="back-overlay">
                         <h2 style="color: #000; text-shadow: 0 0 10px #fff;">Email Us</h2>
                         <p class="tagline" style="color: #333; text-shadow: 0 0 10px #fff;">For bulk orders & detailed support. ✉️</p>

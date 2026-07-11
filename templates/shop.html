@@ -70,6 +70,8 @@
             <img
               class="showcase-frame{% if loop.first %} is-active{% endif %}"
               src="{{ preview.url }}"
+              data-fallback-src="{{ preview.fallback_url or preview.url }}"
+              onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}"
               alt="{{ preview.alt or collection.caption }}"
               data-product-name="{{ preview.alt or collection.caption }}"
               loading="lazy"

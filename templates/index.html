@@ -60,11 +60,20 @@
     </div>
 
     <div id="video-container">
-        <video id="vid-unlit" class="bg-video active" src="{{ url_for('static', filename='videos/unlit.mp4') }}" autoplay loop muted playsinline preload="auto"></video>
+        <video id="vid-unlit" class="bg-video active" autoplay loop muted playsinline preload="auto">
+            <source src="{{ url_for('static', filename='videos/unlit.webm') }}" type="video/webm">
+            <source src="{{ url_for('static', filename='videos/unlit.mp4') }}" type="video/mp4">
+        </video>
         
-        <video id="vid-trans" class="bg-video" src="{{ url_for('static', filename='videos/lightup.mp4') }}" muted playsinline preload="auto"></video>
+        <video id="vid-trans" class="bg-video" muted playsinline preload="auto">
+            <source src="{{ url_for('static', filename='videos/lightup.webm') }}" type="video/webm">
+            <source src="{{ url_for('static', filename='videos/lightup.mp4') }}" type="video/mp4">
+        </video>
         
-        <video id="vid-lit" class="bg-video" src="{{ url_for('static', filename='videos/lit.mp4') }}" loop muted playsinline preload="auto"></video>
+        <video id="vid-lit" class="bg-video" loop muted playsinline preload="auto">
+            <source src="{{ url_for('static', filename='videos/lit.webm') }}" type="video/webm">
+            <source src="{{ url_for('static', filename='videos/lit.mp4') }}" type="video/mp4">
+        </video>
     </div>
 
     <div id="toast-msg">Please light up the candle to go to the next page </div>

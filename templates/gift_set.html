@@ -24,6 +24,7 @@
 {% if show_gift_intro %}
     <div id="cinematic-intro">
         <video muted playsinline preload="auto" id="bg-video">
+            <source src="{{ url_for('static', filename='videos/0401.webm') }}" type="video/webm">
             <source src="{{ url_for('static', filename='videos/0401.mp4') }}" type="video/mp4">
         </video>
         <div class="video-vignette"></div>
@@ -329,10 +330,10 @@
         dustContainer.dataset.coreDustReady = 'true';
 
         const categoryMeta = {
-            birthday: { title: 'Birthday Set', desc: 'Celebrate Their Special Day', video: '/static/videos/birthday_combined.mp4', groupName: 'Birthday Set' },
-            anniversary: { title: 'Anniversary Set', desc: 'Milestones & Shared Memories', video: '/static/videos/anniversary_combined.mp4', groupName: 'Anniversary Set' },
-            date: { title: 'Date Set', desc: 'Intimate & Romantic Vibes', video: '/static/videos/date_combined.mp4', groupName: 'Date Set' },
-            surprise: { title: 'Surprise Set', desc: 'Unexpected Magical Moments', video: '/static/videos/surprise_combined.mp4', groupName: 'Surprise Set' }
+            birthday: { title: 'Birthday Set', desc: 'Celebrate Their Special Day', video: '/static/videos/birthday_combined.webm', videoFallback: '/static/videos/birthday_combined.mp4', groupName: 'Birthday Set' },
+            anniversary: { title: 'Anniversary Set', desc: 'Milestones & Shared Memories', video: '/static/videos/anniversary_combined.webm', videoFallback: '/static/videos/anniversary_combined.mp4', groupName: 'Anniversary Set' },
+            date: { title: 'Date Set', desc: 'Intimate & Romantic Vibes', video: '/static/videos/date_combined.webm', videoFallback: '/static/videos/date_combined.mp4', groupName: 'Date Set' },
+            surprise: { title: 'Surprise Set', desc: 'Unexpected Magical Moments', video: '/static/videos/surprise_combined.webm', videoFallback: '/static/videos/surprise_combined.mp4', groupName: 'Surprise Set' }
         };
 
         window.meltixGiftVault = MeltixCore.initGiftVaultCollection({

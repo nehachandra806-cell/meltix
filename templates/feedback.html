@@ -16,9 +16,11 @@
             <source src="{{ url_for('static', filename='videos/phone_feedback.webm') }}" type="video/webm" media="(max-width: 768px)">
         </video>
         <video muted playsinline id="fb-vid-1" class="fb-video active-vid" preload="auto">
+            <source src="{{ url_for('static', filename='models/feedback_part1.webm') }}" type="video/webm" media="(min-width: 769px)">
             <source src="{{ url_for('static', filename='models/feedback_part1.mp4') }}" type="video/mp4" media="(min-width: 769px)">
         </video>
         <video muted playsinline id="fb-vid-2" class="fb-video" preload="auto">
+            <source src="{{ url_for('static', filename='models/feedback_part2.webm') }}" type="video/webm" media="(min-width: 769px)">
             <source src="{{ url_for('static', filename='models/feedback_part2.mp4') }}" type="video/mp4" media="(min-width: 769px)">
         </video>
         <div class="video-overlay" id="fb-dark-overlay"></div>

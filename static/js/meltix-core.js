@@ -9,6 +9,52 @@
     return typeof value === "string" ? value : "";
   }
 
+  function fallbackFromWebpUrl(value) {
+    const url = textOrEmpty(value);
+    return /\.webp(?=([?#]|$))/i.test(url)
+      ? url.replace(/\.webp(?=([?#]|$))/i, ".jpg")
+      : "";
+  }
+
+  function escapeHtmlAttribute(value) {
+    return textOrEmpty(value)
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function setImageSource(image, primary, fallback = "", finalFallback = "") {
+    if (!image) {
+      return;
+    }
+
+    const sources = [...new Set(
+      [primary, fallback, finalFallback]
+        .map((value) => textOrEmpty(value).trim())
+        .filter(Boolean)
+    )];
+
+    if (!sources.length) {
+      image.onerror = null;
+      image.removeAttribute("src");
+      delete image.dataset.fallbackSrc;
+      return;
+    }
+
+    let sourceIndex = 0;
+    image.dataset.fallbackSrc = sources[1] || "";
+    image.onerror = () => {
+      sourceIndex += 1;
+      if (sourceIndex < sources.length) {
+        image.src = sources[sourceIndex];
+        return;
+      }
+      image.onerror = null;
+    };
+    image.src = sources[0];
+  }
+
   function firstWordUpper(value) {
     return textOrEmpty(value).trim().split(/\s+/)[0]?.toUpperCase() || "";
   }
@@ -16,7 +62,7 @@
   function buildGalleryImages(product) {
     const baseImage = textOrEmpty(product?.image_url) || textOrEmpty(product?.src);
     const rawGallery = Array.isArray(product?.gallery_images) ? product.gallery_images.filter(Boolean) : [];
-    const gallery = rawGallery.length ? rawGallery : (baseImage ? [baseImage] : []);
+    const gallery = rawGallery.length ? [...rawGallery] : (baseImage ? [baseImage] : []);
     if (!gallery.length) {
       return [];
     }
@@ -26,8 +72,32 @@
     return gallery.slice(0, 4);
   }
 
+  function buildGalleryFallbackImages(product) {
+    const gallery = buildGalleryImages(product);
+    const rawFallbacks = Array.isArray(product?.gallery_fallback_images)
+      ? product.gallery_fallback_images.filter(Boolean)
+      : [];
+    const baseFallback = textOrEmpty(product?.image_fallback_url)
+      || textOrEmpty(product?.image_fallback_path)
+      || fallbackFromWebpUrl(gallery[0]);
+    const fallbacks = rawFallbacks.length ? [...rawFallbacks] : gallery.map(fallbackFromWebpUrl);
+
+    while (fallbacks.length < gallery.length) {
+      fallbacks.push(baseFallback || fallbackFromWebpUrl(gallery[fallbacks.length]));
+    }
+
+    return gallery.map((image, index) => fallbacks[index] || baseFallback || fallbackFromWebpUrl(image));
+  }
+
   function primaryProductImage(product) {
     return buildGalleryImages(product)[0] || textOrEmpty(product?.image_url) || textOrEmpty(product?.image_path) || textOrEmpty(product?.src);
+  }
+
+  function primaryProductFallback(product) {
+    return buildGalleryFallbackImages(product)[0]
+      || textOrEmpty(product?.image_fallback_url)
+      || textOrEmpty(product?.image_fallback_path)
+      || fallbackFromWebpUrl(primaryProductImage(product));
   }
 
   function normalizeCartCustomText(value) {
@@ -250,7 +320,7 @@
     overlay.style.cursor = "zoom-out";
 
     const image = document.createElement("img");
-    image.src = imageSrc;
+    setImageSource(image, imageSrc, fallbackFromWebpUrl(imageSrc));
     image.alt = "Expanded Meltix visual";
     image.style.maxWidth = "92vw";
     image.style.maxHeight = "92vh";
@@ -270,11 +340,19 @@
   function buildAvatarMarkup(review) {
     const avatarFilename = review.author_avatar_filename || review.avatar_filename || "";
     const avatarUrl = review.author_avatar_url || review.avatar_url || "";
+    const avatarFallbackUrl = review.author_avatar_fallback_url
+      || review.avatar_fallback_url
+      || fallbackFromWebpUrl(avatarUrl);
     if (avatarUrl) {
-      return `<img src="${avatarUrl}" alt="Avatar">`;
+      const fallbackMarkup = avatarFallbackUrl
+        ? ' data-fallback-src="' + escapeHtmlAttribute(avatarFallbackUrl) + '" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}"'
+        : "";
+      return '<img src="' + escapeHtmlAttribute(avatarUrl) + '"' + fallbackMarkup + ' alt="Avatar">';
     }
     if (avatarFilename) {
-      return `<img src="/static/images/avatar/${avatarFilename}" alt="Avatar">`;
+      const fallbackUrl = "/static/images/avatar/" + avatarFilename;
+      const optimizedUrl = fallbackUrl.replace(/\.(jpe?g)$/i, ".webp");
+      return '<img src="' + escapeHtmlAttribute(optimizedUrl) + '" data-fallback-src="' + escapeHtmlAttribute(fallbackUrl) + '" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Avatar">';
     }
     const initial = (review.display_name || review.user_name || "U").charAt(0).toUpperCase();
     return `<div class="avatar-empty-state"><span class="avatar-empty-title" style="color:var(--accent-gold); font-family:'Playfair Display', serif; font-style:italic;">${initial}</span></div>`;
@@ -434,6 +512,7 @@
         name: this.resolveProductTitle(product),
         price: Number(product.price || 500),
         image: primaryProductImage(product),
+        imageFallback: primaryProductFallback(product),
         qty: Math.max(1, Number(options?.qty || 1)),
         stock: this.resolveProductStock(product),
         customText: normalizeCartCustomText(options?.customText),
@@ -450,16 +529,17 @@
 
     fillGallery(product) {
       const gallery = buildGalleryImages(product);
+      const fallbacks = buildGalleryFallbackImages(product);
       const mainImage = byId("modalMainImage");
       if (mainImage) {
-        mainImage.src = gallery[0] || "";
+        setImageSource(mainImage, gallery[0], fallbacks[0]);
       }
       const legacyMain = byId("modalImage");
       if (legacyMain) {
-        legacyMain.src = gallery[0] || "";
+        setImageSource(legacyMain, gallery[0], fallbacks[0]);
       }
       document.querySelectorAll(".thumb-img").forEach((thumb, index) => {
-        thumb.src = gallery[index] || gallery[0] || "";
+        setImageSource(thumb, gallery[index] || gallery[0], fallbacks[index] || fallbacks[0]);
         thumb.classList.toggle("active-thumb", index === 0);
       });
     }
@@ -481,7 +561,11 @@
           const mappedData = items.map((item) => ({
             id: item.id,
             title: item.name,
-            src: `/static/images/${item.image_file}`,
+            src: item.image_url || ("/static/images/" + item.image_file),
+            image_fallback_url: item.image_fallback_url,
+            image_fallback_path: item.image_fallback_path,
+            gallery_images: item.gallery_images,
+            gallery_fallback_images: item.gallery_fallback_images,
             price: item.price,
             stock: normalizeStockValue(item.stock ?? item.stock_quantity, 0),
             name: item.name,
@@ -801,7 +885,7 @@
     changeModalImage(element, src) {
       const mainImage = byId("modalMainImage");
       if (mainImage) {
-        mainImage.src = src;
+        setImageSource(mainImage, src, element?.dataset?.fallbackSrc || fallbackFromWebpUrl(src));
       }
       document.querySelectorAll(".thumb-img").forEach((thumb) => thumb.classList.remove("active-thumb"));
       if (element) {
@@ -1543,7 +1627,11 @@
           media.className = "showcase-card-media";
           const image = document.createElement("img");
           image.className = "carousel-img showcase-card-image";
-          image.src = product.image_url || product.src || "";
+          setImageSource(
+            image,
+            product.image_url || product.src || "",
+            product.image_fallback_url || product.image_fallback_path || fallbackFromWebpUrl(product.image_url || product.src || "")
+          );
           image.alt = details.title || product.title || product.name || "";
           image.draggable = false;
           media.appendChild(image);
@@ -1624,7 +1712,11 @@
 
         const image = document.createElement("img");
         image.className = "carousel-img";
-        image.src = product.image_url || product.src || "";
+        setImageSource(
+          image,
+          product.image_url || product.src || "",
+          product.image_fallback_url || product.image_fallback_path || fallbackFromWebpUrl(product.image_url || product.src || "")
+        );
         image.alt = product.title || product.name || "";
         image.draggable = false;
         const handleOpen = () => {
@@ -1971,7 +2063,7 @@
       this.videoElement = null;
     }
 
-    loadCategoryVideo(videoUrl) {
+    loadCategoryVideo(videoUrl, fallbackUrl = "") {
       if (!this.videoContainer || !videoUrl) {
         return;
       }
@@ -1988,7 +2080,18 @@
       videoElement.loop = true;
       videoElement.setAttribute("playsinline", "");
       videoElement.setAttribute("preload", "auto");
-      videoElement.src = videoUrl;
+
+      const primarySource = document.createElement("source");
+      primarySource.src = videoUrl;
+      primarySource.type = /\.webm(?=([?#]|$))/i.test(videoUrl) ? "video/webm" : "video/mp4";
+      videoElement.appendChild(primarySource);
+
+      if (fallbackUrl && fallbackUrl !== videoUrl) {
+        const fallbackSource = document.createElement("source");
+        fallbackSource.src = fallbackUrl;
+        fallbackSource.type = /\.webm(?=([?#]|$))/i.test(fallbackUrl) ? "video/webm" : "video/mp4";
+        videoElement.appendChild(fallbackSource);
+      }
 
       this.videoContainer.appendChild(videoElement);
       this.videoElement = videoElement;
@@ -2084,11 +2187,13 @@
         });
 
         const image = document.createElement("img");
-        image.src = product.image_url || product.image_path || "";
+        setImageSource(
+          image,
+          product.image_url || product.image_path || "",
+          product.image_fallback_url || product.image_fallback_path || fallbackFromWebpUrl(product.image_url || product.image_path || ""),
+          "https://via.placeholder.com/300x180/ffffff/b0845a?text=Meltix"
+        );
         image.alt = product.title || product.name || "Meltix product";
-        image.onerror = function () {
-          this.src = "https://via.placeholder.com/300x180/ffffff/b0845a?text=Meltix";
-        };
         card.appendChild(image);
 
         const title = document.createElement("h4");
@@ -2131,7 +2236,7 @@
       this.isActionPlaying = false;
       const skipCategoryVideo = window.matchMedia("(max-width: 768px)").matches;
       if (meta.video && !skipCategoryVideo) {
-        this.loadCategoryVideo(meta.video);
+        this.loadCategoryVideo(meta.video, meta.videoFallback);
       } else if (this.videoElement) {
         this.cleanupCategoryVideo();
       }

@@ -10,6 +10,7 @@
 <body>
     <div class="video-background" aria-hidden="true">
         <video autoplay loop muted playsinline id="bg-video">
+            <source src="{{ url_for('static', filename='models/support_video.webm') }}" type="video/webm">
             <source src="{{ url_for('static', filename='models/support_video.mp4') }}" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
@@ -23,7 +24,7 @@
                 <div class="glass-left meltix-HUD-interface">
                     <div class="meltix-icon-circle-container">
                         <div class="meltix-icon-circle">
-                            <img src="/static/models/__%E2%80%9CA_clean_modern_202604040015.jpg" alt="Meltix support icon" id="meltix-icon-img">
+                            <img src="{{ optimized_static_image_url('models/__“A_clean_modern_202604040015.jpg') }}" data-fallback-src="{{ url_for('static', filename='models/__“A_clean_modern_202604040015.jpg') }}" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}" alt="Meltix support icon" id="meltix-icon-img">
                         </div>
                         <div class="icon-halo-glow"></div>
                     </div>

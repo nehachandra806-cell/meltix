@@ -46,7 +46,7 @@
                 {% for product in top_products %}
                 <div class="suggest-card">
                     <div class="img-wrapper">
-                        <img src="{{ url_for('static', filename='images/' + product.image_file) }}" alt="{{ product.name }}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.src='https://via.placeholder.com/250x250/15100c/d4a373?text=Meltix+Candle'">
+                        <img src="{{ product_image_url(product) }}" data-fallback-src="{{ product_image_fallback_url(product) }}" alt="{{ product.name }}" loading="lazy" decoding="async" fetchpriority="low" onerror="const fallback=this.dataset.fallbackSrc;if(fallback){delete this.dataset.fallbackSrc;this.src=fallback;}else{this.onerror=null;this.src='https://via.placeholder.com/250x250/15100c/d4a373?text=Meltix+Candle';}">
                     </div>
                     
                     <div class="suggest-info">
@@ -77,6 +77,9 @@
         
         const currentPath = "{{ url_for('static', filename='images/frames/ezgif-frame-') }}";
         const currentFrame = index => (
+            currentPath + index.toString().padStart(3, '0') + '.webp'
+        );
+        const fallbackFrame = index => (
             currentPath + index.toString().padStart(3, '0') + '.jpg'
         );
 
@@ -147,7 +150,13 @@
                     onLoad(img);
                 }
             };
+            let fallbackAttempted = false;
             img.onerror = () => {
+                if (!fallbackAttempted) {
+                    fallbackAttempted = true;
+                    img.src = fallbackFrame(frameNumber);
+                    return;
+                }
                 loadingFrames.delete(frameNumber);
             };
             img.src = currentFrame(frameNumber);
